@@ -152,7 +152,7 @@ class AuthProvider extends Singleton
      * @param Auth\Group|Auth\User $returnValue The value to merge to
      * @param Auth\Group|Auth\User $res The value to merge from
      *
-     * @return Auth\Group|false The Group instance if a group with that name exists, false otherwise
+     * @return Auth\Group|false The merged returnValue
      */
     private function mergeResult(&$returnValue, $res)
     {
@@ -168,6 +168,16 @@ class AuthProvider extends Singleton
         $returnValue->merge($res);
     }
 
+    /**
+     * Calls the indicated function on each Authenticator and merges the result
+     *
+     * @param string $functionName The function to call
+     * @param array $args The arguments for the function
+     * @param string $checkField A field to check if it is set a certain way before calling the function
+     * @param mixed $checkValue The value that field should be set to to not call the function
+     *
+     * @return Auth\Group|Auth\User|false The merged returnValue
+     */
     private function callOnEach($functionName, $args, $checkField = false, $checkValue = false)
     {
         $ret = false;
@@ -185,6 +195,34 @@ class AuthProvider extends Singleton
             $this->mergeResult($ret, $res);
         }
         return $ret;
+    }
+
+    /**
+     * Calls the indicated function on each Authenticator and add the result
+     *
+     * @param string $functionName The function to call
+     * @param string $checkField A field to check if it is set a certain way before calling the function
+     * @param mixed $checkValue The value that field should be set to to not call the function
+     *
+     * @return integer|false The added returnValue
+     */
+    private function addFromEach($functionName, $checkField = false, $checkValue = false)
+    {
+        $retCount = 0;
+        $count = count($this->methods);
+        for($i = 0; $i < $count; $i++)
+        {
+            if($checkField)
+            {
+                if($this->methods[$i]->{$checkField} === $checkValue)
+                {
+                    continue;
+                }
+            }
+            $res = call_user_func(array($this->methods[$i], $functionName));
+            $retCount += $res;
+        }
+        return $retCount;
     }
 
     /**
@@ -265,7 +303,7 @@ class AuthProvider extends Singleton
     {
         if($methodName === false)
         {
-            return $this->callOnEach('getPendingUsersByFilter', array($filter, $select, $top, $skip, $orderby), 'current');
+            return $this->callOnEach('getGroupsByFilter', array($filter, $select, $top, $skip, $orderby), 'current');
         }
         $auth = $this->getAuthenticator($methodName);
         return $auth->getGroupsByFilter($filter, $select, $top, $skip, $orderby);
@@ -282,15 +320,7 @@ class AuthProvider extends Singleton
     {
         if($methodName === false)
         {
-            $userCount = 0;
-            $count = count($this->methods);
-            for($i = 0; $i < $count; $i++)
-            {
-                if($this->methods[$i]->current === false) continue;
-
-                $userCount += $this->methods[$i]->getActiveUserCount();
-            }
-            return $userCount;
+            return $this->addFromEach('getActiveUserCount', 'current');
         }
         $auth = $this->getAuthenticator($methodName);
         return $auth->getActiveUserCount();
@@ -307,15 +337,7 @@ class AuthProvider extends Singleton
     {
         if($methodName === false)
         {
-            $userCount = 0;
-            $count = count($this->methods);
-            for($i = 0; $i < $count; $i++)
-            {
-                if($this->methods[$i]->pending === false) continue;
-
-                $userCount += $this->methods[$i]->getPendingUserCount();
-            }
-            return $userCount;
+            return $this->addFromEach('getPendingUserCount', 'pending');
         }
         $auth = $this->getAuthenticator($methodName);
         return $auth->getPendingUserCount();
