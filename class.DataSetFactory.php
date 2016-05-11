@@ -14,7 +14,14 @@
 /**
  * use the FlipsideSettings class
  */
-require_once("/var/www/secure_settings/class.FlipsideSettings.php");
+if(isset($GLOBALS['FLIPSIDE_SETTINGS_LOC']))
+{
+    require_once($GLOBALS['FLIPSIDE_SETTINGS_LOC'].'/class.FlipsideSettings.php');
+}
+else
+{
+    require_once('/var/www/secure_settings/class.FlipsideSettings.php');
+}
 
 /**
  * Allow other classes to be loaded as needed

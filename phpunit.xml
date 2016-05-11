@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit colors="true" verbose="true" stderr="true" backupGlobals="false">
+<phpunit colors="true" verbose="true" stderr="true" backupGlobals="false" backupStaticAttributes="false">
     <testsuites>
         <testsuite name="Common Code Test Suite">
             <directory>./tests/</directory>
@@ -14,6 +14,7 @@
                 <directory>./tests</directory>
                 <directory>./libs</directory>
                 <directory>./js</directory>
+                <directory>./vendor</directory>
             </exclude>
         </whitelist>
     </filter>

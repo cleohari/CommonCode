@@ -367,6 +367,10 @@ class WebPage
      */
     public function currentURL()
     {
+        if(!isset($_SERVER['REQUEST_URI']))
+        {
+            return '';
+        }
         $requestURI = $_SERVER['REQUEST_URI'];
         if($requestURI[0] === '/')
         {

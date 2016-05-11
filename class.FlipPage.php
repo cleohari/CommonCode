@@ -364,8 +364,10 @@ class FlipPage extends WebPage
         }
         $this->links = array();
         $this->notifications = array();
-        $this->minified = 'min';
-        $this->cdn      = 'cdn';
+        $this->minified  = 'min';
+        $this->cdn       = 'cdn';
+        $this->login_url = 'login.php';
+        $this->login_url = 'logout.php';
         if(isset(FlipsideSettings::$global))
         {
             if(isset(FlipsideSettings::$global['use_minified']) && !FlipsideSettings::$global['use_minified'])

@@ -5,9 +5,21 @@ class SQLUser extends User
 {
     private $uid;
 
-    function __construct($data)
+    function __construct($data=false)
     {
-        $this->uid = $data['extended'];
+        $this->uid = false;
+        if($data !== false && !isset($data['extended']))
+        {
+            //Generic user object
+            //TODO get from DB
+        }
+        else
+        {
+            if(isset($data['extended']))
+            {
+                $this->uid = $data['extended'];
+            }
+        }
     }
 
     function isInGroupNamed($name)

@@ -90,7 +90,7 @@ class FlipAdminPage extends FlipPage
             $log = '<a href="https://profiles.burningflipside.com/logout.php"><i class="fa fa-sign-out"></i></a>';
         }
         $this->body = '<div id="wrapper">
-                  <nav class="navbar navbar-default navbar-static-top" role=navigation" style="margin-bottom: 0">
+                  <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
                       <div class="navbar-header">
                           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
                               <span class="sr-only">Toggle Navigation</span>
