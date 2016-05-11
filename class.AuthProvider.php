@@ -180,11 +180,8 @@ class AuthProvider extends Singleton
             }
             return $ret;
         }
-        else
-        {
-            $auth = $this->getAuthenticator($methodName);
-            return $auth->getGroupByName($name);
-        }
+        $auth = $this->getAuthenticator($methodName);
+        return $auth->getGroupByName($name);
     }
 
     /**
@@ -225,11 +222,8 @@ class AuthProvider extends Singleton
             }
             return $ret;
         }
-        else
-        {
-            $auth = $this->getAuthenticator($methodName);
-            return $auth->getUsersByFilter($filter, $select, $top, $skip, $orderby);
-        }
+        $auth = $this->getAuthenticator($methodName);
+        return $auth->getUsersByFilter($filter, $select, $top, $skip, $orderby);
     }
 
     /**
@@ -270,11 +264,8 @@ class AuthProvider extends Singleton
             }
             return $ret;
         }
-        else
-        {
-            $auth = $this->getAuthenticator($methodName);
-            return $auth->getPendingUsersByFilter($filter, $select, $top, $skip, $orderby);
-        }
+        $auth = $this->getAuthenticator($methodName);
+        return $auth->getPendingUsersByFilter($filter, $select, $top, $skip, $orderby);
     }
 
     /**
@@ -315,11 +306,8 @@ class AuthProvider extends Singleton
             }
             return $ret;
         }
-        else
-        {
-            $auth = $this->getAuthenticator($methodName);
-            return $auth->getGroupsByFilter($filter, $select, $top, $skip, $orderby);
-        }
+        $auth = $this->getAuthenticator($methodName);
+        return $auth->getGroupsByFilter($filter, $select, $top, $skip, $orderby);
     }
 
     /**
@@ -343,11 +331,8 @@ class AuthProvider extends Singleton
             }
             return $userCount;
         }
-        else
-        {
-            $auth = $this->getAuthenticator($methodName);
-            return $auth->getActiveUserCount();
-        }
+        $auth = $this->getAuthenticator($methodName);
+        return $auth->getActiveUserCount();
     }
 
     /**
@@ -371,11 +356,8 @@ class AuthProvider extends Singleton
             }
             return $userCount;
         }
-        else
-        {
-            $auth = $this->getAuthenticator($methodName);
-            return $auth->getPendingUserCount();
-        }
+        $auth = $this->getAuthenticator($methodName);
+        return $auth->getPendingUserCount();
     }
 
     /**
@@ -399,11 +381,8 @@ class AuthProvider extends Singleton
             }
             return $groupCount;
         }
-        else
-        {
-            $auth = $this->getAuthenticator($methodName);
-            return $auth->getGroupCount();
-        }
+        $auth = $this->getAuthenticator($methodName);
+        return $auth->getGroupCount();
     }
 
     /**
@@ -437,15 +416,11 @@ class AuthProvider extends Singleton
      */
     public function impersonateUser($userArray)
     {
-        if(is_object($userArray))
-        {
-            \FlipSession::setUser($userArray);
-        }
-        else
+        if(!is_object($userArray))
         {
             $user = new $userArray['class']($userArray);
-            \FlipSession::setUser($user);
         }
+        \FlipSession::setUser($user);
     }
 
     /**
@@ -473,11 +448,8 @@ class AuthProvider extends Singleton
             }
             return false;
         }
-        else
-        {
-            $auth = $this->getAuthenticator($methodName);
-            return $auth->getTempUserByHash($hash);
-        }
+        $auth = $this->getAuthenticator($methodName);
+        return $auth->getTempUserByHash($hash);
     }
 
     /**
@@ -505,11 +477,8 @@ class AuthProvider extends Singleton
             }
             return false;
         }
-        else
-        {
-            $auth = $this->getAuthenticator($methodName);
-            return $auth->createPendingUser($user);
-        }
+        $auth = $this->getAuthenticator($methodName);
+        return $auth->createPendingUser($user);
     }
 
     /**
@@ -541,11 +510,8 @@ class AuthProvider extends Singleton
             }
             return false;
         }
-        else
-        {
-            $auth = $this->getAuthenticator($methodName);
-            return $auth->activatePendingUser($user);
-        }
+        $auth = $this->getAuthenticator($methodName);
+        return $auth->activatePendingUser($user);
     }
 
     /**
@@ -573,15 +539,12 @@ class AuthProvider extends Singleton
             }
             return false;
         }
-        else
+        $auth = $this->getAuthenticator($methodName);
+        if($auth === false)
         {
-            $auth = $this->getAuthenticator($methodName);
-            if($auth === false)
-            {
-                return $this->getUserByResetHash($hash, false);
-            }
-            return $auth->getUserByResetHash($hash);
+            return $this->getUserByResetHash($hash, false);
         }
+        return $auth->getUserByResetHash($hash);
     }
 
     /**
