@@ -19,9 +19,9 @@ ratings:
   - "**.js"
   - "**.php"
 exclude_paths:
-- "tests/*"
-- "libs/**/*"
-- "vendor/**/*"
+- tests/
+- libs/
+- vendor/
 - "static.words.php"
 - "css/bootstrap*"
 - "css/font-awesome*"
