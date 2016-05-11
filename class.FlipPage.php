@@ -346,38 +346,24 @@ class FlipPage extends WebPage
      *
      * @param string $title The webpage title
      * @param boolean $header Draw the header bar?
+     *
+     * @SuppressWarnings("StaticAccess")
      */
     function __construct($title, $header=true)
     {
         parent::__construct($title);
+        $this->setupVars();
         $this->add_js(JS_JQUERY, false);
         $this->add_js(JS_FLIPSIDE, false);
         $this->addBootstrap();
         $this->header = $header;
-        if(isset(FlipsideSettings::$sites))
-        {
-            $this->sites = FlipsideSettings::$sites;
-        }
-        else
-        {
-            $this->sites = array();
-        }
+        $this->sites = $this->getSites();
         $this->links = array();
         $this->notifications = array();
-        $this->minified  = 'min';
-        $this->cdn       = 'cdn';
         $this->login_url = 'login.php';
         $this->login_url = 'logout.php';
         if(isset(FlipsideSettings::$global))
         {
-            if(isset(FlipsideSettings::$global['use_minified']) && !FlipsideSettings::$global['use_minified'])
-            {
-                $this->minified = 'no';
-            }
-            if(isset(FlipsideSettings::$global['use_cdn']) && !FlipsideSettings::$global['use_cdn'])
-            {
-                $this->cdn = 'no';
-            }
             if(isset(FlipsideSettings::$global['login_url']))
             {
                 $this->login_url = FlipsideSettings::$global['login_url'];
@@ -392,7 +378,22 @@ class FlipPage extends WebPage
     }
 
     /**
+     * Get the external site links for this page 
+     *
+     */
+    protected function getSites()
+    {
+        if(isset(FlipsideSettings::$sites))
+        {
+            return FlipsideSettings::$sites;
+        }
+        return array();
+    }
+
+    /**
      * Add the links to be used in the header
+     *
+     * @SuppressWarnings("Superglobals")
      *
      * @todo Consider pulling the about menu from the settings file or a DB
      */
@@ -846,6 +847,8 @@ class FlipPage extends WebPage
 
     /**
      * Add the login form to the page
+     *
+     * @SuppressWarnings("StaticAccess")
      */
     function add_login_form()
     {
