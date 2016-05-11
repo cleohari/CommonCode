@@ -57,8 +57,8 @@ define('CSS_DATATABLE',    4);
 define('CSS_JCROP',        5);
 define('CSS_FONTAWESOME',  6);
 
-global $js_array;
-$js_array = array(
+global $jsArray;
+$jsArray = array(
      JS_JQUERY => array(
          'no' => array(
              'no'  => '/js/common/jquery.js',
@@ -241,8 +241,8 @@ $js_array = array(
      )
 );
 
-global $css_array;
-$css_array = array(
+global $cssArray;
+$cssArray = array(
     CSS_JQUERY_UI => array(
         'no' => array(
              'no'  => '/css/common/jquery-ui.css',
@@ -324,8 +324,6 @@ class FlipPage extends WebPage
 {
     /** The currently logged in user or null if no user is logged in */
     public $user;
-    /** An array of websites to link to globally*/
-    public $sites;
     /** An array of links to put in the header */
     public $links;
     /** An array of notifications to draw on the page */
@@ -333,9 +331,9 @@ class FlipPage extends WebPage
     /** Should we draw the header? */
     public $header;
     /** The login page URL */
-    public $login_url;
+    public $loginUrl;
     /** The logout page URL */
-    public $logout_url;
+    public $logoutUrl;
     /** Should we use minified JS/CSS? */
     protected $minified = null;
     /** Should we use local JS/CSS or Content Delivery Networks? */
@@ -357,20 +355,19 @@ class FlipPage extends WebPage
         $this->add_js(JS_FLIPSIDE, false);
         $this->addBootstrap();
         $this->header = $header;
-        $this->sites = $this->getSites();
         $this->links = array();
         $this->notifications = array();
-        $this->login_url = 'login.php';
-        $this->login_url = 'logout.php';
+        $this->loginUrl = 'login.php';
+        $this->logoutUrl = 'logout.php';
         if(isset(FlipsideSettings::$global))
         {
             if(isset(FlipsideSettings::$global['login_url']))
             {
-                $this->login_url = FlipsideSettings::$global['login_url'];
+                $this->loginUrl = FlipsideSettings::$global['login_url'];
             }
             if(isset(FlipsideSettings::$global['logout_url']))
             {
-                $this->logout_url = FlipsideSettings::$global['logout_url'];
+                $this->logoutUrl = FlipsideSettings::$global['logout_url'];
             }
         }
         $this->user = FlipSession::getUser();
@@ -403,13 +400,13 @@ class FlipPage extends WebPage
         {
             if(isset($_SERVER['REQUEST_URI']) && strstr($_SERVER['REQUEST_URI'], 'logout.php') === false)
             {
-                $this->addLink('Login', $this->login_url);
+                $this->addLink('Login', $this->loginUrl);
             }
         }
         else
         {
             $this->add_links();
-            $this->addLink('Logout', $this->logout_url);
+            $this->addLink('Logout', $this->logoutUrl);
         }
         $about_menu = array(
             'Burning Flipside'=>'https://www.burningflipside.com/about/event',
@@ -466,10 +463,10 @@ class FlipPage extends WebPage
         {
             $attributes['async'] = true;
         }
-        $js_tag = $this->createOpenTag('script', $attributes);
-        $close_tag = $this->createCloseTag('script');
-        $this->addHeadTag($js_tag);
-        $this->addHeadTag($close_tag);
+        $jsTag = $this->createOpenTag('script', $attributes);
+        $closeTag = $this->createCloseTag('script');
+        $this->addHeadTag($jsTag);
+        $this->addHeadTag($closeTag);
     }
 
     /**
@@ -498,8 +495,8 @@ class FlipPage extends WebPage
         {
             $attributes['rel'] = 'import';
         }
-        $css_tag = $this->createOpenTag('link', $attributes, true);
-        $this->addHeadTag($css_tag);
+        $cssTag = $this->createOpenTag('link', $attributes, true);
+        $this->addHeadTag($cssTag);
     }
 
     /**
@@ -528,9 +525,9 @@ class FlipPage extends WebPage
      */
     public function addWellKnownJS($jsFileID, $async=true)
     {
-        global $js_array;
+        global $jsArray;
         $this->setupVars();
-        $src = $js_array[$jsFileID][$this->cdn][$this->minified];
+        $src = $jsArray[$jsFileID][$this->cdn][$this->minified];
         $this->addJSByURI($src, $async);
     }
 
@@ -555,9 +552,9 @@ class FlipPage extends WebPage
      */
     public function addWellKnownCSS($cssFileID, $async=true)
     {
-        global $css_array;
+        global $cssArray;
         $this->setupVars();
-        $src = $css_array[$cssFileID][$this->cdn][$this->minified];
+        $src = $cssArray[$cssFileID][$this->cdn][$this->minified];
         $this->addCSSByURI($src, $async);
     }
 
@@ -571,60 +568,75 @@ class FlipPage extends WebPage
         $this->add_css(CSS_FONTAWESOME);
     }
 
+    protected function getSiteLinksForHeader()
+    {
+        $sites = $this->getSites();
+        $names = array_keys($sites);
+        $ret = '';
+        foreach($names as $name)
+        {
+            $ret.='<li>'.$this->create_link($name, $sites[$name]).'</li>';
+        }
+        return $ret;
+    }
+
+    protected function getHrefForDropdown(&$link)
+    {
+        if(isset($link['_']))
+        {
+            $ret = $link['_'];
+            unset($link['_']);
+            return $ret;
+        }
+        return '#';
+    }
+
+    protected function getDropdown($link, $name)
+    {
+        $ret = '<li class="dropdown">';
+        $href = $this->getHrefForDropdown($link);
+        $ret.= '<a href="'.$href.'" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">'.$name.' <span class="caret"></span></a>';
+        $ret.='<ul class="dropdown-menu">';
+        $subNames = array_keys($link);
+        foreach($subNames as $subName)
+        {
+            $ret.=$this->getLinkByName($subName, $link);
+        }
+        $ret.='</ul></li>';
+        return $ret;
+    }
+
+    protected function getLinkByName($name, $links)
+    {
+        if(is_array($links[$name]))
+        {
+            return $this->getDropdown($links[$name], $name);
+        }
+        if($links[$name] === false)
+        {
+            return '<li>'.$name.'</li>';
+        }
+        return '<li>'.$this->create_link($name, $links[$name]).'</li>';
+    }
+
+    protected function getLinksMenus()
+    {
+        $names = array_keys($this->links);
+        $ret = '';
+        foreach($names as $name)
+        {
+            $ret.=$this->getLinkByName($name, $this->links);
+        }
+        return $ret;
+    }
+
     /**
      * Draw the header for the page
      */
     protected function addHeader()
     {
-        $sites = '';
-        $site_names = array_keys($this->sites);
-        foreach($site_names as $site_name)
-        {
-            $sites.='<li>'.$this->create_link($site_name, $this->sites[$site_name]).'</li>';
-        }
-        $links = '';
-        $link_names = array_keys($this->links);
-        foreach($link_names as $link_name)
-        {
-            if(is_array($this->links[$link_name]))
-            {
-                $links.='<li class="dropdown">';
-                if(isset($this->links[$link_name]['_']))
-                {
-                    $links.='<a href="'.$this->links[$link_name]['_'].'" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">'.$link_name.' <span class="caret"></span></a>';
-                    unset($this->links[$link_name]['_']);
-                }
-                else
-                {
-                    $links.='<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">'.$link_name.' <span class="caret"></span></a>';
-                }
-                $links.='<ul class="dropdown-menu">';
-                $sub_names = array_keys($this->links[$link_name]);
-                foreach($sub_names as $sub_name)
-                {
-                    if($this->links[$link_name][$sub_name] === false)
-                    {
-                        $links.='<li>'.$sub_name.'</li>';
-                    }
-                    else
-                    {
-                        $links.='<li>'.$this->create_link($sub_name, $this->links[$link_name][$sub_name]).'</li>';
-                    }
-                }
-                $links.='</ul></li>';
-            }
-            else
-            {
-                if($this->links[$link_name] === false)
-                {
-                    $links.='<li>'.$link_name.'</li>';
-                }
-                else
-                {
-                    $links.='<li>'.$this->create_link($link_name, $this->links[$link_name]).'</li>';
-                }
-            }
-        }
+        $sites = $this->getSiteLinksForHeader();
+        $links = $this->getLinksMenus();
         $header ='<nav class="navbar navbar-default navbar-fixed-top">
                       <div class="container-fluid">
                           <!-- Brand and toggle get grouped for better mobile display -->
@@ -853,16 +865,16 @@ class FlipPage extends WebPage
     function add_login_form()
     {
         $auth = \AuthProvider::getInstance();
-        $auth_links = $auth->getSupplementaryLinks();
-        $auth_links_str = '';
-        $count = count($auth_links);
+        $authLinks = $auth->getSupplementaryLinks();
+        $authLinksStr = '';
+        $count = count($authLinks);
         for($i = 0; $i < $count; $i++)
         {
-            $auth_links_str .= $auth_links[$i];
+            $authLinksStr .= $authLinks[$i];
         }
         if($count > 0)
         {
-            $auth_links_str = 'Sign in with '.$auth_links_str;
+            $authLinksStr = 'Sign in with '.$authLinksStr;
         }
         $this->body .= '<div class="modal fade" role="dialog" id="login-dialog" title="Login" aria-hidden="true">
                             <div class="modal-dialog">
@@ -881,7 +893,7 @@ class FlipPage extends WebPage
                                             <input type="hidden" name="return" value="'.$this->current_url().'"/>
                                             <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
                                         </form>
-                                        '.$auth_links_str.'
+                                        '.$authLinksStr.'
                                     </div>
                                 </div>
                             </div>

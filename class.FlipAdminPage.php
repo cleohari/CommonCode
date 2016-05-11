@@ -33,22 +33,18 @@ class FlipAdminPage extends FlipPage
     {
         if($this->user === false || $this->user === null)
         {
-            $this->add_link('<i class="fa fa-sign-in"></i> Login', $this->login_url);
+            $this->add_link('<i class="fa fa-sign-in"></i> Login', $this->loginUrl);
         }
         else
         {
             $this->add_links();
-            $this->add_link('<i class="fa fa-sign-out"></i> Logout', $this->logout_url);
+            $this->add_link('<i class="fa fa-sign-out"></i> Logout', $this->logoutUrl);
         }
     }
 
     function addHeader()
     {
-        $sites = '';
-        foreach($this->sites as $link => $site_name)
-        {
-            $sites .= '<li><a href="'.$site_name.'">'.$link.'</a></li>';
-        }
+        $sites = $this->getSiteLinksForHeader();
         $side_nav = '';
         $link_names = array_keys($this->links);
         foreach($link_names as $link_name)
@@ -186,7 +182,7 @@ class FlipAdminPage extends FlipPage
             $this->body = '
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">You must <a href="'.$this->login_url.'?return='.$this->current_url().'">log in <span class="glyphicon glyphicon-log-in"></span></a> to access the '.$this->title.' Admin system!</h1>
+                <h1 class="page-header">You must <a href="'.$this->loginUrl.'?return='.$this->current_url().'">log in <span class="glyphicon glyphicon-log-in"></span></a> to access the '.$this->title.' Admin system!</h1>
             </div>
         </div>';
         }
