@@ -8,10 +8,10 @@ class LDAPUser extends User
 
     function __construct($data=false)
     {
+        $this->server = \LDAP\LDAPServer::getInstance();
         if($data !== false && !isset($data['dn']) && !isset($data['extended']))
         {
             //Generic user object
-            $this->server = \LDAP\LDAPServer::getInstance();
             $filter = new \Data\Filter('mail eq '.$data['mail']);
             $users = $this->server->read($this->server->user_base, $filter);
             if($users === false || !isset($users[0]))
@@ -29,14 +29,6 @@ class LDAPUser extends User
             else
             {
                 $this->ldap_obj = $data;
-            }
-            if(is_object($this->ldap_obj))
-            {
-                $this->server   = $this->ldap_obj->server;
-            }
-            if($this->server === null)
-            {
-                $this->server = \LDAP\LDAPServer::getInstance();
             }
         }
     }
@@ -285,31 +277,91 @@ class LDAPUser extends User
         }
     }
 
-    function addLoginProvider($provider)
+    private function setFieldLocal($fieldName, $fieldValue)
     {
-        if(!is_object($this->ldap_obj))
+        if($this->ldap_obj === false)
         {
-            if($this->ldap_obj === false)
+            $this->ldap_obj = array();
+        }
+        if($fieldValue === null || strlen($fieldValue) === 0)
+        {
+            if(isset($this->ldap_obj[$fieldName]))
             {
-                $this->ldap_obj = array();
+                unset($this->ldap_obj[$fieldName]);
             }
-            $this->ldap_obj['host'] = $provider;
+            return true;
+        }
+        $this->ldap_obj[$fieldName] = $fieldValue;
+        return true;
+    }
+
+    private function appendFieldLocal($fieldName, $fieldValue)
+    {
+        if($this->ldap_obj === false)
+        {
+            $this->ldap_obj = array();
+        }
+        if(!isset($this->ldap_obj[$fieldName]))
+        {
+            $this->ldap_obj[$fieldName] = array();
+        }
+        $this->ldap_obj[$fieldName][] = $fieldValue;
+        return true;
+    }
+
+    private function setFieldServer($fieldName, $fieldValue)
+    {
+        $obj = array('dn'=>$this->ldap_obj->dn);
+        if($fieldValue !== null && strlen($fieldValue) > 0)
+        {
+            $obj[$fieldName] = $fieldValue;
         }
         else
         {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            if(isset($this->ldap_obj->host))
-            {
-                $obj['host'] = $this->ldap_obj->host;
-                $obj['host'][$obj['host']['count']] = $provider;
-                $obj['host']['count']++;
-            }
-            else
-            {
-                $obj['host'] = $provider;
-            }
-            return $this->server->update($obj);
+            $obj[$fieldName] = null;
         }
+        $lowerName = strtolower($fieldName);
+        $this->ldap_obj->{$lowerName} = array($fieldValue);
+        return $this->update($obj);
+    }
+
+    private function appendFieldServer($fieldName, $fieldValue)
+    {
+        $obj = array('dn'=>$this->ldap_obj->dn);
+        if(isset($this->ldap_obj->{$fieldName}))
+        {
+            $obj[$fieldName] = $this->ldap_obj->{$fieldName};
+            $obj[$fieldName][$obj[$fieldName]['count']] = $fieldValue;
+            $obj[$fieldName]['count']++;
+        }
+        else
+        {
+            $obj[$fieldName] = $fieldValue;
+        }
+        return $this->update($obj);
+    }
+
+    private function setField($fieldName, $fieldValue)
+    {
+        if(!is_object($this->ldap_obj))
+        {
+            return $this->setFieldLocal($fieldName, $fieldValue);
+        }
+        return $this->setFieldServer($fieldName, $fieldValue);
+    }
+
+    private function appendField($fieldName, $fieldValue)
+    {
+        if(!is_object($this->ldap_obj))
+        {
+            return $this->appendFieldLocal($fieldName, $fieldValue);
+        }
+        return $this->appendFieldServer($fieldName, $fieldValue);
+    }
+
+    function addLoginProvider($provider)
+    {
+        return $this->appendField('host', $provider);
     }
 
     private function generateLDAPPass($pass)
@@ -324,11 +376,7 @@ class LDAPUser extends User
     {
         if(!is_object($this->ldap_obj))
         {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            $this->ldap_obj['userPassword'] = $this->generateLDAPPass($password);
+            return $this->setFieldLocal('userPassword',  $this->generateLDAPPass($password));
         }
         else
         {
@@ -342,7 +390,7 @@ class LDAPUser extends User
             $auth = \AuthProvider::getInstance();
             $ldap = $auth->getAuthenticator('Auth\LDAPAuthenticator');
             $ldap->get_and_bind_server(true);
-            return $this->server->update($obj);
+            return $this->update($obj);
         }
     }
 
@@ -411,103 +459,29 @@ class LDAPUser extends User
 
     function setDisplayName($name)
     {
-        if(!is_object($this->ldap_obj))
-        {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            if(strlen($name) > 0)
-            {
-                $this->ldap_obj['displayName'] = $name;
-            }
-            else if(isset($this->ldap_obj['displayName']))
-            {
-                unset($this->ldap_obj['displayName']);
-            }
-        }
-        else
-        {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            if(strlen($name) > 0)
-            {
-                $obj['displayName'] = $name;
-            }
-            else
-            {
-                $obj['displayName'] = null;
-            }
-            $this->ldap_obj->displayname = array($name);
-            return $this->update($obj);
-        }
+        return $this->setField('displayName', $name);
     }
 
     function setGivenName($name)
     {
-        if(!is_object($this->ldap_obj))
-        {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            $this->ldap_obj['givenName'] = $name;
-        }
-        else
-        {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            $obj['givenName'] = $name;
-            $this->ldap_obj->givenname = array($name);
-            return $this->update($obj);
-        }
+        return $this->setField('givenName', $name);
     }
 
     function setLastName($sn)
     {
-        if(!is_object($this->ldap_obj))
-        {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            $this->ldap_obj['sn'] = $sn;
-        }
-        else
-        {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            $obj['sn'] = $sn;
-            $this->ldap_obj->sn = array($sn);
-            return $this->update($obj);
-        }
+        return $this->setField('sn', $sn);
     }
 
     function setEmail($email)
     {
-        if(!is_object($this->ldap_obj))
-        {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            $this->ldap_obj['mail'] = $email;
-        }
-        else
-        {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            $obj['mail'] = $email;
-            $this->ldap_obj->mail = array($email);
-            return $this->update($obj);
-        }
+        return $this->setField('mail', $email);
     }
 
     function setUid($uid)
     {
         if(!is_object($this->ldap_obj))
         {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            $this->ldap_obj['uid'] = $uid;
+            return $this->setFieldLocal('uid', $uid);
         }
         else
         {
@@ -517,190 +491,56 @@ class LDAPUser extends User
 
     function setPhoto($photo)
     {
-        if(!is_object($this->ldap_obj))
-        {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            $this->ldap_obj['jpegPhoto'] = $photo;
-        }
-        else
-        {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            $obj['jpegPhoto'] = $photo;
-            $this->ldap_obj->jpegphoto = array($photo);
-            return $this->update($obj);
-        }
+        return $this->setField('jpegPhoto', $photo);
     }
 
     function setAddress($address)
     {
-        if(!is_object($this->ldap_obj))
-        {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            $this->ldap_obj['postalAddress'] = $address;
-        }
-        else
-        {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            $obj['postalAddress'] = $address;
-            $this->ldap_obj->postaladdress = array($address);
-            return $this->update($obj);
-        }
+        return $this->setField('postalAddress', $address);
     }
 
     function setPostalCode($postalcode)
     {
         $postalcode = trim($postalcode);
-        if(!is_object($this->ldap_obj))
-        {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            $this->ldap_obj['postalCode'] = $postalcode;
-        }
-        else
-        {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            $obj['postalCode'] = $postalcode;
-            $this->ldap_obj->postalcode = array($postalcode);
-            return $this->update($obj);
-        }
+        return $this->setField('postalCode', $postalcode);
     }
 
     function setCountry($country)
     {
-        if(!is_object($this->ldap_obj))
-        {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            $this->ldap_obj['c'] = $country;
-        }
-        else
-        {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            $obj['c'] = $country;
-            $this->ldap_obj->c = array($country);
-            return $this->update($obj);
-        }
+        return $this->setField('c', $country);
     }
 
     function setState($state)
     {
-        if(!is_object($this->ldap_obj))
-        {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            $this->ldap_obj['st'] = $state;
-        }
-        else
-        {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            $obj['st'] = $state;
-            $this->ldap_obj->st = array($state);
-            return $this->update($obj);
-        }
+        return $this->setField('st', $state);
     }
 
     function setCity($city)
     {
-        if(!is_object($this->ldap_obj))
-        {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            $this->ldap_obj['l'] = $city;
-        }
-        else
-        {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            $obj['l'] = $city;
-            $this->ldap_obj->l = array($city);
-            return $this->update($obj);
-        }
+        return $this->setField('l', $city);
     }
 
     function setPhoneNumber($phone)
     {
-        if(!is_object($this->ldap_obj))
-        {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            $this->ldap_obj['mobile'] = $phone;
-        }
-        else
-        {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            $obj['mobile'] = $phone;
-            $this->ldap_obj->mobile = array($phone);
-            return $this->update($obj);
-        }
+        return $this->setField('mobile', $phone);
     }
 
     function setTitles($titles)
     {
-        if(!is_object($this->ldap_obj))
+        if(!is_array($titles))
         {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            $this->ldap_obj['title'] = $titles;
+            $titles = array($titles);
         }
-        else
-        {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            if($titles === '') $titles = null;
-            $obj['title'] = $titles;
-            if(is_array($titles))
-            {
-                $this->ldap_obj->title = $titles;
-            }
-            else
-            {
-                $this->ldap_obj->title = array($titles);
-            }
-            return $this->update($obj);
-        }
+        return $this->setField('title', $titles);
     }
 
     function setOrganizationUnits($ous)
     {
-        if(!is_object($this->ldap_obj))
+        if(!is_array($ous))
         {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            $this->ldap_obj['ou'] = $ous;
+            $ous = array($ous);
         }
-        else
-        {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            if($ous === '') $ous = null;
-            $obj['ou'] = $ous;
-            if(is_array($ous))
-            {
-                $this->ldap_obj->ou = $ous;
-            }
-            else
-            {
-                $this->ldap_obj->ou = array($ous);
-            }
-            return $this->update($obj);
-        }
+        return $this->setField('ou', $ous);
     }
 
     function flushUser()

@@ -26,12 +26,13 @@ class Singleton
      */
     public static function getInstance()
     {
-        static $instance = null;
-        if(null === $instance)
+        static $instances = array();
+        $class = get_called_class();
+        if(!isset($instances[$class]))
         {
-            $instance = new static();
+            $instances[$class] = new static();
         }
-        return $instance;
+        return $instances[$class];
     }
 
     /**

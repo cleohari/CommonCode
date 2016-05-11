@@ -2,7 +2,7 @@
 namespace Auth;
 if(!class_exists('Httpful\Request'))
 {
-    require('/var/www/common/libs/httpful/bootstrap.php');
+    require(realpath(dirname(__FILE__)).'/../libs/httpful/bootstrap.php');
 }
 
 class FlipsideAPIUser extends User
@@ -10,9 +10,20 @@ class FlipsideAPIUser extends User
     private $userData;
     private $groupData = null;
 
-    public function __construct($data)
+    public function __construct($data=false)
     {
-        $this->userData = $data['extended'];
+        if($data !== false && !isset($data['extended']))
+        {
+            //Generic user object
+            //TODO get from API
+        }
+        else
+        {
+            if(isset($data['extended']))
+            {
+                $this->userData = $data['extended'];
+            }
+        }
     }
 
     function isInGroupNamed($name)
@@ -39,81 +50,145 @@ class FlipsideAPIUser extends User
 
     function getDisplayName()
     {
+        if($this->userData === null)
+        {
+            return parent::getDisplayName();
+        }
         return $this->userData->displayname;
     }
 
     function getGivenName()
     {
+        if($this->userData === null)
+        {
+            return parent::getGivenName();
+        }
         return $this->userData->givenname;
     }
 
     function getEmail()
     {
+        if($this->userData === null)
+        {
+            return parent::getEmail();
+        }
         return $this->userData->mail;
     }
 
     function getUid()
     {
+        if($this->userData === null)
+        {
+            return parent::getUid();
+        }
         return $this->userData->uid;
     }
 
     function getPhoneNumber()
     {
+        if($this->userData === null)
+        {
+            return parent::getPhoneNumber();
+        }
         return $this->userData->mobile;
     }
 
     function getOrganization()
     {
+        if($this->userData === null)
+        {
+            return parent::getOrganization();
+        }
         return $this->userData->o;
     }
 
     function getTitles()
     {
+        if($this->userData === null)
+        {
+            return parent::getTitles();
+        }
         return $this->userData->title;
     }
 
     function getState()
     {
+        if($this->userData === null)
+        {
+            return parent::getState();
+        }
         return $this->userData->st;
     }
 
     function getCity()
     {
+        if($this->userData === null)
+        {
+            return parent::getCity();
+        }
         return $this->userData->l;
     }
 
     function getLastName()
     {
+        if($this->userData === null)
+        {
+            return parent::getLastName();
+        }
         return $this->userData->sn;
     }
 
     function getNickName()
     {
+        if($this->userData === null)
+        {
+            return parent::getNickName();
+        }
         return $this->userData->displayname;
     }
 
     function getAddress()
     {
+        if($this->userData === null)
+        {
+            return parent::getAddress();
+        }
         return $this->userData->postaladdress;
     }
 
     function getPostalCode()
     {
+        if($this->userData === null)
+        {
+            return parent::getPostalCode();
+        }
         return $this->userData->postalcode;
     }
 
     function getCountry()
     {
+        if($this->userData === null)
+        {
+            return parent::getCountry();
+        }
         return $this->userData->c;
     }
 
     function getOrganizationUnits()
     {
+        if($this->userData === null)
+        {
+            return parent::getOrganizationUnits();
+        }
         return $this->userData->ou;
     }
 
     function getLoginProviders()
     {
+        if($this->userData === null)
+        {
+            return parent::getLoginProviders();
+        }
         return $this->userData->host;
     }
 }
