@@ -36,3 +36,4 @@ exclude_paths:
 - "js/tinynav*"
 - "js/typeahead*"
 - "js/js-webshim/**/*"
+- "js/*.min.js"
