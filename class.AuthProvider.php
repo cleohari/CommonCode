@@ -147,6 +147,28 @@ class AuthProvider extends Singleton
     }
 
     /**
+     * Merge or set the returnValue as appropriate
+     *
+     * @param Auth\Group|Auth\User $returnValue The value to merge to
+     * @param Auth\Group|Auth\User $res The value to merge from
+     *
+     * @return Auth\Group|false The Group instance if a group with that name exists, false otherwise
+     */
+    private function mergeResult(&$returnValue, $res)
+    {
+        if($res === false)
+        {
+            return;
+        }
+        if($returnValue === false)
+        {
+            $returnValue = $res;
+            return;
+        }
+        $returnValue->merge($res);
+    }
+
+    /**
      * Get an Auth\Group by its name
      *
      * @param string $name The name of the group
@@ -166,17 +188,7 @@ class AuthProvider extends Singleton
                 if($this->methods[$i]->current === false) continue;
 
                 $res = $this->methods[$i]->getGroupByName($name);
-                if($res !== false)
-                {
-                    if($ret === false)
-                    {
-                        $ret = $res;
-                    }
-                    else
-                    {
-                        $ret->merge($res);
-                    }
-                }
+                $this->mergeResult($ret, $res);
             }
             return $ret;
         }
@@ -208,17 +220,7 @@ class AuthProvider extends Singleton
                 if($this->methods[$i]->current === false) continue;
 
                 $res = $this->methods[$i]->getUsersByFilter($filter, $select, $top, $skip, $orderby);
-                if($res !== false)
-                {
-                    if($ret === false)
-                    {
-                        $ret = $res;
-                    }
-                    else
-                    {
-                        $ret->merge($res);
-                    }
-                }
+                $this->mergeResult($ret, $res);
             }
             return $ret;
         }
@@ -250,17 +252,7 @@ class AuthProvider extends Singleton
                 if($this->methods[$i]->pending === false) continue;
 
                 $res = $this->methods[$i]->getPendingUsersByFilter($filter, $select, $top, $skip, $orderby);
-                if($res !== false)
-                {
-                    if($ret === false)
-                    {
-                        $ret = $res;
-                    }
-                    else
-                    {
-                        $ret->merge($res);
-                    }
-                }
+                $this->mergeResult($ret, $res);
             }
             return $ret;
         }
@@ -292,17 +284,7 @@ class AuthProvider extends Singleton
                 if($this->methods[$i]->current === false) continue;
 
                 $res = $this->methods[$i]->getGroupsByFilter($filter, $select, $top, $skip, $orderby);
-                if($res !== false)
-                {
-                    if($ret === false)
-                    {
-                        $ret = $res;
-                    }
-                    else
-                    {
-                        $ret->merge($res);
-                    }
-                }
+                $this->mergeResult($ret, $res);
             }
             return $ret;
         }
