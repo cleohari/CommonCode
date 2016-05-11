@@ -4,6 +4,8 @@ require_once("/var/www/secure_settings/class.FlipsideSettings.php");
 
 class LDAPGroup extends Group
 {
+    use LDAPCachableObject;
+
     private $ldap_obj;
     private $server;
 
@@ -33,21 +35,7 @@ class LDAPGroup extends Group
 
     function setDescription($name)
     {
-        if(!is_object($this->ldap_obj))
-        {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            $this->ldap_obj['description'] = $name;
-        }
-        else
-        {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            $obj['description'] = $name;
-            $this->ldap_obj->description = array($name);
-            return $this->server->update($obj);
-        }
+        return $this->setField('description', $name);
     }
 
     public function getMemberUids($recursive=true)
