@@ -168,6 +168,25 @@ class AuthProvider extends Singleton
         $returnValue->merge($res);
     }
 
+    private function callOnEach($functionName, $args, $checkField = false, $checkValue = false)
+    {
+        $ret = false;
+        $count = count($this->methods);
+        for($i = 0; $i < $count; $i++)
+        {
+            if($checkField)
+            {
+                if($this->methods[$i]->{$checkField} === $checkValue)
+                {
+                    continue;
+                }
+            }
+            $res = call_user_func_array(array($this->methods[$i], $functionName), $args);
+            $this->mergeResult($ret, $res);
+        }
+        return $ret;
+    }
+
     /**
      * Get an Auth\Group by its name
      *
@@ -180,17 +199,7 @@ class AuthProvider extends Singleton
     {
         if($methodName === false)
         {
-            $ret = false;
-            $res = false;
-            $count = count($this->methods);
-            for($i = 0; $i < $count; $i++)
-            {
-                if($this->methods[$i]->current === false) continue;
-
-                $res = $this->methods[$i]->getGroupByName($name);
-                $this->mergeResult($ret, $res);
-            }
-            return $ret;
+            return $this->callOnEach('getGroupByName', array($name));
         }
         $auth = $this->getAuthenticator($methodName);
         return $auth->getGroupByName($name);
@@ -212,17 +221,7 @@ class AuthProvider extends Singleton
     {
         if($methodName === false)
         {
-            $ret = false;
-            $res = false;
-            $count = count($this->methods);
-            for($i = 0; $i < $count; $i++)
-            {
-                if($this->methods[$i]->current === false) continue;
-
-                $res = $this->methods[$i]->getUsersByFilter($filter, $select, $top, $skip, $orderby);
-                $this->mergeResult($ret, $res);
-            }
-            return $ret;
+            return $this->callOnEach('getUsersByFilter', array($filter, $select, $top, $skip, $orderby), 'current');
         }
         $auth = $this->getAuthenticator($methodName);
         return $auth->getUsersByFilter($filter, $select, $top, $skip, $orderby);
@@ -244,17 +243,7 @@ class AuthProvider extends Singleton
     {
         if($methodName === false)
         {
-            $ret = false;
-            $res = false;
-            $count = count($this->methods);
-            for($i = 0; $i < $count; $i++)
-            {
-                if($this->methods[$i]->pending === false) continue;
-
-                $res = $this->methods[$i]->getPendingUsersByFilter($filter, $select, $top, $skip, $orderby);
-                $this->mergeResult($ret, $res);
-            }
-            return $ret;
+            return $this->callOnEach('getPendingUsersByFilter', array($filter, $select, $top, $skip, $orderby), 'pending');
         }
         $auth = $this->getAuthenticator($methodName);
         return $auth->getPendingUsersByFilter($filter, $select, $top, $skip, $orderby);
@@ -276,17 +265,7 @@ class AuthProvider extends Singleton
     {
         if($methodName === false)
         {
-            $ret = false;
-            $res = false;
-            $count = count($this->methods);
-            for($i = 0; $i < $count; $i++)
-            {
-                if($this->methods[$i]->current === false) continue;
-
-                $res = $this->methods[$i]->getGroupsByFilter($filter, $select, $top, $skip, $orderby);
-                $this->mergeResult($ret, $res);
-            }
-            return $ret;
+            return $this->callOnEach('getPendingUsersByFilter', array($filter, $select, $top, $skip, $orderby), 'current');
         }
         $auth = $this->getAuthenticator($methodName);
         return $auth->getGroupsByFilter($filter, $select, $top, $skip, $orderby);
