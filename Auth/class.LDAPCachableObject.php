@@ -18,6 +18,24 @@ trait LDAPCachableObject
         }
     }
 
+    protected function getField($fieldName)
+    {
+        if(!is_object($this->ldap_obj))
+        {
+            return $this->getFieldLocal($fieldName);
+        }
+        return $this->getFieldServer($fieldName);
+    }
+
+    protected function getFieldSingleValue($fieldName)
+    {
+        if(!is_object($this->ldap_obj))
+        {
+            return $this->getFieldLocalSingleValue($fieldName);
+        }
+        return $this->getFieldServerSingleValue($fieldName);
+    }
+
     protected function setField($fieldName, $fieldValue)
     {
         if(!is_object($this->ldap_obj))
@@ -34,6 +52,61 @@ trait LDAPCachableObject
             return $this->appendFieldLocal($fieldName, $fieldValue);
         }
         return $this->appendFieldServer($fieldName, $fieldValue);
+    }
+
+    private function getFieldLocal($fieldName)
+    {
+        if($this->ldap_obj === false)
+        {
+            return false;
+        }
+        if(!isset($this->ldap_obj[$fieldName]))
+        {
+            return false;
+        }
+        return $this->ldap_obj[$fieldName];
+    }
+
+    private function getFieldServer($fieldName)
+    {
+        $lowerName = strtolower($fieldName);
+        if(!isset($this->ldap_obj->{$lowerName}))
+        {
+            return false;
+        }
+        return $this->ldap_obj->{$lowerName};
+    }
+
+    private function getFieldLocalSingleValue($fieldName)
+    {
+        if($this->ldap_obj === false)
+        {
+            return false;
+        }
+        if(!isset($this->ldap_obj[$fieldName]))
+        {
+            return false;
+        }
+        if(is_array($this->ldap_obj[$fieldName]))
+        {
+            return $this->ldap_obj[$fieldName][0];
+        }
+        return $this->ldap_obj[$fieldName];
+    }
+
+    private function getFieldServerSingleValue($fieldName)
+    {
+        $lowerName = strtolower($fieldName);
+        if(!isset($this->ldap_obj->{$lowerName}))
+        {
+            return false;
+        }
+        $field = $this->ldap_obj->{$lowerName};
+        if(!isset($field[0]))
+        {
+            return false;
+        }
+        return $field[0];
     }
 
     private function setFieldServer($fieldName, $fieldValue)
