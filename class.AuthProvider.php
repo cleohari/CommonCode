@@ -354,15 +354,7 @@ class AuthProvider extends Singleton
     {
         if($methodName === false)
         {
-            $groupCount = 0;
-            $count = count($this->methods);
-            for($i = 0; $i < $count; $i++)
-            {
-                if($this->methods[$i]->current === false) continue;
-
-                $groupCount += $this->methods[$i]->getGroupCount();
-            }
-            return $groupCount;
+            return $this->addFromEach('getGroupCount', 'current');
         }
         $auth = $this->getAuthenticator($methodName);
         return $auth->getGroupCount();
