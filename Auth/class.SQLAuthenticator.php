@@ -83,26 +83,36 @@ class SQLAuthenticator extends Authenticator
         $this->params = $params;
         if($this->current)
         {
-            if(isset($params['current_data_set']))
-            {
-                $this->data_set = \DataSetFactory::get_data_set($params['current_data_set']);
-            }
-            else
-            {
-                $this->data_set = \DataSetFactory::get_data_set('authentication');
-            }
+            $this->data_set = $this->getCurrentDataSet();
         }
         if($this->pending)
         {
-            if(isset($params['pending_data_set']))
-            {
-                $this->pending_data_set = \DataSetFactory::get_data_set($params['pending_data_set']);
-            }
-            else
-            {
-                $this->pending_data_set = \DataSetFactory::get_data_set('pending_authentication');
-            }
+            $this->data_set = $this->getPendingDataSet();
         }
+    }
+
+    /**
+     * @SuppressWarnings(CleanCode.StaticAccess)
+     */
+    private function getCurrentDataSet()
+    {
+        if(isset($this->params['current_data_set']))
+        {
+            return \DataSetFactory::get_data_set($this->params['current_data_set']);
+        }
+        return \DataSetFactory::get_data_set('authentication');
+    }
+
+    /**
+     * @SuppressWarnings(CleanCode.StaticAccess)
+     */
+    private function getPendingDataSet()
+    {
+        if(isset($this->params['pending_data_set']))
+        {
+            return \DataSetFactory::get_data_set($this->params['pending_data_set']);
+        }
+        return \DataSetFactory::get_data_set('pending_authentication');
     }
 
     private function get_data_table($name)
@@ -195,7 +205,7 @@ class SQLAuthenticator extends Authenticator
     public function getUserByName($name)
     {
         $user_data_table = $this->get_data_table('user');
-        $filter = new \Data\Filter("uid eq '$username'");
+        $filter = new \Data\Filter("uid eq '$name'");
         $users = $user_data_table->read($filter);
         if($users === false || !isset($users[0]))
         {
