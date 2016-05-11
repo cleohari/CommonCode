@@ -92,7 +92,7 @@ class SQLAuthenticator extends Authenticator
     }
 
     /**
-     * @SuppressWarnings(CleanCode.StaticAccess)
+     * @SuppressWarnings("StaticAccess")
      */
     private function getCurrentDataSet()
     {
@@ -104,7 +104,7 @@ class SQLAuthenticator extends Authenticator
     }
 
     /**
-     * @SuppressWarnings(CleanCode.StaticAccess)
+     * @SuppressWarnings("StaticAccess")
      */
     private function getPendingDataSet()
     {
@@ -153,10 +153,7 @@ class SQLAuthenticator extends Authenticator
         {
             return $this->get_pending_data_table($this->params['pending_user_table']);
         }
-        else
-        {
-            return $this->get_pending_data_table('users');
-        }
+        return $this->get_pending_data_table('users');
     }
 
     public function login($username, $password)
