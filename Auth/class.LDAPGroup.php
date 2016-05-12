@@ -6,12 +6,12 @@ class LDAPGroup extends Group
 {
     use LDAPCachableObject;
 
-    private $ldap_obj;
+    private $ldapObj;
     private $server;
 
     function __construct($data)
     {
-        $this->ldap_obj = $data;
+        $this->ldapObj = $data;
         $this->server = \LDAP\LDAPServer::getInstance();
         if(!is_object($data))
         {
@@ -34,22 +34,25 @@ class LDAPGroup extends Group
         return $this->setField('description', $name);
     }
 
-    private function getMembersField()
+    private function getMembersField(&$fieldName = false)
     {
-        $raw_members = $this->getField('member');
-        if($raw_members === false)
+        $rawMembers = $this->getField('member');
+        $fieldName  = 'member';
+        if($rawMembers === false)
         {
-            $raw_members = $this->getField('uniquemember');
+            $rawMembers = $this->getField('uniqueMember');
+            $fieldName  = 'uniqueMember';
         }
-        if($raw_members === false)
+        if($rawMembers === false)
         {
-            $raw_members = $this->getField('memberuid');
+            $rawMembers = $this->getField('memberUid');
+            $fieldName  = 'memberUid';
         }
-        if(!isset($raw_members['count']))
+        if(!isset($rawMembers['count']))
         {
-            $raw_members['count'] = count($raw_members);
+            $rawMembers['count'] = count($rawMembers);
         }
-        return $raw_members;
+        return $rawMembers;
     }
 
     private function getIDFromDN($dn)
@@ -65,12 +68,12 @@ class LDAPGroup extends Group
     public function getMemberUids($recursive=true)
     {
         $members = array();
-        $raw_members = $this->getMembersField();
-        for($i = 0; $i < $raw_members['count']; $i++)
+        $rawMembers = $this->getMembersField();
+        for($i = 0; $i < $rawMembers['count']; $i++)
         {
-            if($recursive && strncmp($raw_members[$i], 'cn=', 3) === 0)
+            if($recursive && strncmp($rawMembers[$i], 'cn=', 3) === 0)
             {
-                $child = self::from_dn($raw_members[$i], $this->server);
+                $child = self::from_dn($rawMembers[$i], $this->server);
                 if($child !== false)
                 {
                     $members = array_merge($members, $child->members());
@@ -78,7 +81,7 @@ class LDAPGroup extends Group
             }
             else
             {
-                array_push($members, $raw_members[$i]);
+                array_push($members, $rawMembers[$i]);
             }
         }
         $count = count($members);
@@ -110,24 +113,24 @@ class LDAPGroup extends Group
     public function members($details=false, $recursive=true, $includeGroups=true)
     {
         $members = array();
-        $raw_members = $this->getMembersField();
-        for($i = 0; $i < $raw_members['count']; $i++)
+        $rawMembers = $this->getMembersField();
+        for($i = 0; $i < $rawMembers['count']; $i++)
         {
-            if($recursive && strncmp($raw_members[$i], 'cn=', 3) === 0)
+            if($recursive && strncmp($rawMembers[$i], 'cn=', 3) === 0)
             {
-                $child = self::from_dn($raw_members[$i], $this->server);
+                $child = self::from_dn($rawMembers[$i], $this->server);
                 if($child !== false)
                 {
                     $members = array_merge($members, $child->members());
                 }
             }
-            else if($includeGroups === false && strncmp($raw_members[$i], 'cn=', 3) === 0)
+            else if($includeGroups === false && strncmp($rawMembers[$i], 'cn=', 3) === 0)
             {
                 //Drop this member
             }
             else
             {
-                array_push($members, $raw_members[$i]);
+                array_push($members, $rawMembers[$i]);
             }
         }
         if($details === true)
@@ -147,32 +150,32 @@ class LDAPGroup extends Group
     public function getNonMemebers($select=false)
     {
         $data = array();
-        $group_filter = '(&(cn=*)(!(cn='.$this->getGroupName().'))';
-        $user_filter = '(&(cn=*)';
+        $groupFilter = '(&(cn=*)(!(cn='.$this->getGroupName().'))';
+        $userFilter = '(&(cn=*)';
         $members = $this->members();
         $count = count($members);
         for($i = 0; $i < $count; $i++)
         {
-            $dn_comps = explode(',',$members[$i]);
+            $dnComps = explode(',',$members[$i]);
             if(strncmp($members[$i], "uid=", 4) == 0)
             {
-                $user_filter.='(!('.$dn_comps[0].'))';
+                $userFilter.='(!('.$dnComps[0].'))';
             }
             else
             {
-                $group_filter.='(!('.$dn_comps[0].'))';
+                $groupFilter.='(!('.$dnComps[0].'))';
             }
         }
-        $user_filter.=')';
-        $group_filter.=')';
-        $groups = $this->server->read($this->server->group_base, $group_filter);
+        $userFilter.=')';
+        $groupFilter.=')';
+        $groups = $this->server->read($this->server->group_base, $groupFilter);
         $count = count($groups);
         for($i = 0; $i < $count; $i++)
         {
             if($groups[$i] === false || $groups[$i] === null) continue;
             array_push($data, new LDAPGroup($groups[$i]));
         }
-        $users = $this->server->read($this->server->user_base, $user_filter, false, $select);
+        $users = $this->server->read($this->server->user_base, $userFilter, false, $select);
         $count = count($users);
         for($i = 0; $i < $count; $i++)
         {
@@ -183,17 +186,17 @@ class LDAPGroup extends Group
 
     public function clearMembers()
     {
-        if(isset($this->ldap_obj['member']))
+        if(isset($this->ldapObj['member']))
         {
-            $this->ldap_obj['member'] = array();
+            $this->ldapObj['member'] = array();
         }
-        else if(isset($this->ldap_obj['uniquemember']))
+        else if(isset($this->ldapObj['uniquemember']))
         {
-            $this->ldap_obj['uniquemember'] = array();
+            $this->ldapObj['uniquemember'] = array();
         }
-        else if(isset($this->ldap_obj['memberuid']))
+        else if(isset($this->ldapObj['memberuid']))
         {
-            $this->ldap_obj['memberuid'] = array();
+            $this->ldapObj['memberuid'] = array();
         }
     }
 
@@ -208,45 +211,30 @@ class LDAPGroup extends Group
         {
             $dn = 'uid='.$name.','.$this->server->user_base;
         }
-        $raw_members = false;
-        $propName = false;
-        if(isset($this->ldap_obj['member']))
-        {
-            $raw_members = $this->ldap_obj['member'];
-            $propName = 'member';
-        }
-        else if(isset($this->ldap_obj['uniquemember']))
-        {
-            $raw_members = $this->ldap_obj['uniquemember'];
-            $propName = 'uniqueMember';
-        }
-        else if(isset($this->ldap_obj['memberuid']))
-        {
-            $raw_members = $this->ldap_obj['memberuid'];
-            $propName = 'memberuid';
-        }
-        if(in_array($dn, $raw_members) || in_array($name, $raw_members))
+        $propName   = false;
+        $rawMembers = $this->getMembersField($propName);;
+        if(in_array($dn, $rawMembers) || in_array($name, $rawMembers))
         {
             return true;
         }
-        if($propName === 'memberuid')
+        if($propName === 'memberUid')
         {
             if($isGroup)
             {
                 throw new \Exception('Unable to add a group as a child of this group type');
             }
-            array_push($raw_members, $name);
+            array_push($rawMembers, $name);
         }
         else
         {
-            array_push($raw_members, $dn);
+            array_push($rawMembers, $dn);
         }
         $tmp = strtolower($propName);
-        $this->ldap_obj->$tmp = $raw_members;
+        $this->ldapObj->$tmp = $rawMembers;
         if($flush === true)
         {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            $obj[$propName] = $raw_members;
+            $obj = array('dn'=>$this->ldapObj->dn);
+            $obj[$propName] = $rawMembers;
             return $this->server->update($obj);
         }
         else

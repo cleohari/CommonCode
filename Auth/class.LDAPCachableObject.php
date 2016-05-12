@@ -20,7 +20,7 @@ trait LDAPCachableObject
 
     protected function getField($fieldName)
     {
-        if(!is_object($this->ldap_obj))
+        if(!is_object($this->ldapObj))
         {
             return $this->getFieldLocal($fieldName);
         }
@@ -29,7 +29,7 @@ trait LDAPCachableObject
 
     protected function getFieldSingleValue($fieldName)
     {
-        if(!is_object($this->ldap_obj))
+        if(!is_object($this->ldapObj))
         {
             return $this->getFieldLocalSingleValue($fieldName);
         }
@@ -38,7 +38,7 @@ trait LDAPCachableObject
 
     protected function setField($fieldName, $fieldValue)
     {
-        if(!is_object($this->ldap_obj))
+        if(!is_object($this->ldapObj))
         {
             return $this->setFieldLocal($fieldName, $fieldValue);
         }
@@ -47,7 +47,7 @@ trait LDAPCachableObject
 
     protected function appendField($fieldName, $fieldValue)
     {
-        if(!is_object($this->ldap_obj))
+        if(!is_object($this->ldapObj))
         {
             return $this->appendFieldLocal($fieldName, $fieldValue);
         }
@@ -56,52 +56,52 @@ trait LDAPCachableObject
 
     private function getFieldLocal($fieldName)
     {
-        if($this->ldap_obj === false)
+        if($this->ldapObj === false)
         {
             return false;
         }
-        if(!isset($this->ldap_obj[$fieldName]))
+        if(!isset($this->ldapObj[$fieldName]))
         {
             return false;
         }
-        return $this->ldap_obj[$fieldName];
+        return $this->ldapObj[$fieldName];
     }
 
     private function getFieldServer($fieldName)
     {
         $lowerName = strtolower($fieldName);
-        if(!isset($this->ldap_obj->{$lowerName}))
+        if(!isset($this->ldapObj->{$lowerName}))
         {
             return false;
         }
-        return $this->ldap_obj->{$lowerName};
+        return $this->ldapObj->{$lowerName};
     }
 
     private function getFieldLocalSingleValue($fieldName)
     {
-        if($this->ldap_obj === false)
+        if($this->ldapObj === false)
         {
             return false;
         }
-        if(!isset($this->ldap_obj[$fieldName]))
+        if(!isset($this->ldapObj[$fieldName]))
         {
             return false;
         }
-        if(is_array($this->ldap_obj[$fieldName]))
+        if(is_array($this->ldapObj[$fieldName]))
         {
-            return $this->ldap_obj[$fieldName][0];
+            return $this->ldapObj[$fieldName][0];
         }
-        return $this->ldap_obj[$fieldName];
+        return $this->ldapObj[$fieldName];
     }
 
     private function getFieldServerSingleValue($fieldName)
     {
         $lowerName = strtolower($fieldName);
-        if(!isset($this->ldap_obj->{$lowerName}))
+        if(!isset($this->ldapObj->{$lowerName}))
         {
             return false;
         }
-        $field = $this->ldap_obj->{$lowerName};
+        $field = $this->ldapObj->{$lowerName};
         if(!isset($field[0]))
         {
             return false;
@@ -111,7 +111,7 @@ trait LDAPCachableObject
 
     private function setFieldServer($fieldName, $fieldValue)
     {
-        $obj = array('dn'=>$this->ldap_obj->dn);
+        $obj = array('dn'=>$this->ldapObj->dn);
         if($fieldValue !== null && strlen($fieldValue) > 0)
         {
             $obj[$fieldName] = $fieldValue;
@@ -121,16 +121,16 @@ trait LDAPCachableObject
             $obj[$fieldName] = null;
         }
         $lowerName = strtolower($fieldName);
-        $this->ldap_obj->{$lowerName} = array($fieldValue);
+        $this->ldapObj->{$lowerName} = array($fieldValue);
         return $this->update($obj);
     }
 
     private function appendFieldServer($fieldName, $fieldValue)
     {
-        $obj = array('dn'=>$this->ldap_obj->dn);
-        if(isset($this->ldap_obj->{$fieldName}))
+        $obj = array('dn'=>$this->ldapObj->dn);
+        if(isset($this->ldapObj->{$fieldName}))
         {
-            $obj[$fieldName] = $this->ldap_obj->{$fieldName};
+            $obj[$fieldName] = $this->ldapObj->{$fieldName};
             $obj[$fieldName][$obj[$fieldName]['count']] = $fieldValue;
             $obj[$fieldName]['count']++;
         }
@@ -143,33 +143,33 @@ trait LDAPCachableObject
 
     private function setFieldLocal($fieldName, $fieldValue)
     {
-        if($this->ldap_obj === false)
+        if($this->ldapObj === false)
         {
-            $this->ldap_obj = array();
+            $this->ldapObj = array();
         }
         if($fieldValue === null || strlen($fieldValue) === 0)
         {
-            if(isset($this->ldap_obj[$fieldName]))
+            if(isset($this->ldapObj[$fieldName]))
             {
-                unset($this->ldap_obj[$fieldName]);
+                unset($this->ldapObj[$fieldName]);
             }
             return true;
         }
-        $this->ldap_obj[$fieldName] = $fieldValue;
+        $this->ldapObj[$fieldName] = $fieldValue;
         return true;
     }
 
     private function appendFieldLocal($fieldName, $fieldValue)
     {
-        if($this->ldap_obj === false)
+        if($this->ldapObj === false)
         {
-            $this->ldap_obj = array();
+            $this->ldapObj = array();
         }
-        if(!isset($this->ldap_obj[$fieldName]))
+        if(!isset($this->ldapObj[$fieldName]))
         {
-            $this->ldap_obj[$fieldName] = array();
+            $this->ldapObj[$fieldName] = array();
         }
-        $this->ldap_obj[$fieldName][] = $fieldValue;
+        $this->ldapObj[$fieldName][] = $fieldValue;
         return true;
     }
 }
