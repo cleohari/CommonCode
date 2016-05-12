@@ -51,28 +51,37 @@ class WebPage
         $this->title = $title;
         $this->head_tags = array();
         $this->body = '';
-        if(isset($GLOBALS['BROWSCAP_CACHE']))
-        {
-            $this->bc = new Browscap($GLOBALS['BROWSCAP_CACHE']);
-        }
-        else
-        {
-            $this->bc = new Browscap('/var/php_cache/browser');
-        }
+        $this->bc = $this->getBrowscap();
         $this->bc->doAutoUpdate = false;
         $this->bc->lowercase = true;
         $this->browser = $this->getBrowser();
         $this->import_support = false;
         
-        $browser_name = $this->getBrowserName();
-        if($browser_name === 'IE' && $this->getBrowserMajorVer() <= 7)
+        $browserName = $this->getBrowserName();
+        if($browserName === 'IE' && $this->getBrowserMajorVer() <= 7)
         {
             header( 'Location: /badbrowser.php' ) ;
         }
-        else if($browser_name === 'Chrome' && $this->getBrowserMajorVer() >= 36)
+        else if($browserName === 'Chrome' && $this->getBrowserMajorVer() >= 36)
         {
             $this->import_support = true;
         }
+    }
+
+    /**
+     * Get the Browscap instance for the system
+     *
+     * @return Browscap The Browscap instance for the system
+     *
+     * @SuppressWarnings("Superglobals")
+     */
+    protected function getBrowscap()
+    {
+        if(isset($GLOBALS['BROWSCAP_CACHE']))
+        {
+            return new Browscap($GLOBALS['BROWSCAP_CACHE']);
+        }
+        return new Browscap('/var/php_cache/browser');
     }
 
     /**
@@ -97,10 +106,7 @@ class WebPage
         {
             return $this->browser->Browser;
         }
-        else
-        {
-            return $this->browser->browser;
-        }
+        return $this->browser->browser;
     }
 
     /**
@@ -115,10 +121,7 @@ class WebPage
         {
             return $this->browser->MajorVer;
         }
-        else
-        {
-            return $this->browser->majorver;
-        }
+        return $this->browser->majorver;
     }
 
     /**
@@ -218,23 +221,20 @@ class WebPage
     protected function createOpenTag($tagName, $attribs=array(), $selfClose=false)
     {
         $tag = '<'.$tagName;
-        $attrib_names = array_keys($attribs);
-        foreach($attrib_names as $attrib_name)
+        $attribNames = array_keys($attribs);
+        foreach($attribNames as $attribName)
         {
-            $tag.=' '.$attrib_name;
-            if($attribs[$attrib_name])
+            $tag.=' '.$attribName;
+            if($attribs[$attribName])
             {
-                $tag.='="'.$attribs[$attrib_name].'"';
+                $tag.='="'.$attribs[$attribName].'"';
             }
         }
         if($selfClose)
         {
             return $tag.'/>';
         }
-        else
-        {
-            return $tag.'>';
-        }
+        return $tag.'>';
     }
    
     /**
@@ -364,6 +364,8 @@ class WebPage
      * Get the currently requested URL
      *
      * @return string The full URL of the requested page
+     *
+     * @SuppressWarnings("Superglobals")
      */
     public function currentURL()
     {
