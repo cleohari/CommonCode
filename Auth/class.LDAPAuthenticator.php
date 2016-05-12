@@ -137,6 +137,8 @@ class LDAPAuthenticator extends Authenticator
      * @param boolean $bind_write Should we be able to write to the server?
      *
      * @return \LDAP\LDAPServer|false The server instance if the binding was successful, otherwise false
+     *
+     * @SuppressWarnings("StaticAccess")
      */
     public function get_and_bind_server($bind_write=false)
     {
@@ -244,6 +246,7 @@ class LDAPAuthenticator extends Authenticator
         {
             return false;
         }
+        $this->processFilteringParams($groups, $select, $top, $skip, $orderby);
         $count = count($groups);
         for($i = 0; $i < $count; $i++)
         {
@@ -267,6 +270,30 @@ class LDAPAuthenticator extends Authenticator
         return $server->count($this->user_base);
     }
 
+    private function processFilteringParams(&$data, &$select, $top, $skip, $orderby)
+    {
+        if($orderby !== false)
+        {
+            sort_array($data, $orderby);
+        }
+        if($select !== false)
+        {
+            $select = array_flip($select);
+        }
+        if($skip !== false && $top !== false)
+        {
+            $data = array_slice($data, $skip, $top);
+        }
+        else if($top !== false)
+        {
+            $data = array_slice($data, 0, $top);
+        }
+        else if($skip !== false)
+        {
+            $data = array_slice($data, $skip);
+        }
+    }
+
     public function getUsersByFilter($filter, $select=false, $top=false, $skip=false, $orderby=false)
     {
         $server = $this->get_and_bind_server();
@@ -283,27 +310,7 @@ class LDAPAuthenticator extends Authenticator
         {
             return false;
         }
-        $count = count($users);
-        if($orderby !== false)
-        {
-            sort_array($users, $orderby);
-        }
-        if($select !== false)
-        {
-            $select = array_flip($select);
-        }
-        if($skip !== false && $top !== false)
-        {
-            $users = array_slice($users, $skip, $top);
-        }
-        else if($top !== false)
-        {
-            $users = array_slice($users, 0, $top);
-        }
-        else if($skip !== false)
-        {
-            $users = array_slice($users, $skip);
-        }
+        $this->processFilteringParams($users, $select, $top, $skip, $orderby);
         $count = count($users);
         for($i = 0; $i < $count; $i++)
         {

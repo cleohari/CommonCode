@@ -76,7 +76,7 @@ class LDAPServer extends \Singleton
         $this->ds = ldap_connect($this->connect);
     }
 
-    private function _get_connect_string($name, $proto=false)
+    private function getConnectString($name, $proto=false)
     {
         if(strstr($name, ':') !== false)
         {
@@ -91,18 +91,13 @@ class LDAPServer extends \Singleton
 
     function connect($name, $proto=false)
     {
-        $connect_str = $this->_get_connect_string($name, $proto);
-        if($this->ds === null)
-        {
-            $this->connect = $connect_str;
-            $this->ds      = ldap_connect($this->connect);
-        }
-        else
+        $connectStr = $this->getConnectString($name, $proto);
+        if($this->ds !== null)
         {
             ldap_close($this->ds);
-            $this->connect = $connect_str;
-            $this->ds      = ldap_connect($this->connect);
         }
+        $this->connect = $connectStr;
+        $this->ds      = ldap_connect($this->connect);
         if($this->ds === false)
         {
             $this->ds = null;
@@ -122,7 +117,7 @@ class LDAPServer extends \Singleton
         $this->connect = false;
     }
 
-    function bind($cn=null,$password=null)
+    function bind($cn=null, $password=null)
     {
         $res = false;
         if($this->ds === null)
@@ -132,19 +127,16 @@ class LDAPServer extends \Singleton
         $this->binder = $cn;
         if($cn === null || $password === null)
         {
-            $res = @ldap_bind($this->ds);
+            return @ldap_bind($this->ds);
         }
-        else
+        try
         {
-            try
-            {
-                $res = ldap_bind($this->ds, $cn, $password);
-            }
-            catch(\Exception $ex)
-            {
-                $this->ds = ldap_connect($this->connect);
-                $res = @ldap_bind($this->ds, $cn, $password);
-            }
+            $res = ldap_bind($this->ds, $cn, $password);
+        }
+        catch(\Exception $ex)
+        {
+            $this->ds = ldap_connect($this->connect);
+            $res = @ldap_bind($this->ds, $cn, $password);
         }
         return $res;
     }
@@ -207,20 +199,22 @@ class LDAPServer extends \Singleton
         return $ret;
     }
 
-    function read($base_dn, $filter=false, $single=false, $attributes=false)
+    private function filterToString($filter)
     {
-        $filter_str = '(objectclass=*)';
-        if($filter !== false)
+        if($filter === false)
         {
-            if(is_string($filter))
-            {
-                $filter_str = $filter;
-            }
-            else
-            {
-                $filter_str = $filter->to_ldap_string();
-            }
+            return '(objectclass=*)';
         }
+        if(is_string($filter))
+        {
+            return $filter;
+        }
+        return $filter->to_ldap_string();
+    }
+
+    function read($baseDN, $filter=false, $single=false, $attributes=false)
+    {
+        $filterStr = $this->filterToString($filter);
         if($this->ds === null)
         {
             throw new \Exception('Not connected');
@@ -230,23 +224,23 @@ class LDAPServer extends \Singleton
         {
             if($single === true)
             {
-                $sr = @ldap_read($this->ds, $base_dn, $filter_str);
+                $sr = @ldap_read($this->ds, $baseDN, $filterStr);
             }
             else
             {
                 if($attributes !== false)
                 {
-                    $sr = @ldap_list($this->ds, $base_dn, $filter_str, $attributes);
+                    $sr = @ldap_list($this->ds, $baseDN, $filterStr, $attributes);
                 }
                 else
                 {
-                    $sr = @ldap_list($this->ds, $base_dn, $filter_str);
+                    $sr = @ldap_list($this->ds, $baseDN, $filterStr);
                 }
             }
         }
         catch(\Exception $e)
         {
-            throw new \Exception($e->getMessage().' '.$filter_str, $e->getCode(), $e);
+            throw new \Exception($e->getMessage().' '.$filterStr, $e->getCode(), $e);
         }
         if($sr === false)
         {
@@ -265,24 +259,20 @@ class LDAPServer extends \Singleton
         return $res;
     }
 
-    function count($base_dn, $filter=false)
+    function count($baseDN, $filter=false)
     {
-        $filter_str = '(objectclass=*)';
-        if($filter !== false)
-        {
-            $filter_str = $filter->to_ldap_string();
-        }
+        $filterStr = $this->filterToString($filter);
         if($this->ds === null)
         {
             throw new \Exception('Not connected');
         }
         try
         {
-            $sr = ldap_list($this->ds, $base_dn, $filter_str, array('dn'));
+            $sr = ldap_list($this->ds, $baseDN, $filterStr, array('dn'));
         }
         catch(\Exception $e)
         {
-            throw new \Exception($e->getMessage().' '.$filter_str, $e->getCode(), $e);
+            throw new \Exception($e->getMessage().' '.$filterStr, $e->getCode(), $e);
         }
         if($sr === false)
         {
