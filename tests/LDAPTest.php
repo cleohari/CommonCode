@@ -65,6 +65,18 @@ class LDAPTest extends PHPUnit_Framework_TestCase
         $this->assertContainsOnlyInstancesOf('LDAP\LDAPObject', $data);
         $this->assertCount(1, $data);
     }
+
+    public function testCount()
+    {
+        $server = \LDAP\LDAPServer::getInstance();
+        $res = $server->connect('ldap://ldap.forumsys.com');
+        $this->assertTrue($res);
+        $res = $server->bind('cn=read-only-admin,dc=example,dc=com','password');
+        $this->assertTrue($res);
+
+        $count = $server->count('dc=example,dc=com');
+        $this->assertGreaterThan(0, $count);
+    }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
 ?>
