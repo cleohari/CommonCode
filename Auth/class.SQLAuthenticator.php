@@ -28,22 +28,22 @@ if(!function_exists('password_hash') || !function_exists('password_verify'))
         {
             case PASSWORD_BCRYPT:
                 $cost = PASSWORD_BCRYPT_DEFAULT_COST;
-                $raw_salt_len = 16;
-                $required_salt_len = 22;
-                $hash_format = sprintf("$2y$%02d$", $cost);
+                $rawSaltLen = 16;
+                $requiredSaltLen = 22;
+                $hashFormat = sprintf("$2y$%02d$", $cost);
                 $resultLength = 60;
                 break;
             default:
                 trigger_error(sprintf("password_hash(): Unknown password hashing algorithm: %s", $algo), E_USER_WARNING);
                 return false;
         }
-        $salt = openssl_random_pseudo_bytes($raw_salt_len);
+        $salt = openssl_random_pseudo_bytes($rawSaltLen);
         $base64_digits = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-        $bcrypt64_digits = './ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        $base64_string = base64_encode($salt);
-        $salt = strtr(rtrim($base64_string, '='), $base64_digits, $bcrypt64_digits);
-        $salt = substr($salt, 0, $required_salt_len);
-        $hash = $hash_format . $salt;
+        $bcrypt64Digits = './ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        $base64String = base64_encode($salt);
+        $salt = strtr(rtrim($base64String, '='), $base64_digits, $bcrypt64Digits);
+        $salt = substr($salt, 0, $requiredSaltLen);
+        $hash = $hashFormat . $salt;
         $ret = crypt($password, $hash);
         if(!is_string($ret) || strlen($ret) != $resultLength)
         {
@@ -71,10 +71,9 @@ if(!function_exists('password_hash') || !function_exists('password_verify'))
 
 class SQLAuthenticator extends Authenticator
 {
-    private $data_set = null;
-    private $pending_data_set = null;
-    private $data_tables = array();
-    private $pending_data_tables = array();
+    private $dataSet = null;
+    private $pendingDataSet = null;
+    private $dataTables = array();
     private $params;
 
     public function __construct($params)
@@ -83,11 +82,11 @@ class SQLAuthenticator extends Authenticator
         $this->params = $params;
         if($this->current)
         {
-            $this->data_set = $this->getCurrentDataSet();
+            $this->dataSet = $this->getCurrentDataSet();
         }
         if($this->pending)
         {
-            $this->data_set = $this->getPendingDataSet();
+            $this->pendingDataSet = $this->getPendingDataSet();
         }
     }
 
@@ -115,51 +114,43 @@ class SQLAuthenticator extends Authenticator
         return \DataSetFactory::get_data_set('pending_authentication');
     }
 
-    private function get_data_table($name)
+    private function getDataTable($name, $pending=false)
     {
-         if(isset($this->data_tables[$name]))
+         if(isset($this->dataTables[$name]) && isset($this->dataTables[$name][$pending]))
          {
-             return $this->data_tables[$name];
+             return $this->dataTables[$name][$pending];
          }
-         $data_set = $this->data_set;
-         if($data_set === null)
+         $dataSet = $this->dataSet;
+         if($pending)
+         {
+             $dataSet = $this->pendingDataSet;
+         }
+         if($dataSet === null)
          {
              throw new \Exception('Unable to obtain dataset for SQL Authentication!');
          }
-         $data_table = $data_set[$name];
-         $this->data_tables[$name] = $data_table;
-         return $this->data_tables[$name];
-    }
-
-    private function get_pending_data_table($name)
-    {
-         if(isset($this->pending_data_tables[$name]))
+         $dataTable = $dataSet[$name];
+         if(!isset($this->dataTables[$name]))
          {
-             return $this->pending_data_tables[$name];
+             $this->dataTables[$name] = array();
          }
-         $data_set = $this->pending_data_set;
-         if($data_set === null)
-         {
-             throw new \Exception('Unable to obtain dataset for SQL Authentication!');
-         }
-         $data_table = $data_set[$name];
-         $this->pending_data_tables[$name] = $data_table;
-         return $this->pending_data_tables[$name];
+         $this->dataTables[$name][$pending] = $dataTable;
+         return $dataTable;
     }
 
     private function get_pending_user_data_table()
     {
         if(isset($this->params['pending_user_table']))
         {
-            return $this->get_pending_data_table($this->params['pending_user_table']);
+            return $this->getDataTable($this->params['pending_user_table'], true);
         }
-        return $this->get_pending_data_table('users');
+        return $this->getDataTable('users', true);
     }
 
     public function login($username, $password)
     {
         if($this->current === false) return false;
-        $user_data_table = $this->get_data_table('user');
+        $user_data_table = $this->getDataTable('user');
         $filter = new \Data\Filter("uid eq '$username'");
         $users = $user_data_table->read($filter, 'uid,pass');
         if($users === false || !isset($users[0]))
@@ -189,7 +180,7 @@ class SQLAuthenticator extends Authenticator
 
     public function getGroupByName($name)
     {
-        $group_data_table = $this->get_data_table('group');
+        $group_data_table = $this->getDataTable('group');
         $filter = new \Data\Filter("gid eq '$name'");
         $groups = $group_data_table->read($filter);
         if($groups === false || !isset($groups[0]))
@@ -201,7 +192,7 @@ class SQLAuthenticator extends Authenticator
 
     public function getUserByName($name)
     {
-        $user_data_table = $this->get_data_table('user');
+        $user_data_table = $this->getDataTable('user');
         $filter = new \Data\Filter("uid eq '$name'");
         $users = $user_data_table->read($filter);
         if($users === false || !isset($users[0]))
@@ -211,10 +202,15 @@ class SQLAuthenticator extends Authenticator
         return new SQLUser($users[0]);
     }
 
+    private function getDataByFilter($dataTableName, $filter, $select, $top, $skip, $orderby)
+    {
+        $dataTable = $this->getDataTable($dataTableName);
+        return $dataTable->read($filter, $select, $top, $skip, $orderby);
+    }
+
     public function getGroupsByFilter($filter, $select=false, $top=false, $skip=false, $orderby=false)
     {
-        $group_data_table = $this->get_data_table('group');
-        $groups = $group_data_table->read($filter, $select, $top, $skip, $orderby);
+        $groups = $this->getDataByFilter('group', $filter, $select, $top, $skip, $orderby);
         if($groups === false)
         {
             return false;
@@ -229,8 +225,7 @@ class SQLAuthenticator extends Authenticator
 
     public function getUsersByFilter($filter, $select=false, $top=false, $skip=false, $orderby=false)
     {
-        $user_data_table = $this->get_data_table('user');
-        $users = $user_data_table->read($filter, $select, $top, $skip, $orderby);
+        $users = $this->getDataByFilter('user', $filter, $select, $top, $skip, $orderby);
         if($users === false)
         {
             return false;

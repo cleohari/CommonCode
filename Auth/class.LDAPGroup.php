@@ -136,7 +136,7 @@ class LDAPGroup extends Group
             $count = count($members);
             for($i = 0; $i < $count; $i++)
             {
-                $details[$i] = getObjectFromDN($members[$i]);
+                $details[$i] = $this->getObjectFromDN($members[$i]);
             }
             unset($members);
             $members = $details;
