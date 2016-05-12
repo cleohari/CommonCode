@@ -46,7 +46,7 @@ class FlipAdminPage extends FlipPage
     {
         $ret  = '<li>';
         $href = $this->getHrefForDropdown($link);
-        $ret .= $this->create_link($link_name.' <i class="fa fa-arrow-right"></i>', $href);
+        $ret .= $this->create_link($name.' <i class="fa fa-arrow-right"></i>', $href);
         $ret.='<ul>';
         $subNames = array_keys($link);
         foreach($subNames as $subName)
@@ -59,9 +59,9 @@ class FlipAdminPage extends FlipPage
 
     function addHeader()
     {
-        $sites  = $this->getSiteLinksForHeader();
-        $sidNav = $this->getLinksMenus();
-        $log    = '<a href="https://profiles.burningflipside.com/logout.php"><i class="fa fa-sign-out"></i></a>';
+        $sites   = $this->getSiteLinksForHeader();
+        $sideNav = $this->getLinksMenus();
+        $log     = '<a href="https://profiles.burningflipside.com/logout.php"><i class="fa fa-sign-out"></i></a>';
         if($this->user === false || $this->user === null)
         {
             $log = '<a href="https://profiles.burningflipside.com/login.php?return='.$this->current_url().'"><i class="fa fa-sign-in"></i></a>';
