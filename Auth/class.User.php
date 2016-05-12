@@ -122,6 +122,8 @@ class User extends \SerializableObject
      * The list of titles for the user
      *
      * @return array The user's title(s) in user friendly strings
+     *
+     * @SuppressWarnings("StaticAccess")
      */
     function getTitleNames()
     {
@@ -132,9 +134,9 @@ class User extends \SerializableObject
         }
         if(self::$titlenames === null)
         {
-            $data_set = \DataSetFactory::get_data_set('profiles');
-            $data_table = $data_set['position'];
-            $titlenames = $data_table->read();
+            $dataSet = \DataSetFactory::get_data_set('profiles');
+            $dataTable = $dataSet['position'];
+            $titlenames = $dataTable->read();
             self::$titlenames = array();
             $count = count($titlenames);
             for($i = 0; $i < $count; $i++)
@@ -321,6 +323,8 @@ class User extends \SerializableObject
      * @param string $password The user's current password
      *
      * @return true|false true if the user's password is correct, false otherwise
+     *
+     * @SuppressWarnings("UnusedFormalParameter")
      */
     function validate_password($password)
     {
@@ -333,6 +337,8 @@ class User extends \SerializableObject
      * @param string $hash The user's reset hash
      *
      * @return true|false true if the user's hash is correct, false otherwise
+     *
+     * @SuppressWarnings("UnusedFormalParameter")
      */
     function validate_reset_hash($hash)
     {
@@ -342,19 +348,19 @@ class User extends \SerializableObject
     /**
      * Change the user's password, validating the old password or reset hash
      *
-     * @param string $oldpass The user's original password or reset hash if $is_hash is true
+     * @param string $oldpass The user's original password or reset hash if $isHash is true
      * @param string $newpass The user's new password
-     * @param boolean $is_hash Is $old_pass a password or a hash
+     * @param boolean $isHash Is $old_pass a password or a hash
      *
      * @return true|false true if the user's password was changed, false otherwise
      */
-    function change_pass($oldpass, $newpass, $is_hash=false)
+    function change_pass($oldpass, $newpass, $isHash=false)
     {
-        if($is_hash === false && $this->validate_password($oldpass) === false)
+        if($isHash === false && $this->validate_password($oldpass) === false)
         {
             throw new \Exception('Invalid Password!', 3);
         }
-        if($is_hash === true && $this->validate_reset_hash($oldpass) === false)
+        if($isHash === true && $this->validate_reset_hash($oldpass) === false)
         {
             throw new \Exception('Invalid Reset Hash!', 3);
         }
@@ -395,6 +401,8 @@ class User extends \SerializableObject
      * @param string $email The user's new email address
      *
      * @return true|false true if the user's email address was changed, false otherwise
+     *
+     * @SuppressWarnings("UnusedFormalParameter")
      */
     function setEmail($email)
     {
@@ -407,6 +415,8 @@ class User extends \SerializableObject
      * @param string $uid The user's new user ID
      *
      * @return true|false true if the user's ID was changed, false otherwise
+     *
+     * @SuppressWarnings("UnusedFormalParameter")
      */
     function setUid($uid)
     {
@@ -419,6 +429,8 @@ class User extends \SerializableObject
      * @param string $photo The user's new photo as a binary string
      *
      * @return true|false true if the user's photo was changed, false otherwise
+     *
+     * @SuppressWarnings("UnusedFormalParameter")
      */
     function setPhoto($photo)
     {
@@ -431,6 +443,8 @@ class User extends \SerializableObject
      * @param string $phone The user's new phonew number
      *
      * @return true|false true if the user's phone number was changed, false otherwise
+     *
+     * @SuppressWarnings("UnusedFormalParameter")
      */
     function setPhoneNumber($phone)
     {
@@ -443,6 +457,8 @@ class User extends \SerializableObject
      * @param string $org The user's new organization
      *
      * @return true|false true if the user's organization was changed, false otherwise
+     *
+     * @SuppressWarnings("UnusedFormalParameter")
      */
     function setOrganization($org)
     {
@@ -455,6 +471,8 @@ class User extends \SerializableObject
      * @param string $titles The user's new titles
      *
      * @return true|false true if the user's titles were changed, false otherwise
+     *
+     * @SuppressWarnings("UnusedFormalParameter")
      */
     function setTitles($titles)
     {
@@ -467,6 +485,8 @@ class User extends \SerializableObject
      * @param string $state The user's new state
      *
      * @return true|false true if the user's state was changed, false otherwise
+     *
+     * @SuppressWarnings("UnusedFormalParameter")
      */
     function setState($state)
     {
@@ -479,6 +499,8 @@ class User extends \SerializableObject
      * @param string $city The user's new city
      *
      * @return true|false true if the user's city was changed, false otherwise
+     *
+     * @SuppressWarnings("UnusedFormalParameter")
      */
     function setCity($city)
     {
@@ -491,6 +513,8 @@ class User extends \SerializableObject
      * @param string $sn The user's new last name
      *
      * @return true|false true if the user's last name was changed, false otherwise
+     *
+     * @SuppressWarnings("UnusedFormalParameter")
      */
     function setLastName($sn)
     {
@@ -515,6 +539,8 @@ class User extends \SerializableObject
      * @param string $address The user's new mailing address
      *
      * @return true|false true if the user's mailing address was changed, false otherwise
+     *
+     * @SuppressWarnings("UnusedFormalParameter")
      */
     function setAddress($address)
     {
@@ -527,6 +553,8 @@ class User extends \SerializableObject
      * @param string $postalcode The user's new postal code
      *
      * @return true|false true if the user's postal code was changed, false otherwise
+     *
+     * @SuppressWarnings("UnusedFormalParameter")
      */
     function setPostalCode($postalcode)
     {
@@ -539,12 +567,23 @@ class User extends \SerializableObject
      * @param string $country The user's new country
      *
      * @return true|false true if the user's country was changed, false otherwise
+     *
+     * @SuppressWarnings("UnusedFormalParameter")
      */
     function setCountry($country)
     {
         return false;
     }
 
+    /**
+     * Set the user's organizations
+     *
+     * @param string $ous The user's new organizations
+     *
+     * @return true|false true if the user's organizations was changed, false otherwise
+     *
+     * @SuppressWarnings("UnusedFormalParameter")
+     */
     function setOrganizationUnits($ous)
     {
         return false;
