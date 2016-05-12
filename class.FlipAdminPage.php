@@ -6,27 +6,27 @@ class FlipAdminPage extends FlipPage
     public $user;
     public $is_admin = false;
 
-    function __construct($title, $admin_group='LDAPAdmins')
+    function __construct($title, $adminGroup='LDAPAdmins')
     {
         $this->user = FlipSession::getUser();
+        $this->is_admin = $this->userIsAdmin($adminGroup);
+        parent::__construct($title);
+        $adminCSS = '/css/common/admin.min.css';
+        if($this->minified !== 'min')
+        {
+            $adminCSS = '/css/common/admin.css';
+        }
+        $this->addCSSByURI($adminCSS);
+        $this->addWellKnownJS(JS_METISMENU, false);
+    }
+
+    protected function userIsAdmin($adminGroup)
+    {
         if($this->user === false || $this->user === null)
         {
-            $this->is_admin = false;
+            return false;
         }
-        else
-        {
-            $this->is_admin = $this->user->isInGroupNamed($admin_group);
-        }
-        parent::__construct($title);
-        if($this->minified === 'min')
-        {
-            $this->add_css_from_src('/css/common/admin.min.css');
-        }
-        else
-        {
-            $this->add_css_from_src('/css/common/admin.css');
-        }
-        $this->add_js(JS_METISMENU, false);
+        return $this->user->isInGroupNamed($adminGroup);
     }
 
     function addAllLinks()
@@ -42,48 +42,29 @@ class FlipAdminPage extends FlipPage
         }
     }
 
+    protected function getDropdown($link, $name)
+    {
+        $ret  = '<li>';
+        $href = $this->getHrefForDropdown($link);
+        $ret .= $this->create_link($link_name.' <i class="fa fa-arrow-right"></i>', $href);
+        $ret.='<ul>';
+        $subNames = array_keys($link);
+        foreach($subNames as $subName)
+        {
+            $ret.=$this->getLinkByName($subName, $link);
+        }
+        $ret.='</ul></li>';
+        return $ret;
+    }
+
     function addHeader()
     {
-        $sites = $this->getSiteLinksForHeader();
-        $side_nav = '';
-        $link_names = array_keys($this->links);
-        foreach($link_names as $link_name)
-        {
-            if(is_array($this->links[$link_name]))
-            {
-                $side_nav .= '<li>';
-                if(isset($this->links[$link_name]['_']))
-                {
-                    $side_nav .= $this->create_link($link_name.' <i class="fa fa-arrow-right"></i>', $this->links[$link_name]['_']);
-                }
-                else
-                {
-                    $side_nav .= $this->create_link($link_name.' <i class="fa fa-arrow-right"></i>');
-                }
-                $side_nav .= '<ul>';
-                $sub_names = array_keys($this->links[$link_name]);
-                foreach($sub_names as $sub_name)
-                {
-                    if(strcmp($sub_name, '_') === 0)
-                    {
-                        continue;
-                    }
-                    $side_nav .='<li>'.$this->create_link($sub_name, $this->links[$link_name][$sub_name]).'</li>';
-                }
-                $side_nav .= '</ul></li>';
-            }
-            else
-            {
-                $side_nav .= '<li>'.$this->create_link($link_name, $this->links[$link_name]).'</li>';
-            }
-        }
+        $sites  = $this->getSiteLinksForHeader();
+        $sidNav = $this->getLinksMenus();
+        $log    = '<a href="https://profiles.burningflipside.com/logout.php"><i class="fa fa-sign-out"></i></a>';
         if($this->user === false || $this->user === null)
         {
             $log = '<a href="https://profiles.burningflipside.com/login.php?return='.$this->current_url().'"><i class="fa fa-sign-in"></i></a>';
-        }
-        else
-        {
-            $log = '<a href="https://profiles.burningflipside.com/logout.php"><i class="fa fa-sign-out"></i></a>';
         }
         $this->body = '<div id="wrapper">
                   <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
@@ -114,7 +95,7 @@ class FlipAdminPage extends FlipPage
                       <div class="navbar-default sidebar" role="navigation">
                           <div class="sidebar-nav navbar-collapse" style="height: 1px;">
                               <ul class="nav" id="side-menu">
-                                  '.$side_nav.'
+                                  '.$sideNav.'
                               </ul>
                           </div>
                       </div>
@@ -127,26 +108,26 @@ class FlipAdminPage extends FlipPage
     const CARD_YELLOW = 'panel-yellow';
     const CARD_RED    = 'panel-red';
 
-    function add_card($icon_name, $big_text, $little_text, $link='#', $color = self::CARD_BLUE, $text_color=false)
+    function add_card($iconName, $bigText, $littleText, $link='#', $color = self::CARD_BLUE, $textColor=false)
     {
-        if($text_color === false)
+        if($textColor === false)
         {
             switch($color)
             {
                 default:
-                    $text_color='';
+                    $textColor='';
                     break;
                 case self::CARD_BLUE:
-                    $text_color='text-primary';
+                    $textColor='text-primary';
                     break;
                 case self::CARD_GREEN:
-                    $text_color='text-success';
+                    $textColor='text-success';
                     break;
                 case self::CARD_YELLOW:
-                    $text_color='text-warning';
+                    $textColor='text-warning';
                     break;
                 case self::CARD_RED:
-                    $text_color='text-danger';
+                    $textColor='text-danger';
                     break;
             }
         }
@@ -155,11 +136,11 @@ class FlipAdminPage extends FlipPage
                          <div class="panel-heading">
                              <div class="row">
                                  <div class="col-xs-3">
-                                     <i class="fa '.$icon_name.'" style="font-size: 5em;"></i>
+                                     <i class="fa '.$iconName.'" style="font-size: 5em;"></i>
                                  </div>
                                  <div class="col-xs-9 text-right">
-                                     <div style="font-size: 40px;">'.$big_text.'</div>
-                                     <div>'.$little_text.'</div>
+                                     <div style="font-size: 40px;">'.$bigText.'</div>
+                                     <div>'.$littleText.'</div>
                                  </div>
                              </div>
                          </div>
