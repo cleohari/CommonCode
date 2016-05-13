@@ -330,7 +330,12 @@ class Email extends \SerializableObject
     {
         $boundary = uniqid(rand(), true);
         $rawMessage = 'To: '.$this->encodeRecipients($this->getToAddresses())."\n";
-        $rawMessage.= 'From: '.$this->encodeRecipients($this->getFromAddress())."\n";
+        $from = $this->getFromAddress();
+        if($from === false)
+        {
+            throw new \Exception('Message must have a from address');
+        }
+        $rawMessage.= 'From: '.$this->encodeRecipients($from)."\n";
         if(!empty($this->cc))
         {
             $rawMessage.= 'CC: '. $this->encodeRecipients($this->getCCAddresses())."\n";

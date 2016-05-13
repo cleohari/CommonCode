@@ -149,7 +149,7 @@ class AuthProvider extends Singleton
     /**
      * Merge or set the returnValue as appropriate
      *
-     * @param Auth\Group|Auth\User $returnValue The value to merge to
+     * @param false|Auth\Group|Auth\User $returnValue The value to merge to
      * @param Auth\Group|Auth\User $res The value to merge from
      *
      * @return Auth\Group|false The merged returnValue
