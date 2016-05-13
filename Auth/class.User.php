@@ -33,7 +33,7 @@ class User extends \SerializableObject
      *
      * @return true|false True if the user is in the group, false otherwise
      */
-    function isInGroupNamed($name)
+    public function isInGroupNamed($name)
     {
         return false;
     }
@@ -43,7 +43,7 @@ class User extends \SerializableObject
      *
      * @return string The name the user should be displayed as
      */
-    function getDisplayName()
+    public function getDisplayName()
     {
         return $this->getNickName();
     }
@@ -53,7 +53,7 @@ class User extends \SerializableObject
      *
      * @return string The user's first name
      */
-    function getGivenName()
+    public function getGivenName()
     {
         return $this->getUid();
     }
@@ -63,7 +63,7 @@ class User extends \SerializableObject
      *
      * @return string The user's email address
      */
-    function getEmail()
+    public function getEmail()
     {
         return false;
     }
@@ -73,7 +73,7 @@ class User extends \SerializableObject
      *
      * @return string The user's ID or username
      */
-    function getUid()
+    public function getUid()
     {
         return $this->getEmail();
     }
@@ -83,7 +83,7 @@ class User extends \SerializableObject
      *
      * @return string The user's photo as a binary string
      */ 
-    function getPhoto()
+    public function getPhoto()
     {
         return false;
     }
@@ -93,7 +93,7 @@ class User extends \SerializableObject
      *
      * @return false|string The user's phone number
      */
-    function getPhoneNumber()
+    public function getPhoneNumber()
     {
         return false;
     }
@@ -103,7 +103,7 @@ class User extends \SerializableObject
      *
      * @return false|string The user's organization
      */
-    function getOrganization()
+    public function getOrganization()
     {
         return false;
     }
@@ -113,7 +113,7 @@ class User extends \SerializableObject
      *
      * @return array The user's title(s) in short format
      */
-    function getTitles()
+    public function getTitles()
     {
         return false;
     }
@@ -125,7 +125,7 @@ class User extends \SerializableObject
      *
      * @SuppressWarnings("StaticAccess")
      */
-    function getTitleNames()
+    public function getTitleNames()
     {
         $titles = $this->getTitles();
         if($titles === false)
@@ -161,7 +161,7 @@ class User extends \SerializableObject
      *
      * @return string The user's state from their mailing address
      */
-    function getState()
+    public function getState()
     {
         return false;
     }
@@ -171,7 +171,7 @@ class User extends \SerializableObject
      *
      * @return string The user's city from their mailing address
      */
-    function getCity()
+    public function getCity()
     {
         return false;
     }
@@ -181,7 +181,7 @@ class User extends \SerializableObject
      *
      * @return string The user's last name
      */
-    function getLastName()
+    public function getLastName()
     {
         return false;
     }
@@ -191,7 +191,7 @@ class User extends \SerializableObject
      *
      * @return string The user's nick name
      */
-    function getNickName()
+    public function getNickName()
     {
         return $this->getUid();
     }
@@ -201,7 +201,7 @@ class User extends \SerializableObject
      *
      * @return string The user's street address
      */
-    function getAddress()
+    public function getAddress()
     {
         return false;
     }
@@ -211,7 +211,7 @@ class User extends \SerializableObject
      *
      * @return string The user's postal code
      */
-    function getPostalCode()
+    public function getPostalCode()
     {
         return false;
     }
@@ -221,7 +221,7 @@ class User extends \SerializableObject
      *
      * @return string The user's country from their mailing address
      */
-    function getCountry()
+    public function getCountry()
     {
         return false;
     }
@@ -233,7 +233,7 @@ class User extends \SerializableObject
      *
      * @return array The user's orgnaiational units
      */
-    function getOrganizationUnits()
+    public function getOrganizationUnits()
     {
         return false;
     }
@@ -243,7 +243,7 @@ class User extends \SerializableObject
      *
      * @return array The user's login providers
      */
-    function getLoginProviders()
+    public function getLoginProviders()
     {
         return false;
     }
@@ -253,7 +253,7 @@ class User extends \SerializableObject
      *
      * @return false|array The user's Auth\Group structures
      */
-    function getGroups()
+    public function getGroups()
     {
         return false;
     }
@@ -265,7 +265,7 @@ class User extends \SerializableObject
      *
      * @return true|false true if the addition worked, false otherwise
      */
-    function addLoginProvider($provider)
+    public function addLoginProvider($provider)
     {
         throw new \Exception('Cannot add provider for this login type!');
     }
@@ -277,7 +277,7 @@ class User extends \SerializableObject
      *
      * @return true|false true if they can login with the provider, false otherwise
      */
-    function canLoginWith($provider)
+    public function canLoginWith($provider)
     {
         $hosts = $this->getLoginProviders();
         if($hosts === false) return false;
@@ -306,7 +306,7 @@ class User extends \SerializableObject
      *
      * @return true|false true if the user's profile is complete, false otherwise
      */
-    function isProfileComplete()
+    public function isProfileComplete()
     {
         if($this->getCountry() === false    || $this->getAddress() === false ||
            $this->getPostalCode() === false || $this->getCity() === false ||
@@ -326,7 +326,7 @@ class User extends \SerializableObject
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
-    function validate_password($password)
+    public function validate_password($password)
     {
         return false;
     }
@@ -340,7 +340,7 @@ class User extends \SerializableObject
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
-    function validate_reset_hash($hash)
+    public function validate_reset_hash($hash)
     {
         return false;
     }
@@ -354,7 +354,7 @@ class User extends \SerializableObject
      *
      * @return true|false true if the user's password was changed, false otherwise
      */
-    function change_pass($oldpass, $newpass, $isHash=false)
+    public function change_pass($oldpass, $newpass, $isHash=false)
     {
         if($isHash === false && $this->validate_password($oldpass) === false)
         {
@@ -378,7 +378,7 @@ class User extends \SerializableObject
      *
      * @return true|false true if the user's display name was changed, false otherwise
      */
-    function setDisplayName($name)
+    public function setDisplayName($name)
     {
         return $this->setNickName($name);
     }
@@ -390,9 +390,9 @@ class User extends \SerializableObject
      *
      * @return true|false true if the user's given name was changed, false otherwise
      */
-    function setGivenName($name)
+    public function setGivenName($name)
     {
-        return $this->getUid($name);
+        return $this->setUid($name);
     }
 
     /**
@@ -404,7 +404,7 @@ class User extends \SerializableObject
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
-    function setEmail($email)
+    public function setEmail($email)
     {
         return false;
     }
@@ -418,7 +418,7 @@ class User extends \SerializableObject
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
-    function setUid($uid)
+    public function setUid($uid)
     {
         return false;
     }
@@ -432,7 +432,7 @@ class User extends \SerializableObject
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
-    function setPhoto($photo)
+    public function setPhoto($photo)
     {
         return false;
     }
@@ -446,7 +446,7 @@ class User extends \SerializableObject
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
-    function setPhoneNumber($phone)
+    public function setPhoneNumber($phone)
     {
         return false;
     }
@@ -460,7 +460,7 @@ class User extends \SerializableObject
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
-    function setOrganization($org)
+    public function setOrganization($org)
     {
         return false;
     }
@@ -474,7 +474,7 @@ class User extends \SerializableObject
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
-    function setTitles($titles)
+    public function setTitles($titles)
     {
         return false;
     }
@@ -488,7 +488,7 @@ class User extends \SerializableObject
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
-    function setState($state)
+    public function setState($state)
     {
         return false;
     }
@@ -502,7 +502,7 @@ class User extends \SerializableObject
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
-    function setCity($city)
+    public function setCity($city)
     {
         return false;
     }
@@ -516,7 +516,7 @@ class User extends \SerializableObject
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
-    function setLastName($sn)
+    public function setLastName($sn)
     {
         return false;
     }
@@ -528,7 +528,7 @@ class User extends \SerializableObject
      *
      * @return true|false true if the user's nick name was changed, false otherwise
      */
-    function setNickName($displayName)
+    public function setNickName($displayName)
     {
         return $this->setUid($displayName);
     }
@@ -542,7 +542,7 @@ class User extends \SerializableObject
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
-    function setAddress($address)
+    public function setAddress($address)
     {
         return false;
     }
@@ -556,7 +556,7 @@ class User extends \SerializableObject
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
-    function setPostalCode($postalcode)
+    public function setPostalCode($postalcode)
     {
         return false;
     }
@@ -570,7 +570,7 @@ class User extends \SerializableObject
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
-    function setCountry($country)
+    public function setCountry($country)
     {
         return false;
     }
@@ -584,7 +584,7 @@ class User extends \SerializableObject
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
-    function setOrganizationUnits($ous)
+    public function setOrganizationUnits($ous)
     {
         return false;
     }
@@ -596,7 +596,7 @@ class User extends \SerializableObject
      *
      * @return true|false true if the user's data was changed, false otherwise
      */
-    function editUser($data)
+    public function editUser($data)
     {
         //Make sure we are bound in write mode
         $auth = \AuthProvider::getInstance();
