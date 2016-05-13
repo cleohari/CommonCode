@@ -97,9 +97,9 @@ class SQLAuthenticator extends Authenticator
     {
         if(isset($this->params['current_data_set']))
         {
-            return \DataSetFactory::get_data_set($this->params['current_data_set']);
+            return \DataSetFactory::getDataSetByName($this->params['current_data_set']);
         }
-        return \DataSetFactory::get_data_set('authentication');
+        return \DataSetFactory::getDataSetByName('authentication');
     }
 
     /**
@@ -109,9 +109,9 @@ class SQLAuthenticator extends Authenticator
     {
         if(isset($this->params['pending_data_set']))
         {
-            return \DataSetFactory::get_data_set($this->params['pending_data_set']);
+            return \DataSetFactory::getDataSetByName($this->params['pending_data_set']);
         }
-        return \DataSetFactory::get_data_set('pending_authentication');
+        return \DataSetFactory::getDataSetByName('pending_authentication');
     }
 
     private function getDataTable($name, $pending=false)

@@ -566,8 +566,8 @@ class FlipPage extends WebPage
     private function addBootstrap()
     {
         $this->add_js(JS_BOOTSTRAP, false);
-        $this->add_css(CSS_BOOTSTRAP);
-        $this->add_css(CSS_FONTAWESOME);
+        $this->addWellKnownCSS(CSS_BOOTSTRAP);
+        $this->addWellKnownCSS(CSS_FONTAWESOME);
     }
 
     protected function getSiteLinksForHeader()
@@ -874,7 +874,7 @@ class FlipPage extends WebPage
                                         <form id="login_dialog_form" role="form">
                                             <input class="form-control" type="text" name="username" placeholder="Username or Email" required autofocus/>
                                             <input class="form-control" type="password" name="password" placeholder="Password" required/>
-                                            <input type="hidden" name="return" value="'.$this->current_url().'"/>
+                                            <input type="hidden" name="return" value="'.$this->currentUrl().'"/>
                                             <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
                                         </form>
                                         '.$authLinksStr.'

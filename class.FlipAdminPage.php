@@ -33,12 +33,12 @@ class FlipAdminPage extends FlipPage
     {
         if($this->user === false || $this->user === null)
         {
-            $this->add_link('<i class="fa fa-sign-in"></i> Login', $this->loginUrl);
+            $this->addLink('<i class="fa fa-sign-in"></i> Login', $this->loginUrl);
         }
         else
         {
             $this->add_links();
-            $this->add_link('<i class="fa fa-sign-out"></i> Logout', $this->logoutUrl);
+            $this->addLink('<i class="fa fa-sign-out"></i> Logout', $this->logoutUrl);
         }
     }
 
@@ -64,7 +64,7 @@ class FlipAdminPage extends FlipPage
         $log     = '<a href="https://profiles.burningflipside.com/logout.php"><i class="fa fa-sign-out"></i></a>';
         if($this->user === false || $this->user === null)
         {
-            $log = '<a href="https://profiles.burningflipside.com/login.php?return='.$this->current_url().'"><i class="fa fa-sign-in"></i></a>';
+            $log = '<a href="https://profiles.burningflipside.com/login.php?return='.$this->currentUrl().'"><i class="fa fa-sign-in"></i></a>';
         }
         $this->body = '<div id="wrapper">
                   <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
@@ -163,7 +163,7 @@ class FlipAdminPage extends FlipPage
             $this->body = '
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">You must <a href="'.$this->loginUrl.'?return='.$this->current_url().'">log in <span class="glyphicon glyphicon-log-in"></span></a> to access the '.$this->title.' Admin system!</h1>
+                <h1 class="page-header">You must <a href="'.$this->loginUrl.'?return='.$this->currentUrl().'">log in <span class="glyphicon glyphicon-log-in"></span></a> to access the '.$this->title.' Admin system!</h1>
             </div>
         </div>';
         }

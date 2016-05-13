@@ -7,7 +7,7 @@ class FlipsideCAPTCHA implements JsonSerializable
 
     public static function get_valid_captcha_ids()
     {
-        $dataset = DataSetFactory::get_data_set('profiles');
+        $dataset = DataSetFactory::getDataSetByName('profiles');
         $datatable = $dataset['captcha'];
         $data = $datatable->read(false, array('id'));
         $count = count($data);
@@ -33,7 +33,7 @@ class FlipsideCAPTCHA implements JsonSerializable
 
     public static function save_new_captcha($question, $hint, $answer)
     {
-        $dataset = DataSetFactory::get_data_set('profiles');
+        $dataset = DataSetFactory::getDataSetByName('profiles');
         $datatable = $dataset['captcha'];
         return $datatable->create(array('question'=>$question,'hint'=>$hint,'answer'=>$answer));
     }
@@ -47,7 +47,7 @@ class FlipsideCAPTCHA implements JsonSerializable
 
     public function get_question()
     {
-        $dataset = DataSetFactory::get_data_set('profiles');
+        $dataset = DataSetFactory::getDataSetByName('profiles');
         $datatable = $dataset['captcha'];
         $data = $datatable->read(new \Data\Filter('id eq '.$this->random_id), array('question'));
         if($data === false)
@@ -59,7 +59,7 @@ class FlipsideCAPTCHA implements JsonSerializable
 
     public function get_hint()
     {
-        $dataset = DataSetFactory::get_data_set('profiles');
+        $dataset = DataSetFactory::getDataSetByName('profiles');
         $datatable = $dataset['captcha'];
         $data = $datatable->read(new \Data\Filter('id eq '.$this->random_id), array('hint'));
         if($data === false)
@@ -71,7 +71,7 @@ class FlipsideCAPTCHA implements JsonSerializable
 
     private function get_answer()
     {
-        $dataset = DataSetFactory::get_data_set('profiles');
+        $dataset = DataSetFactory::getDataSetByName('profiles');
         $datatable = $dataset['captcha'];
         $data = $datatable->read(new \Data\Filter('id eq '.$this->random_id), array('answer'));
         if($data === false)

@@ -24,7 +24,7 @@ class SQLUser extends User
 
     function isInGroupNamed($name)
     {
-        $auth_data_set = \DataSetFactory::get_data_set('authentication');
+        $auth_data_set = \DataSetFactory::getDataSetByName('authentication');
         $group_data_table = $auth_data_set['group'];
         $filter = new \Data\Filter("uid eq '$this->uid' and gid eq '$name'");
         $groups = $group_data_table->read($filter);

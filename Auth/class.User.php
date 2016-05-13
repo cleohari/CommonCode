@@ -134,7 +134,7 @@ class User extends \SerializableObject
         }
         if(self::$titlenames === null)
         {
-            $dataSet = \DataSetFactory::get_data_set('profiles');
+            $dataSet = \DataSetFactory::getDataSetByName('profiles');
             $dataTable = $dataSet['position'];
             $titlenames = $dataTable->read();
             self::$titlenames = array();
