@@ -39,13 +39,47 @@ class GroupTest extends PHPUnit_Framework_TestCase
         {
             $this->assertFalse(false);
         }
-        $array = array('dn'=>array('cn=Test,dc=example,dc=com'), 'cn'=>array('Test'), 'description'=>array('Test Group'), 'member'=>array('uid=test'));
+        $array = array('dn'=>array('cn=Test,dc=example,dc=com'), 'cn'=>array('Test'), 'description'=>array('Test Group'), 'member'=>array('uid=test,dc=example,dc=com', 'cn=tg,dc=example,dc=com'));
         $ldapGroup = new \LDAP\LDAPObject($array);
         $group = new \Auth\LDAPGroup($ldapGroup);
         $this->assertEquals('Test', $group->getGroupName());
         $this->assertEquals('Test Group', $group->getDescription());
         $group->setDescription('New Group');
         $this->assertEquals('New Group', $group->getDescription());
+        $ids = $group->getMemberUids(false);
+        $this->assertNotFalse($ids);
+        $this->assertCount(2, $ids);
+
+        $this->assertTrue($group->addMember('test2', false, false));
+        $ids = $group->getMemberUids(false);
+        $this->assertNotFalse($ids);
+        $this->assertCount(3, $ids);
+
+        $this->assertTrue($group->addMember('test3', true, false));
+        $ids = $group->getMemberUids(false);
+        $this->assertNotFalse($ids);
+        $this->assertCount(4, $ids);
+
+        $group->clearMembers();
+        $ids = $group->getMemberUids();
+        $this->assertNotFalse($ids);
+        $this->assertCount(0, $ids);
+
+        $array = array('dn'=>array('cn=Test,dc=example,dc=com'), 'cn'=>array('Test'), 'description'=>array('Test Group'), 'memberuid'=>array('test'));
+        $ldapGroup = new \LDAP\LDAPObject($array);
+        $group = new \Auth\LDAPGroup($ldapGroup);
+        $ids = $group->getMemberUids();
+        $this->assertNotFalse($ids);
+        $this->assertCount(1, $ids);
+
+        $group->clearMembers();
+        $ids = $group->getMemberUids();
+        $this->assertNotFalse($ids);
+        $this->assertCount(0, $ids);
+
+        $array = array('dn'=>array('cn=Test,dc=example,dc=com'), 'cn'=>array('Test'), 'description'=>array('Test Group'), 'uniquemember'=>array('uid=test'));
+        $ldapGroup = new \LDAP\LDAPObject($array);
+        $group = new \Auth\LDAPGroup($ldapGroup);
         $ids = $group->getMemberUids();
         $this->assertNotFalse($ids);
         $this->assertCount(1, $ids);

@@ -219,7 +219,11 @@ class LDAPGroup extends Group
             $dn = 'uid='.$name.','.$this->server->user_base;
         }
         $propName   = false;
-        $rawMembers = $this->getMembersField($propName);;
+        $rawMembers = $this->getMembersField($propName);
+        if(isset($rawMembers['count']))
+        {
+            unset($rawMembers['count']);
+        }
         if(in_array($dn, $rawMembers) || in_array($name, $rawMembers))
         {
             return true;
