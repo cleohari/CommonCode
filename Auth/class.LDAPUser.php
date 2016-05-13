@@ -231,15 +231,15 @@ class LDAPUser extends User
 
     function setPass($password)
     {
-        if(!is_object($this->ldap_obj))
+        if(!is_object($this->ldapObj))
         {
             return $this->setFieldLocal('userPassword',  $this->generateLDAPPass($password));
         }
         else
         {
-            $obj = array('dn'=>$this->ldap_obj->dn);
+            $obj = array('dn'=>$this->ldapObj->dn);
             $obj['userPassword'] = $this->generateLDAPPass($password);
-            if(isset($this->ldap_obj->uniqueidentifier))
+            if(isset($this->ldapObj->uniqueidentifier))
             {
                $obj['uniqueIdentifier'] = null;
             }
@@ -253,7 +253,7 @@ class LDAPUser extends User
 
     function validate_password($password)
     {
-        if($this->server->bind($this->ldap_obj->dn, $password))
+        if($this->server->bind($this->ldapObj->dn, $password))
         {
             return true;
         }
@@ -262,7 +262,7 @@ class LDAPUser extends User
 
     function validate_reset_hash($hash)
     {
-        if(isset($this->ldap_obj->uniqueidentifier) && strcmp($this->ldap_obj->uniqueidentifier[0], $hash) === 0)
+        if(isset($this->ldapObj->uniqueidentifier) && strcmp($this->ldapObj->uniqueidentifier[0], $hash) === 0)
         {
             return true;
         }

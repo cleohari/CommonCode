@@ -110,27 +110,6 @@ class FlipAdminPage extends FlipPage
 
     function add_card($iconName, $bigText, $littleText, $link='#', $color = self::CARD_BLUE, $textColor=false)
     {
-        if($textColor === false)
-        {
-            switch($color)
-            {
-                default:
-                    $textColor='';
-                    break;
-                case self::CARD_BLUE:
-                    $textColor='text-primary';
-                    break;
-                case self::CARD_GREEN:
-                    $textColor='text-success';
-                    break;
-                case self::CARD_YELLOW:
-                    $textColor='text-warning';
-                    break;
-                case self::CARD_RED:
-                    $textColor='text-danger';
-                    break;
-            }
-        }
         $card = '<div class="col-lg-3 col-md-6">
                      <div class="panel '.$color.'">
                          <div class="panel-heading">

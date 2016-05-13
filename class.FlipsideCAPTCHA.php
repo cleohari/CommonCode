@@ -22,7 +22,8 @@ class FlipsideCAPTCHA implements JsonSerializable
     {
         $res = array();
         $ids = FlipsideCAPTCHA::get_valid_captcha_ids();
-        for($i = 0; $i < count($ids); $i++)
+        $count = count($ids);
+        for($i = 0; $i < $count; $i++)
         {
             $captcha = new FlipsideCAPTCHA();
             $captcha->random_id = $ids[$i]; 

@@ -16,6 +16,7 @@ class DataTable implements \ArrayAccess
         {
             throw new \Exception('Unimplemented');
         }
+        $array = $this->data;
         if($filter !== false)
         {
             $array = $filter->filter_array($this->data);

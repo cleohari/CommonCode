@@ -164,13 +164,15 @@ class LDAPServer extends \Singleton
         }
         unset($entity['dn']);
         $keys = array_keys($entity);
-        for($i = 0; $i < count($keys); $i++)
+        $count = count($keys);
+        for($i = 0; $i < $count; $i++)
         {
             if(is_array($entity[$keys[$i]]))
             {
                 $array = $entity[$keys[$i]];
                 unset($entity[$keys[$i]]);
-                for($j = 0; $j < count($array); $j++)
+                $count1 = count($array);
+                for($j = 0; $j < $count1; $j++)
                 {
                     if(isset($array[$j]))
                     {
@@ -286,6 +288,7 @@ class LDAPServer extends \Singleton
         $dn = ldap_escape($object['dn'], true);
         $delete = array();
         $entity = $this->_fix_object($object, $delete);
+        $ret = false;
         if(!empty($entity))
         {
             $ret = @ldap_mod_replace($this->ds, $dn, $entity);

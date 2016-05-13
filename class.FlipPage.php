@@ -701,12 +701,10 @@ class FlipPage extends WebPage
      * @param string $message The message to show in the notifcation
      * @param string $sevity The severity of the notifcation
      * @param boolean $dismissible Can the user dismiss the notificaton?
-     *
-     * @deprecated 2.0.0 Use the addNotification function instead
      */
     public function addNotification($message, $severity=self::NOTIFICATION_INFO, $dismissible=true)
     {
-        array_push($this->notificatons, array('msg'=>$message, 'sev'=>$severity, 'dismissible'=>$dismissible)); 
+        array_push($this->notifications, array('msg'=>$message, 'sev'=>$severity, 'dismissible'=>$dismissible)); 
     }
 
     /**

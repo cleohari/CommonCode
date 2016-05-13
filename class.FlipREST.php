@@ -235,7 +235,7 @@ class FlipRESTFormat extends \Slim\Middleware
         if($this->app->response->getStatus() == 200 && $this->app->fmt !== 'json')
         {
             $data = json_decode($this->app->response->getBody());
-            $text = '';
+            $text = false;
             switch($this->app->fmt)
             {
                 case 'data-table':
