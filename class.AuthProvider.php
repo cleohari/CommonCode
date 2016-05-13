@@ -204,7 +204,7 @@ class AuthProvider extends Singleton
      * @param string $checkField A field to check if it is set a certain way before calling the function
      * @param mixed $checkValue The value that field should be set to to not call the function
      *
-     * @return integer|false The added returnValue
+     * @return integer The added returnValue
      */
     private function addFromEach($functionName, $checkField = false, $checkValue = false)
     {
