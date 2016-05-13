@@ -10,6 +10,7 @@ services:
 
 before_install:
   - echo "extension=ldap.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
+  - mysql -e 'create database auth;'
 
 install:
   - composer require satooshi/php-coveralls:~1.0
