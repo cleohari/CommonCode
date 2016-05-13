@@ -9,7 +9,7 @@ class PageValidTest extends PHPUnit_Framework_TestCase
         $GLOBALS['BROWSCAP_CACHE']        = './tests/helpers';
         $page = new FlipPage('Test', false);
         ob_start();
-        $page->print_page();
+        $page->printPage();
         $html = ob_get_contents();
         ob_end_clean();
 
@@ -25,7 +25,7 @@ class PageValidTest extends PHPUnit_Framework_TestCase
         $GLOBALS['BROWSCAP_CACHE']        = './tests/helpers';
         $page = new FlipPage('Test');
         ob_start();
-        $page->print_page();
+        $page->printPage();
         $html = ob_get_contents();
         ob_end_clean();
 

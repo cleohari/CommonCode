@@ -338,6 +338,8 @@ class FlipPage extends WebPage
     protected $minified = null;
     /** Should we use local JS/CSS or Content Delivery Networks? */
     protected $cdn = null;
+    /** Draw the analytics scripts */
+    protected $analytics = true;
 
     /**
      * Create a webpage with JQuery, Bootstrap, etc
@@ -712,7 +714,12 @@ class FlipPage extends WebPage
      */
     private function renderNotifications()
     {
-        for($i = 0; $i < count($this->notifications); $i++)
+        $count = count($this->notifications);
+        if($count === 0)
+        {
+            return;
+        }
+        for($i = 0; $i < $count; $i++)
         {
             $class = 'alert '.$this->notifications[$i]['sev'];
             $button = '';
@@ -749,24 +756,28 @@ class FlipPage extends WebPage
     }
 
     /**
-     * Draw the page
-     *
-     * @param boolean $header Draw the header
+     * Add the no script block
      */
-    function print_page($header=true)
+    private function addNoScript()
     {
-        if(count($this->notifications) > 0)
-        {
-            $this->renderNotifications();
-        }
-        $this->body = '
-            <noscript>
+        $this->body = '<noscript>
                 <div class="alert alert-danger alert-dismissible" role="alert">
                     <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                     <strong>Error!</strong> This site makes extensive use of JavaScript. Please enable JavaScript or this site will not function.
                 </div>
-            </noscript>
-        '.$this->body.'<script>
+            </noscript>'.$this->body;
+    }
+
+    /**
+     * Add the analytics script block
+     */
+    private function addAnalyticsBlock()
+    {
+        if($this->analytics === false)
+        {
+            return;
+        }
+        $this->body = $this->body.'<script>
   (function(i,s,o,g,r,a,m){i[\'GoogleAnalyticsObject\']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -776,11 +787,6 @@ class FlipPage extends WebPage
   ga(\'send\', \'pageview\');
 
 </script>';
-        if($this->header || $header)
-        {
-            $this->addHeader();
-        }
-        parent::printPage();
     }
 
     /**
@@ -789,33 +795,11 @@ class FlipPage extends WebPage
      * @param boolean $header Draw the header
      * @param boolean $analytics Include analytics on the page
      */
-    public function printPage($header=true, $analytics=true)
+    public function printPage($header=true)
     {
-        if(count($this->notifications) > 0)
-        {
-            $this->renderNotifications();
-        }
-        $this->body = '
-            <noscript>
-                <div class="alert alert-danger alert-dismissible" role="alert">
-                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <strong>Error!</strong> This site makes extensive use of JavaScript. Please enable JavaScript or this site will not function.
-                </div>
-            </noscript>
-        '.$this->body;
-        if($analytics)
-        {
-            $this->body.='<script>
-  (function(i,s,o,g,r,a,m){i[\'GoogleAnalyticsObject\']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,\'script\',\'//www.google-analytics.com/analytics.js\',\'ga\');
-
-  ga(\'create\', \'UA-64901342-1\', \'auto\');
-  ga(\'send\', \'pageview\');
-
-</script>';
-        }
+        $this->renderNotifications();
+        $this->addNoScript();
+        $this->addAnalyticsBlock();
         if($this->header || $header)
         {
             $this->addHeader();

@@ -156,7 +156,7 @@ class FlipAdminPage extends FlipPage
         $this->body .= $card;
     }
 
-    function print_page($header=true)
+    function printPage($header=true)
     {
         if($this->user === false || $this->user === null)
         {
@@ -176,7 +176,7 @@ class FlipAdminPage extends FlipPage
             </div>
         </div>';
         }
-        parent::print_page();
+        parent::printPage();
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
