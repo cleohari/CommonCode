@@ -138,6 +138,21 @@ class PageContentTest extends PHPUnit_Framework_TestCase
         $page->printPage();
         $html = ob_get_contents();
         ob_end_clean();
+
+        $page = new FlipAdminPage('Test');
+        $page->user = new \Auth\User();
+        ob_start();
+        $page->printPage();
+        $html = ob_get_contents();
+        ob_end_clean();
+
+        $page = new FlipAdminPage('Test');
+        $page->user = new \Auth\User();
+        $page->is_admin = true;
+        ob_start();
+        $page->printPage();
+        $html = ob_get_contents();
+        ob_end_clean();
     }
 }
 ?>
