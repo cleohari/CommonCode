@@ -91,7 +91,7 @@ class User extends \SerializableObject
     /**
      * The phone number for the user
      *
-     * @return string The user's phone number
+     * @return false|string The user's phone number
      */
     function getPhoneNumber()
     {
@@ -101,7 +101,7 @@ class User extends \SerializableObject
     /**
      * The organziation for the user
      *
-     * @return string The user's organization
+     * @return false|string The user's organization
      */
     function getOrganization()
     {
@@ -251,7 +251,7 @@ class User extends \SerializableObject
     /**
      * The groups the user is a part of
      *
-     * @return array The user's Auth\Group structures
+     * @return false|array The user's Auth\Group structures
      */
     function getGroups()
     {

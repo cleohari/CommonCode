@@ -7,7 +7,12 @@ class Filter
     protected $string;
     protected $sqlAppend = '';
 
-    function __construct($string = false)
+    /**
+     * Creates a new filter object
+     *
+     * @param false|string $string The string to create the filter from or false for an empty filter
+     */
+    public function __construct($string = false)
     {
         if($string !== false)
         {

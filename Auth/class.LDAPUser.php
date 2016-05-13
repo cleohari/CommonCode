@@ -8,7 +8,7 @@ class LDAPUser extends User
     private $ldapObj;
     private $server;
 
-    function __construct($data=false)
+    public function __construct($data=false)
     {
         $this->server = \LDAP\LDAPServer::getInstance();
         if($data !== false && !isset($data['dn']) && !isset($data['extended']))
@@ -50,7 +50,20 @@ class LDAPUser extends User
         return $res;
     }
 
-    function isInGroupNamed($name)
+    private function isInListOrChild($listName, $group, $dn)
+    {
+        if(!isset($group[$listName]))
+        {
+            return false;
+        }
+        if(in_array($dn, $group[$listName]))
+        {
+            return true;
+        }
+        return $this->check_child_group($group[$listName]);
+    }
+
+    public function isInGroupNamed($name)
     {
         $filter = new \Data\Filter('cn eq '.$name);
         $group = $this->server->read($this->server->group_base, $filter);
@@ -59,67 +72,51 @@ class LDAPUser extends User
             $group = $group[0];
             $dn  = $this->ldapObj->dn;
             $uid = $this->ldapObj->uid[0];
-            if(isset($group['member']))
+            $ret = $this->isInListOrChild('member', $group, $dn);
+            if($ret === false)
             {
-                if(in_array($dn, $group['member']))
-                {
-                    return true;
-                }
-                else
-                {
-                    return $this->check_child_group($group['member']);
-                }
+                $ret = $this->isInListOrChild('uniquemember', $group, $dn);
             }
-            else if(isset($group['uniquemember']))
-            {
-                if(in_array($dn, $group['uniquemember']))
-                {
-                    return true;
-                }
-                else
-                {
-                    return $this->check_child_group($group['uniquemember']);
-                }
-            }
-            else if(isset($group['memberUid']) && in_array($uid, $group['memberUid']))
+            if($ret === false && isset($group['memberUid']) && in_array($uid, $group['memberUid']))
             {
                 return true;
             }
+            return $ret;
         }
         return false;
     }
 
-    function getDisplayName()
+    public function getDisplayName()
     {
         return $this->getFieldSingleValue('displayName');
     }
 
-    function getGivenName()
+    public function getGivenName()
     {
         return $this->getFieldSingleValue('givenName');
     }
 
-    function getEmail()
+    public function getEmail()
     {
         return $this->getFieldSingleValue('mail');
     }
 
-    function getUid()
+    public function getUid()
     {
         return $this->getFieldSingleValue('uid');
     }
 
-    function getPhoto()
+    public function getPhoto()
     {
         return $this->getFieldSingleValue('jpegPhoto');
     }
 
-    function getPhoneNumber()
+    public function getPhoneNumber()
     {
         return $this->getFieldSingleValue('mobile');
     }
 
-    function getOrganization()
+    public function getOrganization()
     {
         $org = $this->getFieldSingleValue('o');
         if($org === false)
@@ -129,7 +126,7 @@ class LDAPUser extends User
         return $org;
     }
 
-    function getTitles()
+    public function getTitles()
     {
         $titles = $this->getField('title');
         if(isset($titles['count']))
@@ -139,42 +136,42 @@ class LDAPUser extends User
         return $titles;
     }
 
-    function getState()
+    public function getState()
     {
         return $this->getFieldSingleValue('st');
     }
 
-    function getCity()
+    public function getCity()
     {
         return $this->getFieldSingleValue('l');
     }
 
-    function getLastName()
+    public function getLastName()
     {
         return $this->getFieldSingleValue('sn');
     }
 
-    function getNickName()
+    public function getNickName()
     {
         return $this->getFieldSingleValue('cn');
     }
 
-    function getAddress()
+    public function getAddress()
     {
         return $this->getFieldSingleValue('postalAddress');
     }
 
-    function getPostalCode()
+    public function getPostalCode()
     {
         return $this->getFieldSingleValue('postalCode');
     }
 
-    function getCountry()
+    public function getCountry()
     {
         return $this->getFieldSingleValue('c');
     }
 
-    function getOrganizationUnits()
+    public function getOrganizationUnits()
     {
         $units = $this->getField('ou');
         if(isset($units['count']))
@@ -184,7 +181,7 @@ class LDAPUser extends User
         return $units;
     }
 
-    function getLoginProviders()
+    public function getLoginProviders()
     {
         $hosts = $this->getField('host');
         if(isset($hosts['count']))
@@ -194,7 +191,7 @@ class LDAPUser extends User
         return $hosts;
     }
 
-    function getGroups()
+    public function getGroups()
     {
         $res = array();
         $groups = $this->server->read($this->server->group_base);
@@ -216,7 +213,7 @@ class LDAPUser extends User
         }
     }
 
-    function addLoginProvider($provider)
+    public function addLoginProvider($provider)
     {
         return $this->appendField('host', $provider);
     }
@@ -229,7 +226,7 @@ class LDAPUser extends User
         return '{SSHA}'.$hash;
     }
 
-    function setPass($password)
+    public function setPass($password)
     {
         if(!is_object($this->ldapObj))
         {
@@ -251,7 +248,7 @@ class LDAPUser extends User
         }
     }
 
-    function validate_password($password)
+    public function validate_password($password)
     {
         if($this->server->bind($this->ldapObj->dn, $password))
         {
@@ -260,7 +257,7 @@ class LDAPUser extends User
         return false;
     }
 
-    function validate_reset_hash($hash)
+    public function validate_reset_hash($hash)
     {
         if(isset($this->ldapObj->uniqueidentifier) && strcmp($this->ldapObj->uniqueidentifier[0], $hash) === 0)
         {
@@ -299,27 +296,27 @@ class LDAPUser extends User
         return new static($user[0]);
     }
 
-    function setDisplayName($name)
+    public function setDisplayName($name)
     {
         return $this->setField('displayName', $name);
     }
 
-    function setGivenName($name)
+    public function setGivenName($name)
     {
         return $this->setField('givenName', $name);
     }
 
-    function setLastName($sn)
+    public function setLastName($sn)
     {
         return $this->setField('sn', $sn);
     }
 
-    function setEmail($email)
+    public function setEmail($email)
     {
         return $this->setField('mail', $email);
     }
 
-    function setUid($uid)
+    public function setUid($uid)
     {
         if(!is_object($this->ldapObj))
         {
@@ -331,43 +328,43 @@ class LDAPUser extends User
         }
     }
 
-    function setPhoto($photo)
+    public function setPhoto($photo)
     {
         return $this->setField('jpegPhoto', $photo);
     }
 
-    function setAddress($address)
+    public function setAddress($address)
     {
         return $this->setField('postalAddress', $address);
     }
 
-    function setPostalCode($postalcode)
+    public function setPostalCode($postalcode)
     {
         $postalcode = trim($postalcode);
         return $this->setField('postalCode', $postalcode);
     }
 
-    function setCountry($country)
+    public function setCountry($country)
     {
         return $this->setField('c', $country);
     }
 
-    function setState($state)
+    public function setState($state)
     {
         return $this->setField('st', $state);
     }
 
-    function setCity($city)
+    public function setCity($city)
     {
         return $this->setField('l', $city);
     }
 
-    function setPhoneNumber($phone)
+    public function setPhoneNumber($phone)
     {
         return $this->setField('mobile', $phone);
     }
 
-    function setTitles($titles)
+    public function setTitles($titles)
     {
         if(!is_array($titles))
         {
@@ -376,7 +373,7 @@ class LDAPUser extends User
         return $this->setField('title', $titles);
     }
 
-    function setOrganizationUnits($ous)
+    public function setOrganizationUnits($ous)
     {
         if(!is_array($ous))
         {
@@ -385,7 +382,7 @@ class LDAPUser extends User
         return $this->setField('ou', $ous);
     }
 
-    function flushUser()
+    public function flushUser()
     {
         if(is_object($this->ldapObj))
         {
