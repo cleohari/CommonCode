@@ -128,5 +128,16 @@ class PageContentTest extends PHPUnit_Framework_TestCase
         }
         $this->assertTrue($found);
     }
+
+    public function testAdminRendering()
+    {
+        $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
+        $GLOBALS['BROWSCAP_CACHE']        = './tests/helpers';
+        $page = new FlipAdminPage('Test');
+        ob_start();
+        $page->printPage();
+        $html = ob_get_contents();
+        ob_end_clean();
+    }
 }
 ?>
