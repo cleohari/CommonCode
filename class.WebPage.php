@@ -27,11 +27,11 @@ class WebPage
     /** The webpage title */
     public $title;
     /** An array of tags to be added to the HTML head section */
-    public $head_tags;
+    protected $headTags;
     /** A string represnting the body of the page */
     public $body;
     /** The browsecap object */
-    private $bc;
+    private $browscap;
     /** Data about the browser used to load the page */
     public $browser;
     /** A string to add to the body open tag */
@@ -49,11 +49,11 @@ class WebPage
     function __construct($title)
     {
         $this->title = $title;
-        $this->head_tags = array();
+        $this->headTags = array();
         $this->body = '';
-        $this->bc = $this->getBrowscap();
-        $this->bc->doAutoUpdate = false;
-        $this->bc->lowercase = true;
+        $this->browscap = $this->getBrowscap();
+        $this->browscap->doAutoUpdate = false;
+        $this->browscap->lowercase = true;
         $this->browser = $this->getBrowser();
         $this->import_support = false;
         
@@ -92,7 +92,7 @@ class WebPage
         static $browser;//No accident can arise from depending on an unset variable.
         if(!isset($browser))
         {
-            $browser = $this->bc->getBrowser();
+            $browser = $this->browscap->getBrowser();
         }
         return $browser;
     }
@@ -178,7 +178,7 @@ class WebPage
      */
     protected function addHeadTag($tag)
     {
-        array_push($this->head_tags, $tag);
+        array_push($this->headTags, $tag);
     }
 
     /**
@@ -272,7 +272,7 @@ class WebPage
         }
         echo $prefix.$prefix.'<TITLE>'.$this->title.'</TITLE>';
         echo $prefix.$prefix.'<meta name="viewport" content="width=device-width, initial-scale=1.0">';
-        foreach($this->head_tags as $tag)
+        foreach($this->headTags as $tag)
         {
             echo $prefix.$prefix.$tag."\n";
         }
