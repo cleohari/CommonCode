@@ -18,7 +18,14 @@ require_once('Autoload.php');
 /**
  * Require the FlipsideSettings file
  */
-require_once '/var/www/secure_settings/class.FlipsideSettings.php';
+if(isset($GLOBALS['FLIPSIDE_SETTINGS_LOC']))
+{
+    require_once($GLOBALS['FLIPSIDE_SETTINGS_LOC'].'/class.FlipsideSettings.php');
+}
+else
+{
+    require_once('/var/www/secure_settings/class.FlipsideSettings.php');
+}
 
 /**
  * A Singleton class to abstract access to the authentication providers.

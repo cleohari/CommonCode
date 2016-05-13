@@ -13,6 +13,7 @@ trait LDAPCachableObject
         {
             $auth = \AuthProvider::getInstance();
             $ldap = $auth->getAuthenticator('Auth\LDAPAuthenticator');
+            if($ldap === false) return false;
             $this->server = $ldap->get_and_bind_server(true);
             return $this->server->update($obj);
         }
