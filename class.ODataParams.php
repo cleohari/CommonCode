@@ -1,16 +1,44 @@
 <?php
 class ODataParams
 {
+    /**
+     * The ODataFilter or false if not set
+     * @var false|Data\Filter
+     */
     public $filter = false;
+    /**
+     * An array of properties to expand or false if not set
+     * @var false|array
+     */
     public $expand = false;
+    /**
+     * An array of properties to display or false if not set
+     * @var false|array
+     */
     public $select = false;
+    /**
+     * An array of properties to sort by or false if not set
+     * @var false|array
+     */
     public $orderby = false;
+    /**
+     * The number of results to display or false if not set
+     * @var false|integer
+     */
     public $top = false;
+    /**
+     * The number of results to skip or false if not set
+     * @var false|integer
+     */
     public $skip = false;
+    /**
+     * Display the count of results
+     * @var boolean
+     */
     public $count = false;
     public $search = false;
 
-    function __construct($params)
+    public function __construct($params)
     {
         if(isset($params['filter']))
         {
