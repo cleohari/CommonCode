@@ -40,6 +40,18 @@ class ODataParams
 
     public function __construct($params)
     {
+        $this->processFilter($params);
+        $this->processExpand($params);
+        $this->processSelect($params);
+        $this->processOrderBy($params);
+        $this->processTop($params);
+        $this->processSkip($params);
+        $this->processCount($params);
+        $this->processSearch($params);
+    }
+
+    protected function processFilter($params)
+    {
         if(isset($params['filter']))
         {
             $this->filter = new \Data\Filter($params['filter']);
@@ -48,12 +60,18 @@ class ODataParams
         {
             $this->filter = new \Data\Filter($params['$filter']);
         }
+    }
 
+    protected function processExpand($params)
+    {
         if(isset($params['$expand']))
         {
             $this->expand = explode(',',$params['$expand']);
         }
+    }
 
+    protected function processSelect($params)
+    {
         if(isset($params['select']))
         {
             $this->select = explode(',',$params['select']);
@@ -62,7 +80,10 @@ class ODataParams
         {
             $this->select = explode(',',$params['$select']);
         }
+    }
 
+    protected function processOrderBy($params)
+    {
         if(isset($params['$orderby']))
         {
             $this->orderby = array();
@@ -92,23 +113,35 @@ class ODataParams
                 }
             }
         }
+    }
 
-        if(isset($params['$top']))
+    protected function processTop($params)
+    {
+        if(isset($params['$top']) && is_numeric($params['$top']))
         {
-            $this->top = $params['$top'];
+            $this->top = intval($params['$top']);
         }
+    }
 
-        if(isset($params['$skip']))
+    protected function processSkip($params)
+    {
+        if(isset($params['$skip']) && is_numeric($params['$skip']))
         {
-            $this->skip = $params['$skip'];
+            $this->skip = intval($params['$skip']);
         }
+    }
 
-        if(isset($params['$count']) && $params['$count'] === 'true')
+    protected function processCount($params)
+    {
+        if(isset($params['$count']) && strcasecmp($params['$count'], 'true') === 0)
         {
             $this->count = true;
         }
+    }
 
-        if(isset($params['$seach']))
+    protected function processSearch($params)
+    {
+        if(isset($params['$search']))
         {
             throw new Exception('Search not yet implemented');
         }
