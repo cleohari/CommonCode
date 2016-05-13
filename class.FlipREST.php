@@ -23,56 +23,68 @@ class OAuth2Auth extends \Slim\Middleware
         $this->headers = $headers;
     }
 
+    private function getUserFromSession()
+    {
+        if(FlipSession::isLoggedIn())
+        {
+            return FlipSession::getUser();
+        }
+        return false;
+    }
+
+    /*
+     * @SuppressWarnings("Superglobals")
+     * @SuppressWarnings("StaticAccess")
+     */
+    private function getUserFromBasicAuth($header)
+    {
+        $auth = \AuthProvider::getInstance();
+        $auth->login($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']);
+        $user = FlipSession::getUser();
+        if($user === false)
+        {
+            $data = substr($header['Authorization'], 6);
+            $userpass = explode(':', base64_decode($data));
+            $user = $auth->getUserByLogin($userpass[0], $userpass[1]);
+        }
+        return $user;
+    }
+
+    /*
+     * @SuppressWarnings("StaticAccess")
+     */
+    private function getUserFromToken($header)
+    {
+        $auth = \AuthProvider::getInstance();
+        $key = substr($header, 7);
+        return $auth->getUserByAccessCode($key);
+    }
+
+    private function getUserFromHeader($header)
+    {
+        if(strncmp($header, 'Basic', 5) == 0)
+        {
+            return $this->getUserFromBasicAuth($header);
+        }
+        return $this->getUserFromToken($header);
+    }
+
     public function call()
     {
         // no auth header
         if(!isset($this->headers['Authorization']))
         {
-            if(FlipSession::isLoggedIn())
-            {
-                $user = FlipSession::getUser();
-                $this->app->user = $user;
-            }
-            else
-            {
-                $this->app->getLog()->error("No authorization header or session");
-            }
+            $this->app->user = $this->getUserFromSession();
         } 
         else 
         {
-            if(strncmp($this->headers['Authorization'], 'Basic', 5) == 0)
-            {
-                $auth = \AuthProvider::getInstance();
-                $auth->login($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']);
-                $user = FlipSession::getUser();
-                if($user !== false)
-                {
-                    $this->app->user = $user;
-                }
-            }
-            try
-            {
-                $auth = AuthProvider::getInstance();
-                $header = $this->headers['Authorization'];
-                if(strncmp($header, 'Basic', 5) === 0)
-                {
-                    $data = substr($this->headers['Authorization'], 6);
-                    $userpass = explode(':', base64_decode($data));
-                    $this->app->user = $auth->getUserByLogin($userpass[0], $userpass[1]);
-                }
-                else
-                {
-                    $key = substr($this->headers['Authorization'], 7);
-                    $user = $auth->getUserByAccessCode($key);
-                    if($user !== FALSE)
-                    {
-                        $this->app->user = $user;
-                    }
-                }
-            }
-            catch(\Exception $e)
-            {
-            }
+            $header = $this->headers['Authorization'];
+            $this->app->user = $this->getUserFromHeader($header);
+        }
+
+        if($this->app->user === false)
+        {
+            $this->app->getLog()->error("No user found for call");
         }
 
         // this line is required for the application to proceed
@@ -102,7 +114,7 @@ class FlipRESTFormat extends \Slim\Middleware
         }
     }
 
-    private function create_csv(&$array)
+    private function createCSV(&$array)
     {
         if (count($array) == 0)
         {
@@ -165,7 +177,7 @@ class FlipRESTFormat extends \Slim\Middleware
         return ob_get_clean();
     }
 
-    private function create_xml(&$array, $path)
+    private function createXML(&$array)
     {
         $obj = new SerializableObject($array);
         return $obj->xmlSerialize();
@@ -194,13 +206,13 @@ class FlipRESTFormat extends \Slim\Middleware
         }
         if($fmt === null)
         {
-            $mime_type = $this->app->request->headers->get('Accept');
-            if(strstr($mime_type, 'odata.streaming=true'))
+            $mimeType = $this->app->request->headers->get('Accept');
+            if(strstr($mimeType, 'odata.streaming=true'))
             {
                 $this->app->response->setStatus(406);
                 return;
             }
-            switch($mime_type)
+            switch($mimeType)
             {
                 case 'text/csv':
                     $fmt = 'csv';
@@ -236,14 +248,11 @@ class FlipRESTFormat extends \Slim\Middleware
                     $path = strrchr($path, '/');
                     $path = substr($path, 1);
                     $this->app->response->headers->set('Content-Disposition', 'attachment; filename='.$path.'.csv');
-                    $text = $this->create_csv($data);
+                    $text = $this->createCSV($data);
                     break;
                 case 'xml':
                     $this->app->response->headers->set('Content-Type', 'application/xml');
-                    $path = $this->app->request->getPathInfo();
-                    $path = strrchr($path, '/');
-                    $path = substr($path, 1);
-                    $text = $this->create_xml($data, $path);
+                    $text = $this->createXML($data);
                     break;
                 case 'passthru':
                     $text = $this->app->response->getBody();
@@ -270,8 +279,8 @@ class FlipREST extends \Slim\Slim
         $headers = apache_request_headers();
         $this->add(new OAuth2Auth($headers));
         $this->add(new FlipRESTFormat());
-        $error_handler = array($this, 'error_handler');
-        $this->error($error_handler);
+        $errorHandler = array($this, 'errorHandler');
+        $this->error($errorHandler);
     }
 
     function route_get($uri, $handler)
@@ -295,13 +304,13 @@ class FlipREST extends \Slim\Slim
         return json_decode($body, $array);
     }
 
-    function error_handler($e)
+    function errorHandler($exception)
     {
         $error = array(
-            'code' => $e->getCode(),
-            'message' => $e->getMessage(),
-            'file' => $e->getFile(),
-            'line' => $e->getLine(),
+            'code' => $exception->getCode(),
+            'message' => $exception->getMessage(),
+            'file' => $exception->getFile(),
+            'line' => $exception->getLine(),
         );
         $this->response->headers->set('Content-Type', 'application/json');
         error_log(print_r($error, true));

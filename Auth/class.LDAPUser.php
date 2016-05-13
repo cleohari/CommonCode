@@ -3,7 +3,9 @@ namespace Auth;
 
 class LDAPUser extends User
 {
-    private $ldap_obj;
+    use LDAPCachableObject;
+
+    private $ldapObj;
     private $server;
 
     function __construct($data=false)
@@ -18,17 +20,17 @@ class LDAPUser extends User
             {
                 throw new \Exception('No such LDAP User!');
             }
-            $this->ldap_obj = $users[0];
+            $this->ldapObj = $users[0];
         }
         else
         {
             if(isset($data['extended']))
             {
-                $this->ldap_obj = $data['extended'];
+                $this->ldapObj = $data['extended'];
             }
             else
             {
-                $this->ldap_obj = $data;
+                $this->ldapObj = $data;
             }
         }
     }
@@ -55,8 +57,8 @@ class LDAPUser extends User
         if(!empty($group))
         {
             $group = $group[0];
-            $dn  = $this->ldap_obj->dn;
-            $uid = $this->ldap_obj->uid[0];
+            $dn  = $this->ldapObj->dn;
+            $uid = $this->ldapObj->uid[0];
             if(isset($group['member']))
             {
                 if(in_array($dn, $group['member']))
@@ -89,74 +91,47 @@ class LDAPUser extends User
 
     function getDisplayName()
     {
-        if(!isset($this->ldap_obj->displayname) || !isset($this->ldap_obj->displayname[0]))
-        {
-            return $this->getGivenName();
-        }
-        return $this->ldap_obj->displayname[0];
+        return $this->getFieldSingleValue('displayName');
     }
 
     function getGivenName()
     {
-        if(!isset($this->ldap_obj->givenname) || !isset($this->ldap_obj->givenname[0]))
-        {
-            return false;
-        }
-        return $this->ldap_obj->givenname[0];
+        return $this->getFieldSingleValue('givenName');
     }
 
     function getEmail()
     {
-        if(!isset($this->ldap_obj->mail) || !isset($this->ldap_obj->mail[0]))
-        {
-            return false;
-        }
-        return $this->ldap_obj->mail[0];
+        return $this->getFieldSingleValue('mail');
     }
 
     function getUid()
     {
-        if(!isset($this->ldap_obj->uid) || !isset($this->ldap_obj->uid[0]))
-        {
-            return false;
-        }
-        return $this->ldap_obj->uid[0];
+        return $this->getFieldSingleValue('uid');
     }
 
     function getPhoto()
     {
-        if(!isset($this->ldap_obj->jpegphoto) || !isset($this->ldap_obj->jpegphoto[0]))
-        {
-            return false;
-        }
-        return $this->ldap_obj->jpegphoto[0];
+        return $this->getFieldSingleValue('jpegPhoto');
     }
 
     function getPhoneNumber()
     {
-        if(!isset($this->ldap_obj->mobile) || !isset($this->ldap_obj->mobile[0]))
-        {
-            return false;
-        }
-        return $this->ldap_obj->mobile[0];
+        return $this->getFieldSingleValue('mobile');
     }
 
     function getOrganization()
     {
-        if(!isset($this->ldap_obj->o) || !isset($this->ldap_obj->o[0]))
+        $org = $this->getFieldSingleValue('o');
+        if($org === false)
         {
             return 'Volunteer';
         }
-        return $this->ldap_obj->o[0];
+        return $org;
     }
 
     function getTitles()
     {
-        if(!isset($this->ldap_obj->title) || !isset($this->ldap_obj->title[0]))
-        {
-            return false;
-        }
-        $titles = $this->ldap_obj->title;
+        $titles = $this->getField('title');
         if(isset($titles['count']))
         {
             unset($titles['count']);
@@ -166,74 +141,42 @@ class LDAPUser extends User
 
     function getState()
     {
-        if(!isset($this->ldap_obj->st) || !isset($this->ldap_obj->st[0]))
-        {
-            return false;
-        }
-        return $this->ldap_obj->st[0];;
+        return $this->getFieldSingleValue('st');
     }
 
     function getCity()
     {
-        if(!isset($this->ldap_obj->l) || !isset($this->ldap_obj->l[0]))
-        {
-            return false;
-        }
-        return $this->ldap_obj->l[0];;
+        return $this->getFieldSingleValue('l');
     }
 
     function getLastName()
     {
-        if(!isset($this->ldap_obj->sn) || !isset($this->ldap_obj->sn[0]))
-        {
-            return false;
-        }
-        return $this->ldap_obj->sn[0];;
+        return $this->getFieldSingleValue('sn');
     }
 
     function getNickName()
     {
-        if(!isset($this->ldap_obj->cn) || !isset($this->ldap_obj->cn[0]))
-        {
-            return false;
-        }
-        return $this->ldap_obj->cn[0];;
+        return $this->getFieldSingleValue('cn');
     }
 
     function getAddress()
     {
-        if(!isset($this->ldap_obj->postaladdress) || !isset($this->ldap_obj->postaladdress[0]))
-        {
-            return false;
-        } 
-        return $this->ldap_obj->postaladdress[0];
+        return $this->getFieldSingleValue('postalAddress');
     }
 
     function getPostalCode()
     {
-        if(!isset($this->ldap_obj->postalcode) || !isset($this->ldap_obj->postalcode[0]))
-        {
-            return false;
-        }
-        return $this->ldap_obj->postalcode[0];;
+        return $this->getFieldSingleValue('postalCode');
     }
 
     function getCountry()
     {
-        if(!isset($this->ldap_obj->c) || !isset($this->ldap_obj->c[0]))
-        {
-            return false;
-        }
-        return $this->ldap_obj->c[0];
+        return $this->getFieldSingleValue('c');
     }
 
     function getOrganizationUnits()
     {
-        if(!isset($this->ldap_obj->ou))
-        {
-            return false;
-        }
-        $units = $this->ldap_obj->ou;
+        $units = $this->getField('ou');
         if(isset($units['count']))
         {
             unset($units['count']);
@@ -243,11 +186,7 @@ class LDAPUser extends User
 
     function getLoginProviders()
     {
-        if(!isset($this->ldap_obj->host))
-        {
-            return false;
-        }
-        $hosts = $this->ldap_obj->host;
+        $hosts = $this->getField('host');
         if(isset($hosts['count']))
         {
             unset($hosts['count']);
@@ -275,88 +214,6 @@ class LDAPUser extends User
         {
             return false;
         }
-    }
-
-    private function setFieldLocal($fieldName, $fieldValue)
-    {
-        if($this->ldap_obj === false)
-        {
-            $this->ldap_obj = array();
-        }
-        if($fieldValue === null || strlen($fieldValue) === 0)
-        {
-            if(isset($this->ldap_obj[$fieldName]))
-            {
-                unset($this->ldap_obj[$fieldName]);
-            }
-            return true;
-        }
-        $this->ldap_obj[$fieldName] = $fieldValue;
-        return true;
-    }
-
-    private function appendFieldLocal($fieldName, $fieldValue)
-    {
-        if($this->ldap_obj === false)
-        {
-            $this->ldap_obj = array();
-        }
-        if(!isset($this->ldap_obj[$fieldName]))
-        {
-            $this->ldap_obj[$fieldName] = array();
-        }
-        $this->ldap_obj[$fieldName][] = $fieldValue;
-        return true;
-    }
-
-    private function setFieldServer($fieldName, $fieldValue)
-    {
-        $obj = array('dn'=>$this->ldap_obj->dn);
-        if($fieldValue !== null && strlen($fieldValue) > 0)
-        {
-            $obj[$fieldName] = $fieldValue;
-        }
-        else
-        {
-            $obj[$fieldName] = null;
-        }
-        $lowerName = strtolower($fieldName);
-        $this->ldap_obj->{$lowerName} = array($fieldValue);
-        return $this->update($obj);
-    }
-
-    private function appendFieldServer($fieldName, $fieldValue)
-    {
-        $obj = array('dn'=>$this->ldap_obj->dn);
-        if(isset($this->ldap_obj->{$fieldName}))
-        {
-            $obj[$fieldName] = $this->ldap_obj->{$fieldName};
-            $obj[$fieldName][$obj[$fieldName]['count']] = $fieldValue;
-            $obj[$fieldName]['count']++;
-        }
-        else
-        {
-            $obj[$fieldName] = $fieldValue;
-        }
-        return $this->update($obj);
-    }
-
-    private function setField($fieldName, $fieldValue)
-    {
-        if(!is_object($this->ldap_obj))
-        {
-            return $this->setFieldLocal($fieldName, $fieldValue);
-        }
-        return $this->setFieldServer($fieldName, $fieldValue);
-    }
-
-    private function appendField($fieldName, $fieldValue)
-    {
-        if(!is_object($this->ldap_obj))
-        {
-            return $this->appendFieldLocal($fieldName, $fieldValue);
-        }
-        return $this->appendFieldServer($fieldName, $fieldValue);
     }
 
     function addLoginProvider($provider)
@@ -442,21 +299,6 @@ class LDAPUser extends User
         return new static($user[0]);
     }
 
-    private function update($obj)
-    {
-        try
-        {
-            return $this->server->update($obj);
-        }
-        catch(\Exception $ex)
-        {
-            $auth = \AuthProvider::getInstance();
-            $ldap = $auth->getAuthenticator('Auth\LDAPAuthenticator');
-            $this->server = $ldap->get_and_bind_server(true);
-            return $this->server->update($obj);
-        }
-    }
-
     function setDisplayName($name)
     {
         return $this->setField('displayName', $name);
@@ -479,7 +321,7 @@ class LDAPUser extends User
 
     function setUid($uid)
     {
-        if(!is_object($this->ldap_obj))
+        if(!is_object($this->ldapObj))
         {
             return $this->setFieldLocal('uid', $uid);
         }
@@ -545,14 +387,14 @@ class LDAPUser extends User
 
     function flushUser()
     {
-        if(is_object($this->ldap_obj))
+        if(is_object($this->ldapObj))
         {
             //In this mode we are always up to date
             return true;
         }
-        $obj = $this->ldap_obj;
+        $obj = $this->ldapObj;
         $obj['objectClass'] = array('top', 'inetOrgPerson', 'extensibleObject');
-        $obj['dn'] = 'uid='.$this->ldap_obj['uid'].','.$this->server->user_base;
+        $obj['dn'] = 'uid='.$this->ldapObj['uid'].','.$this->server->user_base;
         if(!isset($obj['sn']))
         {
             $obj['sn'] = $obj['uid'];
@@ -571,18 +413,18 @@ class LDAPUser extends User
         $auth = \AuthProvider::getInstance();
         $ldap = $auth->getAuthenticator('Auth\LDAPAuthenticator');
         $ldap->get_and_bind_server(true);
-        $ldap_obj = $this->server->read($ldap->user_base, new \Data\Filter('uid eq '.$this->getUid()));
-        $ldap_obj = $ldap_obj[0];
+        $ldapObj = $this->server->read($ldap->user_base, new \Data\Filter('uid eq '.$this->getUid()));
+        $ldapObj = $ldapObj[0];
         $hash = false;
-        if(isset($ldap_obj->userpassword))
+        if(isset($ldapObj->userpassword))
         {
-            $hash = hash('sha512', $ldap_obj->dn.';'.$ldap_obj->userpassword[0].';'.$ldap_obj->mail[0]);
+            $hash = hash('sha512', $ldapObj->dn.';'.$ldapObj->userpassword[0].';'.$ldapObj->mail[0]);
         }
         else
         {
-            $hash = hash('sha512', $ldap_obj->dn.';'.openssl_random_pseudo_bytes(10).';'.$ldap_obj->mail[0]);
+            $hash = hash('sha512', $ldapObj->dn.';'.openssl_random_pseudo_bytes(10).';'.$ldapObj->mail[0]);
         }
-        $obj = array('dn'=>$this->ldap_obj->dn);
+        $obj = array('dn'=>$this->ldapObj->dn);
         $obj['uniqueIdentifier'] = $hash;
         if($this->server->update($obj) === false)
         {
@@ -597,7 +439,7 @@ class LDAPUser extends User
         $auth = \AuthProvider::getInstance();
         $ldap = $auth->getAuthenticator('Auth\LDAPAuthenticator');
         $ldap->get_and_bind_server(true);
-        return $this->server->delete($this->ldap_obj->dn);
+        return $this->server->delete($this->ldapObj->dn);
     }
 }
 

@@ -147,6 +147,85 @@ class AuthProvider extends Singleton
     }
 
     /**
+     * Merge or set the returnValue as appropriate
+     *
+     * @param Auth\Group|Auth\User $returnValue The value to merge to
+     * @param Auth\Group|Auth\User $res The value to merge from
+     *
+     * @return Auth\Group|false The merged returnValue
+     */
+    private function mergeResult(&$returnValue, $res)
+    {
+        if($res === false)
+        {
+            return;
+        }
+        if($returnValue === false)
+        {
+            $returnValue = $res;
+            return;
+        }
+        $returnValue->merge($res);
+    }
+
+    /**
+     * Calls the indicated function on each Authenticator and merges the result
+     *
+     * @param string $functionName The function to call
+     * @param array $args The arguments for the function
+     * @param string $checkField A field to check if it is set a certain way before calling the function
+     * @param mixed $checkValue The value that field should be set to to not call the function
+     *
+     * @return Auth\Group|Auth\User|false The merged returnValue
+     */
+    private function callOnEach($functionName, $args, $checkField = false, $checkValue = false)
+    {
+        $ret = false;
+        $count = count($this->methods);
+        for($i = 0; $i < $count; $i++)
+        {
+            if($checkField)
+            {
+                if($this->methods[$i]->{$checkField} === $checkValue)
+                {
+                    continue;
+                }
+            }
+            $res = call_user_func_array(array($this->methods[$i], $functionName), $args);
+            $this->mergeResult($ret, $res);
+        }
+        return $ret;
+    }
+
+    /**
+     * Calls the indicated function on each Authenticator and add the result
+     *
+     * @param string $functionName The function to call
+     * @param string $checkField A field to check if it is set a certain way before calling the function
+     * @param mixed $checkValue The value that field should be set to to not call the function
+     *
+     * @return integer|false The added returnValue
+     */
+    private function addFromEach($functionName, $checkField = false, $checkValue = false)
+    {
+        $retCount = 0;
+        $count = count($this->methods);
+        for($i = 0; $i < $count; $i++)
+        {
+            if($checkField)
+            {
+                if($this->methods[$i]->{$checkField} === $checkValue)
+                {
+                    continue;
+                }
+            }
+            $res = call_user_func(array($this->methods[$i], $functionName));
+            $retCount += $res;
+        }
+        return $retCount;
+    }
+
+    /**
      * Get an Auth\Group by its name
      *
      * @param string $name The name of the group
@@ -158,33 +237,10 @@ class AuthProvider extends Singleton
     {
         if($methodName === false)
         {
-            $ret = false;
-            $res = false;
-            $count = count($this->methods);
-            for($i = 0; $i < $count; $i++)
-            {
-                if($this->methods[$i]->current === false) continue;
-
-                $res = $this->methods[$i]->getGroupByName($name);
-                if($res !== false)
-                {
-                    if($ret === false)
-                    {
-                        $ret = $res;
-                    }
-                    else
-                    {
-                        $ret->merge($res);
-                    }
-                }
-            }
-            return $ret;
+            return $this->callOnEach('getGroupByName', array($name));
         }
-        else
-        {
-            $auth = $this->getAuthenticator($methodName);
-            return $auth->getGroupByName($name);
-        }
+        $auth = $this->getAuthenticator($methodName);
+        return $auth->getGroupByName($name);
     }
 
     /**
@@ -203,33 +259,10 @@ class AuthProvider extends Singleton
     {
         if($methodName === false)
         {
-            $ret = false;
-            $res = false;
-            $count = count($this->methods);
-            for($i = 0; $i < $count; $i++)
-            {
-                if($this->methods[$i]->current === false) continue;
-
-                $res = $this->methods[$i]->getUsersByFilter($filter, $select, $top, $skip, $orderby);
-                if($res !== false)
-                {
-                    if($ret === false)
-                    {
-                        $ret = $res;
-                    }
-                    else
-                    {
-                        $ret->merge($res);
-                    }
-                }
-            }
-            return $ret;
+            return $this->callOnEach('getUsersByFilter', array($filter, $select, $top, $skip, $orderby), 'current');
         }
-        else
-        {
-            $auth = $this->getAuthenticator($methodName);
-            return $auth->getUsersByFilter($filter, $select, $top, $skip, $orderby);
-        }
+        $auth = $this->getAuthenticator($methodName);
+        return $auth->getUsersByFilter($filter, $select, $top, $skip, $orderby);
     }
 
     /**
@@ -248,33 +281,10 @@ class AuthProvider extends Singleton
     {
         if($methodName === false)
         {
-            $ret = false;
-            $res = false;
-            $count = count($this->methods);
-            for($i = 0; $i < $count; $i++)
-            {
-                if($this->methods[$i]->pending === false) continue;
-
-                $res = $this->methods[$i]->getPendingUsersByFilter($filter, $select, $top, $skip, $orderby);
-                if($res !== false)
-                {
-                    if($ret === false)
-                    {
-                        $ret = $res;
-                    }
-                    else
-                    {
-                        $ret->merge($res);
-                    }
-                }
-            }
-            return $ret;
+            return $this->callOnEach('getPendingUsersByFilter', array($filter, $select, $top, $skip, $orderby), 'pending');
         }
-        else
-        {
-            $auth = $this->getAuthenticator($methodName);
-            return $auth->getPendingUsersByFilter($filter, $select, $top, $skip, $orderby);
-        }
+        $auth = $this->getAuthenticator($methodName);
+        return $auth->getPendingUsersByFilter($filter, $select, $top, $skip, $orderby);
     }
 
     /**
@@ -293,33 +303,10 @@ class AuthProvider extends Singleton
     {
         if($methodName === false)
         {
-            $ret = false;
-            $res = false;
-            $count = count($this->methods);
-            for($i = 0; $i < $count; $i++)
-            {
-                if($this->methods[$i]->current === false) continue;
-
-                $res = $this->methods[$i]->getGroupsByFilter($filter, $select, $top, $skip, $orderby);
-                if($res !== false)
-                {
-                    if($ret === false)
-                    {
-                        $ret = $res;
-                    }
-                    else
-                    {
-                        $ret->merge($res);
-                    }
-                }
-            }
-            return $ret;
+            return $this->callOnEach('getGroupsByFilter', array($filter, $select, $top, $skip, $orderby), 'current');
         }
-        else
-        {
-            $auth = $this->getAuthenticator($methodName);
-            return $auth->getGroupsByFilter($filter, $select, $top, $skip, $orderby);
-        }
+        $auth = $this->getAuthenticator($methodName);
+        return $auth->getGroupsByFilter($filter, $select, $top, $skip, $orderby);
     }
 
     /**
@@ -333,21 +320,10 @@ class AuthProvider extends Singleton
     {
         if($methodName === false)
         {
-            $userCount = 0;
-            $count = count($this->methods);
-            for($i = 0; $i < $count; $i++)
-            {
-                if($this->methods[$i]->current === false) continue;
-
-                $userCount += $this->methods[$i]->getActiveUserCount();
-            }
-            return $userCount;
+            return $this->addFromEach('getActiveUserCount', 'current');
         }
-        else
-        {
-            $auth = $this->getAuthenticator($methodName);
-            return $auth->getActiveUserCount();
-        }
+        $auth = $this->getAuthenticator($methodName);
+        return $auth->getActiveUserCount();
     }
 
     /**
@@ -361,21 +337,10 @@ class AuthProvider extends Singleton
     {
         if($methodName === false)
         {
-            $userCount = 0;
-            $count = count($this->methods);
-            for($i = 0; $i < $count; $i++)
-            {
-                if($this->methods[$i]->pending === false) continue;
-
-                $userCount += $this->methods[$i]->getPendingUserCount();
-            }
-            return $userCount;
+            return $this->addFromEach('getPendingUserCount', 'pending');
         }
-        else
-        {
-            $auth = $this->getAuthenticator($methodName);
-            return $auth->getPendingUserCount();
-        }
+        $auth = $this->getAuthenticator($methodName);
+        return $auth->getPendingUserCount();
     }
 
     /**
@@ -389,21 +354,10 @@ class AuthProvider extends Singleton
     {
         if($methodName === false)
         {
-            $groupCount = 0;
-            $count = count($this->methods);
-            for($i = 0; $i < $count; $i++)
-            {
-                if($this->methods[$i]->current === false) continue;
-
-                $groupCount += $this->methods[$i]->getGroupCount();
-            }
-            return $groupCount;
+            return $this->addFromEach('getGroupCount', 'current');
         }
-        else
-        {
-            $auth = $this->getAuthenticator($methodName);
-            return $auth->getGroupCount();
-        }
+        $auth = $this->getAuthenticator($methodName);
+        return $auth->getGroupCount();
     }
 
     /**
@@ -437,15 +391,11 @@ class AuthProvider extends Singleton
      */
     public function impersonateUser($userArray)
     {
-        if(is_object($userArray))
-        {
-            \FlipSession::setUser($userArray);
-        }
-        else
+        if(!is_object($userArray))
         {
             $user = new $userArray['class']($userArray);
-            \FlipSession::setUser($user);
         }
+        \FlipSession::setUser($user);
     }
 
     /**
@@ -473,11 +423,8 @@ class AuthProvider extends Singleton
             }
             return false;
         }
-        else
-        {
-            $auth = $this->getAuthenticator($methodName);
-            return $auth->getTempUserByHash($hash);
-        }
+        $auth = $this->getAuthenticator($methodName);
+        return $auth->getTempUserByHash($hash);
     }
 
     /**
@@ -505,11 +452,8 @@ class AuthProvider extends Singleton
             }
             return false;
         }
-        else
-        {
-            $auth = $this->getAuthenticator($methodName);
-            return $auth->createPendingUser($user);
-        }
+        $auth = $this->getAuthenticator($methodName);
+        return $auth->createPendingUser($user);
     }
 
     /**
@@ -541,11 +485,8 @@ class AuthProvider extends Singleton
             }
             return false;
         }
-        else
-        {
-            $auth = $this->getAuthenticator($methodName);
-            return $auth->activatePendingUser($user);
-        }
+        $auth = $this->getAuthenticator($methodName);
+        return $auth->activatePendingUser($user);
     }
 
     /**
@@ -573,15 +514,12 @@ class AuthProvider extends Singleton
             }
             return false;
         }
-        else
+        $auth = $this->getAuthenticator($methodName);
+        if($auth === false)
         {
-            $auth = $this->getAuthenticator($methodName);
-            if($auth === false)
-            {
-                return $this->getUserByResetHash($hash, false);
-            }
-            return $auth->getUserByResetHash($hash);
+            return $this->getUserByResetHash($hash, false);
         }
+        return $auth->getUserByResetHash($hash);
     }
 
     /**

@@ -3,17 +3,7 @@ require_once('Autoload.php');
 class FlipsideCAPTCHA implements JsonSerializable
 {
     public  $random_id;
-    private $valid_ids;
-    /*TODO - Replace with DB or something */
-    private $questions = array('How much water should you bring to Burning Flipside?',
-                               'Will you bring anything to sell at the event?',
-                               'What does "no" mean?',
-                               'What does MOOP stand for?'
-                              );
-    private $answers   = array('3 gallons per day',
-                               'no',
-                               'no',
-                               'matter out of place');
+    private $validIDs;
 
     public static function get_valid_captcha_ids()
     {
@@ -50,9 +40,9 @@ class FlipsideCAPTCHA implements JsonSerializable
 
     public function __construct()
     {
-        $this->valid_ids = FlipsideCAPTCHA::get_valid_captcha_ids();
-        $this->random_id = mt_rand(0, count($this->valid_ids)-1);
-        $this->random_id = $this->valid_ids[$this->random_id];
+        $this->validIDs = FlipsideCAPTCHA::get_valid_captcha_ids();
+        $this->random_id = mt_rand(0, count($this->validIDs)-1);
+        $this->random_id = $this->validIDs[$this->random_id];
     }
 
     public function get_question()
@@ -96,17 +86,17 @@ class FlipsideCAPTCHA implements JsonSerializable
         return strcasecmp($this->get_answer(),$answer) == 0;
     }
 
-    public function draw_captcha($explination=true, $return=false, $own_form=false)
+    public function draw_captcha($explination=true, $return=false, $ownForm=false)
     {
         $string = '';
 
-        if($own_form)
+        if($ownForm)
         {
             $string.= '<form id="flipcaptcha" name="flipcaptcha">';
         }
 
         $string .= '<label for="captcha" class="col-sm-2 control-label">'.$this->get_question().'</label><div class="col-sm-10"><input class="form-control" type="text" id="captcha" name="captcha" placeholder="'.$this->get_hint().'" required/></div>';
-        if($own_form)
+        if($ownForm)
         {
             $string.='</form>';
         }
@@ -119,10 +109,7 @@ class FlipsideCAPTCHA implements JsonSerializable
         {
             echo $string;
         }
-        else
-        {
-            return $string;
-        }
+        return $string;
     }
 
     public function self_json_encode()

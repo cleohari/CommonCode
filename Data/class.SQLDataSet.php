@@ -39,6 +39,11 @@ class SQLDataSet extends DataSet
         {
             return true;
         }
+        else if($this->_get_row_count_for_query('SELECT * FROM sqlite_master WHERE name LIKE '.$this->pdo->quote($name)) > 0)
+        {
+            return true;
+        }
+        return false;
     }
 
     function _tableExists($name)

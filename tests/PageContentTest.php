@@ -8,7 +8,7 @@ class PageContentTest extends PHPUnit_Framework_TestCase
         $GLOBALS['BROWSCAP_CACHE']        = './tests/helpers';
         $page = new FlipPage('Test');
         ob_start();
-        $page->print_page();
+        $page->printPage();
         $html = ob_get_contents();
         ob_end_clean();
         
@@ -22,7 +22,7 @@ class PageContentTest extends PHPUnit_Framework_TestCase
 
         $page = new FlipPage('Something Else');
         ob_start();
-        $page->print_page();
+        $page->printPage();
         $html = ob_get_contents();
         ob_end_clean();
 
@@ -40,7 +40,7 @@ class PageContentTest extends PHPUnit_Framework_TestCase
         $GLOBALS['BROWSCAP_CACHE']        = './tests/helpers';
         $page = new FlipPage('Test');
         ob_start();
-        $page->print_page();
+        $page->printPage();
         $html = ob_get_contents();
         ob_end_clean();
 
@@ -81,7 +81,7 @@ class PageContentTest extends PHPUnit_Framework_TestCase
         $page->browser->Browser = 'IE';
         $page->browser->MajorVer = 9;
         ob_start();
-        $page->print_page();
+        $page->printPage();
         $html = ob_get_contents();
         ob_end_clean();
 
@@ -103,7 +103,7 @@ class PageContentTest extends PHPUnit_Framework_TestCase
         $page->browser->Browser = 'IE';
         $page->browser->MajorVer = 8;
         ob_start();
-        $page->print_page();
+        $page->printPage();
         $html = ob_get_contents();
         ob_end_clean();
 

@@ -151,14 +151,12 @@ class Email extends \SerializableObject
      */
     public function setFromAddress($email, $name=false)
     {
+        $address = $email;
         if($name !== false)
         {
-            $this->sender = $name.' <'.$email.'>';
+            $address = $name.' <'.$email.'>';
         }
-        else
-        {
-            $this->sender = $email;
-        }
+        $this->sender = $address;
     }
 
     /**
@@ -219,14 +217,12 @@ class Email extends \SerializableObject
      */
     public function setReplyTo($email, $name=false)
     {
+        $address = $email;
         if($name !== false)
         {
-            $this->replyTo = $name.' <'.$email.'>';
+            $address = $name.' <'.$email.'>';
         }
-        else
-        {
-            $this->replyTo = $email;
-        }
+        $this->replyTo = $address;
     }
 
     /**
@@ -307,12 +303,9 @@ class Email extends \SerializableObject
         $mimeType = finfo_file($finfo, $filename);
         if($mimeType === false)
         {
-            if(file_exists($filename) && is_file($filename) && is_readable($filename))
-            {
-                $this->addAttachmentFromBuffer($name, file_get_contents($filename));
-            }
+            $mimeType = 'application/octet-stream';
         }
-        else
+        if(file_exists($filename) && is_file($filename) && is_readable($filename))
         {
             $this->addAttachmentFromBuffer($name, file_get_contents($filename), $mimeType);
         }
@@ -336,47 +329,46 @@ class Email extends \SerializableObject
     public function getRawMessage()
     {
         $boundary = uniqid(rand(), true);
-        $raw_message = 'To: '.$this->encodeRecipients($this->getToAddresses())."\n";
-        $raw_message.= 'From: '.$this->encodeRecipients($this->getFromAddress())."\n";
+        $rawMessage = 'To: '.$this->encodeRecipients($this->getToAddresses())."\n";
+        $rawMessage.= 'From: '.$this->encodeRecipients($this->getFromAddress())."\n";
         if(!empty($this->cc))
         {
-            $raw_message.= 'CC: '. $this->encodeRecipients($this->getCCAddresses())."\n";
+            $rawMessage.= 'CC: '. $this->encodeRecipients($this->getCCAddresses())."\n";
         }
         if(!empty($this->bcc))
         {
-            $raw_message.= 'BCC: '. $this->encodeRecipients($this->getBCCAddresses())."\n";
+            $rawMessage.= 'BCC: '. $this->encodeRecipients($this->getBCCAddresses())."\n";
         }
-        $raw_message .= 'Subject: '.$this->getSubject()."\n";
-        $raw_message .= 'MIME-Version: 1.0'."\n";
-        $raw_message .= 'Content-type: Multipart/Mixed; boundary="'.$boundary.'"'."\n";
-        $raw_message .= "\n--{$boundary}\n";
-        $raw_message .= 'Content-type: Multipart/Alternative; boundary="alt-'.$boundary.'"'."\n";
-        $text_body    = $this->getTextBody();
-        if($text_body !== false && strlen($text_body) > 0)
+        $rawMessage .= 'Subject: '.$this->getSubject()."\n";
+        $rawMessage .= 'MIME-Version: 1.0'."\n";
+        $rawMessage .= 'Content-type: Multipart/Mixed; boundary="'.$boundary.'"'."\n";
+        $rawMessage .= "\n--{$boundary}\n";
+        $rawMessage .= 'Content-type: Multipart/Alternative; boundary="alt-'.$boundary.'"'."\n";
+        $textBody    = $this->getTextBody();
+        if($textBody !== false && strlen($textBody) > 0)
         {
-            $raw_message.= "\n--alt-{$boundary}\n";
-            $raw_message.= "Content-Type: text/plain\n\n";
-            $raw_message.= $text_body."\n";
+            $rawMessage.= "\n--alt-{$boundary}\n";
+            $rawMessage.= "Content-Type: text/plain\n\n";
+            $rawMessage.= $textBody."\n";
         }
-        $html_body    = $this->getHTMLBody();
-        if($html_body !== false && strlen($html_body) > 0)
+        $htmlBody    = $this->getHTMLBody();
+        if($htmlBody !== false && strlen($htmlBody) > 0)
         {
-            $charset = empty($this->messageHtmlCharset) ? '' : "; charset=\"{$this->messageHtmlCharset}\"";
-            $raw_message .= "\n--alt-{$boundary}\n";
-            $raw_message .= 'Content-Type: text/html; charset="UTF-8"'."\n\n";
-            $raw_message .= $html_body."\n";
+            $rawMessage .= "\n--alt-{$boundary}\n";
+            $rawMessage .= 'Content-Type: text/html; charset="UTF-8"'."\n\n";
+            $rawMessage .= $htmlBody."\n";
         }
-        $raw_message.= "\n--alt-{$boundary}--\n";
+        $rawMessage.= "\n--alt-{$boundary}--\n";
         foreach($this->attachments as $attachment)
         {
-            $raw_message.= "\n--{$boundary}\n";
-            $raw_message.= 'Content-Type: '. $attachment['mimeType'].'; name="'.$attachment['name']."\"\n";
-            $raw_message.= 'Content-Disposition: attachment'."\n";
-            $raw_message.= 'Content-Transfer-Encoding: base64'."\n\n";
-            $raw_message.= chunk_split(base64_encode($attachment['data']), 76, "\n")."\n";
+            $rawMessage.= "\n--{$boundary}\n";
+            $rawMessage.= 'Content-Type: '. $attachment['mimeType'].'; name="'.$attachment['name']."\"\n";
+            $rawMessage.= 'Content-Disposition: attachment'."\n";
+            $rawMessage.= 'Content-Transfer-Encoding: base64'."\n\n";
+            $rawMessage.= chunk_split(base64_encode($attachment['data']), 76, "\n")."\n";
         }
-        $raw_message .= "\n--{$boundary}--\n";
-        return $raw_message;
+        $rawMessage .= "\n--{$boundary}--\n";
+        return $rawMessage;
     }
 
     /**

@@ -96,6 +96,7 @@ class SerializableObject implements ArrayAccess,JsonSerializable
                 }
                 else
                 {
+                    $key = strtr($key, array(' '=>'', ','=>''));
                     $xml->writeElement($key, $value);
                 }
             }
