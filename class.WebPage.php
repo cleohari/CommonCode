@@ -201,22 +201,6 @@ class WebPage
      * @param boolean $selfClose Does this tag end with a close (/>)?
      *
      * @return string The tag as a string
-     *
-     * @deprecated 1.0.0 This funciton is deprectated and will be remoted. Please use createOpenTag() instead
-     */
-    function create_open_tag($tagName, $attribs=array(), $selfClose=false)
-    {
-        return $this->createOpenTag($tagName, $attribs, $selfClose);
-    }
-
-    /**
-     * Create a tag to be added to the document
-     *
-     * @param string $tagName The tag's name (i.e. the string right after the open sign
-     * @param array $attribs Attributes to be added to the tag in the form key=value
-     * @param boolean $selfClose Does this tag end with a close (/>)?
-     *
-     * @return string The tag as a string
      */
     protected function createOpenTag($tagName, $attribs=array(), $selfClose=false)
     {
@@ -237,20 +221,6 @@ class WebPage
         return $tag.'>';
     }
    
-    /**
-     * Create a close tag to be added to the document
-     *
-     * @param string $tagName The tag's name (i.e. the string right after the open sign
-     *
-     * @return string The close tag as a string
-     *
-     * @deprecated 1.0.0 This funciton is deprectated and will be remoted. Please use createCloseTag() instead
-     */ 
-    function create_close_tag($tagName)
-    {
-        return $this->createCloseTag($tagName);
-    }
-
     /**
      * Create a close tag to be added to the document
      *
