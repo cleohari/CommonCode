@@ -78,6 +78,17 @@ class DataSetTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(isset($dataSet['Persons']));
         $this->assertTrue(isset($dataSet['Users']));
         $this->assertTrue(isset($dataSet['UserPerople']));
+        $this->assertFalse(isset($dataSet['Test']));
+
+        try
+        {
+            $dataSet['Test'];
+            $this->assertTrue(false);
+        }
+        catch(\Exception $ex)
+        {
+            $this->assertTrue(true);
+        }
 
         $dataTable = $dataSet['Persons'];
         $this->assertNotFalse($dataTable);
@@ -106,6 +117,9 @@ class DataSetTest extends PHPUnit_Framework_TestCase
         $this->assertCount(2, $res[0]);
         $this->assertEquals(2, $res[0]['PersonID']);
         $this->assertEquals('123 Fake Street', $res[0]['Address']);
+
+        $res = $dataTable->read(new \Data\Filter('PersonID eq 3'));
+        $this->assertFalse($res);
 
         $res = $dataTable->read(false, false, 1);
         $this->assertCount(1, $res);
