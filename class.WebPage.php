@@ -175,38 +175,10 @@ class WebPage
      * Add a tag to the head element
      *
      * @param string $tag The tag to add to the page header
-     *
-     * @deprecated 1.0.0 This funciton is deprectated and will be remoted. Please use addHeadTag() instead
-     */
-    function add_head_tag($tag)
-    {
-        $this->addHeadTag($tag);
-    }
-
-    /**
-     * Add a tag to the head element
-     *
-     * @param string $tag The tag to add to the page header
      */
     protected function addHeadTag($tag)
     {
         array_push($this->head_tags, $tag);
-    }
-
-    /**
-     * Create a tag to be added to the document
-     *
-     * @param string $tagName The tag's name (i.e. the string right after the open sign
-     * @param array $attribs Attributes to be added to the tag in the form key=value
-     * @param boolean $selfClose Does this tag end with a close (/>)?
-     *
-     * @return string The tag as a string
-     *
-     * @deprecated 1.0.0 This funciton is deprectated and will be remoted. Please use createOpenTag() instead
-     */
-    function create_open_tag($tagName, $attribs=array(), $selfClose=false)
-    {
-        return $this->createOpenTag($tagName, $attribs, $selfClose);
     }
 
     /**
@@ -243,39 +215,10 @@ class WebPage
      * @param string $tagName The tag's name (i.e. the string right after the open sign
      *
      * @return string The close tag as a string
-     *
-     * @deprecated 1.0.0 This funciton is deprectated and will be remoted. Please use createCloseTag() instead
-     */ 
-    function create_close_tag($tagName)
-    {
-        return $this->createCloseTag($tagName);
-    }
-
-    /**
-     * Create a close tag to be added to the document
-     *
-     * @param string $tagName The tag's name (i.e. the string right after the open sign
-     *
-     * @return string The close tag as a string
      */
     protected function createCloseTag($tagName)
     {
         return '</'.$tagName.'>';
-    }
-
-    /**
-     * Create a link to be added to the document
-     *
-     * @param string $linkName The text inside the link
-     * @param string $linkTarget The location the link goes to
-     *
-     * @return string The link
-     *
-     * @deprecated 1.0.0 This funciton is deprectated and will be remoted. Please use createLink() instead
-     */
-    function create_link($linkName, $linkTarget='#')
-    {
-        return $this->createLink($linkName, $linkTarget);
     }
 
     /**

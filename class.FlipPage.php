@@ -577,7 +577,7 @@ class FlipPage extends WebPage
         $ret = '';
         foreach($names as $name)
         {
-            $ret.='<li>'.$this->create_link($name, $sites[$name]).'</li>';
+            $ret.='<li>'.$this->createLink($name, $sites[$name]).'</li>';
         }
         return $ret;
     }
@@ -618,7 +618,7 @@ class FlipPage extends WebPage
         {
             return '<li>'.$name.'</li>';
         }
-        return '<li>'.$this->create_link($name, $links[$name]).'</li>';
+        return '<li>'.$this->createLink($name, $links[$name]).'</li>';
     }
 
     protected function getLinksMenus()

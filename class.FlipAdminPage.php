@@ -46,7 +46,7 @@ class FlipAdminPage extends FlipPage
     {
         $ret  = '<li>';
         $href = $this->getHrefForDropdown($link);
-        $ret .= $this->create_link($name.' <i class="fa fa-arrow-right"></i>', $href);
+        $ret .= $this->createLink($name.' <i class="fa fa-arrow-right"></i>', $href);
         $ret.='<ul>';
         $subNames = array_keys($link);
         foreach($subNames as $subName)
