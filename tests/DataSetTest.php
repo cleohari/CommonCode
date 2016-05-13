@@ -69,6 +69,16 @@ class DataSetTest extends PHPUnit_Framework_TestCase
         $res = $dataSet->raw_query('CREATE TABLE Persons (PersonID int, LastName varchar(255), FirstName varchar(255), Address varchar(255), City varchar(255));');
         $this->assertNotFalse($res);
 
+        $res = $dataSet->raw_query('CREATE TABLE tblUsers (UID int, UserName varchar(255), Password varchar(255), PersonID int);');
+        $this->assertNotFalse($res);
+
+        $res = $dataSet->raw_query('CREATE VIEW vUserPerople AS SELECT tblUsers.UID, tblUsers.UserName, Persons.LastName, Persons.FirstName FROM Persons INNER JOIN tblUsers ON Persons.PersonID = tblUsers.PersonID;');
+        $this->assertNotFalse($res);
+
+        $this->assertTrue(isset($dataSet['Persons']));
+        $this->assertTrue(isset($dataSet['Users']));
+        $this->assertTrue(isset($dataSet['UserPerople']));
+
         $dataTable = $dataSet['Persons'];
         $this->assertNotFalse($dataTable);
         $this->assertInstanceOf('Data\SQLDataTable', $dataTable);
