@@ -37,7 +37,7 @@ class WebPage
     /** A string to add to the body open tag */
     public $body_tags;
     /** Does the browser support import of CSS or HTML? */
-    public $import_support;
+    public $importSupport;
 
     /**
      * Create a new WebPage
@@ -55,7 +55,7 @@ class WebPage
         $this->browscap->doAutoUpdate = false;
         $this->browscap->lowercase = true;
         $this->browser = $this->getBrowser();
-        $this->import_support = false;
+        $this->importSupport = false;
         
         $browserName = $this->getBrowserName();
         if($browserName === 'IE' && $this->getBrowserMajorVer() <= 7)
@@ -64,7 +64,7 @@ class WebPage
         }
         else if($browserName === 'Chrome' && $this->getBrowserMajorVer() >= 36)
         {
-            $this->import_support = true;
+            $this->importSupport = true;
         }
     }
 

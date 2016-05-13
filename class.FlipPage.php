@@ -493,7 +493,7 @@ class FlipPage extends WebPage
     public function addCSSByURI($uri, $async=false)
     {
         $attributes = array('rel'=>'stylesheet', 'href'=>$uri, 'type'=>'text/css');
-        if($async === true && $this->import_support === true)
+        if($async === true && $this->importSupport === true)
         {
             $attributes['rel'] = 'import';
         }
