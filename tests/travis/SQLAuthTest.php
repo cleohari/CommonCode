@@ -4,7 +4,7 @@ class SQLAuthTest extends PHPUnit_Framework_TestCase
 {
     public function testSQLAuthenticator()
     {
-        $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/travis/helpers';
+        $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
         if(!isset(FlipsideSettings::$dataset['auth']))
         {
             $params = array('dsn'=>'mysql:host=localhost;dbname=auth', 'host'=>'localhost', 'user'=>'root', 'pass'=>'');
