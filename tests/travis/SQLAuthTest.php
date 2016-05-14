@@ -49,6 +49,8 @@ class SQLAuthTest extends PHPUnit_Framework_TestCase
         $group = $auth->getGroupByName('test');
         $this->assertNotFalse($group);
         $this->assertInstanceOf('Auth\SQLGroup', $group);
+
+        $this->assertTrue($auth->isInGroupNamed('test'));
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
