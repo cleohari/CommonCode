@@ -152,14 +152,14 @@ class SQLAuthenticator extends Authenticator
         if($this->current === false) return false;
         $userDataTable = $this->getDataTable('user');
         $filter = new \Data\Filter("uid eq '$username'");
-        $users = $userDataTable->read($filter, 'uid,pass');
+        $users = $userDataTable->read($filter);
         if($users === false || !isset($users[0]))
         {
             return false;
         }
         if(password_verify($password, $users[0]['pass']))
         {
-            return array('res'=>true, 'extended'=>$users[0]['uid']);
+            return array('res'=>true, 'extended'=>$users[0]);
         }
         return false;
     }

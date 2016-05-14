@@ -8,13 +8,9 @@ class SQLUser extends User
     function __construct($data=false)
     {
         $this->data = array();
-        if($data !== false && !isset($data['extended']))
+        if($data !== false)
         {
-            //Generic user object
             $this->data = $data;
-        }
-        else
-        {
             if(isset($data['extended']))
             {
                 $this->data = $data['extended'];
