@@ -7,7 +7,7 @@ class SQLUser extends User
 
     function __construct($data=false)
     {
-        $this->uid = false;
+        $this->data = array();
         if($data !== false && !isset($data['extended']))
         {
             //Generic user object
@@ -48,7 +48,11 @@ class SQLUser extends User
 
     function getUid()
     {
-        return $this->data['uid'];
+        if(isset($this->data['uid']))
+        {
+            return $this->data['uid'];
+        }
+        return false;
     }
 }
 
