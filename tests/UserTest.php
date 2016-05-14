@@ -54,6 +54,67 @@ class UserTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($user->setCountry('test'));
         $this->assertFalse($user->setOrganizationUnits('test'));
         $this->assertFalse($user->getPasswordResetHash());
+
+        try
+        {
+            $res = $user->change_pass('test', 'test');
+            $this->assertFalse(true);
+        }
+        catch(\Exception $ex)
+        {
+            $this->assertFalse(false);
+        }
+
+        try
+        {
+            $res = $user->change_pass('test', 'test', true);
+            $this->assertFalse(true);
+        }
+        catch(\Exception $ex)
+        {
+            $this->assertFalse(false);
+        }
+
+        try
+        {
+            $res = $user->change_pass(false, 'test');
+            $this->assertFalse(true);
+        }
+        catch(\Exception $ex)
+        {
+            $this->assertFalse(false);
+        }
+
+        $vcard = $user->getVcard();
+        $this->assertEquals("BEGIN:VCARD\nVERSION:2.1\nN:;\nFN:\nORG: Austin Artistic Reconstruction\nTEL;TYPE=MOBILE,VOICE:\nEMAIL;TYPE=PREF,INTERNET:\nEND:VCARD\n", $vcard);
+
+        $data = new \stdClass();
+        $user->editUser($data);
+        $this->assertFalse(false);
+
+        try
+        {
+            $data->password = 'test';
+            $data->oldpass = 'test';
+            $user->editUser($data);
+            $this->assertFalse(true);
+        }
+        catch(\Exception $ex)
+        {
+            $this->assertFalse(false);
+        }
+
+        try
+        {
+            $data->password = 'test';
+            $data->hash = 'test';
+            $user->editUser($data);
+            $this->assertFalse(true);
+        }
+        catch(\Exception $ex)
+        {
+            $this->assertFalse(false);
+        }
     }
 
     public function testLDAPUser()

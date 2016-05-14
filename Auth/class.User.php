@@ -597,7 +597,10 @@ class User extends \SerializableObject
         //Make sure we are bound in write mode
         $auth = \AuthProvider::getInstance();
         $ldap = $auth->getAuthenticator('Auth\LDAPAuthenticator');
-        $ldap->get_and_bind_server(true);
+        if($ldap !== false)
+        {
+            $ldap->get_and_bind_server(true);
+        }
     }
 
     /**
@@ -792,7 +795,11 @@ class User extends \SerializableObject
         $ret = "BEGIN:VCARD\nVERSION:2.1\n";
         $ret.= 'N:'.$this->getLastName().';'.$this->getGivenName()."\n";
         $ret.= 'FN:'.$this->getGivenName()."\n";
-        $ret.= 'TITLE:'.implode(',', $this->getTitles())."\n";
+        $titles = $this->getTitles();
+        if($titles !== false)
+        {
+            $ret.= 'TITLE:'.implode(',', $titles)."\n";
+        }
         $ret.= "ORG: Austin Artistic Reconstruction\n";
         $ret.= 'TEL;TYPE=MOBILE,VOICE:'.$this->getPhoneNumber()."\n";
         $ret.= 'EMAIL;TYPE=PREF,INTERNET:'.$this->getEmail()."\n";
