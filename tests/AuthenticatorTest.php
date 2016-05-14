@@ -66,6 +66,16 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($auth->isLoggedIn($res));
         $this->assertNull($auth->getUser(false));
     }
+
+    public function testLDAPAuthenticator()
+    {
+        $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
+        $params = array('current'=>true, 'pending'=>false, 'supplement'=>false, 'host'=>'ldap://ldap.forumsys.com', 'user_base'=>'dc=example,dc=com', 'group_base'=>'dc=example,dc=com', 
+                        'bind_dn'=>'cn=read-only-admin,dc=example,dc=com', 'bind_pass'=>'password');
+        $auth = new \Auth\LDAPAuthenticator($params);
+        $this->assertNotNull($auth);
+        $this->assertInstanceOf('Auth\LDAPAuthenticator', $auth);
+    }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
 ?>
