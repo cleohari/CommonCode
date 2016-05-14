@@ -44,7 +44,7 @@ class SQLAuthTest extends PHPUnit_Framework_TestCase
         $group = $auth->getGroupByName('test');
         $this->assertFalse($group);
 
-        $dataSet->raw_query('INSERT INTO group VALUES (\'test\', \'test\', \'Test Group\');');
+        $dataSet->raw_query('INSERT INTO `group` VALUES (\'test\', \'test\', \'Test Group\');');
 
         $group = $auth->getGroupByName('test');
         $this->assertNotFalse($group);
