@@ -276,7 +276,11 @@ class FlipREST extends \Slim\Slim
     {
         parent::__construct();
         $this->config('debug', false);
-        $headers = apache_request_headers();
+        $headers = array();
+        if(php_sapi_name() !== "cli")
+        {
+            $headers = apache_request_headers();
+        }
         $this->add(new OAuth2Auth($headers));
         $this->add(new FlipRESTFormat());
         $errorHandler = array($this, 'errorHandler');
