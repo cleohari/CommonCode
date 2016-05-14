@@ -21,11 +21,16 @@ class SQLAuthTest extends PHPUnit_Framework_TestCase
 
         $dataSet->raw_query('INSERT INTO tbluser VALUES (\'test\', \'$2y$10$bBzajdH12NSC9MOmMldfxOlozTKSS7Dyl3apWhyO53/KobKtHkoES\');');
 
-        $tmp = $dataSet['user']->read(new \Data\Filter("uid eq 'test'"));
-        print_r($tmp);
-
         $res = $auth->login('test', 'test');
         $this->assertNotFalse($res);
+
+        $this->assertFalse($auth->login('test', 'test1'));
+
+        $this->assertTrue($auth->isLoggedIn($res));
+        $this->assertFalse($auth->isLoggedIn(false));
+
+        $user = $auth->getUser($res);
+        $this->assertInstanceOf('Auth\SQLUser', $user);
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
