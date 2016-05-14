@@ -19,7 +19,7 @@ class SQLAuthTest extends PHPUnit_Framework_TestCase
 
         $this->assertFalse($auth->login('test', 'test'));
 
-        $dataSet->raw_query('INSERT INTO tbluser (\'test\', \'$2a$10$KSQ0GxWYv9nUS.TmNSLYnOo/33maFdXhgQ9qU.fLsMSNwtMnwl3FS\');');
+        $dataSet->raw_query('INSERT INTO tbluser (\'test\', \'$2y$10$bBzajdH12NSC9MOmMldfxOlozTKSS7Dyl3apWhyO53/KobKtHkoES\');');
 
         $res = $auth->login('test', 'test');
         $this->assertNotFalse($res);
