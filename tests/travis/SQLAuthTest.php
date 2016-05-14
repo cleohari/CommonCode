@@ -12,15 +12,15 @@ class SQLAuthTest extends PHPUnit_Framework_TestCase
         }
 
         $dataSet = \DataSetFactory::getDataSetByName('auth');
-        $dataSet->raw_query('CREATE TABLE tbluser (uid VARCHAR(255), pass VARCHAR(255));');
-        $dataSet->raw_query('CREATE TABLE `group` (gid VARCHAR(255), uid VARCHAR(255), description VARCHAR(255));');
+        $dataSet->raw_query('CREATE TABLE user (uid VARCHAR(255), pass VARCHAR(255));');
+        $dataSet->raw_query('CREATE TABLE tblgroup (gid VARCHAR(255), uid VARCHAR(255), description VARCHAR(255));');
 
         $params = array('current'=>true, 'pending'=>false, 'supplement'=>false, 'current_data_set'=>'auth');
         $auth = new \Auth\SQLAuthenticator($params);
 
         $this->assertFalse($auth->login('test', 'test'));
 
-        $dataSet->raw_query('INSERT INTO tbluser VALUES (\'test\', \'$2y$10$bBzajdH12NSC9MOmMldfxOlozTKSS7Dyl3apWhyO53/KobKtHkoES\');');
+        $dataSet->raw_query('INSERT INTO user VALUES (\'test\', \'$2y$10$bBzajdH12NSC9MOmMldfxOlozTKSS7Dyl3apWhyO53/KobKtHkoES\');');
 
         $res = $auth->login('test', 'test');
         $this->assertNotFalse($res);
@@ -44,7 +44,7 @@ class SQLAuthTest extends PHPUnit_Framework_TestCase
         $group = $auth->getGroupByName('test');
         $this->assertFalse($group);
 
-        $dataSet->raw_query('INSERT INTO `group` VALUES (\'test\', \'test\', \'Test Group\');');
+        $dataSet->raw_query('INSERT INTO tblgroup VALUES (\'test\', \'test\', \'Test Group\');');
 
         $group = $auth->getGroupByName('test');
         $this->assertNotFalse($group);
