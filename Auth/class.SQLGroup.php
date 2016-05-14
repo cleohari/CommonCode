@@ -28,7 +28,7 @@ class SQLGroup extends Group
         return false;
     }
 
-    public function getMemberUids()
+    public function getMemberUids($recursive=true)
     {
         return $this->members(false);
     }
