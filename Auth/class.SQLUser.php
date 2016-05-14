@@ -3,21 +3,17 @@ namespace Auth;
 
 class SQLUser extends User
 {
-    private $uid;
+    private $data;
 
     function __construct($data=false)
     {
-        $this->uid = false;
-        if($data !== false && !isset($data['extended']))
+        $this->data = array();
+        if($data !== false)
         {
-            //Generic user object
-            //TODO get from DB
-        }
-        else
-        {
+            $this->data = $data;
             if(isset($data['extended']))
             {
-                $this->uid = $data['extended'];
+                $this->data = $data['extended'];
             }
         }
     }
@@ -26,7 +22,8 @@ class SQLUser extends User
     {
         $auth_data_set = \DataSetFactory::getDataSetByName('authentication');
         $group_data_table = $auth_data_set['group'];
-        $filter = new \Data\Filter("uid eq '$this->uid' and gid eq '$name'");
+        $uid = $this->getUid();
+        $filter = new \Data\Filter("uid eq '$uid' and gid eq '$name'");
         $groups = $group_data_table->read($filter);
         if($groups === false || !isset($groups[0]))
         {
@@ -38,12 +35,20 @@ class SQLUser extends User
 
     function getEmail()
     {
-        return $this->uid;
+        if(isset($this->data['mail']))
+        {
+             return $this->data['mail'];
+        }
+        return $this->getUid();
     }
 
     function getUid()
     {
-        return $this->uid;
+        if(isset($this->data['uid']))
+        {
+            return $this->data['uid'];
+        }
+        return false;
     }
 }
 
