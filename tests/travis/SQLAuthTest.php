@@ -10,6 +10,10 @@ class SQLAuthTest extends PHPUnit_Framework_TestCase
             $params = array('dsn'=>'mysql:host=localhost;dbname=auth', 'host'=>'localhost', 'user'=>'root', 'pass'=>'');
             FlipsideSettings::$dataset['auth'] = array('type'=>'SQLDataSet', 'params'=>$params);
         }
+
+        $dataSet = \DataSetFactory::getDataSetByName('auth');
+        $dataSet->raw_query('CREATE TABLE tbluser (uid VARCHAR(255), pass VARCHAR(255));');
+
         $params = array('current'=>true, 'pending'=>false, 'supplement'=>false, 'current_data_set'=>'auth');
         $auth = new \Auth\SQLAuthenticator($params);
 
