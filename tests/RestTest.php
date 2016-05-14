@@ -25,6 +25,15 @@ class RestTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, $elements->length);
         $node = $elements->item(0);
         $this->assertStringStartsWith('404', $node->nodeValue);
+
+        $data = array('uid'=>'test');
+        \FlipSession::setUser(new \Auth\SQLUser($data));
+        ob_start();
+        $app->run();
+        $html = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertNotFalse($app->user);
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */

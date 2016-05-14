@@ -287,16 +287,6 @@ class FlipREST extends \Slim\Slim
         $this->error($errorHandler);
     }
 
-    function route_get($uri, $handler)
-    {
-        return $this->get($uri, $handler);
-    }
-
-    function route_post($uri, $handler)
-    {
-        return $this->post($uri, $handler);
-    }
-
     function get_json_body($array=false)
     {
         return $this->getJsonBody($array);
