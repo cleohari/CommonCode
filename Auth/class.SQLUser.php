@@ -8,6 +8,7 @@ class SQLUser extends User
     function __construct($data=false)
     {
         $this->uid = false;
+        var_dump($data);
         if($data !== false && !isset($data['extended']))
         {
             //Generic user object
