@@ -175,6 +175,10 @@ class SQLAuthenticator extends Authenticator
 
     public function getUser($data)
     {
+        if(isset($this->params['current_data_set']))
+        {
+            $data['current_data_set'] = $this->params['current_data_set'];
+        }
         return new SQLUser($data);
     }
 
