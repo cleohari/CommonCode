@@ -94,6 +94,7 @@ class UserTest extends PHPUnit_Framework_TestCase
 
         try
         {
+            $data = new \stdClass();
             $data->password = 'test';
             $data->oldpass = 'test';
             $user->editUser($data);
@@ -106,8 +107,51 @@ class UserTest extends PHPUnit_Framework_TestCase
 
         try
         {
+            $data = new \stdClass();
             $data->password = 'test';
             $data->hash = 'test';
+            $user->editUser($data);
+            $this->assertFalse(true);
+        }
+        catch(\Exception $ex)
+        {
+            $this->assertFalse(false);
+        }
+
+        $data = new \stdClass();
+        $data->displayName = 'test';
+        $data->givenName = 'test';
+        $data->sn = 'test';
+        $data->cn = 'test';
+        $data->postalAddress = 'test';
+        $data->l = 'test';
+        $data->st = 'test';
+        $data->postalCode = 'test';
+        $data->c = 'test';
+        $data->o = 'test';
+        $data->title = 'test';
+        $data->ou = 'test';
+        $data->jpegPhoto = base64_encode('test');
+        $data->mobile = 'test';
+        $user->editUser($data);
+        $this->assertFalse(false);
+
+        try
+        {
+            $data = new \stdClass();
+            $data->mail = 'test';
+            $user->editUser($data);
+            $this->assertFalse(true);
+        }
+        catch(\Exception $ex)
+        {
+            $this->assertFalse(false);
+        }
+
+        try
+        {
+            $data = new \stdClass();
+            $data->uid = 'test';
             $user->editUser($data);
             $this->assertFalse(true);
         }
