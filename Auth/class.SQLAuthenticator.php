@@ -71,8 +71,8 @@ if(!function_exists('password_hash') || !function_exists('password_verify'))
 
 class SQLAuthenticator extends Authenticator
 {
-    private $dataSet = null;
-    private $pendingDataSet = null;
+    public $dataSet = null;
+    public $pendingDataSet = null;
     private $dataTables = array();
     private $params;
 
@@ -179,7 +179,7 @@ class SQLAuthenticator extends Authenticator
         {
             $data['current_data_set'] = $this->params['current_data_set'];
         }
-        return new SQLUser($data);
+        return new SQLUser($data, $this);
     }
 
     public function getGroupByName($name)
@@ -203,7 +203,7 @@ class SQLAuthenticator extends Authenticator
         {
             return false;
         }
-        return new SQLUser($users[0]);
+        return new SQLUser($users[0], $this);
     }
 
     private function getDataByFilter($dataTableName, $filter, $select, $top, $skip, $orderby)
@@ -222,7 +222,7 @@ class SQLAuthenticator extends Authenticator
         $count = count($data);
         for($i = 0; $i < $count; $i++)
         {
-            $data[$i] = new $className($groups[$i]);
+            $data[$i] = new $className($groups[$i], $this);
         }
         return $data;
     }
