@@ -590,29 +590,39 @@ class User extends \SerializableObject
     }
 
     /**
-     * Modify the user given the provided data object
-     *
-     * @param stdClass $data The user's new data
-     *
-     * @return true|false true if the user's data was changed, false otherwise
+     * Allow write for the user
      */
-    public function editUser($data)
+    protected function enableReadWrite()
     {
         //Make sure we are bound in write mode
         $auth = \AuthProvider::getInstance();
         $ldap = $auth->getAuthenticator('Auth\LDAPAuthenticator');
         $ldap->get_and_bind_server(true);
-        if(isset($data->oldpass) && isset($data->password))
+    }
+
+    /**
+     * Update the user password if required
+     */
+    private function editUserPassword($data)
+    {
+        if(isset($data->password))
         {
-            $this->change_pass($data->oldpass, $data->password);
-            unset($data->oldpass);
+            if(isset($data->oldpass))
+            {
+                $this->change_pass($data->oldpass, $data->password);
+                unset($data->oldpass);
+            }
+            else if(isset($data->hash))
+            {
+                $this->change_pass($data->hash, $data->password, true);
+                unset($data->hash);
+            }
             unset($data->password);
         }
-        else if(isset($data->hash) && isset($data->password))
-        {
-            $this->change_pass($data->hash, $data->password, true);
-            return;
-        }
+    }
+
+    private function editNames($data)
+    {
         if(isset($data->displayName))
         {
             $this->setDisplayName($data->displayName);
@@ -623,11 +633,20 @@ class User extends \SerializableObject
             $this->setGivenName($data->givenName);
             unset($data->givenName);
         }
-        if(isset($data->jpegPhoto))
+        if(isset($data->sn))
         {
-            $this->setPhoto(base64_decode($data->jpegPhoto));
-            unset($data->jpegPhoto);
+            $this->setLastName($data->sn);
+            unset($data->sn);
         }
+        if(isset($data->cn))
+        {
+            $this->setNickName($data->cn);
+            unset($data->cn);
+        }
+    }
+
+    private function checkForUnsettableElements($data)
+    {
         if(isset($data->mail))
         {
             if($data->mail !== $this->getEmail())
@@ -644,45 +663,24 @@ class User extends \SerializableObject
             }
             unset($data->uid);
         }
-        if(isset($data->mobile))
+    }
+
+    private function editAddressElements($data)
+    {
+        if(isset($data->postalAddress))
         {
-            $this->setPhoneNumber($data->mobile);
-            unset($data->mobile);
-        }
-        if(isset($data->o))
-        {
-            $this->setOrganization($data->o);
-            unset($data->o);
-        }
-        if(isset($data->title))
-        {
-            $this->setTitles($data->title);
-            unset($data->title);
-        }
-        if(isset($data->st))
-        {
-            $this->setState($data->st);
-            unset($data->st);
+            $this->setAddress($data->postalAddress);
+            unset($data->postalAddress);
         }
         if(isset($data->l))
         {
             $this->setCity($data->l);
             unset($data->l);
         }
-        if(isset($data->sn))
+        if(isset($data->st))
         {
-            $this->setLastName($data->sn);
-            unset($data->sn);
-        }
-        if(isset($data->cn))
-        {
-            $this->setNickName($data->cn);
-            unset($data->cn);
-        }
-        if(isset($data->postalAddress))
-        {
-            $this->setAddress($data->postalAddress);
-            unset($data->postalAddress);
+            $this->setState($data->st);
+            unset($data->st);
         }
         if(isset($data->postalCode))
         {
@@ -694,10 +692,53 @@ class User extends \SerializableObject
             $this->setCountry($data->c);
             unset($data->c);
         }
+    }
+
+    private function editOrganizationElements($data)
+    {
+        if(isset($data->o))
+        {
+            $this->setOrganization($data->o);
+            unset($data->o);
+        }
+        if(isset($data->title))
+        {
+            $this->setTitles($data->title);
+            unset($data->title);
+        }
         if(isset($data->ou))
         {
             $this->setOrganizationUnits($data->ou);
             unset($data->ou);
+        }
+    }
+
+    /**
+     * Modify the user given the provided data object
+     *
+     * @param stdClass $data The user's new data
+     *
+     * @return true|false true if the user's data was changed, false otherwise
+     */
+    public function editUser($data)
+    {
+        $this->enableReadWrite();
+
+        $this->checkForUnsettableElements($data);
+        $this->editUserPassword($data);
+        $this->editNames($data);
+        $this->editAddressElements($data);
+        $this->editOrganizationElements($data);
+
+        if(isset($data->jpegPhoto))
+        {
+            $this->setPhoto(base64_decode($data->jpegPhoto));
+            unset($data->jpegPhoto);
+        }
+        if(isset($data->mobile))
+        {
+            $this->setPhoneNumber($data->mobile);
+            unset($data->mobile);
         }
     }
 
