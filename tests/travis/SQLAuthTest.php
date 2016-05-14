@@ -50,6 +50,7 @@ class SQLAuthTest extends PHPUnit_Framework_TestCase
         $this->assertNotFalse($group);
         $this->assertInstanceOf('Auth\SQLGroup', $group);
 
+        $user = $auth->getUserByName('test');
         $this->assertTrue($user->isInGroupNamed('test'));
     }
 }
