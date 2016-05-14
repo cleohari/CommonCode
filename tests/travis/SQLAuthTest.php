@@ -12,6 +12,8 @@ class SQLAuthTest extends PHPUnit_Framework_TestCase
         }
         $params = array('current'=>true, 'pending'=>false, 'supplement'=>false, 'current_data_set'=>'auth');
         $auth = new \Auth\SQLAuthenticator($params);
+
+        $this->assertFalse($auth->login('test', 'test'));
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
