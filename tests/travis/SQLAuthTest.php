@@ -13,6 +13,7 @@ class SQLAuthTest extends PHPUnit_Framework_TestCase
 
         $dataSet = \DataSetFactory::getDataSetByName('auth');
         $dataSet->raw_query('CREATE TABLE tbluser (uid VARCHAR(255), pass VARCHAR(255));');
+        $dataSet->raw_query('CREATE TABLE group (gid VARCHAR(255), description VARCHAR(255));');
 
         $params = array('current'=>true, 'pending'=>false, 'supplement'=>false, 'current_data_set'=>'auth');
         $auth = new \Auth\SQLAuthenticator($params);
@@ -31,6 +32,23 @@ class SQLAuthTest extends PHPUnit_Framework_TestCase
 
         $user = $auth->getUser($res);
         $this->assertInstanceOf('Auth\SQLUser', $user);
+        $this->assertEquals('test', $user->getUid());
+ 
+        $user = $auth->getUserByName('test');
+        $this->assertInstanceOf('Auth\SQLUser', $user);
+        $this->assertEquals('test', $user->getUid());
+
+        $user = $auth->getUserByName('test1');
+        $this->assertFalse($user);
+
+        $group = $auth->getGroupByName('test');
+        $this->assertFalse($group);
+
+        $dataSet->raw_query('INSERT INTO group VALUES (\'test\', \'Test Group\');');
+
+        $group = $auth->getGroupByName('test');
+        $this->assertNotFalse($group);
+        $this->assertInstanceOf('Auth\SQLGroup', $group);
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
