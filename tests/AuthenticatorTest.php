@@ -75,6 +75,24 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase
         $auth = new \Auth\LDAPAuthenticator($params);
         $this->assertNotNull($auth);
         $this->assertInstanceOf('Auth\LDAPAuthenticator', $auth);
+
+        $users = $auth->getUsersByFilter(false);
+        $this->assertNotNull($users);
+
+        $users = $auth->getUsersByFilter(false, array('cn', 'mail'));
+        $this->assertNotNull($users);
+        $count = count($users);
+        for($i = 0; $i < $count; $i++)
+        {
+            $this->assertCount(2, $users[$i]);
+        }
+
+        $users = $auth->getUsersByFilter(false, false, 1, 1);
+        $this->assertNotNull($users);
+        $this->assertCount(1, $users);
+
+        $users = $auth->getUsersByFilter(false, false, false, false, array('mail'));
+        $this->assertNotNull($users);
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
