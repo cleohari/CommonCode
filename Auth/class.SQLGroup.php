@@ -30,10 +30,10 @@ class SQLGroup extends Group
 
     public function getMemberUids($recursive=true)
     {
-        return $this->members(false);
+        return $this->members(false), $recursive, true;
     }
 
-    public function members($details=false)
+    public function members($details=false, $recursive=true, $includeGroups=true)
     {
         //TODO
         return array();
