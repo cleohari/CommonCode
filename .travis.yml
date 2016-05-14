@@ -10,6 +10,7 @@ services:
 
 before_install:
   - echo "extension=ldap.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
+  - mysql -e 'create database auth;'
 
 install:
   - composer require satooshi/php-coveralls:~1.0
@@ -18,7 +19,7 @@ before_script:
   - mkdir -p build/logs
 
 script:
-  - phpunit --coverage-clover build/logs/clover.xml
+  - phpunit -c phpunit_travis.xml --coverage-clover build/logs/clover.xml
 
 after_success:
   - sh -c 'if [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then php vendor/bin/coveralls -v; fi;'

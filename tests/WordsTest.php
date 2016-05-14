@@ -9,7 +9,7 @@ class WordsTest extends PHPUnit_Framework_TestCase
         for($i = 0; $i < 10; $i++)
         {
             $index = rand(0, $count-1);
-            $this->assertGreaterThanOrEqual(1, strlen($words[$index]));
+            $this->assertGreaterThanOrEqual(1, strlen($words[$index]), 'Word at index '.$index.' is 0 length!');
         }
     }
 }

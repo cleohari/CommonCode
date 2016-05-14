@@ -4,6 +4,7 @@
     <testsuites>
         <testsuite name="Common Code Test Suite">
             <directory>./tests/</directory>
+            <exclude>./tests/travis</exclude>
         </testsuite>
     </testsuites>
 
