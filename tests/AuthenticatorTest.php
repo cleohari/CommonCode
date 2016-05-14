@@ -93,6 +93,7 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase
 
         $users = $auth->getUsersByFilter(false, false, false, false, array('mail'));
         $this->assertNotNull($users);
+
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
