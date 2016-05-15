@@ -193,6 +193,25 @@ class UserTest extends PHPUnit_Framework_TestCase
         {
             $this->assertFalse(false);
         }
+
+        $this->assertTrue($user->setPass('test'));
+        $this->assertTrue($user->setDisplayName('test'));
+        $this->assertTrue($user->setGivenName('test'));
+        $this->assertTrue($user->setLastName('test'));
+        $this->assertTrue($user->setEmail('test@example.com'));
+        $this->assertTrue($user->setUid('test'));
+        $this->assertTrue($user->setPhoto(base64_encode('test')));
+        $this->assertTrue($user->setAddress('test'));
+        $this->assertTrue($user->setPostalCode('123456'));
+        $this->assertTrue($user->setCountry('US'));
+        $this->assertTrue($user->setState('TX'));
+        $this->assertTrue($user->setCity('test'));
+        $this->assertTrue($user->setPhoneNumber('1234567890'));
+        $this->assertTrue($user->setTitles('test'));
+        $this->assertTrue($user->setTitles(array('test', 'test2')));
+        $this->assertTrue($user->setOrganizationUnits('test'));
+        $this->assertTrue($user->setOrganizationUnits(array('test', 'test2')));
+        
     }
 
     public function testSQLUser()

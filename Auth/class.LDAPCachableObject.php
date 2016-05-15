@@ -148,7 +148,7 @@ trait LDAPCachableObject
         {
             $this->ldapObj = array();
         }
-        if($fieldValue === null || strlen($fieldValue) === 0)
+        if($fieldValue === null || (is_string($fieldValue) && strlen($fieldValue) === 0))
         {
             if(isset($this->ldapObj[$fieldName]))
             {
