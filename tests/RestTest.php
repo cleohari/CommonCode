@@ -36,6 +36,32 @@ class RestTest extends PHPUnit_Framework_TestCase
         $this->assertNotFalse($app->user);
     }
 
+    public function throwError()
+    {
+        throw new \Exception('Test', 100);
+    }
+
+    public function testError()
+    {
+        $app = new \FlipREST();
+        $this->assertInstanceOf('FlipREST', $app);
+
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
+        $_SERVER['REQUEST_URI'] = '/';
+        $_SERVER['SERVER_NAME'] = 'localhost';
+
+        $app->get('/', array($this, 'throwError'));
+
+        ob_start();
+        $app->run();
+        $html = ob_get_contents();
+        ob_end_clean();
+        $json = json_decode($html);
+        $this->assertEquals(100, $json->code);
+        $this->assertEquals('Test', $json->message);
+    }
+
     public function call()
     {
     }
@@ -63,6 +89,19 @@ class RestTest extends PHPUnit_Framework_TestCase
 
         \FlipSession::setUser(false);
         $headers = array('Authorization'=>'Basic aHR0cHdhdGNoOmY=');
+        $_SERVER['PHP_AUTH_USER'] = '';
+        $_SERVER['PHP_AUTH_PW'] = '';
+        $plugin = new \OAuth2Auth($headers);
+        $plugin->setApplication($this);
+        $plugin->setNextMiddleware($this);
+        $plugin->call();
+        $this->assertFalse($this->user);
+    }
+
+    public function testOAuth()
+    {
+        \FlipSession::setUser(false);
+        $headers = array('Authorization'=>'Bearer aHR0cHdhdGNoOmY=');
         $_SERVER['PHP_AUTH_USER'] = '';
         $_SERVER['PHP_AUTH_PW'] = '';
         $plugin = new \OAuth2Auth($headers);

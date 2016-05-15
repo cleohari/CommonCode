@@ -565,6 +565,27 @@ class AuthProvider extends Singleton
         }
         return true;
     }
+
+    public function getUserByAccessCode($key, $methodName=false)
+    {
+        if($methodName === false)
+        {
+            $count = count($this->methods);
+            for($i = 0; $i < $count; $i++)
+            {
+                if($this->methods[$i]->current === false) continue;
+
+                $ret = $this->methods[$i]->getUserByAccessCode($key);
+                if($ret !== false)
+                {
+                    return $ret;
+                }
+            }
+            return false;
+        }
+        $auth = $this->getAuthenticator($methodName);
+        return $auth->getUserByAccessCode($key);
+    }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
 ?>
