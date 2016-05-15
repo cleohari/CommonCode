@@ -43,7 +43,7 @@ class OAuth2Auth extends \Slim\Middleware
         $user = FlipSession::getUser();
         if($user === false)
         {
-            $data = substr($header['Authorization'], 6);
+            $data = substr($header, 6);
             $userpass = explode(':', base64_decode($data));
             $user = $auth->getUserByLogin($userpass[0], $userpass[1]);
         }

@@ -40,17 +40,36 @@ class RestTest extends PHPUnit_Framework_TestCase
     {
     }
 
+    public function getLog()
+    {
+        return $this;
+    }
+
+    public function error($string)
+    {
+    }
+
     public function testBasicAuth()
     {
-        $headers = array('Authorization'=>'Basic aHR0cHdhdGNoOmY=');
+        \FlipSession::setUser(false);
+        $headers = array();
         $_SERVER['PHP_AUTH_USER'] = 'test';
         $_SERVER['PHP_AUTH_PW'] = 'test';
         $plugin = new \OAuth2Auth($headers);
-        $app = new \stdClass();
-        $plugin->setApplication($app);
+        $plugin->setApplication($this);
         $plugin->setNextMiddleware($this);
         $plugin->call();
-        $this->assertNotFalse($app->user);
+        $this->assertFalse($this->user);
+
+        \FlipSession::setUser(false);
+        $headers = array('Authorization'=>'Basic aHR0cHdhdGNoOmY=');
+        $_SERVER['PHP_AUTH_USER'] = '';
+        $_SERVER['PHP_AUTH_PW'] = '';
+        $plugin = new \OAuth2Auth($headers);
+        $plugin->setApplication($this);
+        $plugin->setNextMiddleware($this);
+        $plugin->call();
+        $this->assertFalse($this->user);
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
