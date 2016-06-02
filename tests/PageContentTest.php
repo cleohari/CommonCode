@@ -129,6 +129,41 @@ class PageContentTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($found);
     }
 
+    public function testPageWithUser()
+    {
+        $userParams = array('uid'=>'test');
+        \FlipSession::setUser(new \Auth\SQLUser($userParams));
+        $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
+        $GLOBALS['BROWSCAP_CACHE']        = './tests/helpers';
+        $page = new FlipPage('Test');
+        $page->browser = new stdClass();
+        $page->browser->Browser = 'IE';
+        $page->browser->MajorVer = 9;
+        ob_start();
+        $page->printPage();
+        $html = ob_get_contents();
+        ob_end_clean();
+
+        $doc = new DOMDocument();
+        libxml_use_internal_errors(true);
+        $doc->loadHTML($html);
+        $elements = $doc->getElementsByTagName('a');
+        for($i = 0; $i < $elements->length; $i++)
+        {
+            $node = $elements->item($i);
+            if($node->hasAttribute('href'))
+            {
+                $page = $node->getAttribute('href');
+                if(strstr($page, 'logout.php') !== false)
+                {
+                    $found = true;
+                    break;
+                }
+            }
+        }
+        $this->assertTrue($found);
+    }
+
     public function testAdminRendering()
     {
         $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';

@@ -22,6 +22,10 @@ class SQLUser extends User
 
     function isInGroupNamed($name)
     {
+        if($this->auth === false)
+        {
+            return false;
+        }
         $auth_data_set = $this->auth->dataSet;
         $group_data_table = $auth_data_set['group'];
         $uid = $this->getUid();
