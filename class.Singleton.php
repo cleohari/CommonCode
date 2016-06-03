@@ -51,6 +51,8 @@ class Singleton
 
     /**
      * A singleton can not be serialized and deserialized
+     * 
+     * @SuppressWarnings("UnusedPrivateMethod")
      */
     private function __wakeup()
     {
