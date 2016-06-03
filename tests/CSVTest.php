@@ -20,6 +20,14 @@ class CSVTest extends PHPUnit_Framework_TestCase
         $array = array($obj);
         $data = $serializer->serializeData('text/csv', $array);
         $this->assertEquals("Test1,Test2,ABC\n1,a,1\n", $data);
+
+        $serializer = new \Serialize\CSVSerializer();
+        $obj = new stdClass();
+        $obj->Test1 = 1;
+        $obj->Test2 = 'a';
+        $obj->ABC = '1';
+        $data = $serializer->serializeData('text/csv', $obj);
+        $this->assertEquals("Test1,Test2,ABC\n1,a,1\n", $data);
     }
 
     public function testComma()
@@ -35,6 +43,14 @@ class CSVTest extends PHPUnit_Framework_TestCase
         $serializer = new \Serialize\CSVSerializer();
         $array = array(array('Test1'=>1,'Test2,3'=>'a','ABC'=>'1,0'));
         $data = $serializer->serializeData('text/json', $array);
+        $this->assertNull($data);
+    }
+
+    public function testEmpty()
+    {
+        $serializer = new \Serialize\CSVSerializer();
+        $array = array();
+        $data = $serializer->serializeData('text/csv', $array);
         $this->assertNull($data);
     }
 }

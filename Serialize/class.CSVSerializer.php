@@ -17,7 +17,7 @@ class CSVSerializer extends SpreadSheetSerializer
         }
         $data = $this->getArray($array);
         ob_start();
-        $df = fopen("php://output", 'w');
+        $df = fopen('php://output', 'w');
         foreach($data as $row)
         {
             fputcsv($df, $row);

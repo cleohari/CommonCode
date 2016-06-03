@@ -20,7 +20,7 @@ abstract class SpreadSheetSerializer implements ISerializer
         $res = array();
         if(is_object($array))
         {
-            $array = get_object_vars($array);
+            $array = array(get_object_vars($array));
         }
         $first = reset($array);
         $keys = false;
