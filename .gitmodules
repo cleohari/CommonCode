@@ -19,3 +19,6 @@
 [submodule "libs/PHPMailer"]
 	path = libs/PHPMailer
 	url = https://github.com/PHPMailer/PHPMailer.git
+[submodule "libs/PHPExcel"]
+	path = libs/PHPExcel
+	url = https://github.com/PHPOffice/PHPExcel.git
