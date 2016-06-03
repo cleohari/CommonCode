@@ -15,6 +15,33 @@ abstract class SpreadSheetSerializer implements ISerializer
         return false;
     }
 
+    private function getKeysFromData($array)
+    {
+        $first = reset($array);
+        if(is_array($first))
+        {
+            return array_keys($first);
+        }
+        else if(is_object($first))
+        {
+            return array_keys(get_object_vars($first));
+        }
+        return false;
+    }
+
+    private function getRowArray($row)
+    {
+        if(is_object($row))
+        {
+            return get_object_vars($row);
+        }
+        if(!is_array($row))
+        {
+            return array($row);
+        }
+        return $row;
+    }
+
     protected function getArray(&$array)
     {
         $res = array();
@@ -22,29 +49,17 @@ abstract class SpreadSheetSerializer implements ISerializer
         {
             $array = array(get_object_vars($array));
         }
-        $first = reset($array);
-        $keys = false;
-        if(is_array($first))
+        $keys = $this->getKeysFromData($array);
+        if($keys === false)
         {
-            $keys = array_keys($first);
-        }
-        else if(is_object($first))
-        {
-            $keys = array_keys(get_object_vars($first));
+            return $array;
         }
         $colCount = count($keys);
         $res[] = $keys;
         foreach($array as $row)
         {
             $tmp = array();
-            if(is_object($row))
-            {
-                $row = get_object_vars($row);
-            }
-            if(!is_array($row))
-            {
-                $row = array($row);
-            }
+            $row = $this->getRowArray($row);
             for($j = 0; $j < $colCount; $j++)
             {
                 $colName = $keys[$j];
