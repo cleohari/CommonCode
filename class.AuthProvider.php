@@ -262,7 +262,7 @@ class AuthProvider extends Singleton
      *
      * @return array|false An array of Auth\User objects or false if no users were found
      */
-    public function getUsersByFilter($filter, $select=false, $top=false, $skip=false, $orderby=false, $methodName = false)
+    public function getUsersByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false, $methodName = false)
     {
         if($methodName === false)
         {
@@ -284,7 +284,7 @@ class AuthProvider extends Singleton
      *
      * @return array|false An array of Auth\PendingUser objects or false if no pending users were found
      */
-    public function getPendingUsersByFilter($filter, $select=false, $top=false, $skip=false, $orderby=false, $methodName = false)
+    public function getPendingUsersByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false, $methodName = false)
     {
         if($methodName === false)
         {
@@ -306,7 +306,7 @@ class AuthProvider extends Singleton
      *
      * @return array|false An array of Auth\Group objects or false if no pending users were found
      */
-    public function getGroupsByFilter($filter, $select=false, $top=false, $skip=false, $orderby=false, $methodName = false)
+    public function getGroupsByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false, $methodName = false)
     {
         if($methodName === false)
         {
@@ -381,7 +381,10 @@ class AuthProvider extends Singleton
         $count = count($this->methods);
         for($i = 0; $i < $count; $i++)
         {
-            if($this->methods[$i]->supplement === false) continue;
+            if($this->methods[$i]->supplement === false)
+            {
+                continue;
+            }
 
             array_push($ret, $this->methods[$i]->getSupplementLink());
         }
@@ -420,7 +423,10 @@ class AuthProvider extends Singleton
             $count = count($this->methods);
             for($i = 0; $i < $count; $i++)
             {
-                if($this->methods[$i]->pending === false) continue;
+                if($this->methods[$i]->pending === false)
+                {
+                    continue;
+                }
 
                 $ret = $this->methods[$i]->getTempUserByHash($hash);
                 if($ret !== false)
@@ -440,7 +446,7 @@ class AuthProvider extends Singleton
      * @param array $user An array of information about the user to create
      * @param string|false $methodName The AuthMethod if information is desired only from a particular Auth\Authenticator
      *
-     * @return true|false true if the user was successfully created. Otherwise false.
+     * @return boolean true if the user was successfully created. Otherwise false.
      */
     public function createPendingUser($user, $methodName = false)
     {
@@ -449,7 +455,10 @@ class AuthProvider extends Singleton
             $count = count($this->methods);
             for($i = 0; $i < $count; $i++)
             {
-                if($this->methods[$i]->pending === false) continue;
+                if($this->methods[$i]->pending === false)
+                {
+                    continue;
+                }
 
                 $ret = $this->methods[$i]->createPendingUser($user);
                 if($ret !== false)
@@ -472,7 +481,7 @@ class AuthProvider extends Singleton
      * @param Auth\PendingUser $user The user to turn into a current user
      * @param string|false $methodName The AuthMethod if information is desired only from a particular Auth\Authenticator
      *
-     * @return true|false true if the user was successfully created. Otherwise false.
+     * @return boolean true if the user was successfully created. Otherwise false.
      */
     public function activatePendingUser($user, $methodName = false)
     {
@@ -481,7 +490,10 @@ class AuthProvider extends Singleton
             $count = count($this->methods);
             for($i = 0; $i < $count; $i++)
             {
-                if($this->methods[$i]->current === false) continue;
+                if($this->methods[$i]->current === false)
+                {
+                    continue;
+                }
 
                 $ret = $this->methods[$i]->activatePendingUser($user);
                 if($ret !== false)
@@ -511,7 +523,10 @@ class AuthProvider extends Singleton
             $count = count($this->methods);
             for($i = 0; $i < $count; $i++)
             {
-                if($this->methods[$i]->current === false) continue;
+                if($this->methods[$i]->current === false)
+                {
+                    continue;
+                }
 
                 $ret = $this->methods[$i]->getUserByResetHash($hash);
                 if($ret !== false)
@@ -541,7 +556,10 @@ class AuthProvider extends Singleton
         $count = count($this->methods);
         for($i = 0; $i < $count; $i++)
         {
-            if($this->methods[$i]->supplement === false) continue;
+            if($this->methods[$i]->supplement === false)
+            {
+                continue;
+            }
 
             if($this->methods[$i]->getHostName() === $host)
             {
@@ -551,7 +569,7 @@ class AuthProvider extends Singleton
         return false;
     }
 
-    public function deletePendingUsersByFilter($filter, $methodName=false)
+    public function deletePendingUsersByFilter($filter, $methodName = false)
     {
         $users = $this->getPendingUsersByFilter($filter, false, false, false, false, $methodName);
         if($users === false)
@@ -566,14 +584,17 @@ class AuthProvider extends Singleton
         return true;
     }
 
-    public function getUserByAccessCode($key, $methodName=false)
+    public function getUserByAccessCode($key, $methodName = false)
     {
         if($methodName === false)
         {
             $count = count($this->methods);
             for($i = 0; $i < $count; $i++)
             {
-                if($this->methods[$i]->current === false) continue;
+                if($this->methods[$i]->current === false)
+                {
+                    continue;
+                }
 
                 $ret = $this->methods[$i]->getUserByAccessCode($key);
                 if($ret !== false)
