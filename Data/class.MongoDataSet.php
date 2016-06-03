@@ -84,6 +84,10 @@ class MongoDataSet extends DataSet
 
     private function setupMongoClient($params)
     {
+        if($params === false)
+        {
+            return;
+        }
         if(isset($params['user']))
         {
             $this->client = new \MongoClient('mongodb://'.$params['host'].'/'.$params['db'], array('username'=>$params['user'], 'password'=>$params['pass']));
@@ -97,6 +101,10 @@ class MongoDataSet extends DataSet
 
     private function setupMongoManager($params)
     {
+        if($params === false)
+        {
+            return;
+        }
         if(isset($params['user']))
         {
             $this->manager = new \MongoDB\Driver\Manager('mongodb://'.$params['user'].':'.$params['pass'].'@'.$params['host'].'/'.$params['db']);

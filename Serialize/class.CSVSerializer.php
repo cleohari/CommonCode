@@ -20,10 +20,15 @@ class CSVSerializer extends SpreadSheetSerializer
         $df = fopen('php://output', 'w');
         foreach($data as $row)
         {
+            if(!is_array($row))
+            {
+                $row = array($row);
+            }
             fputcsv($df, $row);
         }
         fclose($df);
-        return ob_get_clean();
+        $ret = ob_get_clean();
+        return $ret;
     }
 }
 ?>
