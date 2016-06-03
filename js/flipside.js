@@ -40,7 +40,10 @@ function browser_supports_font_face_css2(rule)
         sheet.insertRule(rule, 0);
         result = !(/unknown/i).test(sheet.cssRules[0].cssText);
         sheet.deleteRule(sheet.cssRules.length - 1);
-    } catch(ignore) {}
+    } catch(ignore)
+    {
+        console.log(ignore);
+    }
     return result;
 }
 
@@ -182,6 +185,7 @@ function string_startswith(str)
 
 if(typeof String.prototype.startsWith !== 'function')
 {
+    // eslint-disable-next-line no-extend-native
     String.prototype.startsWith = string_startswith;
 }
 
