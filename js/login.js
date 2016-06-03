@@ -1,7 +1,6 @@
 function login_submit_done(jqXHR)
 {
-    console.log(jqXHR);
-    if(jqXHR.status != 200)
+    if(jqXHR.status !== 200)
     {
         var failed = getParameterByName('failed')*1;
         var return_val = window.location;
@@ -28,6 +27,7 @@ function login_submit_done(jqXHR)
             }
             if(data.extended)
             {
+            	console.log(data.extended);
             }
 	    window.location = url;
 	}
