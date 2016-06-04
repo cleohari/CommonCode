@@ -121,6 +121,7 @@ class SerializableObject implements ArrayAccess,JsonSerializable
      */
     private function array2XML(XMLWriter $xml, $keyParent, $data)
     {
+        $data = array_values($data);
         $count = count($data);
         for($i = 0; $i < $count; $i++)
         {
