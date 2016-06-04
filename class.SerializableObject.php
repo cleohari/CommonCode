@@ -61,7 +61,35 @@ class SerializableObject implements ArrayAccess,JsonSerializable
         $xml = new XmlWriter();
         $xml->openMemory();
         $xml->startDocument('1.0');
-        $tmp = json_decode(json_encode($this));
+        if(version_compare(PHP_VERSION, '7.0.0', '>='))
+        {
+            $this->php7XmlSerialize($xml);
+        }
+        else
+        {
+            $this->oldPhpSerialize($xml);
+        }
+        $xml->endElement();
+        return $xml->outputMemory(true);
+    }
+
+    private function php7XmlSerialize(XMLWriter $xml)
+    {
+        if(isset($this[0]))
+        {
+            $xml->startElement('Array');
+            $this->array2XML($xml, 'Entity', get_object_vars($this));
+            $xml->endElement();
+        }
+        else
+        {
+            $this->object2XML($xml, $this);
+        }
+    }
+
+    private function oldPhpSerialize(XMLWriter $xml)
+    {
+        $tmp = json_decode(json_encode($this), false);
         $tmpA = get_object_vars($tmp);
         if(isset($tmpA[0]))
         {
@@ -73,8 +101,6 @@ class SerializableObject implements ArrayAccess,JsonSerializable
         {
             $this->object2XML($xml, $tmp);
         }
-        $xml->endElement();
-        return $xml->outputMemory(true);
     }
 
     /**
@@ -113,6 +139,18 @@ class SerializableObject implements ArrayAccess,JsonSerializable
     }
 
     /**
+     * Determine if an array has any string keys
+     *
+     * @param array $array The array to test
+     * 
+     * @return boolean True if the array has string keys, false otherwise
+     */
+    private function arrayHasStringKeys(array $array)
+    {
+        return count(array_filter(array_keys($array), 'is_string')) > 0;
+    }
+
+    /**
      * Convert an array to XML without document tags
      *
      * @param XmlWriter $xml The XMLWriter to write the object to
@@ -126,16 +164,22 @@ class SerializableObject implements ArrayAccess,JsonSerializable
         for($i = 0; $i < $count; $i++)
         {
             $value = $data[$i];
-            if(is_object($value))
+            if(is_array($value) && isset($value[0]))
+            {
+                $xml->startElement($keyParent);
+                $this->array2XML($xml, 'Child', $value);
+                $xml->endElement();
+            }
+            else if(is_array($value) && $this->arrayHasStringKeys($value))
             {
                 $xml->startElement($keyParent);
                 $this->object2XML($xml, $value);
                 $xml->endElement();
             }
-            else if(is_array($value))
+            else if(is_object($value))
             {
                 $xml->startElement($keyParent);
-                $this->array2XML($xml, 'Child', $value);
+                $this->object2XML($xml, $value);
                 $xml->endElement();
             }
             else
