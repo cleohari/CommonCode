@@ -25,11 +25,18 @@ class SerializableObject implements ArrayAccess,JsonSerializable
      */
     public function __construct($array=false)
     {
-        if($array !== false && is_array($array))
+        if($array !== false)
         {
-            foreach($array as $key => $value)
+            if(is_object($array))
             {
-                $this->{$key} = $value;
+                $array = get_object_vars($array);
+            }
+            if(is_array($array))
+            {
+                foreach($array as $key => $value)
+                {
+                    $this->{$key} = $value;
+                }
             }
         }
     }
@@ -54,15 +61,17 @@ class SerializableObject implements ArrayAccess,JsonSerializable
         $xml = new XmlWriter();
         $xml->openMemory();
         $xml->startDocument('1.0');
-        if(isset($this[0]))
+        $tmp = json_decode(json_encode($this));
+        $tmpA = get_object_vars($tmp);
+        if(isset($tmpA[0]))
         {
             $xml->startElement('Array');
-            $this->array2XML($xml, 'Entity', (array)$this);
+            $this->array2XML($xml, 'Entity', $tmpA);
             $xml->endElement();
         }
         else
         {
-            $this->object2XML($xml, $this);
+            $this->object2XML($xml, $tmp);
         }
         $xml->endElement();
         return $xml->outputMemory(true);
@@ -86,7 +95,7 @@ class SerializableObject implements ArrayAccess,JsonSerializable
             {
                 $xml->startElement($key);
                 $this->object2XML($xml, $value);
-		$xml->endElement();
+                $xml->endElement();
             }
             else
             {
@@ -112,31 +121,25 @@ class SerializableObject implements ArrayAccess,JsonSerializable
      */
     private function array2XML(XMLWriter $xml, $keyParent, $data)
     {
-        foreach($data as $key => $value)
+        $count = count($data);
+        for($i = 0; $i < $count; $i++)
         {
-	    if(is_string($value))
-            {
-                $xml->writeElement($keyParent, $value);
-                continue;
-            }
-            if(is_numeric($key))
-            {
-                $xml->startElement($keyParent);
-            }
- 
+            $value = $data[$i];
             if(is_object($value))
             {
+                $xml->startElement($keyParent);
                 $this->object2XML($xml, $value);
+                $xml->endElement();
             }
             else if(is_array($value))
             {
-                $this->array2XML($xml, $key, $value);
-                continue;
-            }
- 
-            if(is_numeric($key))
-            {
+                $xml->startElement($keyParent);
+                $this->array2XML($xml, 'Child', $value);
                 $xml->endElement();
+            }
+            else
+            {
+                $xml->writeElement($keyParent, $value);
             }
         }
     }
