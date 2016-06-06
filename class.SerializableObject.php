@@ -90,7 +90,11 @@ class SerializableObject implements ArrayAccess, JsonSerializable
     private function oldPhpSerialize(XMLWriter $xml)
     {
         $tmp = json_decode(json_encode($this), false);
-        $tmpA = get_object_vars($tmp);
+        $tmpA = $tmp;
+        if(is_object($tmp))
+        {
+            $tmpA = get_object_vars($tmp);
+        }
         if(isset($tmpA[0]))
         {
             $xml->startElement('Array');
