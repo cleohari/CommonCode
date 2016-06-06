@@ -127,7 +127,6 @@ class Filter
         }
         if(count($ret) == 1 && is_array($ret[0]))
         {
-            //print_r(json_encode($ret[0])); die();
             return $ret[0];
         }
         return $ret;

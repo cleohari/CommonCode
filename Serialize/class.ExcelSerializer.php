@@ -31,23 +31,17 @@ class ExcelSerializer extends SpreadSheetSerializer
         {
             for($j = 0; $j < $colCount; $j++)
             {
-                $colName = $keys[$j];
                 $sheat->setCellValueByColumnAndRow($j, (2 + $i), $data[$i][$j]);
             }
         }
+        $writerType = 'Excel5';
         if(strcasecmp($type, 'xlsx') === 0 || strcasecmp($type, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') === 0)
         {
-            $writer = \PHPExcel_IOFactory::createWriter($ssheat, 'Excel2007');
-            ob_start();
-            $writer->save('php://output');
-            return ob_get_clean();
+            $writerType = 'Excel2007';
         }
-        else
-        {
-            $writer = \PHPExcel_IOFactory::createWriter($ssheat, 'Excel5');
-            ob_start();
-            $writer->save('php://output');
-            return ob_get_clean();
-        }
+        $writer = \PHPExcel_IOFactory::createWriter($ssheat, $writerType);
+        ob_start();
+        $writer->save('php://output');
+        return ob_get_clean();
     }
 }

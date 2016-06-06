@@ -13,16 +13,43 @@ class Group extends \SerializableObject
         return false;
     }
 
+    /**
+     * Set the Group's Name
+     *
+     * @param string $name The name for the group
+     *
+     * @return boolean true if the name was successfully updated, false otherwise
+     *
+     * @SuppressWarnings("UnusedFormalParameter")
+     */
     public function setGroupName($name)
     {
         return false;
     }
 
+    /**
+     * Set the Group's Description
+     *
+     * @param string $desc The description for the group
+     *
+     * @return boolean true if the description was successfully updated, false otherwise
+     *
+     * @SuppressWarnings("UnusedFormalParameter")
+     */
     public function setDescription($desc)
     {
         return false;
     }
 
+    /**
+     * Get the UID's of the Group Members
+     *
+     * @param boolean $recursie Include members of child groups
+     *
+     * @return array Array of UIDs
+     *
+     * @SuppressWarnings("UnusedFormalParameter")
+     */
     public function getMemberUids($recursive = true)
     {
         return array();
@@ -52,6 +79,15 @@ class Group extends \SerializableObject
         return $group;
     }
 
+    /**
+     * Get all users that aren't in this group
+     *
+     * @param array|boolean $select The fields to include
+     *
+     * @return array An array of all users not in this group
+     *
+     * @SuppressWarnings("UnusedFormalParameter")
+     */
     public function getNonMembers($select = false)
     {
         return array();

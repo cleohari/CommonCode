@@ -23,7 +23,6 @@ if(!function_exists('password_hash') || !function_exists('password_verify'))
             trigger_error("password_hash() expects parameter 2 to be long, ".gettype($algo)." given", E_USER_WARNING);
             return false;
         }
-        $resultLength = 0;
         switch($algo)
         {
             case PASSWORD_BCRYPT:

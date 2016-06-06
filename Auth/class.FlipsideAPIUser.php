@@ -12,7 +12,7 @@ class FlipsideAPIUser extends User
 
     public function __construct($data = false)
     {
-        if($data !== false && !isset($data['extended']))
+        if(($data !== false) && !isset($data['extended']))
         {
             //Generic user object
             //TODO get from API

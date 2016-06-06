@@ -108,7 +108,7 @@ class FlipAdminPage extends FlipPage
     const CARD_YELLOW = 'panel-yellow';
     const CARD_RED    = 'panel-red';
 
-    public function add_card($iconName, $bigText, $littleText, $link = '#', $color = self::CARD_BLUE, $textColor = false)
+    public function add_card($iconName, $bigText, $littleText, $link = '#', $color = self::CARD_BLUE)
     {
         $card = '<div class="col-lg-3 col-md-6">
                      <div class="panel '.$color.'">

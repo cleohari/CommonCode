@@ -56,23 +56,21 @@ class FilterClause
         $this->var2  = $rest;
     }
 
-    function to_sql_string()
+    public function to_sql_string()
     {
-        $str = '';
         switch($this->op)
         {
             case 'substringof':
             case 'contains':
-                $str = $this->var1.' LIKE \'%'.trim($this->var2, "'").'%\'';
+                return $this->var1.' LIKE \'%'.trim($this->var2, "'").'%\'';
                 break;
             default:
-                $str = $this->var1.$this->op.$this->var2;
+                return $this->var1.$this->op.$this->var2;
                 break;
         }
-        return $str;
     }
 
-    function to_ldap_string()
+    public function to_ldap_string()
     {
         $str = '(';
         switch($this->op)
@@ -91,7 +89,7 @@ class FilterClause
         return $str.')';
     }
 
-    function to_mongo_filter()
+    public function to_mongo_filter()
     {
         $this->var2 = trim($this->var2, "'");
         if($this->var1 === '_id')
