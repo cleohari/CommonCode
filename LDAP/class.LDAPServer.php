@@ -76,7 +76,7 @@ class LDAPServer extends \Singleton
         $this->ds = ldap_connect($this->connect);
     }
 
-    private function getConnectString($name, $proto=false)
+    private function getConnectString($name, $proto = false)
     {
         if(strstr($name, ':') !== false)
         {
@@ -89,7 +89,7 @@ class LDAPServer extends \Singleton
         return $name;
     }
 
-    function connect($name, $proto=false)
+    function connect($name, $proto = false)
     {
         $connectStr = $this->getConnectString($name, $proto);
         if($this->ds !== null)
@@ -117,7 +117,7 @@ class LDAPServer extends \Singleton
         $this->connect = false;
     }
 
-    function bind($cn=null, $password=null)
+    function bind($cn = null, $password = null)
     {
         $res = false;
         if($this->ds === null)
@@ -214,7 +214,7 @@ class LDAPServer extends \Singleton
         return $filter->to_ldap_string();
     }
 
-    function read($baseDN, $filter=false, $single=false, $attributes=false)
+    function read($baseDN, $filter = false, $single = false, $attributes = false)
     {
         $filterStr = $this->filterToString($filter);
         if($this->ds === null)
@@ -261,7 +261,7 @@ class LDAPServer extends \Singleton
         return $res;
     }
 
-    function count($baseDN, $filter=false)
+    function count($baseDN, $filter = false)
     {
         $filterStr = $this->filterToString($filter);
         if($this->ds === null)

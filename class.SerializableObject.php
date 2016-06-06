@@ -16,14 +16,14 @@
  *
  * This class can be serialized to various formats
  */
-class SerializableObject implements ArrayAccess,JsonSerializable
+class SerializableObject implements ArrayAccess, JsonSerializable
 {
     /**
      * Create the object from an array
      *
      * @param array $array The array of object properties
      */
-    public function __construct($array=false)
+    public function __construct($array = false)
     {
         if($array !== false)
         {

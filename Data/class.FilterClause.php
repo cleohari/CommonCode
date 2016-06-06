@@ -7,7 +7,7 @@ class FilterClause
     public $var2;
     public $op;
 
-    function __construct($string=false)
+    function __construct($string = false)
     {
         if($string !== false) $this->process_filter_string($string);
     }
@@ -63,7 +63,7 @@ class FilterClause
         {
             case 'substringof':
             case 'contains':
-                $str = $this->var1.' LIKE \'%'.trim($this->var2,"'").'%\'';
+                $str = $this->var1.' LIKE \'%'.trim($this->var2, "'").'%\'';
                 break;
             default:
                 $str = $this->var1.$this->op.$this->var2;
@@ -79,13 +79,13 @@ class FilterClause
         {
             case 'substringof':
             case 'contains':
-                $str.=$this->var1.$this->op.'*'.trim($this->var2,"'").'*';
+                $str .= $this->var1.$this->op.'*'.trim($this->var2, "'").'*';
                 break;
             case '!=':
-                $str.='!('.$this->var1.'='.$this->var2.')';
+                $str .= '!('.$this->var1.'='.$this->var2.')';
                 break;
             default:
-                $str.=$this->var1.$this->op.$this->var2;
+                $str .= $this->var1.$this->op.$this->var2;
                 break;
         }
         return $str.')';
@@ -119,7 +119,7 @@ class FilterClause
                 $case  = false;
                 if(self::str_startswith($this->var1, 'tolower'))
                 {
-                    $field = substr($this->var1, strpos($this->var1, '(')+1);
+                    $field = substr($this->var1, strpos($this->var1, '(') + 1);
                     $field = substr($field, 0, strpos($field, ')'));
                     $case = true;
                 }

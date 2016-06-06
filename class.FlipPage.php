@@ -30,32 +30,32 @@ else
  */
 require_once('class.WebPage.php');
 
-define('JS_JQUERY',       0);
-define('JS_JQUERY_UI',    1);
-define('JS_BOOTSTRAP',    2);
+define('JS_JQUERY', 0);
+define('JS_JQUERY_UI', 1);
+define('JS_BOOTSTRAP', 2);
 define('JQUERY_VALIDATE', 3);
-define('JQUERY_TOUCH',    4);
-define('JS_TINYNAV',      5);
+define('JQUERY_TOUCH', 4);
+define('JS_TINYNAV', 5);
 define('JS_BOOTSTRAP_FH', 6);
 define('JS_BOOTSTRAP_SW', 7);
-define('JS_DATATABLE',    8);
-define('JS_CHART',        9);
-define('JS_METISMENU',    10);
-define('JS_BOOTBOX',         11);
+define('JS_DATATABLE', 8);
+define('JS_CHART', 9);
+define('JS_METISMENU', 10);
+define('JS_BOOTBOX', 11);
 define('JS_DATATABLE_ODATA', 12);
-define('JS_CRYPTO_MD5_JS',   13);
-define('JS_JCROP',           14);
-define('JS_TYPEAHEAD',       15);
-define('JS_FLIPSIDE',     20);
-define('JS_LOGIN',        21);
+define('JS_CRYPTO_MD5_JS', 13);
+define('JS_JCROP', 14);
+define('JS_TYPEAHEAD', 15);
+define('JS_FLIPSIDE', 20);
+define('JS_LOGIN', 21);
 
-define('CSS_JQUERY_UI',    0);
-define('CSS_BOOTSTRAP',    1);
+define('CSS_JQUERY_UI', 0);
+define('CSS_BOOTSTRAP', 1);
 define('CSS_BOOTSTRAP_FH', 2);
 define('CSS_BOOTSTRAP_SW', 3);
-define('CSS_DATATABLE',    4);
-define('CSS_JCROP',        5);
-define('CSS_FONTAWESOME',  6);
+define('CSS_DATATABLE', 4);
+define('CSS_JCROP', 5);
+define('CSS_FONTAWESOME', 6);
 
 global $jsArray;
 $jsArray = array(
@@ -349,7 +349,7 @@ class FlipPage extends WebPage
      *
      * @SuppressWarnings("StaticAccess")
      */
-    function __construct($title, $header=true)
+    function __construct($title, $header = true)
     {
         parent::__construct($title);
         $this->setupVars();
@@ -447,7 +447,7 @@ class FlipPage extends WebPage
      *
      * @deprecated 2.0.0 Please use addJSByURI() instead
      */
-    function add_js_from_src($src, $async=true)
+    function add_js_from_src($src, $async = true)
     {
         $this->addJSByURI($src, $async);
     }
@@ -458,7 +458,7 @@ class FlipPage extends WebPage
      * @param string $uri The webpath to the JavaScript file
      * @param boolean $async Can the JavaScript be loaded asynchronously?
      */
-    public function addJSByURI($uri, $async=true)
+    public function addJSByURI($uri, $async = true)
     {
         $attributes = array('src'=>$uri, 'type'=>'text/javascript');
         if($async === true)
@@ -479,7 +479,7 @@ class FlipPage extends WebPage
      *
      * @deprecated 2.0.0 Please use addCSSByURI() instead
      */
-    function add_css_from_src($src, $import=false)
+    function add_css_from_src($src, $import = false)
     {
         $this->addCSSByURI($src, $import);
     }
@@ -490,7 +490,7 @@ class FlipPage extends WebPage
      * @param string $src The webpath to the Cascading Style Sheet file
      * @param boolean $async Can the CSS be loaded asynchronously?
      */
-    public function addCSSByURI($uri, $async=false)
+    public function addCSSByURI($uri, $async = false)
     {
         $attributes = array('rel'=>'stylesheet', 'href'=>$uri, 'type'=>'text/css');
         if($async === true && $this->importSupport === true)
@@ -509,12 +509,12 @@ class FlipPage extends WebPage
      *
      * @deprecated 2.0.0 Please use addWellKnownJS() instead
      */
-    function addJS($type, $async=true)
+    function addJS($type, $async = true)
     {
         $this->addWellKnownJS($type, $async);
     }
 
-    function add_js($type, $async=true)
+    function add_js($type, $async = true)
     {
         $this->addWellKnownJS($type, $async);
     }
@@ -525,7 +525,7 @@ class FlipPage extends WebPage
      * @param string $jsFileID the ID of the JS file
      * @param boolean $async Can the JS file be loaded asynchronously?
      */
-    public function addWellKnownJS($jsFileID, $async=true)
+    public function addWellKnownJS($jsFileID, $async = true)
     {
         global $jsArray;
         $this->setupVars();
@@ -541,7 +541,7 @@ class FlipPage extends WebPage
      *
      * @deprecated 2.0.0 Please use addWellKnownCSS() instead
      */
-    function add_css($type, $import=false)
+    function add_css($type, $import = false)
     {
         $this->addWellKnownCSS($type, $import);
     }
@@ -552,7 +552,7 @@ class FlipPage extends WebPage
      * @param string $cssFileID the ID of the CSS file
      * @param boolean $async Can the CSS file be loaded asynchronously?
      */
-    public function addWellKnownCSS($cssFileID, $async=true)
+    public function addWellKnownCSS($cssFileID, $async = true)
     {
         global $cssArray;
         $this->setupVars();
@@ -577,7 +577,7 @@ class FlipPage extends WebPage
         $ret = '';
         foreach($names as $name)
         {
-            $ret.='<li>'.$this->createLink($name, $sites[$name]).'</li>';
+            $ret .= '<li>'.$this->createLink($name, $sites[$name]).'</li>';
         }
         return $ret;
     }
@@ -597,14 +597,14 @@ class FlipPage extends WebPage
     {
         $ret = '<li class="dropdown">';
         $href = $this->getHrefForDropdown($link);
-        $ret.= '<a href="'.$href.'" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">'.$name.' <span class="caret"></span></a>';
-        $ret.='<ul class="dropdown-menu">';
+        $ret .= '<a href="'.$href.'" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">'.$name.' <span class="caret"></span></a>';
+        $ret .= '<ul class="dropdown-menu">';
         $subNames = array_keys($link);
         foreach($subNames as $subName)
         {
-            $ret.=$this->getLinkByName($subName, $link);
+            $ret .= $this->getLinkByName($subName, $link);
         }
-        $ret.='</ul></li>';
+        $ret .= '</ul></li>';
         return $ret;
     }
 
@@ -627,7 +627,7 @@ class FlipPage extends WebPage
         $ret = '';
         foreach($names as $name)
         {
-            $ret.=$this->getLinkByName($name, $this->links);
+            $ret .= $this->getLinkByName($name, $this->links);
         }
         return $ret;
     }
@@ -639,7 +639,7 @@ class FlipPage extends WebPage
     {
         $sites = $this->getSiteLinksForHeader();
         $links = $this->getLinksMenus();
-        $header ='<nav class="navbar navbar-default navbar-fixed-top">
+        $header = '<nav class="navbar navbar-default navbar-fixed-top">
                       <div class="container-fluid">
                           <!-- Brand and toggle get grouped for better mobile display -->
                           <div class="navbar-header">
@@ -668,7 +668,7 @@ class FlipPage extends WebPage
                       </div>
                   </nav>';
         $this->body = $header.$this->body;
-        $this->body_tags.='style="padding-top: 60px;"';
+        $this->body_tags .= 'style="padding-top: 60px;"';
     }
 
     /** Notification that is green for success */
@@ -689,7 +689,7 @@ class FlipPage extends WebPage
      *
      * @deprecated 2.0.0 Use the addNotification function instead 
      */
-    function add_notification($msg, $sev=self::NOTIFICATION_INFO, $dismissible=1)
+    function add_notification($msg, $sev = self::NOTIFICATION_INFO, $dismissible = 1)
     {
         $notice = array('msg'=>$msg, 'sev'=>$sev, 'dismissible'=>$dismissible);
         array_push($this->notifications, $notice);
@@ -702,7 +702,7 @@ class FlipPage extends WebPage
      * @param string $sevity The severity of the notifcation
      * @param boolean $dismissible Can the user dismiss the notificaton?
      */
-    public function addNotification($message, $severity=self::NOTIFICATION_INFO, $dismissible=true)
+    public function addNotification($message, $severity = self::NOTIFICATION_INFO, $dismissible = true)
     {
         array_push($this->notifications, array('msg'=>$message, 'sev'=>$severity, 'dismissible'=>$dismissible)); 
     }
@@ -740,10 +740,10 @@ class FlipPage extends WebPage
                     break;
             }
             $style = '';
-            if($i+1 < count($this->notifications))
+            if(($i + 1) < count($this->notifications))
             {
                 //Not the last notification, remove the end margin
-                $style='style="margin: 0px;"';
+                $style = 'style="margin: 0px;"';
             }
             $this->body = '
                 <div class="'.$class.'" role="alert" '.$style.'>
@@ -793,7 +793,7 @@ class FlipPage extends WebPage
      * @param boolean $header Draw the header
      * @param boolean $analytics Include analytics on the page
      */
-    public function printPage($header=true)
+    public function printPage($header = true)
     {
         $this->renderNotifications();
         $this->addNoScript();
@@ -814,7 +814,7 @@ class FlipPage extends WebPage
      *
      * @deprecated 1.0.0 Use addLink instead
      */
-    function add_link($name, $url=false, $submenu=false)
+    function add_link($name, $url = false, $submenu = false)
     {
         $this->addLink($name, $url, $submenu);
     }
@@ -826,7 +826,7 @@ class FlipPage extends WebPage
      * @param false|string $url The URL to link to
      * @param false|array $subment Any submenu items for the dropdown
      */
-    public function addLink($name, $url=false, $submenu=false)
+    public function addLink($name, $url = false, $submenu = false)
     {
         if(is_array($submenu))
         {

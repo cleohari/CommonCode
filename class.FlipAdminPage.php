@@ -6,7 +6,7 @@ class FlipAdminPage extends FlipPage
     public $user;
     public $is_admin = false;
 
-    function __construct($title, $adminGroup='LDAPAdmins')
+    function __construct($title, $adminGroup = 'LDAPAdmins')
     {
         $this->user = FlipSession::getUser();
         $this->is_admin = $this->userIsAdmin($adminGroup);
@@ -47,13 +47,13 @@ class FlipAdminPage extends FlipPage
         $ret  = '<li>';
         $href = $this->getHrefForDropdown($link);
         $ret .= $this->createLink($name.' <i class="fa fa-arrow-right"></i>', $href);
-        $ret.='<ul>';
+        $ret .= '<ul>';
         $subNames = array_keys($link);
         foreach($subNames as $subName)
         {
-            $ret.=$this->getLinkByName($subName, $link);
+            $ret .= $this->getLinkByName($subName, $link);
         }
-        $ret.='</ul></li>';
+        $ret .= '</ul></li>';
         return $ret;
     }
 
@@ -108,7 +108,7 @@ class FlipAdminPage extends FlipPage
     const CARD_YELLOW = 'panel-yellow';
     const CARD_RED    = 'panel-red';
 
-    function add_card($iconName, $bigText, $littleText, $link='#', $color = self::CARD_BLUE, $textColor=false)
+    function add_card($iconName, $bigText, $littleText, $link = '#', $color = self::CARD_BLUE, $textColor = false)
     {
         $card = '<div class="col-lg-3 col-md-6">
                      <div class="panel '.$color.'">
@@ -135,7 +135,7 @@ class FlipAdminPage extends FlipPage
         $this->body .= $card;
     }
 
-    function printPage($header=true)
+    function printPage($header = true)
     {
         if($this->user === false || $this->user === null)
         {

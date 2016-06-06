@@ -51,7 +51,7 @@ class SQLDataTable extends DataTable
         }
     }
 
-    function count($filter=false)
+    function count($filter = false)
     {
         if($this->data !== null)
         {
@@ -65,15 +65,15 @@ class SQLDataTable extends DataTable
         $ret = $this->dataset->read($this->tablename, $where, 'COUNT(*)');
         if($ret === false || !isset($ret[0]) || !isset($ret[0]['COUNT(*)']))
         {
-             return false;
+            return false;
         }
         else
         {
-             return $ret[0]['COUNT(*)'];
+            return $ret[0]['COUNT(*)'];
         }
     }
   
-    function search($filter=false, $select=false, $count=false, $skip=false, $sort=false, $params=false)
+    function search($filter = false, $select = false, $count = false, $skip = false, $sort = false, $params = false)
     {
         if($this->data !== null)
         {
@@ -93,8 +93,8 @@ class SQLDataTable extends DataTable
 
     function update($filter, $data)
     {
-         $where = $filter->to_sql_string();
-         return $this->dataset->update($this->tablename, $where, $data);
+        $where = $filter->to_sql_string();
+        return $this->dataset->update($this->tablename, $where, $data);
     }
 
     function create($data)
@@ -117,4 +117,5 @@ class SQLDataTable extends DataTable
         return $this->dataset->raw_query($sql);
     }
 }
+/* vim: set tabstop=4 shiftwidth=4 expandtab: */
 ?>

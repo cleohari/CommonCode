@@ -36,13 +36,13 @@ class FlipsideCAPTCHA implements JsonSerializable
     {
         $dataset = DataSetFactory::getDataSetByName('profiles');
         $datatable = $dataset['captcha'];
-        return $datatable->create(array('question'=>$question,'hint'=>$hint,'answer'=>$answer));
+        return $datatable->create(array('question'=>$question, 'hint'=>$hint, 'answer'=>$answer));
     }
 
     public function __construct()
     {
         $this->validIDs = FlipsideCAPTCHA::get_valid_captcha_ids();
-        $this->random_id = mt_rand(0, count($this->validIDs)-1);
+        $this->random_id = mt_rand(0, count($this->validIDs) - 1);
         $this->random_id = $this->validIDs[$this->random_id];
     }
 
@@ -84,22 +84,22 @@ class FlipsideCAPTCHA implements JsonSerializable
 
     public function is_answer_right($answer)
     {
-        return strcasecmp($this->get_answer(),$answer) == 0;
+        return strcasecmp($this->get_answer(), $answer) === 0;
     }
 
-    public function draw_captcha($explination=true, $return=false, $ownForm=false)
+    public function draw_captcha($explination = true, $return = false, $ownForm = false)
     {
         $string = '';
 
         if($ownForm)
         {
-            $string.= '<form id="flipcaptcha" name="flipcaptcha">';
+            $string .= '<form id="flipcaptcha" name="flipcaptcha">';
         }
 
         $string .= '<label for="captcha" class="col-sm-2 control-label">'.$this->get_question().'</label><div class="col-sm-10"><input class="form-control" type="text" id="captcha" name="captcha" placeholder="'.$this->get_hint().'" required/></div>';
         if($ownForm)
         {
-            $string.='</form>';
+            $string .= '</form>';
         }
         if($explination)
         {

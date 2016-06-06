@@ -6,7 +6,7 @@ class MongoDataTable extends DataTable
     protected $collection;
     protected $namespace;
 
-    public function __construct($collection, $collection_name=false)
+    public function __construct($collection, $collection_name = false)
     {
         if($collection_name !== false)
         {
@@ -18,7 +18,7 @@ class MongoDataTable extends DataTable
         }
     }
 
-    public function count($filter=false)
+    public function count($filter = false)
     {
         $criteria = array();
         if($filter !== false)
@@ -48,7 +48,7 @@ class MongoDataTable extends DataTable
         return $filter->to_mongo_filter();
     }
 
-    public function search($filter=false, $select=false, $count=false, $skip=false, $sort=false, $params=false)
+    public function search($filter = false, $select = false, $count = false, $skip = false, $sort = false, $params = false)
     {
         $fields   = array();
         $criteria = $this->getCriteriaFromFilter($filter);
@@ -56,16 +56,16 @@ class MongoDataTable extends DataTable
         {
             $fields = array_fill_keys($select, 1);
         }
-        $cursor   = $this->collection->find($criteria, $fields);
+        $cursor = $this->collection->find($criteria, $fields);
         if($params !== false && isset($params['fields']))
         {
             $cursor->fields($params['fields']);
         }
-        if($sort  !== false)
+        if($sort !== false)
         {
             $cursor->sort($sort);
         }
-        if($skip  !== false)
+        if($skip !== false)
         {
             $cursor->skip($skip);
         }
@@ -73,7 +73,7 @@ class MongoDataTable extends DataTable
         {
             $cursor->limit($count);
         }
-        $ret      = array();
+        $ret = array();
         foreach($cursor as $doc)
         {
             array_push($ret, $doc);

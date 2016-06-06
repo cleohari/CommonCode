@@ -66,7 +66,7 @@ class ODataParams
     {
         if(isset($params['$expand']))
         {
-            $this->expand = explode(',',$params['$expand']);
+            $this->expand = explode(',', $params['$expand']);
         }
     }
 
@@ -74,11 +74,11 @@ class ODataParams
     {
         if(isset($params['select']))
         {
-            $this->select = explode(',',$params['select']);
+            $this->select = explode(',', $params['select']);
         }
         else if(isset($params['$select']))
         {
-            $this->select = explode(',',$params['$select']);
+            $this->select = explode(',', $params['$select']);
         }
     }
 
@@ -87,11 +87,11 @@ class ODataParams
         if(isset($params['$orderby']))
         {
             $this->orderby = array();
-            $orderby = explode(',',$params['$orderby']);
+            $orderby = explode(',', $params['$orderby']);
             $count = count($orderby);
             for($i = 0; $i < $count; $i++)
             {
-                $exp = explode(' ',$orderby[$i]);
+                $exp = explode(' ', $orderby[$i]);
                 if(count($exp) === 1)
                 {
                     //Default to assending

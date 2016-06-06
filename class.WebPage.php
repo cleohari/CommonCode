@@ -60,7 +60,7 @@ class WebPage
         $browserName = $this->getBrowserName();
         if($browserName === 'IE' && $this->getBrowserMajorVer() <= 7)
         {
-            header( 'Location: /badbrowser.php' ) ;
+            header('Location: /badbrowser.php');
         }
         else if($browserName === 'Chrome' && $this->getBrowserMajorVer() >= 36)
         {
@@ -89,7 +89,7 @@ class WebPage
      */
     private function getBrowser()
     {
-        static $browser;//No accident can arise from depending on an unset variable.
+        static $browser; //No accident can arise from depending on an unset variable.
         if(!isset($browser))
         {
             $browser = $this->browscap->getBrowser();
@@ -190,16 +190,16 @@ class WebPage
      *
      * @return string The tag as a string
      */
-    protected function createOpenTag($tagName, $attribs=array(), $selfClose=false)
+    protected function createOpenTag($tagName, $attribs = array(), $selfClose = false)
     {
         $tag = '<'.$tagName;
         $attribNames = array_keys($attribs);
         foreach($attribNames as $attribName)
         {
-            $tag.=' '.$attribName;
+            $tag .= ' '.$attribName;
             if($attribs[$attribName])
             {
-                $tag.='="'.$attribs[$attribName].'"';
+                $tag .= '="'.$attribs[$attribName].'"';
             }
         }
         if($selfClose)
@@ -229,7 +229,7 @@ class WebPage
      *
      * @return string The link
      */
-    public function createLink($linkName, $linkTarget='#')
+    public function createLink($linkName, $linkTarget = '#')
     {
         $startTag = $this->createOpenTag('a', array('href'=>$linkTarget));
         $endTag = $this->createCloseTag('a');
@@ -245,17 +245,17 @@ class WebPage
      *
      * @param string $prefix The prefix to append to each line
      */
-    protected function printIeCompatability($prefix='')
+    protected function printIeCompatability($prefix = '')
     {
-       //IE 8 doesn't support HTML 5. Install the shim...
-       if($this->getBrowserMajorVer() < 9)
-       {
-           echo $prefix.'<script src="js/html5.js"></script>';
-           echo "\n";
-       }
-       //Tell the browser not to use compatability mode...
-       echo $prefix.'<meta http-equiv="X-UA-Compatible" content="IE=edge"/>';
-       echo "\n";
+        //IE 8 doesn't support HTML 5. Install the shim...
+        if($this->getBrowserMajorVer() < 9)
+        {
+            echo $prefix.'<script src="js/html5.js"></script>';
+            echo "\n";
+        }
+        //Tell the browser not to use compatability mode...
+        echo $prefix.'<meta http-equiv="X-UA-Compatible" content="IE=edge"/>';
+        echo "\n";
     }
 
     /**
@@ -263,7 +263,7 @@ class WebPage
      *
      * @param string $prefix The prefix to append to each line
      */
-    protected function printHead($prefix='')
+    protected function printHead($prefix = '')
     {
         echo $prefix.'<HEAD>';
         if($this->getBrowserName() === 'IE')
@@ -284,7 +284,7 @@ class WebPage
      *
      * @param string $prefix The prefix to append to each line
      */
-    protected function printBody($prefix='')
+    protected function printBody($prefix = '')
     {
         echo $prefix.'<BODY '.$this->body_tags.'>';
         echo $prefix.$prefix.$this->body."\n";
@@ -321,7 +321,7 @@ class WebPage
         {
             $requestURI = substr($requestURI, 1);
         }
-        return 'http'.(isset($_SERVER['HTTPS'])?'s':'').'://'.$_SERVER['HTTP_HOST'].'/'.$requestURI;
+        return 'http'.(isset($_SERVER['HTTPS']) ? 's' : '').'://'.$_SERVER['HTTP_HOST'].'/'.$requestURI;
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */

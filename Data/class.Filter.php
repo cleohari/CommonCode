@@ -27,7 +27,7 @@ class Filter
         //First check for parenthesis...
         if($string[0] === '(' && substr($string, -1) === ')')
         {
-            $string = substr($string, 1, strlen($string)-2);
+            $string = substr($string, 1, strlen($string) - 2);
             $parens = true;
         }
         if(preg_match('/(.+?)( and | or )(.+)/', $string, $clauses) === 0)
@@ -51,19 +51,19 @@ class Filter
         {
             if($this->children[$i] === '(' || $this->children[$i] === ')')
             {
-                $ret.=$this->children[$i];
+                $ret .= $this->children[$i];
             }
             else if($this->children[$i] === 'and')
             {
-                $ret.=' AND ';
+                $ret .= ' AND ';
             }
             else if($this->children[$i] === 'or')
             {
-                $ret.=' OR ';
+                $ret .= ' OR ';
             }
             else
             {
-                $ret.=$this->children[$i]->to_sql_string();
+                $ret .= $this->children[$i]->to_sql_string();
             }
         }
         return $ret.$this->sqlAppend;
@@ -94,7 +94,7 @@ class Filter
             }
             else
             {
-                $ret.=$this->children[$i]->to_ldap_string();
+                $ret .= $this->children[$i]->to_ldap_string();
             }
         }
         if($count === 1 && $prefix === '')
@@ -189,7 +189,7 @@ class Filter
 
     public function addToSQLString($string)
     {
-        $this->sqlAppend.=$string;
+        $this->sqlAppend .= $string;
     }
 
     public function appendChild($child)

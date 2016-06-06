@@ -92,7 +92,7 @@ class LDAPAuthenticator extends Authenticator
         $this->host       = $this->getHostParam($params);
         $this->user_base  = $this->getParam($params, 'user_base');
         $this->group_base = $this->getParam($params, 'group_base');
-        $this->bind_dn    = $this->getParam($params, 'bind_dn',   '$ldap_auth', 'read_write_pass');
+        $this->bind_dn    = $this->getParam($params, 'bind_dn', '$ldap_auth', 'read_write_pass');
         $this->bind_pass  = $this->getParam($params, 'bind_pass', '$ldap_auth', 'read_write_user');
     }
 
@@ -130,7 +130,7 @@ class LDAPAuthenticator extends Authenticator
      *
      * @SuppressWarnings("StaticAccess")
      */
-    private function getParam($params, $paramName, $settingsLocation='$ldap', $settingsName=false)
+    private function getParam($params, $paramName, $settingsLocation = '$ldap', $settingsName = false)
     {
         if($settingsName === false)
         {
@@ -156,7 +156,7 @@ class LDAPAuthenticator extends Authenticator
      *
      * @SuppressWarnings("StaticAccess")
      */
-    public function get_and_bind_server($bind_write=false)
+    public function get_and_bind_server($bind_write = false)
     {
         $server = \LDAP\LDAPServer::getInstance();
         $server->user_base = $this->user_base;
@@ -246,7 +246,7 @@ class LDAPAuthenticator extends Authenticator
         return LDAPGroup::from_name($name, $server);
     }
 
-    public function getGroupsByFilter($filter, $select=false, $top=false, $skip=false, $orderby=false)
+    public function getGroupsByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false)
     {
         $server = $this->get_and_bind_server();
         if($server === false)
@@ -310,7 +310,7 @@ class LDAPAuthenticator extends Authenticator
         }
     }
 
-    public function getUsersByFilter($filter, $select=false, $top=false, $skip=false, $orderby=false)
+    public function getUsersByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false)
     {
         $server = $this->get_and_bind_server();
         if($server === false)

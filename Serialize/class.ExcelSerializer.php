@@ -1,7 +1,7 @@
 <?php
 namespace Serialize;
 
-require_once dirname(__FILE__) . '/../libs/PHPExcel/Classes/PHPExcel.php';
+require_once dirname(__FILE__).'/../libs/PHPExcel/Classes/PHPExcel.php';
 
 class ExcelSerializer extends SpreadSheetSerializer
 {
@@ -32,7 +32,7 @@ class ExcelSerializer extends SpreadSheetSerializer
             for($j = 0; $j < $colCount; $j++)
             {
                 $colName = $keys[$j];
-                $sheat->setCellValueByColumnAndRow($j, 2+$i, $data[$i][$j]);
+                $sheat->setCellValueByColumnAndRow($j, (2 + $i), $data[$i][$j]);
             }
         }
         if(strcasecmp($type, 'xlsx') === 0 || strcasecmp($type, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') === 0)

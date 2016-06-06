@@ -11,10 +11,9 @@ class AmazonSES extends EmailService
         $credentials = \Aws\Common\Credentials\Credentials::fromIni('default', $params['ini']);
 
         $this->ses = \Aws\Ses\SesClient::factory([
-            'version' => 'latest',
-            'region'  => 'us-west-2',
-            'credentials' => $credentials
-         ]);
+                'version' => 'latest',
+                'region'  => 'us-west-2',
+                'credentials' => $credentials]);
     }
 
     public function canSend()

@@ -10,7 +10,7 @@ class FlipsideAPIUser extends User
     private $userData;
     private $groupData = null;
 
-    public function __construct($data=false)
+    public function __construct($data = false)
     {
         if($data !== false && !isset($data['extended']))
         {

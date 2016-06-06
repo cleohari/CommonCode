@@ -6,7 +6,7 @@ class SQLUser extends User
     private $data;
     private $auth;
 
-    function __construct($data=false, $auth=false)
+    function __construct($data = false, $auth = false)
     {
         $this->data = array();
         $this->auth = $auth;
@@ -43,7 +43,7 @@ class SQLUser extends User
     {
         if(isset($this->data['mail']))
         {
-             return $this->data['mail'];
+            return $this->data['mail'];
         }
         return $this->getUid();
     }
@@ -57,5 +57,5 @@ class SQLUser extends User
         return false;
     }
 }
-
+/* vim: set tabstop=4 shiftwidth=4 expandtab: */
 ?>

@@ -116,7 +116,7 @@ class FlipRESTFormat extends \Slim\Middleware
 
     private function createCSV(&$array)
     {
-        if (count($array) == 0)
+        if(count($array) == 0)
         {
             return null;
         }
@@ -135,7 +135,7 @@ class FlipRESTFormat extends \Slim\Middleware
                 $keys = array_keys(get_object_vars($first));
             }
             fputcsv($df, $keys);
-            foreach ($array as $row)
+            foreach($array as $row)
             {
                 if(is_array($row))
                 {
@@ -287,12 +287,12 @@ class FlipREST extends \Slim\Slim
         $this->error($errorHandler);
     }
 
-    function get_json_body($array=false)
+    function get_json_body($array = false)
     {
         return $this->getJsonBody($array);
     }
 
-    function getJsonBody($array=false)
+    function getJsonBody($array = false)
     {
         $body = $this->request->getBody();
         return json_decode($body, $array);
