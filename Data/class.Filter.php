@@ -214,4 +214,3 @@ class Filter
         return $this->children;
     }
 }
-?>

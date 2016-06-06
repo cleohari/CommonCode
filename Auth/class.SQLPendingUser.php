@@ -64,4 +64,3 @@ class SQLPendingUser extends PendingUser
     }
 }
 
-?>

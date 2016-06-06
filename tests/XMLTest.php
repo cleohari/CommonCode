@@ -70,4 +70,3 @@ class XMLTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("<?xml version=\"1.0\"?>\n", $data);
     }
 }
-?>

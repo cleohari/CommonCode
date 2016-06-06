@@ -39,4 +39,3 @@ class SQLGroup extends Group
         return array();
     }
 }
-?>

@@ -49,4 +49,3 @@ class GitHubAuthenticator extends OAuth2Authenticator
         return $user;
     }
 }
-?>

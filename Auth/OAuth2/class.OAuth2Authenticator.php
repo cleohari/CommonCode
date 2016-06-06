@@ -146,4 +146,3 @@ abstract class OAuth2Authenticator extends \Auth\Authenticator
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
-?>

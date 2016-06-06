@@ -104,4 +104,3 @@ class Group extends \SerializableObject
         return false;
     }
 }
-?>

@@ -310,4 +310,3 @@ class LDAPServer extends \Singleton
     }
 }
 
-?>

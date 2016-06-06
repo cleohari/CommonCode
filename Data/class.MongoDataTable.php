@@ -117,4 +117,3 @@ class MongoDataTable extends DataTable
         return true;
     }
 }
-?>
