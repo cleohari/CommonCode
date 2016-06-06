@@ -23,4 +23,3 @@ date_default_timezone_set('America/Chicago');
 $browscap = new Browscap('/var/php_cache/browser');
 $browscap->updateCache();
 
-?>

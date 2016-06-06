@@ -76,4 +76,3 @@ class HTML5Validate {
 	
 }
 
-?>

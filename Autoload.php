@@ -44,4 +44,3 @@ else
     spl_autoload_register('FlipsideAutoload');
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
-?>

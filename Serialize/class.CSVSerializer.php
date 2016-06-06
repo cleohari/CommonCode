@@ -31,4 +31,3 @@ class CSVSerializer extends SpreadSheetSerializer
         return $ret;
     }
 }
-?>

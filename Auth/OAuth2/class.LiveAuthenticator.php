@@ -49,4 +49,3 @@ class LiveAuthenticator extends OAuth2Authenticator
         return $user;
     }
 }
-?>

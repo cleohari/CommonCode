@@ -27,4 +27,3 @@ class PDF
         return $this->mpdf->Output($filename);
     }
 }
-?>

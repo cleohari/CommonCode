@@ -27,5 +27,3 @@ class XMLSerializer implements ISerializer
         return $obj->xmlSerialize();
     }
 }
-?>
-

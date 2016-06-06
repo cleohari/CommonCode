@@ -74,4 +74,3 @@ class FlipsideAuthenticator extends OAuth2Authenticator
         return new \Auth\FlipsideAPIUser($data);
     }
 }
-?>

@@ -26,4 +26,3 @@ class JSONSerializer implements ISerializer
         return json_encode($array);
     }
 }
-?>

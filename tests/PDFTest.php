@@ -18,4 +18,3 @@ class PDFTest extends PHPUnit_Framework_TestCase
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
-?>

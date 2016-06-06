@@ -51,4 +51,3 @@ class ExcelSerializer extends SpreadSheetSerializer
         }
     }
 }
-?>

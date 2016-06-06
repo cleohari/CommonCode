@@ -45,4 +45,3 @@ class GitLabAuthenticator extends OAuth2Authenticator
         return $user;
     }
 }
-?>

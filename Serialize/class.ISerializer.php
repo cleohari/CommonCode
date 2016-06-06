@@ -22,4 +22,3 @@ interface ISerializer
      */
     public function serializeData($type, $array);
 }
-?>

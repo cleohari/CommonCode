@@ -69,4 +69,3 @@ class DataTable implements \ArrayAccess
         return $this->data[$offset];
     }
 }
-?>

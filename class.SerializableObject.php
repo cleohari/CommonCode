@@ -277,4 +277,3 @@ class SerializableObject implements ArrayAccess, JsonSerializable
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
-?>

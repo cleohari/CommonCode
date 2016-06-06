@@ -26,4 +26,3 @@ class JSONTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('[]', $data);
     }
 }
-?>
