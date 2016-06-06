@@ -43,7 +43,7 @@ class Filter
         return $children;
     }
 
-    function to_sql_string()
+    public function to_sql_string()
     {
         $ret = '';
         $count = count($this->children);
@@ -69,7 +69,7 @@ class Filter
         return $ret.$this->sqlAppend;
     }
 
-    function to_ldap_string()
+    public function to_ldap_string()
     {
         $ret = '';
         $count = count($this->children);
@@ -104,7 +104,7 @@ class Filter
         return '('.$prefix.$ret.')';
     }
 
-    function to_mongo_filter()
+    public function to_mongo_filter()
     {
         $ret = array();
         $count = count($this->children);
@@ -133,7 +133,7 @@ class Filter
         return $ret;
     }
 
-    function filter_array(&$array)
+    public function filter_array(&$array)
     {
         $res = array();
         if(is_array($array))

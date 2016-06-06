@@ -6,7 +6,7 @@ class FlipAdminPage extends FlipPage
     public $user;
     public $is_admin = false;
 
-    function __construct($title, $adminGroup = 'LDAPAdmins')
+    public function __construct($title, $adminGroup = 'LDAPAdmins')
     {
         $this->user = FlipSession::getUser();
         $this->is_admin = $this->userIsAdmin($adminGroup);
@@ -29,7 +29,7 @@ class FlipAdminPage extends FlipPage
         return $this->user->isInGroupNamed($adminGroup);
     }
 
-    function addAllLinks()
+    protected function addAllLinks()
     {
         if($this->user === false || $this->user === null)
         {
@@ -57,7 +57,7 @@ class FlipAdminPage extends FlipPage
         return $ret;
     }
 
-    function addHeader()
+    protected function addHeader()
     {
         $sites   = $this->getSiteLinksForHeader();
         $sideNav = $this->getLinksMenus();
@@ -108,7 +108,7 @@ class FlipAdminPage extends FlipPage
     const CARD_YELLOW = 'panel-yellow';
     const CARD_RED    = 'panel-red';
 
-    function add_card($iconName, $bigText, $littleText, $link = '#', $color = self::CARD_BLUE, $textColor = false)
+    public function add_card($iconName, $bigText, $littleText, $link = '#', $color = self::CARD_BLUE, $textColor = false)
     {
         $card = '<div class="col-lg-3 col-md-6">
                      <div class="panel '.$color.'">
@@ -135,7 +135,7 @@ class FlipAdminPage extends FlipPage
         $this->body .= $card;
     }
 
-    function printPage($header = true)
+    public function printPage($header = true)
     {
         if($this->user === false || $this->user === null)
         {

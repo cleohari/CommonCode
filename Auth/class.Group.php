@@ -99,7 +99,7 @@ class Group extends \SerializableObject
         return true;
     }
 
-    static function from_name($name, $data = false)
+    public static function from_name($name, $data = false)
     {
         return false;
     }

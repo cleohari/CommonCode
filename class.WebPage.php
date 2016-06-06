@@ -46,7 +46,7 @@ class WebPage
      *
      * @param string $title The webpage title
      */
-    function __construct($title)
+    public function __construct($title)
     {
         $this->title = $title;
         $this->headTags = array();
@@ -154,7 +154,7 @@ class WebPage
      *
      * @deprecated 1.0.0 This funciton is deprectated and will be remoted. Please use printPage() instead
      */
-    function print_page()
+    public function print_page()
     {
         $this->printPage();
     }
@@ -298,7 +298,7 @@ class WebPage
      *
      * @deprecated 1.0.0 This funciton is deprectated and will be remoted. Please use currentURL() instead
      */
-    function current_url()
+    public function current_url()
     {
         return $this->currentURL();
     }

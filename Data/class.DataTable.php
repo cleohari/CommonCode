@@ -5,12 +5,12 @@ class DataTable implements \ArrayAccess
 {
     protected $data = null;
 
-    function count($filter = false)
+    public function count($filter = false)
     {
         throw new \Exception('Unimplemented');
     }
 
-    function search($filter = false, $select = false, $count = false, $skip = false, $sort = false, $params = false)
+    public function search($filter = false, $select = false, $count = false, $skip = false, $sort = false, $params = false)
     {
         if($this->data === null)
         {
@@ -24,27 +24,27 @@ class DataTable implements \ArrayAccess
         return $array;
     }
 
-    function create($data)
+    public function create($data)
     {
         throw new \Exception('Unimplemented');
     }
 
-    function read($filter = false, $select = false, $count = false, $skip = false, $sort = false, $params = false)
+    public function read($filter = false, $select = false, $count = false, $skip = false, $sort = false, $params = false)
     {
         return $this->search($filter, $select, $count, $skip, $sort, $params);
     }
 
-    function update($filter, $data)
+    public function update($filter, $data)
     {
         throw new \Exception('Unimplemented');
     }
 
-    function delete($filter)
+    public function delete($filter)
     {
         throw new \Exception('Unimplemented');
     }
 
-    function prefetch_all()
+    public function prefetch_all()
     {
         $this->data = $this->read(false, false);
     }

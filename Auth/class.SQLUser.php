@@ -6,7 +6,7 @@ class SQLUser extends User
     private $data;
     private $auth;
 
-    function __construct($data = false, $auth = false)
+    public function __construct($data = false, $auth = false)
     {
         $this->data = array();
         $this->auth = $auth;
@@ -20,7 +20,7 @@ class SQLUser extends User
         }
     }
 
-    function isInGroupNamed($name)
+    public function isInGroupNamed($name)
     {
         if($this->auth === false)
         {
@@ -39,7 +39,7 @@ class SQLUser extends User
 
     }
 
-    function getEmail()
+    public function getEmail()
     {
         if(isset($this->data['mail']))
         {
@@ -48,7 +48,7 @@ class SQLUser extends User
         return $this->getUid();
     }
 
-    function getUid()
+    public function getUid()
     {
         if(isset($this->data['uid']))
         {

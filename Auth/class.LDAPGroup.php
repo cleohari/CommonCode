@@ -16,7 +16,7 @@ class LDAPGroup extends Group
     private $ldapObj;
     private $server;
 
-    function __construct($data)
+    public function __construct($data)
     {
         $this->ldapObj = $data;
         $this->server = \LDAP\LDAPServer::getInstance();
@@ -254,7 +254,7 @@ class LDAPGroup extends Group
         }
     }
 
-    static function from_dn($dn, $data = false)
+    public static function from_dn($dn, $data = false)
     {
         if($data === false)
         {
@@ -268,7 +268,7 @@ class LDAPGroup extends Group
         return new static($group[0]);
     }
 
-    static function from_name($name, $data = false)
+    public static function from_name($name, $data = false)
     {
         if($data === false)
         {

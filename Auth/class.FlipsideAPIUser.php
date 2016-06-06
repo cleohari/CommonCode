@@ -26,7 +26,7 @@ class FlipsideAPIUser extends User
         }
     }
 
-    function isInGroupNamed($name)
+    public function isInGroupNamed($name)
     {
         if($this->groupData === null)
         {
@@ -48,7 +48,7 @@ class FlipsideAPIUser extends User
         return false;
     }
 
-    function getDisplayName()
+    public function getDisplayName()
     {
         if($this->userData === null)
         {
@@ -57,7 +57,7 @@ class FlipsideAPIUser extends User
         return $this->userData->displayname;
     }
 
-    function getGivenName()
+    public function getGivenName()
     {
         if($this->userData === null)
         {
@@ -66,7 +66,7 @@ class FlipsideAPIUser extends User
         return $this->userData->givenname;
     }
 
-    function getEmail()
+    public function getEmail()
     {
         if($this->userData === null)
         {
@@ -75,7 +75,7 @@ class FlipsideAPIUser extends User
         return $this->userData->mail;
     }
 
-    function getUid()
+    public function getUid()
     {
         if($this->userData === null)
         {
@@ -84,7 +84,7 @@ class FlipsideAPIUser extends User
         return $this->userData->uid;
     }
 
-    function getPhoneNumber()
+    public function getPhoneNumber()
     {
         if($this->userData === null)
         {
@@ -93,7 +93,7 @@ class FlipsideAPIUser extends User
         return $this->userData->mobile;
     }
 
-    function getOrganization()
+    public function getOrganization()
     {
         if($this->userData === null)
         {
@@ -102,7 +102,7 @@ class FlipsideAPIUser extends User
         return $this->userData->o;
     }
 
-    function getTitles()
+    public function getTitles()
     {
         if($this->userData === null)
         {
@@ -111,7 +111,7 @@ class FlipsideAPIUser extends User
         return $this->userData->title;
     }
 
-    function getState()
+    public function getState()
     {
         if($this->userData === null)
         {
@@ -120,7 +120,7 @@ class FlipsideAPIUser extends User
         return $this->userData->st;
     }
 
-    function getCity()
+    public function getCity()
     {
         if($this->userData === null)
         {
@@ -129,7 +129,7 @@ class FlipsideAPIUser extends User
         return $this->userData->l;
     }
 
-    function getLastName()
+    public function getLastName()
     {
         if($this->userData === null)
         {
@@ -138,7 +138,7 @@ class FlipsideAPIUser extends User
         return $this->userData->sn;
     }
 
-    function getNickName()
+    public function getNickName()
     {
         if($this->userData === null)
         {
@@ -147,7 +147,7 @@ class FlipsideAPIUser extends User
         return $this->userData->displayname;
     }
 
-    function getAddress()
+    public function getAddress()
     {
         if($this->userData === null)
         {
@@ -156,7 +156,7 @@ class FlipsideAPIUser extends User
         return $this->userData->postaladdress;
     }
 
-    function getPostalCode()
+    public function getPostalCode()
     {
         if($this->userData === null)
         {
@@ -165,7 +165,7 @@ class FlipsideAPIUser extends User
         return $this->userData->postalcode;
     }
 
-    function getCountry()
+    public function getCountry()
     {
         if($this->userData === null)
         {
@@ -174,7 +174,7 @@ class FlipsideAPIUser extends User
         return $this->userData->c;
     }
 
-    function getOrganizationUnits()
+    public function getOrganizationUnits()
     {
         if($this->userData === null)
         {
@@ -183,7 +183,7 @@ class FlipsideAPIUser extends User
         return $this->userData->ou;
     }
 
-    function getLoginProviders()
+    public function getLoginProviders()
     {
         if($this->userData === null)
         {

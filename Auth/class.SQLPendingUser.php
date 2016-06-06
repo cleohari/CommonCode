@@ -8,7 +8,7 @@ class SQLPendingUser extends PendingUser
     private $blob;
     private $table;
 
-    function __construct($data, $table = false)
+    public function __construct($data, $table = false)
     {
         $this->hash = $data['hash'];
         $this->time = new \DateTime($data['time']);
@@ -26,7 +26,7 @@ class SQLPendingUser extends PendingUser
         return $this->time;
     }
 
-    function getEmail()
+    public function getEmail()
     {
         if(is_array($this->blob->mail))
         {
@@ -35,7 +35,7 @@ class SQLPendingUser extends PendingUser
         return $this->blob->mail;
     }
 
-    function getUid()
+    public function getUid()
     {
         if(is_array($this->blob->uid))
         {
@@ -44,7 +44,7 @@ class SQLPendingUser extends PendingUser
         return $this->blob->uid;
     }
 
-    function getPassword()
+    public function getPassword()
     {
         if(is_array($this->blob->password))
         {

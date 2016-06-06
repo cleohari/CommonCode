@@ -44,7 +44,7 @@ class DataSetFactory
      *
      * @deprecated 2.0.0 Utilize the getDataSetByName() instead
      */
-    static function get_data_set($setName)
+    public static function get_data_set($setName)
     {
         return static::getDataSetByName($setName);
     }
@@ -56,7 +56,7 @@ class DataSetFactory
      *
      * @return \Data\DataSet The DataSet specified
      */
-    static function getDataSetByName($setName)
+    public static function getDataSetByName($setName)
     {
         static $instances = array();
         if(isset($instances[$setName]))

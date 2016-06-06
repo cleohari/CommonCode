@@ -102,7 +102,7 @@ class PendingUser extends User
      *
      * @return array The user's login providers
      */
-    function getLoginProviders()
+    public function getLoginProviders()
     {
         if(isset($this->host))
         {
@@ -118,7 +118,7 @@ class PendingUser extends User
      *
      * @return true|false true if the addition worked, false otherwise
      */
-    function addLoginProvider($provider)
+    public function addLoginProvider($provider)
     {
         if(isset($this->host))
         {

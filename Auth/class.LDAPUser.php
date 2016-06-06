@@ -266,7 +266,7 @@ class LDAPUser extends User
         return false;
     }
 
-    static function from_name($name, $data = false)
+    public static function from_name($name, $data = false)
     {
         if($data === false)
         {
@@ -281,7 +281,7 @@ class LDAPUser extends User
         return new static($user[0]);
     }
 
-    static function from_dn($dn, $data = false)
+    public static function from_dn($dn, $data = false)
     {
         if($data === false)
         {

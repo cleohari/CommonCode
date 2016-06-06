@@ -349,7 +349,7 @@ class FlipPage extends WebPage
      *
      * @SuppressWarnings("StaticAccess")
      */
-    function __construct($title, $header = true)
+    public function __construct($title, $header = true)
     {
         parent::__construct($title);
         $this->setupVars();
@@ -447,7 +447,7 @@ class FlipPage extends WebPage
      *
      * @deprecated 2.0.0 Please use addJSByURI() instead
      */
-    function add_js_from_src($src, $async = true)
+    public function add_js_from_src($src, $async = true)
     {
         $this->addJSByURI($src, $async);
     }
@@ -479,7 +479,7 @@ class FlipPage extends WebPage
      *
      * @deprecated 2.0.0 Please use addCSSByURI() instead
      */
-    function add_css_from_src($src, $import = false)
+    public function add_css_from_src($src, $import = false)
     {
         $this->addCSSByURI($src, $import);
     }
@@ -509,12 +509,12 @@ class FlipPage extends WebPage
      *
      * @deprecated 2.0.0 Please use addWellKnownJS() instead
      */
-    function addJS($type, $async = true)
+    public function addJS($type, $async = true)
     {
         $this->addWellKnownJS($type, $async);
     }
 
-    function add_js($type, $async = true)
+    public function add_js($type, $async = true)
     {
         $this->addWellKnownJS($type, $async);
     }
@@ -541,7 +541,7 @@ class FlipPage extends WebPage
      *
      * @deprecated 2.0.0 Please use addWellKnownCSS() instead
      */
-    function add_css($type, $import = false)
+    public function add_css($type, $import = false)
     {
         $this->addWellKnownCSS($type, $import);
     }
@@ -689,7 +689,7 @@ class FlipPage extends WebPage
      *
      * @deprecated 2.0.0 Use the addNotification function instead 
      */
-    function add_notification($msg, $sev = self::NOTIFICATION_INFO, $dismissible = 1)
+    public function add_notification($msg, $sev = self::NOTIFICATION_INFO, $dismissible = 1)
     {
         $notice = array('msg'=>$msg, 'sev'=>$sev, 'dismissible'=>$dismissible);
         array_push($this->notifications, $notice);
@@ -814,7 +814,7 @@ class FlipPage extends WebPage
      *
      * @deprecated 1.0.0 Use addLink instead
      */
-    function add_link($name, $url = false, $submenu = false)
+    public function add_link($name, $url = false, $submenu = false)
     {
         $this->addLink($name, $url, $submenu);
     }
@@ -844,7 +844,7 @@ class FlipPage extends WebPage
      *
      * @SuppressWarnings("StaticAccess")
      */
-    function add_login_form()
+    public function add_login_form()
     {
         $auth = \AuthProvider::getInstance();
         $authLinks = $auth->getSupplementaryLinks();
@@ -885,7 +885,7 @@ class FlipPage extends WebPage
     /**
      * Add additional links
      */
-    function add_links()
+    public function add_links()
     {
     }
 }

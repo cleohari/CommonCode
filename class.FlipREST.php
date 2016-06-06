@@ -272,7 +272,7 @@ class FlipRESTFormat extends \Slim\Middleware
 
 class FlipREST extends \Slim\Slim
 {
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
         $this->config('debug', false);
@@ -287,18 +287,18 @@ class FlipREST extends \Slim\Slim
         $this->error($errorHandler);
     }
 
-    function get_json_body($array = false)
+    public function get_json_body($array = false)
     {
         return $this->getJsonBody($array);
     }
 
-    function getJsonBody($array = false)
+    public function getJsonBody($array = false)
     {
         $body = $this->request->getBody();
         return json_decode($body, $array);
     }
 
-    function errorHandler($exception)
+    public function errorHandler($exception)
     {
         $error = array(
             'code' => $exception->getCode(),
