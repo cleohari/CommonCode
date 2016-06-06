@@ -176,6 +176,19 @@ class DataSetTest extends PHPUnit_Framework_TestCase
         $res = $dataTable->delete(new \Data\Filter('Test eq 4'));
         $this->assertFalse($res);
     }
+
+    public function testUnknownDataSet()
+    {
+        try
+        {
+             \DataSetFactory::get_data_set('Unknown');
+             $this->assertFalse(true);
+        }
+        catch(\Exception $ex)
+        {
+            $this->assertEquals('Unknown dataset name Unknown', $ex->getMessage());
+        }
+    }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
 ?>

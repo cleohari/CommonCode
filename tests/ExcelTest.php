@@ -416,7 +416,7 @@ class ExcelTest extends PHPUnit_Framework_TestCase
     {
         $serializer = new \Serialize\ExcelSerializer();
         $array = array();
-        $data = $serializer->serializeData('text/csv', $array);
+        $data = $serializer->serializeData('xls', $array);
         $this->assertNull($data);
     }
 }

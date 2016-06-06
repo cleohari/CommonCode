@@ -241,6 +241,9 @@ class UserTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($user->getOrganizationUnits());
         $this->assertFalse($user->getLoginProviders());
         $this->assertFalse($user->getGroups());
+
+        $user = new \Auth\SQLUser(array('mail'=>'test@example.com'));
+        $this->assertEquals('test@example.com', $user->getEmail());
     }
 
     public function testFlipsideAPIUser()
