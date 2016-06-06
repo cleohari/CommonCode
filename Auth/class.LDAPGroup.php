@@ -275,7 +275,7 @@ class LDAPGroup extends Group
             throw new \Exception('data must be set for LDAPGroup');
         }
         $filter = new \Data\Filter("cn eq $name");
-	$group = $data->read($data->group_base, $filter);
+        $group = $data->read($data->group_base, $filter);
         if($group === false || !isset($group[0]))
         {
             return false;
