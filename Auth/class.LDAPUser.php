@@ -8,7 +8,7 @@ class LDAPUser extends User
     private $ldapObj;
     private $server;
 
-    public function __construct($data=false)
+    public function __construct($data = false)
     {
         $this->server = \LDAP\LDAPServer::getInstance();
         if($data !== false && !isset($data['dn']) && !isset($data['extended']))
@@ -220,9 +220,9 @@ class LDAPUser extends User
 
     private function generateLDAPPass($pass)
     {
-        mt_srand((double)microtime()*1000000);
+        mt_srand((double)microtime() * 1000000);
         $salt = pack("CCCC", mt_rand(), mt_rand(), mt_rand(), mt_rand());
-        $hash = base64_encode(pack('H*',sha1($pass.$salt)).$salt);
+        $hash = base64_encode(pack('H*', sha1($pass.$salt)).$salt);
         return '{SSHA}'.$hash;
     }
 
@@ -230,7 +230,7 @@ class LDAPUser extends User
     {
         if(!is_object($this->ldapObj))
         {
-            return $this->setFieldLocal('userPassword',  $this->generateLDAPPass($password));
+            return $this->setFieldLocal('userPassword', $this->generateLDAPPass($password));
         }
         else
         {
@@ -266,7 +266,7 @@ class LDAPUser extends User
         return false;
     }
 
-    static function from_name($name, $data=false)
+    static function from_name($name, $data = false)
     {
         if($data === false)
         {
@@ -281,7 +281,7 @@ class LDAPUser extends User
         return new static($user[0]);
     }
 
-    static function from_dn($dn, $data=false)
+    static function from_dn($dn, $data = false)
     {
         if($data === false)
         {

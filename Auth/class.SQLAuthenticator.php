@@ -20,7 +20,7 @@ if(!function_exists('password_hash') || !function_exists('password_verify'))
         }
         if(!is_int($algo))
         {
-            trigger_error("password_hash() expects parameter 2 to be long, " . gettype($algo) . " given", E_USER_WARNING);
+            trigger_error("password_hash() expects parameter 2 to be long, ".gettype($algo)." given", E_USER_WARNING);
             return false;
         }
         $resultLength = 0;
@@ -43,7 +43,7 @@ if(!function_exists('password_hash') || !function_exists('password_verify'))
         $base64String = base64_encode($salt);
         $salt = strtr(rtrim($base64String, '='), $base64Digits, $bcrypt64Digits);
         $salt = substr($salt, 0, $requiredSaltLen);
-        $hash = $hashFormat . $salt;
+        $hash = $hashFormat.$salt;
         $ret = crypt($password, $hash);
         if(!is_string($ret) || strlen($ret) != $resultLength)
         {
@@ -114,7 +114,7 @@ class SQLAuthenticator extends Authenticator
         return \DataSetFactory::getDataSetByName('pending_authentication');
     }
 
-    private function getDataTable($name, $pending=false)
+    private function getDataTable($name, $pending = false)
     {
          if(isset($this->dataTables[$name]) && isset($this->dataTables[$name][$pending]))
          {
@@ -227,12 +227,12 @@ class SQLAuthenticator extends Authenticator
         return $data;
     }
 
-    public function getGroupsByFilter($filter, $select=false, $top=false, $skip=false, $orderby=false)
+    public function getGroupsByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false)
     {
         return $this->convertDataToClass('group', 'SQLGroup', $filter, $select, $top, $skip, $orderby);
     }
 
-    public function getUsersByFilter($filter, $select=false, $top=false, $skip=false, $orderby=false)
+    public function getUsersByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false)
     {
         return $this->convertDataToClass('group', 'SQLUser', $filter, $select, $top, $skip, $orderby);
     }
@@ -249,7 +249,7 @@ class SQLAuthenticator extends Authenticator
     {
         $userDataTable = $this->getPendingUserDataTable();
         $fieldData = $filter->to_mongo_filter();
-        $firstFilter = new \Data\Filter('substringof(data,"'.implode($fieldData,' ').'")');
+        $firstFilter = new \Data\Filter('substringof(data,"'.implode($fieldData, ' ').'")');
         $users = $userDataTable->read($firstFilter, $select, $top, $skip, $orderby);
         if($users === false)
         {
@@ -276,8 +276,7 @@ class SQLAuthenticator extends Authenticator
         return $ret;
     }
 
-    public function getPendingUsersByFilter($filter, $select=false, $top=false, $skip=false, $orderby=false)
-
+    public function getPendingUsersByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false)
     {
         if($this->pending === false) return false;
         if($filter !== false && !$filter->contains('hash'))

@@ -28,12 +28,12 @@ class SQLGroup extends Group
         return false;
     }
 
-    public function getMemberUids($recursive=true)
+    public function getMemberUids($recursive = true)
     {
         return $this->members(false, $recursive, true);
     }
 
-    public function members($details=false, $recursive=true, $includeGroups=true)
+    public function members($details = false, $recursive = true, $includeGroups = true)
     {
         //TODO
         return array();

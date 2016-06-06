@@ -134,9 +134,9 @@ class SQLDataSet extends DataSet
             $tmp = array();
             foreach($sort as $sort_col=>$dir)
             {
-                array_push($tmp, $sort_col.' '.($dir === 1? 'ASC' : 'DESC'));
+                array_push($tmp, $sort_col.' '.($dir === 1 ? 'ASC' : 'DESC'));
             }
-            $sql .= implode($tmp,',');
+            $sql .= implode($tmp, ',');
         }
         $stmt = $this->pdo->query($sql, \PDO::FETCH_ASSOC);
         if($stmt === false)

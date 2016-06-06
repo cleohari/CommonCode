@@ -5,7 +5,7 @@ class LDAPObject extends \SerializableObject
 {
      public $server;
 
-     function __construct($array=false, $server=false)
+     function __construct($array = false, $server = false)
      {
          parent::__construct($array);
          $this->server = $server;
@@ -14,7 +14,7 @@ class LDAPObject extends \SerializableObject
      public function jsonSerialize()
      {
          $ret = array();
-         foreach ($this as $key => $value)
+         foreach($this as $key => $value)
          {
             if($key === 'server' || $key === 'count') continue;
             if(is_numeric($key)) continue;

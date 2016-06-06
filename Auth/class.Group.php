@@ -23,12 +23,12 @@ class Group extends \SerializableObject
         return false;
     }
 
-    public function getMemberUids($recursive=true)
+    public function getMemberUids($recursive = true)
     {
         return array();
     }
 
-    public function members($details=false, $recursive=true, $includeGroups=true)
+    public function members($details = false, $recursive = true, $includeGroups = true)
     {
         return array();
     }
@@ -46,20 +46,24 @@ class Group extends \SerializableObject
     public function jsonSerialize()
     {
         $group = array();
-        try{
-        $group['cn'] = $this->getGroupName();
-        $group['description'] = $this->getDescription();
-        $group['member'] = $this->getMemberUids();
-        } catch(\Exception $e) {echo $e->getMessage(); die();}
+        try
+        {
+            $group['cn'] = $this->getGroupName();
+            $group['description'] = $this->getDescription();
+            $group['member'] = $this->getMemberUids();
+        }
+        catch(\Exception $e)
+        {
+        }
         return $group;
     }
 
-    public function getNonMembers($select=false)
+    public function getNonMembers($select = false)
     {
         return array();
     }
 
-    public function addMember($name, $isGroup=false, $flush=true)
+    public function addMember($name, $isGroup = false, $flush = true)
     {
         return false;
     }
