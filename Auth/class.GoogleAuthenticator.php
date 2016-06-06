@@ -1,6 +1,6 @@
 <?php
 namespace Auth;
-require dirname(__FILE__) . '/../libs/google/src/Google/autoload.php';
+require dirname(__FILE__).'/../libs/google/src/Google/autoload.php';
 
 class GoogleAuthenticator extends Authenticator
 {
@@ -34,13 +34,16 @@ class GoogleAuthenticator extends Authenticator
     public function authenticate($code, &$currentUser = false)
     {
         $googleUser = false;
-        try{
+        try
+        {
             $this->client->authenticate($code);
             $this->token = $this->client->getAccessToken();
             \FlipSession::setVar('GoogleToken', $this->token);
             $oauth2Service = new \Google_Service_Oauth2($this->client);
             $googleUser = $oauth2Service->userinfo->get();
-        } catch(\Exception $ex) {
+        }
+        catch(\Exception $ex)
+        {
             return self::LOGIN_FAILED;
         }
 

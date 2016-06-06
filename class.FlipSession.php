@@ -157,7 +157,7 @@ class FlipSession extends Singleton
             $len = $pos - $offset;
             $name = substr($sessionData, $offset, $len);
             if($name === false) break;
-            $offset += $len+1;
+            $offset += $len + 1;
             $data = @unserialize(substr($sessionData, $offset));
             $res[$name] = $data;
             $offset += strlen(serialize($data));
@@ -185,7 +185,7 @@ class FlipSession extends Singleton
             else
             {
                 $tmp = FlipSession::unserializePhpSession($sessionData);
-                $tmp['sid' ] = $sessionId;
+                $tmp['sid'] = $sessionId;
                 array_push($res, $tmp);
             }
         }
