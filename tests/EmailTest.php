@@ -19,6 +19,13 @@ class EmailTest extends PHPUnit_Framework_TestCase
         $this->assertEmpty($email->getHTMLBody());
         $this->assertEmpty($email->getTextBody());
     }
+
+    public function testEmailService()
+    {
+        $service = new \Email\EmailService(false);
+        $this->assertFalse($service->canSend());
+        $this->assertFalse($service->sendEmail(false));
+    }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
 ?>
