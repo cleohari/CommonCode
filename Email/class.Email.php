@@ -149,7 +149,7 @@ class Email extends \SerializableObject
      * @param string $email The email address to send from
      * @param string $name  The name to associate with the from address
      */
-    public function setFromAddress($email, $name=false)
+    public function setFromAddress($email, $name = false)
     {
         $address = $email;
         if($name !== false)
@@ -165,7 +165,7 @@ class Email extends \SerializableObject
      * @param string $email The email address to send to
      * @param string $name  The name to associate with the address
      */
-    public function addToAddress($email, $name=false)
+    public function addToAddress($email, $name = false)
     {
         $this->addAddress($this->to, $email, $name);
     }
@@ -176,7 +176,7 @@ class Email extends \SerializableObject
      * @param string $email The email address to send to
      * @param string $name  The name to associate with the address
      */
-    public function addCCAddress($email, $name=false)
+    public function addCCAddress($email, $name = false)
     {
         $this->addAddress($this->cc, $email, $name);
     }
@@ -187,7 +187,7 @@ class Email extends \SerializableObject
      * @param string $email The email address to send to
      * @param string $name  The name to associate with the address
      */
-    public function addBCCAddress($email, $name=false)
+    public function addBCCAddress($email, $name = false)
     {
         $this->addAddress($this->bcc, $email, $name);
     }
@@ -199,7 +199,7 @@ class Email extends \SerializableObject
      * @param string $email The email address to send to
      * @param string $name  The name to associate with the address
      */
-    protected function addAddress(&$list, $email, $name=false)
+    protected function addAddress(&$list, $email, $name = false)
     {
         $address = $email;
         if($name !== false)
@@ -215,7 +215,7 @@ class Email extends \SerializableObject
      * @param string $email The email address to reply to
      * @param string $name  The name to associate with the from address
      */
-    public function setReplyTo($email, $name=false)
+    public function setReplyTo($email, $name = false)
     {
         $address = $email;
         if($name !== false)
@@ -262,7 +262,7 @@ class Email extends \SerializableObject
      */
     public function appendToHTMLBody($body)
     {
-        $this->htmlBody.= $body;
+        $this->htmlBody .= $body;
     }
 
     /**
@@ -272,7 +272,7 @@ class Email extends \SerializableObject
      */
     public function appendToTextBody($body)
     {
-        $this->textBody.= $body;
+        $this->textBody .= $body;
     }
 
     /**
@@ -335,14 +335,14 @@ class Email extends \SerializableObject
         {
             throw new \Exception('Message must have a from address');
         }
-        $rawMessage.= 'From: '.$this->encodeRecipients($from)."\n";
+        $rawMessage .= 'From: '.$this->encodeRecipients($from)."\n";
         if(!empty($this->cc))
         {
-            $rawMessage.= 'CC: '. $this->encodeRecipients($this->getCCAddresses())."\n";
+            $rawMessage .= 'CC: '. $this->encodeRecipients($this->getCCAddresses())."\n";
         }
         if(!empty($this->bcc))
         {
-            $rawMessage.= 'BCC: '. $this->encodeRecipients($this->getBCCAddresses())."\n";
+            $rawMessage .= 'BCC: '. $this->encodeRecipients($this->getBCCAddresses())."\n";
         }
         $rawMessage .= 'Subject: '.$this->getSubject()."\n";
         $rawMessage .= 'MIME-Version: 1.0'."\n";
@@ -352,9 +352,9 @@ class Email extends \SerializableObject
         $textBody    = $this->getTextBody();
         if($textBody !== false && strlen($textBody) > 0)
         {
-            $rawMessage.= "\n--alt-{$boundary}\n";
-            $rawMessage.= "Content-Type: text/plain\n\n";
-            $rawMessage.= $textBody."\n";
+            $rawMessage .= "\n--alt-{$boundary}\n";
+            $rawMessage .= "Content-Type: text/plain\n\n";
+            $rawMessage .= $textBody."\n";
         }
         $htmlBody    = $this->getHTMLBody();
         if($htmlBody !== false && strlen($htmlBody) > 0)
@@ -363,14 +363,14 @@ class Email extends \SerializableObject
             $rawMessage .= 'Content-Type: text/html; charset="UTF-8"'."\n\n";
             $rawMessage .= $htmlBody."\n";
         }
-        $rawMessage.= "\n--alt-{$boundary}--\n";
+        $rawMessage .= "\n--alt-{$boundary}--\n";
         foreach($this->attachments as $attachment)
         {
-            $rawMessage.= "\n--{$boundary}\n";
-            $rawMessage.= 'Content-Type: '. $attachment['mimeType'].'; name="'.$attachment['name']."\"\n";
-            $rawMessage.= 'Content-Disposition: attachment'."\n";
-            $rawMessage.= 'Content-Transfer-Encoding: base64'."\n\n";
-            $rawMessage.= chunk_split(base64_encode($attachment['data']), 76, "\n")."\n";
+            $rawMessage .= "\n--{$boundary}\n";
+            $rawMessage .= 'Content-Type: '. $attachment['mimeType'].'; name="'.$attachment['name']."\"\n";
+            $rawMessage .= 'Content-Disposition: attachment'."\n";
+            $rawMessage .= 'Content-Transfer-Encoding: base64'."\n\n";
+            $rawMessage .= chunk_split(base64_encode($attachment['data']), 76, "\n")."\n";
         }
         $rawMessage .= "\n--{$boundary}--\n";
         return $rawMessage;

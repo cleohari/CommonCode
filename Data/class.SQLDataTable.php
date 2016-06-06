@@ -51,7 +51,7 @@ class SQLDataTable extends DataTable
         }
     }
 
-    function count($filter=false)
+    function count($filter = false)
     {
         if($this->data !== null)
         {
@@ -73,7 +73,7 @@ class SQLDataTable extends DataTable
         }
     }
   
-    function search($filter=false, $select=false, $count=false, $skip=false, $sort=false, $params=false)
+    function search($filter = false, $select = false, $count = false, $skip = false, $sort = false, $params = false)
     {
         if($this->data !== null)
         {

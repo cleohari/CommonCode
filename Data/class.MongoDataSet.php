@@ -7,15 +7,15 @@ function MongofillAutoload($classname)
     $classname = ltrim($classname, '\\');
     $filename  = '';
     $namespace = '';
-    if ($lastNsPos = strrpos($classname, '\\'))
+    if($lastNsPos = strrpos($classname, '\\'))
     {
         $namespace = substr($classname, 0, $lastNsPos);
         $classname = substr($classname, $lastNsPos + 1);
-        $filename  = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
+        $filename  = str_replace('\\', DIRECTORY_SEPARATOR, $namespace).DIRECTORY_SEPARATOR;
     }
     if(strlen($namespace))
     {
-        $namespace.=DIRECTORY_SEPARATOR;
+        $namespace .= DIRECTORY_SEPARATOR;
     }
     $filename = __DIR__.'/../libs/mongofill/src/'.$namespace.$classname.'.php';
     if(is_readable($filename))
