@@ -304,6 +304,30 @@ class UserTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals('{"hash":false,"mail":"test@example.com","uid":"test@example.com","class":"Auth\\\\PendingUser"}', json_encode($user));
     }
+
+    public function testSQLPendingUser()
+    {
+        $user = new \Auth\SQLPendingUser(array('hash'=>false, 'time'=>'now', 'data'=>'{"mail":"test@example.com", "uid":"test", "password":"test"}'));
+        $this->assertFalse($user->getHash());
+        $this->assertNotFalse($user->getRegistrationTime());
+        $this->assertFalse($user->isInGroupNamed('AAR'));
+        $this->assertEquals('test@example.com', $user->getEmail());
+        $this->assertEquals('test', $user->getUid());
+        $this->assertEquals('test', $user->getPassword());
+        $time = $user->getRegistrationTime()->format(\DateTime::RFC822);
+        $this->assertEquals('{"hash":false,"mail":"test@example.com","uid":"test","time":"'.$time.'","class":"Auth\\\\SQLPendingUser"}', json_encode($user));
+        $this->assertEquals('test', $user['uid']);
+
+        $user = new \Auth\SQLPendingUser(array('hash'=>'1234', 'time'=>'now', 'data'=>'{"mail":["test@example.com"], "uid":["test"], "password":["test"]}'));
+        $this->assertEquals('1234', $user->getHash());
+        $this->assertNotFalse($user->getRegistrationTime());
+        $this->assertFalse($user->isInGroupNamed('AAR'));
+        $this->assertEquals('test@example.com', $user->getEmail());
+        $this->assertEquals('test', $user->getUid());
+        $this->assertEquals('test', $user->getPassword());
+        $time = $user->getRegistrationTime()->format(\DateTime::RFC822);
+        $this->assertEquals('{"hash":"1234","mail":"test@example.com","uid":"test","time":"'.$time.'","class":"Auth\\\\SQLPendingUser"}', json_encode($user));
+    }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
 ?>
