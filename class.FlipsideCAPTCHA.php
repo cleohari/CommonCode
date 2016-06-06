@@ -99,7 +99,7 @@ class FlipsideCAPTCHA implements JsonSerializable
         $string .= '<label for="captcha" class="col-sm-2 control-label">'.$this->get_question().'</label><div class="col-sm-10"><input class="form-control" type="text" id="captcha" name="captcha" placeholder="'.$this->get_hint().'" required/></div>';
         if($ownForm)
         {
-            $string .='</form>';
+            $string .= '</form>';
         }
         if($explination)
         {
