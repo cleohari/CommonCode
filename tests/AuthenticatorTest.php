@@ -95,6 +95,66 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase
         $this->assertNotNull($users);
 
     }
+
+    public function testFlipsideAuthenticator()
+    {
+        $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
+        $_SERVER['HTTP_HOST'] = 'example.com';
+        $params = array('current'=>true, 'pending'=>false, 'supplement'=>false);
+        $auth = new \Auth\OAuth2\FlipsideAuthenticator($params);
+        $this->assertNotNull($auth);
+        $this->assertInstanceOf('Auth\OAuth2\FlipsideAuthenticator', $auth);
+        $this->assertEquals('burningflipside.com', $auth->getHostName());
+        $this->assertEquals('https://profiles.burningflipside.com/OAUTH2/authorize.php?client_id=test&redirect_uri=https%3A%2F%2Fexample.com%2Foauth%2Fcallbacks%2Fburningflipside.com&scope=user', $auth->getAuthorizationUrl());
+        $this->assertEquals('https://profiles.burningflipside.com/OAUTH2/token.php?client_id=test&redirect_uri=https%3A%2F%2Fexample.com%2Foauth%2Fcallbacks%2Fburningflipside.com', $auth->getAccessTokenUrl());
+        $this->assertEquals('<a href="https://profiles.burningflipside.com/OAUTH2/authorize.php?client_id=test&redirect_uri=https%3A%2F%2Fexample.com%2Foauth%2Fcallbacks%2Fburningflipside.com&scope=user"><img src="/img/common/burningflipside.com_sign_in.png" style="width: 2em;"/></a>', $auth->getSupplementLink());
+        $this->assertEquals('/img/common/burningflipside.com_sign_in.png', $auth->getSignInImg());
+    }
+
+    public function testGithubAuthenticator()
+    {
+        $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
+        $_SERVER['HTTP_HOST'] = 'example.com';
+        $params = array('current'=>true, 'pending'=>false, 'supplement'=>false, 'app_id'=>'test', 'app_secret'=>'abc');
+        $auth = new \Auth\OAuth2\GitHubAuthenticator($params);
+        $this->assertNotNull($auth);
+        $this->assertInstanceOf('Auth\OAuth2\GitHubAuthenticator', $auth);
+        $this->assertEquals('github.com', $auth->getHostName());
+        $this->assertEquals('https://github.com/login/oauth/authorize?client_id=test&redirect_uri=https%3A%2F%2Fexample.com%2Foauth%2Fcallbacks%2Fgithub.com&scope=user', $auth->getAuthorizationUrl());
+        $this->assertEquals('https://github.com/login/oauth/access_token?client_id=test&client_secret=abc&redirect_uri=https%3A%2F%2Fexample.com%2Foauth%2Fcallbacks%2Fgithub.com', $auth->getAccessTokenUrl());
+        $this->assertEquals('<a href="https://github.com/login/oauth/authorize?client_id=test&redirect_uri=https%3A%2F%2Fexample.com%2Foauth%2Fcallbacks%2Fgithub.com&scope=user"><img src="/img/common/github.com_sign_in.png" style="width: 2em;"/></a>', $auth->getSupplementLink());
+        $this->assertEquals('/img/common/github.com_sign_in.png', $auth->getSignInImg());
+    }
+
+    public function testGitlabAuthenticator()
+    {
+        $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
+        $_SERVER['HTTP_HOST'] = 'example.com';
+        $params = array('current'=>true, 'pending'=>false, 'supplement'=>false, 'app_id'=>'test', 'app_secret'=>'abc');
+        $auth = new \Auth\OAuth2\GitLabAuthenticator($params);
+        $this->assertNotNull($auth);
+        $this->assertInstanceOf('Auth\OAuth2\GitLabAuthenticator', $auth);
+        $this->assertEquals('gitlab.com', $auth->getHostName());
+        $this->assertEquals('https://gitlab.com/oauth/authorize?client_id=test&redirect_uri=https%3A%2F%2Fexample.com%2Foauth%2Fcallbacks%2Fgitlab.com&response_type=code', $auth->getAuthorizationUrl());
+        $this->assertEquals('https://gitlab.com/oauth/token?client_id=test&client_secret=abc&grant_type=authorization_code&redirect_uri=https%3A%2F%2Fexample.com%2Foauth%2Fcallbacks%2Fgitlab.com', $auth->getAccessTokenUrl());
+        $this->assertEquals('<a href="https://gitlab.com/oauth/authorize?client_id=test&redirect_uri=https%3A%2F%2Fexample.com%2Foauth%2Fcallbacks%2Fgitlab.com&response_type=code"><img src="/img/common/gitlab.com_sign_in.png" style="width: 2em;"/></a>', $auth->getSupplementLink());
+        $this->assertEquals('/img/common/gitlab.com_sign_in.png', $auth->getSignInImg());
+    }
+
+    public function testLiveAuthenticator()
+    {
+        $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
+        $_SERVER['HTTP_HOST'] = 'example.com';
+        $params = array('current'=>true, 'pending'=>false, 'supplement'=>false, 'app_id'=>'test', 'app_secret'=>'abc');
+        $auth = new \Auth\OAuth2\LiveAuthenticator($params);
+        $this->assertNotNull($auth);
+        $this->assertInstanceOf('Auth\OAuth2\LiveAuthenticator', $auth);
+        $this->assertEquals('live.com', $auth->getHostName());
+        $this->assertEquals('https://login.live.com/oauth20_authorize.srf?client_id=test&redirect_uri=https%3A%2F%2Fexample.com%2Foauth%2Fcallbacks%2Flive.com&response_type=code&scope=wl.basic,wl.emails', $auth->getAuthorizationUrl());
+        $this->assertEquals('https://login.live.com/oauth20_token.srf', $auth->getAccessTokenUrl());
+        $this->assertEquals('<a href="https://login.live.com/oauth20_authorize.srf?client_id=test&redirect_uri=https%3A%2F%2Fexample.com%2Foauth%2Fcallbacks%2Flive.com&response_type=code&scope=wl.basic,wl.emails"><img src="/img/common/live.com_sign_in.png" style="width: 2em;"/></a>', $auth->getSupplementLink());
+        $this->assertEquals('/img/common/live.com_sign_in.png', $auth->getSignInImg());
+    }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
 ?>

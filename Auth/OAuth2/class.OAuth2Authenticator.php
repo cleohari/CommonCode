@@ -16,7 +16,7 @@ namespace Auth\OAuth2;
 /** Only load the HTTPFul bootstrap if it isn't already loaded*/
 if(!class_exists('Httpful\Request'))
 {
-    require('/var/www/common/libs/httpful/bootstrap.php');
+    require dirname(__FILE__) . '/../../libs/httpful/bootstrap.php';
 }
 
 /**
