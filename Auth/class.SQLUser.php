@@ -6,7 +6,7 @@ class SQLUser extends User
     private $data;
     private $auth;
 
-    function __construct($data=false, $auth=false)
+    function __construct($data = false, $auth = false)
     {
         $this->data = array();
         $this->auth = $auth;

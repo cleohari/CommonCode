@@ -308,9 +308,9 @@ class User extends \SerializableObject
      */
     public function isProfileComplete()
     {
-        if($this->getCountry() === false    || $this->getAddress() === false ||
+        if($this->getCountry() === false || $this->getAddress() === false ||
            $this->getPostalCode() === false || $this->getCity() === false ||
-           $this->getState() === false      || $this->getPhoneNumber() === false)
+           $this->getState() === false || $this->getPhoneNumber() === false)
         {
             return false;
         }
@@ -354,7 +354,7 @@ class User extends \SerializableObject
      *
      * @return true|false true if the user's password was changed, false otherwise
      */
-    public function change_pass($oldpass, $newpass, $isHash=false)
+    public function change_pass($oldpass, $newpass, $isHash = false)
     {
         if($isHash === false && $this->validate_password($oldpass) === false)
         {
@@ -793,17 +793,17 @@ class User extends \SerializableObject
     public function getVcard()
     {
         $ret = "BEGIN:VCARD\nVERSION:2.1\n";
-        $ret.= 'N:'.$this->getLastName().';'.$this->getGivenName()."\n";
-        $ret.= 'FN:'.$this->getGivenName()."\n";
+        $ret .= 'N:'.$this->getLastName().';'.$this->getGivenName()."\n";
+        $ret .= 'FN:'.$this->getGivenName()."\n";
         $titles = $this->getTitles();
         if($titles !== false)
         {
-            $ret.= 'TITLE:'.implode(',', $titles)."\n";
+            $ret .= 'TITLE:'.implode(',', $titles)."\n";
         }
-        $ret.= "ORG: Austin Artistic Reconstruction\n";
-        $ret.= 'TEL;TYPE=MOBILE,VOICE:'.$this->getPhoneNumber()."\n";
-        $ret.= 'EMAIL;TYPE=PREF,INTERNET:'.$this->getEmail()."\n";
-        $ret.= "END:VCARD\n";
+        $ret .= "ORG: Austin Artistic Reconstruction\n";
+        $ret .= 'TEL;TYPE=MOBILE,VOICE:'.$this->getPhoneNumber()."\n";
+        $ret .= 'EMAIL;TYPE=PREF,INTERNET:'.$this->getEmail()."\n";
+        $ret .= "END:VCARD\n";
         return $ret;
     }
 }

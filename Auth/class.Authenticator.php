@@ -102,7 +102,7 @@ class Authenticator
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
-    public function getGroupsByFilter($filter, $select=false, $top=false, $skip=false, $orderby=false)
+    public function getGroupsByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false)
     {
         return false;
     }
@@ -120,7 +120,7 @@ class Authenticator
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
-    public function getUsersByFilter($filter, $select=false, $top=false, $skip=false, $orderby=false)
+    public function getUsersByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false)
     {
         return false;
     }
@@ -138,7 +138,7 @@ class Authenticator
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
-    public function getPendingUsersByFilter($filter, $select=false, $top=false, $skip=false, $orderby=false)
+    public function getPendingUsersByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false)
     {
         return false;
     }

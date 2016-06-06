@@ -72,7 +72,7 @@ class LDAPGroup extends Group
         return substr($split[0], 4);
     }
 
-    public function getMemberUids($recursive=true)
+    public function getMemberUids($recursive = true)
     {
         $members = array();
         $rawMembers = $this->getMembersField();
@@ -117,7 +117,7 @@ class LDAPGroup extends Group
         return LDAPUser::from_name(substr($split[0], 4), $this->server);
     }
 
-    public function members($details=false, $recursive=true, $includeGroups=true)
+    public function members($details = false, $recursive = true, $includeGroups = true)
     {
         $members = array();
         $rawMembers = $this->getMembersField();
@@ -154,7 +154,7 @@ class LDAPGroup extends Group
         return $members;
     }
 
-    public function getNonMemebers($select=false)
+    public function getNonMemebers($select = false)
     {
         $data = array();
         $groupFilter = '(&(cn=*)(!(cn='.$this->getGroupName().'))';
@@ -163,18 +163,18 @@ class LDAPGroup extends Group
         $count = count($members);
         for($i = 0; $i < $count; $i++)
         {
-            $dnComps = explode(',',$members[$i]);
+            $dnComps = explode(',', $members[$i]);
             if(strncmp($members[$i], "uid=", 4) == 0)
             {
-                $userFilter.='(!('.$dnComps[0].'))';
+                $userFilter .= '(!('.$dnComps[0].'))';
             }
             else
             {
-                $groupFilter.='(!('.$dnComps[0].'))';
+                $groupFilter .= '(!('.$dnComps[0].'))';
             }
         }
-        $userFilter.=')';
-        $groupFilter.=')';
+        $userFilter .= ')';
+        $groupFilter .= ')';
         $groups = $this->server->read($this->server->group_base, $groupFilter);
         $count = count($groups);
         for($i = 0; $i < $count; $i++)
@@ -207,7 +207,7 @@ class LDAPGroup extends Group
         }
     }
 
-    public function addMember($name, $isGroup=false, $flush=true)
+    public function addMember($name, $isGroup = false, $flush = true)
     {
         $dn = false;
         if($isGroup)
@@ -254,7 +254,7 @@ class LDAPGroup extends Group
         }
     }
 
-    static function from_dn($dn, $data=false)
+    static function from_dn($dn, $data = false)
     {
         if($data === false)
         {
@@ -268,7 +268,7 @@ class LDAPGroup extends Group
         return new static($group[0]);
     }
 
-    static function from_name($name, $data=false)
+    static function from_name($name, $data = false)
     {
         if($data === false)
         {

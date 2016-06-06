@@ -338,11 +338,11 @@ class Email extends \SerializableObject
         $rawMessage .= 'From: '.$this->encodeRecipients($from)."\n";
         if(!empty($this->cc))
         {
-            $rawMessage .= 'CC: '. $this->encodeRecipients($this->getCCAddresses())."\n";
+            $rawMessage .= 'CC: '.$this->encodeRecipients($this->getCCAddresses())."\n";
         }
         if(!empty($this->bcc))
         {
-            $rawMessage .= 'BCC: '. $this->encodeRecipients($this->getBCCAddresses())."\n";
+            $rawMessage .= 'BCC: '.$this->encodeRecipients($this->getBCCAddresses())."\n";
         }
         $rawMessage .= 'Subject: '.$this->getSubject()."\n";
         $rawMessage .= 'MIME-Version: 1.0'."\n";
@@ -356,7 +356,7 @@ class Email extends \SerializableObject
             $rawMessage .= "Content-Type: text/plain\n\n";
             $rawMessage .= $textBody."\n";
         }
-        $htmlBody    = $this->getHTMLBody();
+        $htmlBody = $this->getHTMLBody();
         if($htmlBody !== false && strlen($htmlBody) > 0)
         {
             $rawMessage .= "\n--alt-{$boundary}\n";
@@ -367,7 +367,7 @@ class Email extends \SerializableObject
         foreach($this->attachments as $attachment)
         {
             $rawMessage .= "\n--{$boundary}\n";
-            $rawMessage .= 'Content-Type: '. $attachment['mimeType'].'; name="'.$attachment['name']."\"\n";
+            $rawMessage .= 'Content-Type: '.$attachment['mimeType'].'; name="'.$attachment['name']."\"\n";
             $rawMessage .= 'Content-Disposition: attachment'."\n";
             $rawMessage .= 'Content-Transfer-Encoding: base64'."\n\n";
             $rawMessage .= chunk_split(base64_encode($attachment['data']), 76, "\n")."\n";

@@ -106,7 +106,7 @@ class SQLDataSet extends DataSet
         throw new \Exception('No such table '.$name);
     }
 
-    function read($tablename, $where=false, $select='*', $count=false, $skip=false, $sort=false)
+    function read($tablename, $where = false, $select = '*', $count = false, $skip = false, $sort = false)
     {
         if($select === false)
         {
@@ -115,28 +115,28 @@ class SQLDataSet extends DataSet
         $sql = "SELECT $select FROM $tablename";
         if($where !== false)
         {
-            $sql.=' WHERE '.$where;
+            $sql .= ' WHERE '.$where;
         }
         if($count !== false)
         {
             if($skip === false)
             {
-                $sql.=' LIMIT '.(int)$count;
+                $sql .= ' LIMIT '.(int)$count;
             }
             else
             {
-                $sql.=" LIMIT $skip, $count";
+                $sql .= " LIMIT $skip, $count";
             }
         }
         if($sort !== false)
         {
-            $sql.=' ORDER BY ';
+            $sql .= ' ORDER BY ';
             $tmp = array();
             foreach($sort as $sort_col=>$dir)
             {
-                array_push($tmp, $sort_col.' '.($dir === 1?'ASC':'DESC'));
+                array_push($tmp, $sort_col.' '.($dir === 1? 'ASC' : 'DESC'));
             }
-            $sql.=implode($tmp,',');
+            $sql .= implode($tmp,',');
         }
         $stmt = $this->pdo->query($sql, \PDO::FETCH_ASSOC);
         if($stmt === false)
