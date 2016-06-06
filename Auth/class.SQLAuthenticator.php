@@ -116,26 +116,26 @@ class SQLAuthenticator extends Authenticator
 
     private function getDataTable($name, $pending = false)
     {
-         if(isset($this->dataTables[$name]) && isset($this->dataTables[$name][$pending]))
-         {
-             return $this->dataTables[$name][$pending];
-         }
-         $dataSet = $this->dataSet;
-         if($pending)
-         {
-             $dataSet = $this->pendingDataSet;
-         }
-         if($dataSet === null)
-         {
-             throw new \Exception('Unable to obtain dataset for SQL Authentication!');
-         }
-         $dataTable = $dataSet[$name];
-         if(!isset($this->dataTables[$name]))
-         {
-             $this->dataTables[$name] = array();
-         }
-         $this->dataTables[$name][$pending] = $dataTable;
-         return $dataTable;
+        if(isset($this->dataTables[$name]) && isset($this->dataTables[$name][$pending]))
+        {
+            return $this->dataTables[$name][$pending];
+        }
+        $dataSet = $this->dataSet;
+        if($pending)
+        {
+            $dataSet = $this->pendingDataSet;
+        }
+        if($dataSet === null)
+        {
+            throw new \Exception('Unable to obtain dataset for SQL Authentication!');
+        }
+        $dataTable = $dataSet[$name];
+        if(!isset($this->dataTables[$name]))
+        {
+            $this->dataTables[$name] = array();
+        }
+        $this->dataTables[$name][$pending] = $dataTable;
+        return $dataTable;
     }
 
     private function getPendingUserDataTable()

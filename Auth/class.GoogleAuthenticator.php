@@ -69,7 +69,7 @@ class GoogleAuthenticator extends Authenticator
             $ret = $auth->activatePendingUser($user);
             if($ret === false)
             {
-                 throw new \Exception('Unable to create user! '.$res);
+                throw new \Exception('Unable to create user! '.$res);
             }
             return self::SUCCESS;
         }

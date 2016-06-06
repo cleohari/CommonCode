@@ -283,4 +283,5 @@ class LDAPGroup extends Group
         return new static($group[0]);
     }
 }
+/* vim: set tabstop=4 shiftwidth=4 expandtab: */
 ?>

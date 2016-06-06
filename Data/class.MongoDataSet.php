@@ -65,7 +65,7 @@ class MongoDataSet extends DataSet
         $collections = $this->db->getCollectionNames();
         if(in_array($name, $collections))
         {
-             return true;
+            return true;
         }
         return false;
     }
@@ -116,4 +116,5 @@ class MongoDataSet extends DataSet
         $this->db_name = $params['db'];
     }
 }
+/* vim: set tabstop=4 shiftwidth=4 expandtab: */
 ?>

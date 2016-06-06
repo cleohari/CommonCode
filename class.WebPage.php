@@ -247,15 +247,15 @@ class WebPage
      */
     protected function printIeCompatability($prefix = '')
     {
-       //IE 8 doesn't support HTML 5. Install the shim...
-       if($this->getBrowserMajorVer() < 9)
-       {
-           echo $prefix.'<script src="js/html5.js"></script>';
-           echo "\n";
-       }
-       //Tell the browser not to use compatability mode...
-       echo $prefix.'<meta http-equiv="X-UA-Compatible" content="IE=edge"/>';
-       echo "\n";
+        //IE 8 doesn't support HTML 5. Install the shim...
+        if($this->getBrowserMajorVer() < 9)
+        {
+            echo $prefix.'<script src="js/html5.js"></script>';
+            echo "\n";
+        }
+        //Tell the browser not to use compatability mode...
+        echo $prefix.'<meta http-equiv="X-UA-Compatible" content="IE=edge"/>';
+        echo "\n";
     }
 
     /**

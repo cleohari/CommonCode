@@ -238,7 +238,7 @@ class LDAPUser extends User
             $obj['userPassword'] = $this->generateLDAPPass($password);
             if(isset($this->ldapObj->uniqueidentifier))
             {
-               $obj['uniqueIdentifier'] = null;
+                $obj['uniqueIdentifier'] = null;
             }
             //Make sure we are bound in write mode
             $auth = \AuthProvider::getInstance();
@@ -439,5 +439,5 @@ class LDAPUser extends User
         return $this->server->delete($this->ldapObj->dn);
     }
 }
-
+/* vim: set tabstop=4 shiftwidth=4 expandtab: */
 ?>

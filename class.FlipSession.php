@@ -204,7 +204,7 @@ class FlipSession extends Singleton
 
     static function deleteSessionById($sid)
     {
-       return unlink(ini_get('session.save_path').'/sess_'.$sid); 
+        return unlink(ini_get('session.save_path').'/sess_'.$sid); 
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
