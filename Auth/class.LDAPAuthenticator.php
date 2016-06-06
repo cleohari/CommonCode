@@ -286,6 +286,13 @@ class LDAPAuthenticator extends Authenticator
         return $server->count($this->user_base);
     }
 
+    /**
+     # @param array   $data The array data to filter and sort
+     * @param array   $select The fields to return
+     * @param integer $top The number of records to return
+     * @param integer $skip The number of records to skip
+     * @param array   $orderby The fields to sort by
+     */
     private function processFilteringParams(&$data, &$select, $top, $skip, $orderby)
     {
         if($orderby !== false)

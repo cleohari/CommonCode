@@ -44,11 +44,11 @@ class SerializableObject implements ArrayAccess, JsonSerializable
     /**
      * Serialize the object into a format consumable by json_encode
      *
-     * @return mixed The object in a more serialized format
+     * @return array The object in a more serialized format
      */
     public function jsonSerialize()
     {
-        return $this;
+        return (array)$this;
     }
 
     /**

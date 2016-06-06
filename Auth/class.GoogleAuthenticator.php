@@ -25,6 +25,11 @@ class GoogleAuthenticator extends Authenticator
         $this->client->setRedirectUri($params['redirect_url']);
     }
 
+    /**
+     * Get the link to login using this method
+     *
+     * @return string The link to login using this method
+     */
     public function getSupplementLink()
     {
         $authUrl = $this->client->createAuthUrl();
