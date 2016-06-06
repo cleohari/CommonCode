@@ -1,0 +1,18 @@
+<?php
+require_once('Autoload.php');
+class PDFTest extends PHPUnit_Framework_TestCase
+{
+    public function testPDF()
+    {
+        $pdf = new \PDF\PDF();
+        $pdf->setPDFFromHTML('<html><body>Test</body></html>');
+        $pdfStr = $pdf->toPDFBuffer();
+        $this->assertEquals(14568, strlen($pdfStr));
+        $name = tempnam('/tmp', 'PDF');
+        $pdf->toPDFFile($name);
+        $this->assertEquals($pdfStr, file_get_contents($name));
+        unlink($name);
+    }
+}
+/* vim: set tabstop=4 shiftwidth=4 expandtab: */
+?>
