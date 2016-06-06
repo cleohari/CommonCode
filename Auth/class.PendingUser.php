@@ -180,7 +180,11 @@ class PendingUser extends User
         $user['hash'] = $this->getHash();
         $user['mail'] = $this->getEmail();
         $user['uid'] = $this->getUid();
-        $user['time'] = $this->getRegistrationTime()->format(\DateTime::RFC822);
+        $time = $this->getRegistrationTime();
+        if($time !== false)
+        {
+            $user['time'] = $time->format(\DateTime::RFC822);
+        }
         $user['class'] = get_class($this);
         return $user; 
     }

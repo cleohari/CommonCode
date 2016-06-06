@@ -274,6 +274,36 @@ class UserTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($user->getLoginProviders());
         $this->assertFalse($user->getGroups());
     }
+
+    public function testPendingUser()
+    {
+        $user = new \Auth\PendingUser();
+        $this->assertFalse($user->getHash());
+        $this->assertFalse($user->getRegistrationTime());
+        $this->assertFalse($user->isInGroupNamed('AAR'));
+        $this->assertFalse($user->getEmail());
+        $this->assertFalse($user->getGivenName());
+        $this->assertFalse($user->getLastName());
+        $this->assertFalse($user->getPassword());
+        $this->assertFalse($user->getLoginProviders());
+
+        $user->addLoginProvider('example.com');
+        $this->assertEquals(array('example.com'), $user->getLoginProviders());
+
+        $user->addLoginProvider('example2.com');
+        $this->assertEquals(array('example.com', 'example2.com'), $user->getLoginProviders());
+
+        $this->assertTrue($user->setEmail('test@example.com'));
+        $this->assertEquals('test@example.com', $user->getEmail());
+
+        $this->assertTrue($user->setGivenName('test'));
+        $this->assertEquals('test', $user->getGivenName());
+
+        $this->assertTrue($user->setLastName('test'));
+        $this->assertEquals('test', $user->getLastName());
+
+        $this->assertEquals('{"hash":false,"mail":"test@example.com","uid":"test@example.com","class":"Auth\\\\PendingUser"}', json_encode($user));
+    }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
 ?>
