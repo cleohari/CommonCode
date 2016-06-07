@@ -27,7 +27,7 @@ class Settings extends \Singleton
             for($i = 0; $i < $count; $i++)
             {
                 $class = $keys[$i];
-                array_push($this->methods, new $class($prop[$keys[$i]]));
+                array_push($ret, new $class($prop[$keys[$i]]));
             }
         }
         return $ret;
@@ -80,7 +80,7 @@ class Settings extends \Singleton
             case 'host':
                 return $this->getLDAPHost($default);
             default:
-                if($ldapAuth == false)
+                if($ldapAuth === false)
                 {
                     return FlipsideSettings::$ldap[$propName];
                 }
