@@ -44,7 +44,7 @@ class Group extends \SerializableObject
     /**
      * Get the UID's of the Group Members
      *
-     * @param boolean $recursie Include members of child groups
+     * @param boolean $recursive Include members of child groups
      *
      * @return array Array of UIDs
      *
@@ -120,7 +120,10 @@ class Group extends \SerializableObject
                 {
                     $isLast = true;
                 }
-                if(!isset($group->member[$i]->type)) continue;
+                if(!isset($group->member[$i]->type))
+                {
+                    continue;
+                }
                 if($group->member[$i]->type === 'Group')
                 {
                     $this->addMember($group->member[$i]->cn, true, $isLast);

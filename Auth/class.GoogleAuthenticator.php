@@ -86,7 +86,8 @@ class GoogleAuthenticator extends Authenticator
         {
             $data = $this->token;
         }
-        try {
+        try
+        {
             $this->client->setAccessToken($data);
             $oauth2Service = new \Google_Service_Oauth2($this->client);
             $googleUser = $oauth2Service->userinfo->get();
@@ -97,7 +98,8 @@ class GoogleAuthenticator extends Authenticator
             $profileUser['displayName'] = $googleUser->name;
             $profileUser['jpegPhoto'] = base64_encode(file_get_contents($googleUser->picture));
             return $profileUser;
-        } catch(\Exception $e)
+        }
+        catch(\Exception $e)
         {
             return false;
         }

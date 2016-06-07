@@ -1,6 +1,9 @@
 <?php
 require_once('Autoload.php');
-if(!isset($_SESSION) && php_sapi_name() !== 'cli') { session_start(); }
+if(!isset($_SESSION) && php_sapi_name() !== 'cli')
+{
+    session_start();
+}
 if(!isset($_SESSION['ip_address']) && isset($_SERVER['REMOTE_ADDR']))
 {
     $_SESSION['ip_address'] = $_SERVER['REMOTE_ADDR'];
@@ -156,7 +159,10 @@ class FlipSession extends Singleton
             $pos = strpos($sessionData, "|", $offset);
             $len = $pos - $offset;
             $name = substr($sessionData, $offset, $len);
-            if($name === false) break;
+            if($name === false)
+            {
+                break;
+            }
             $offset += $len + 1;
             $data = @unserialize(substr($sessionData, $offset));
             $res[$name] = $data;

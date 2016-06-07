@@ -88,6 +88,13 @@ trait LDAPCachableObject
         return $this->appendFieldServer($fieldName, $fieldValue);
     }
 
+    /**
+     * Get the value of the field in the local cache
+     *
+     * @param string $fieldName The name of the field to retrieve
+     *
+     * @return mixed the value of the field
+     */
     private function getFieldLocal($fieldName)
     {
         if($this->ldapObj === false)
@@ -101,6 +108,13 @@ trait LDAPCachableObject
         return $this->ldapObj[$fieldName];
     }
 
+    /**
+     * Get the value of the field in the server object
+     *
+     * @param string $fieldName The name of the field to retrieve
+     *
+     * @return mixed the value of the field
+     */
     private function getFieldServer($fieldName)
     {
         $lowerName = strtolower($fieldName);
@@ -111,6 +125,13 @@ trait LDAPCachableObject
         return $this->ldapObj->{$lowerName};
     }
 
+    /**
+     * Get the value of the specified field from the local cache
+     *
+     * @param string $fieldName The name of the field to retrieve
+     *
+     * @return string the value of the field
+     */
     private function getFieldLocalSingleValue($fieldName)
     {
         if($this->ldapObj === false)
@@ -128,6 +149,13 @@ trait LDAPCachableObject
         return $this->ldapObj[$fieldName];
     }
 
+    /**
+     * Get the value of the specified field from the server
+     *
+     * @param string $fieldName The name of the field to retrieve
+     *
+     * @return string the value of the field
+     */
     private function getFieldServerSingleValue($fieldName)
     {
         $lowerName = strtolower($fieldName);
@@ -143,6 +171,14 @@ trait LDAPCachableObject
         return $field[0];
     }
 
+    /**
+     * Set the specified field in the server
+     *
+     * @param string $fieldName The name of the field to set
+     * @param mixed $fieldValue The value to write to the field
+     *
+     * @return boolean true if the field is set and false otherwise
+     */
     private function setFieldServer($fieldName, $fieldValue)
     {
         $obj = array('dn'=>$this->ldapObj->dn);
@@ -159,6 +195,14 @@ trait LDAPCachableObject
         return $this->update($obj);
     }
 
+    /**
+     * Append a value of the specified field in the server
+     *
+     * @param string $fieldName The name of the field to set
+     * @param mixed $fieldValue The value to append to the field
+     *
+     * @return  boolean true if the field is set and false otherwise
+     */
     private function appendFieldServer($fieldName, $fieldValue)
     {
         $obj = array('dn'=>$this->ldapObj->dn);
@@ -175,6 +219,14 @@ trait LDAPCachableObject
         return $this->update($obj);
     }
 
+    /**
+     * Set the specified field in the local cache
+     *
+     * @param string $fieldName The name of the field to set
+     * @param mixed $fieldValue The value to write to the field
+     *
+     * @return boolean true if the field is set and false otherwise
+     */
     private function setFieldLocal($fieldName, $fieldValue)
     {
         if($this->ldapObj === false)
@@ -193,6 +245,14 @@ trait LDAPCachableObject
         return true;
     }
 
+    /**
+     * Append a value of the specified field in the local cache
+     *
+     * @param string $fieldName The name of the field to set
+     * @param mixed $fieldValue The value to append to the field
+     *
+     * @return  boolean true if the field is set and false otherwise
+     */
     private function appendFieldLocal($fieldName, $fieldValue)
     {
         if($this->ldapObj === false)

@@ -16,8 +16,14 @@ class LDAPObject extends \SerializableObject
         $ret = array();
         foreach($this as $key => $value)
         {
-            if($key === 'server' || $key === 'count') continue;
-            if(is_numeric($key)) continue;
+            if($key === 'server' || $key === 'count')
+            {
+                continue;
+            }
+            if(is_numeric($key))
+            {
+                continue;
+            }
             if($key === 'jpegphoto')
             {
                 $ret[$key] = base64_encode($value[0]);

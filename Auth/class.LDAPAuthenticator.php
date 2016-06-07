@@ -41,10 +41,16 @@ function sort_array(&$array, $orderby)
             switch($orderby[$keys[0]])
             {
                 case 1:
-                    if($d > 0) swap($array, $i, $j);
+                    if($d > 0)
+                    {
+                        swap($array, $i, $j);
+                    }
                     break;
                 case 0:
-                    if($d < 0) swap($array, $i, $j);
+                    if($d < 0)
+                    {
+                        swap($array, $i, $j);
+                    }
                     break;
             }
         }
@@ -287,7 +293,7 @@ class LDAPAuthenticator extends Authenticator
     }
 
     /**
-     # @param array           $data The array data to filter and sort
+     * @param array           $data The array data to filter and sort
      * @param boolean|array   $select The fields to return
      * @param boolean|integer $top The number of records to return
      * @param boolean|integer $skip The number of records to skip
@@ -317,6 +323,14 @@ class LDAPAuthenticator extends Authenticator
         }
     }
 
+    
+    /**
+     * @param boolean|\Data\Filter $filter The filter to user when reading users
+     * @param boolean|array   $select The fields to return
+     * @param boolean|integer $top The number of records to return
+     * @param boolean|integer $skip The number of records to skip
+     * @param boolean|array   $orderby The fields to sort by
+     */
     public function getUsersByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false)
     {
         $server = $this->get_and_bind_server();
