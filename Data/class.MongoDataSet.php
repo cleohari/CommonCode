@@ -46,14 +46,7 @@ class MongoDataSet extends DataSet
         else
         {
             require __DIR__.'/../libs/mongofill/src/functions.php';
-            if(version_compare(PHP_VERSION, '5.3.0', '>='))
-            {
-                spl_autoload_register('\Data\MongofillAutoload', true, true);
-            }
-            else
-            {
-                spl_autoload_register('\Data\MongofillAutoload');
-            }
+            autoLoadHandler('\Data\MongofillAutoload');
             $this->setupMongoClient($params);
         }
     }
