@@ -838,8 +838,8 @@ class FlipPage extends WebPage
      * Add a link to the header
      *
      * @param string $name The name of the link
-     * @param false|string $url The URL to link to
-     * @param false|array $subment Any submenu items for the dropdown
+     * @param boolean|string $url The URL to link to
+     * @param boolean|array $submenu Any submenu items for the dropdown
      */
     public function addLink($name, $url = false, $submenu = false)
     {

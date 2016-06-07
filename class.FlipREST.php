@@ -75,8 +75,8 @@ class OAuth2Auth extends \Slim\Middleware
         if(!isset($this->headers['Authorization']))
         {
             $this->app->user = $this->getUserFromSession();
-        } 
-        else 
+        }
+        else
         {
             $header = $this->headers['Authorization'];
             $this->app->user = $this->getUserFromHeader($header);

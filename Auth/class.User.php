@@ -31,7 +31,7 @@ class User extends \SerializableObject
      *
      * @param string $name The name of the group to check if the user is in
      *
-     * @return true|false True if the user is in the group, false otherwise
+     * @return boolean True if the user is in the group, false otherwise
      */
     public function isInGroupNamed($name)
     {
@@ -41,7 +41,7 @@ class User extends \SerializableObject
     /**
      * The name the user should be displayed as
      *
-     * @return string The name the user should be displayed as
+     * @return boolean|string The name the user should be displayed as
      */
     public function getDisplayName()
     {
@@ -51,7 +51,7 @@ class User extends \SerializableObject
     /**
      * The given (or first) name for the user
      *
-     * @return string The user's first name
+     * @return boolean|string The user's first name
      */
     public function getGivenName()
     {
@@ -61,7 +61,7 @@ class User extends \SerializableObject
     /**
      * The email address for the user
      *
-     * @return string The user's email address
+     * @return boolean|string The user's email address
      */
     public function getEmail()
     {
@@ -71,7 +71,7 @@ class User extends \SerializableObject
     /**
      * The user ID for the user
      *
-     * @return string The user's ID or username
+     * @return boolean|string The user's ID or username
      */
     public function getUid()
     {
@@ -81,7 +81,7 @@ class User extends \SerializableObject
     /**
      * The photo for the user
      *
-     * @return string The user's photo as a binary string
+     * @return boolean|string The user's photo as a binary string
      */ 
     public function getPhoto()
     {
@@ -91,7 +91,7 @@ class User extends \SerializableObject
     /**
      * The phone number for the user
      *
-     * @return false|string The user's phone number
+     * @return boolean|string The user's phone number
      */
     public function getPhoneNumber()
     {
@@ -101,7 +101,7 @@ class User extends \SerializableObject
     /**
      * The organziation for the user
      *
-     * @return false|string The user's organization
+     * @return boolean|string The user's organization
      */
     public function getOrganization()
     {
@@ -111,7 +111,7 @@ class User extends \SerializableObject
     /**
      * The list of titles for the user
      *
-     * @return array The user's title(s) in short format
+     * @return boolean|array The user's title(s) in short format
      */
     public function getTitles()
     {
@@ -121,7 +121,7 @@ class User extends \SerializableObject
     /**
      * The list of titles for the user
      *
-     * @return array The user's title(s) in user friendly strings
+     * @return boolean|array The user's title(s) in user friendly strings
      *
      * @SuppressWarnings("StaticAccess")
      */
@@ -159,7 +159,7 @@ class User extends \SerializableObject
     /**
      * The state the user's mailing address is in
      *
-     * @return string The user's state from their mailing address
+     * @return boolean|string The user's state from their mailing address
      */
     public function getState()
     {
@@ -169,7 +169,7 @@ class User extends \SerializableObject
     /**
      * The city the user's mailing address is in
      *
-     * @return string The user's city from their mailing address
+     * @return boolean|string The user's city from their mailing address
      */
     public function getCity()
     {
@@ -179,7 +179,7 @@ class User extends \SerializableObject
     /**
      * The last name for the user
      *
-     * @return string The user's last name
+     * @return boolean|string The user's last name
      */
     public function getLastName()
     {
@@ -189,7 +189,7 @@ class User extends \SerializableObject
     /**
      * The nick name for the user
      *
-     * @return string The user's nick name
+     * @return boolean|string The user's nick name
      */
     public function getNickName()
     {
@@ -199,7 +199,7 @@ class User extends \SerializableObject
     /**
      * The street address for the user
      *
-     * @return string The user's street address
+     * @return boolean|string The user's street address
      */
     public function getAddress()
     {
@@ -209,7 +209,7 @@ class User extends \SerializableObject
     /**
      * The postal (zip) code for the user's mailing address
      *
-     * @return string The user's postal code
+     * @return boolean|string The user's postal code
      */
     public function getPostalCode()
     {
@@ -219,7 +219,7 @@ class User extends \SerializableObject
     /**
      * The country the user's mailing address is in
      *
-     * @return string The user's country from their mailing address
+     * @return boolean|string The user's country from their mailing address
      */
     public function getCountry()
     {
@@ -231,7 +231,7 @@ class User extends \SerializableObject
      *
      * This is the same as Areas in Flipside speak. 
      *
-     * @return array The user's orgnaiational units
+     * @return boolean|array The user's orgnaiational units
      */
     public function getOrganizationUnits()
     {
@@ -241,7 +241,7 @@ class User extends \SerializableObject
     /**
      * The supplemental login types that the user can use to login
      *
-     * @return array The user's login providers
+     * @return boolean|array The user's login providers
      */
     public function getLoginProviders()
     {
@@ -251,7 +251,7 @@ class User extends \SerializableObject
     /**
      * The groups the user is a part of
      *
-     * @return false|array The user's Auth\Group structures
+     * @return boolean|array The user's Auth\Group structures
      */
     public function getGroups()
     {
@@ -263,7 +263,7 @@ class User extends \SerializableObject
      *
      * @param string $provider The hostname for the provider
      *
-     * @return true|false true if the addition worked, false otherwise
+     * @return boolean true if the addition worked, false otherwise
      */
     public function addLoginProvider($provider)
     {
@@ -275,16 +275,22 @@ class User extends \SerializableObject
      *
      * @param string $provider The hostname for the provider
      *
-     * @return true|false true if they can login with the provider, false otherwise
+     * @return boolean true if they can login with the provider, false otherwise
      */
     public function canLoginWith($provider)
     {
         $hosts = $this->getLoginProviders();
-        if($hosts === false) return false;
+        if($hosts === false)
+        {
+            return false;
+        }
         $count = count($hosts);
         for($i = 0; $i < $count; $i++)
         {
-            if(strcasecmp($hosts[$i], $provider) === 0) return true;
+            if(strcasecmp($hosts[$i], $provider) === 0)
+            {
+                return true;
+            }
         }
         return false;
     }
@@ -294,7 +300,7 @@ class User extends \SerializableObject
      *
      * @param string $password The new user password
      *
-     * @return true|false true if the user's password was changed, false otherwise
+     * @return boolean true if the user's password was changed, false otherwise
      */
     protected function setPass($password)
     {
@@ -304,7 +310,7 @@ class User extends \SerializableObject
     /**
      * Has the user completely filled out their user profile?
      *
-     * @return true|false true if the user's profile is complete, false otherwise
+     * @return boolean true if the user's profile is complete, false otherwise
      */
     public function isProfileComplete()
     {
@@ -322,7 +328,7 @@ class User extends \SerializableObject
      *
      * @param string $password The user's current password
      *
-     * @return true|false true if the user's password is correct, false otherwise
+     * @return boolean true if the user's password is correct, false otherwise
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
@@ -336,7 +342,7 @@ class User extends \SerializableObject
      *
      * @param string $hash The user's reset hash
      *
-     * @return true|false true if the user's hash is correct, false otherwise
+     * @return boolean true if the user's hash is correct, false otherwise
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
@@ -352,7 +358,7 @@ class User extends \SerializableObject
      * @param string $newpass The user's new password
      * @param boolean $isHash Is $old_pass a password or a hash
      *
-     * @return true|false true if the user's password was changed, false otherwise
+     * @return boolean true if the user's password was changed, false otherwise
      */
     public function change_pass($oldpass, $newpass, $isHash = false)
     {
@@ -376,7 +382,7 @@ class User extends \SerializableObject
      *
      * @param string $name The user's new display name
      *
-     * @return true|false true if the user's display name was changed, false otherwise
+     * @return boolean true if the user's display name was changed, false otherwise
      */
     public function setDisplayName($name)
     {
@@ -388,7 +394,7 @@ class User extends \SerializableObject
      *
      * @param string $name The user's new given name
      *
-     * @return true|false true if the user's given name was changed, false otherwise
+     * @return boolean true if the user's given name was changed, false otherwise
      */
     public function setGivenName($name)
     {
@@ -400,7 +406,7 @@ class User extends \SerializableObject
      *
      * @param string $email The user's new email address
      *
-     * @return true|false true if the user's email address was changed, false otherwise
+     * @return boolean true if the user's email address was changed, false otherwise
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
@@ -414,7 +420,7 @@ class User extends \SerializableObject
      *
      * @param string $uid The user's new user ID
      *
-     * @return true|false true if the user's ID was changed, false otherwise
+     * @return boolean true if the user's ID was changed, false otherwise
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
@@ -428,7 +434,7 @@ class User extends \SerializableObject
      *
      * @param string $photo The user's new photo as a binary string
      *
-     * @return true|false true if the user's photo was changed, false otherwise
+     * @return boolean true if the user's photo was changed, false otherwise
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
@@ -442,7 +448,7 @@ class User extends \SerializableObject
      *
      * @param string $phone The user's new phonew number
      *
-     * @return true|false true if the user's phone number was changed, false otherwise
+     * @return boolean true if the user's phone number was changed, false otherwise
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
@@ -456,7 +462,7 @@ class User extends \SerializableObject
      *
      * @param string $org The user's new organization
      *
-     * @return true|false true if the user's organization was changed, false otherwise
+     * @return boolean true if the user's organization was changed, false otherwise
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
@@ -470,7 +476,7 @@ class User extends \SerializableObject
      *
      * @param string $titles The user's new titles
      *
-     * @return true|false true if the user's titles were changed, false otherwise
+     * @return boolean true if the user's titles were changed, false otherwise
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
@@ -484,7 +490,7 @@ class User extends \SerializableObject
      *
      * @param string $state The user's new state
      *
-     * @return true|false true if the user's state was changed, false otherwise
+     * @return boolean true if the user's state was changed, false otherwise
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
@@ -498,7 +504,7 @@ class User extends \SerializableObject
      *
      * @param string $city The user's new city
      *
-     * @return true|false true if the user's city was changed, false otherwise
+     * @return boolean true if the user's city was changed, false otherwise
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
@@ -512,7 +518,7 @@ class User extends \SerializableObject
      *
      * @param string $sn The user's new last name
      *
-     * @return true|false true if the user's last name was changed, false otherwise
+     * @return boolean true if the user's last name was changed, false otherwise
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
@@ -526,7 +532,7 @@ class User extends \SerializableObject
      *
      * @param string $displayName The user's new nick name
      *
-     * @return true|false true if the user's nick name was changed, false otherwise
+     * @return boolean true if the user's nick name was changed, false otherwise
      */
     public function setNickName($displayName)
     {
@@ -538,7 +544,7 @@ class User extends \SerializableObject
      *
      * @param string $address The user's new mailing address
      *
-     * @return true|false true if the user's mailing address was changed, false otherwise
+     * @return boolean true if the user's mailing address was changed, false otherwise
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
@@ -552,7 +558,7 @@ class User extends \SerializableObject
      *
      * @param string $postalcode The user's new postal code
      *
-     * @return true|false true if the user's postal code was changed, false otherwise
+     * @return boolean true if the user's postal code was changed, false otherwise
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
@@ -566,7 +572,7 @@ class User extends \SerializableObject
      *
      * @param string $country The user's new country
      *
-     * @return true|false true if the user's country was changed, false otherwise
+     * @return boolean true if the user's country was changed, false otherwise
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
@@ -580,7 +586,7 @@ class User extends \SerializableObject
      *
      * @param string $ous The user's new organizations
      *
-     * @return true|false true if the user's organizations was changed, false otherwise
+     * @return boolean true if the user's organizations was changed, false otherwise
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
@@ -721,7 +727,7 @@ class User extends \SerializableObject
      *
      * @param stdClass $data The user's new data
      *
-     * @return true|false true if the user's data was changed, false otherwise
+     * @return boolean true if the user's data was changed, false otherwise
      */
     public function editUser($data)
     {

@@ -107,7 +107,7 @@ class LDAPServer extends \Singleton
         return true;
     }
 
-    function disconnect()
+    public function disconnect()
     {
         if($this->ds !== null)
         {
@@ -117,7 +117,13 @@ class LDAPServer extends \Singleton
         $this->connect = false;
     }
 
-    function bind($cn = null, $password = null)
+    /**
+     * Bind (login0 to the LDAP Server
+     *
+     * @param string $cn The common name to bind with, null to bind anonymously
+     * @param string $password The password to bind with, null to bind anonymously
+     */
+    public function bind($cn = null, $password = null)
     {
         $res = false;
         if($this->ds === null)
@@ -201,6 +207,13 @@ class LDAPServer extends \Singleton
         return $ret;
     }
 
+    /**
+     * Get the LDAP filter represented by the passed object
+     *
+     * @param boolean|string|\Data\Filter $filter The fiter to use
+     *
+     * @return string The filter in LDAP format
+     */
     private function filterToString($filter)
     {
         if($filter === false)

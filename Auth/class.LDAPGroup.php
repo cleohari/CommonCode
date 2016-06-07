@@ -179,7 +179,10 @@ class LDAPGroup extends Group
         $count = count($groups);
         for($i = 0; $i < $count; $i++)
         {
-            if($groups[$i] === false || $groups[$i] === null) continue;
+            if($groups[$i] === false || $groups[$i] === null)
+            {
+                continue;
+            }
             array_push($data, new LDAPGroup($groups[$i]));
         }
         $users = $this->server->read($this->server->user_base, $userFilter, false, $select);

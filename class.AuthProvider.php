@@ -275,14 +275,14 @@ class AuthProvider extends Singleton
     /**
      * Get an array of Auth\PendingUser from a filtered set
      *
-     * @param Data\Filter|false $filter The filter conditions or false to retreive all
-     * @param array|false $methodName The user fields to obtain or false to obtain all
-     * @param integer|false $top The number of users to obtain or false to obtain all
-     * @param integer|false $skip The number of users to skip or false to skip none
-     * @param array|false $orderby The field to sort by and the method to sort or false to not sort
-     * @param string|false $methodName The AuthMethod if information is desired only from a particular Auth\Authenticator
+     * @param Data\Filter|boolean $filter The filter conditions or false to retreive all
+     * @param array|boolean $methodName The user fields to obtain or false to obtain all
+     * @param integer|boolean $top The number of users to obtain or false to obtain all
+     * @param integer|boolean $skip The number of users to skip or false to skip none
+     * @param array|boolean $orderby The field to sort by and the method to sort or false to not sort
+     * @param string|boolean $methodName The AuthMethod if information is desired only from a particular Auth\Authenticator
      *
-     * @return array|false An array of Auth\PendingUser objects or false if no pending users were found
+     * @return array|boolean An array of Auth\PendingUser objects or false if no pending users were found
      */
     public function getPendingUsersByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false, $methodName = false)
     {

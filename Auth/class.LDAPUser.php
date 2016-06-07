@@ -44,12 +44,20 @@ class LDAPUser extends User
             {
                 $dn = explode(',', $array[$i]);
                 $res = $this->isInGroupNamed(substr($dn[0], 3));
-                if($res) return $res;
+                if($res)
+                {
+                    return $res;
+                }
             }
         }
         return $res;
     }
 
+    /**
+     * @param string $listName The name of the list to search
+     * @param Group $group The group to search inside
+     * @param string $dn The distringuished name to search for
+     */
     private function isInListOrChild($listName, $group, $dn)
     {
         if(!isset($group[$listName]))

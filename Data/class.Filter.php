@@ -35,11 +35,17 @@ class Filter
             return array(new FilterClause($string));
         }
         $children = array();
-        if($parens) array_push($children, '(');
+        if($parens)
+        {
+            array_push($children, '(');
+        }
         $children = array_merge($children, self::process_string($clauses[1]));
         array_push($children, trim($clauses[2]));
         $children = array_merge($children, self::process_string($clauses[3]));
-        if($parens) array_push($children, ')');
+        if($parens)
+        {
+            array_push($children, ')');
+        }
         return $children;
     }
 
