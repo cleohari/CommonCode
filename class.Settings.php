@@ -2,11 +2,11 @@
 
 class Settings extends \Singleton
 {
-    private function __construct()
+    protected function __construct()
     {
         if(isset($GLOBALS['FLIPSIDE_SETTINGS_LOC']))
         {
-            require $GLOBALS['FLIPSIDE_SETTINGS_LOC'];
+            require $GLOBALS['FLIPSIDE_SETTINGS_LOC'].'/class.FlipsideSettings.php';
             return;
         }
         if(is_readable('/var/www/secure_settings/class.FlipsideSettings.php'))
@@ -16,7 +16,7 @@ class Settings extends \Singleton
         }
     }
 
-    public function getClassesByPropName(string $propName)
+    public function getClassesByPropName($propName)
     {
         $ret = array();
         if(isset(FlipsideSettings::$$propName))
@@ -33,7 +33,7 @@ class Settings extends \Singleton
         return $ret;
     }
 
-    public function getDataSetData(string $dataSetName)
+    public function getDataSetData($dataSetName)
     {
         if(!isset(FlipsideSettings::$dataset) || !isset(FlipsideSettings::$dataset[$dataSetName]))
         {
@@ -42,7 +42,7 @@ class Settings extends \Singleton
         return FlipsideSettings::$dataset[$dataSetName];
     }
 
-    public function getGlobalSetting(string $propName, $default = false)
+    public function getGlobalSetting($propName, $default = false)
     {
         if(isset(FlipsideSettings::$global) && FlipsideSettings::$global[$propName])
         {
@@ -73,7 +73,7 @@ class Settings extends \Singleton
         return \FlipsideSettings::$ldap['host'];
     }
 
-    public function getLDAPSetting(string $propName, boolean $ldapAuth = false, $default = false)
+    public function getLDAPSetting(string $propName, $ldapAuth = false, $default = false)
     {
         switch($propName)
         {

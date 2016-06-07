@@ -340,7 +340,7 @@ class FlipPage extends WebPage
      */
     public function __construct($title, $header = true)
     {
-        $this->settings = \Setting::getInstance();
+        $this->settings = \Settings::getInstance();
         parent::__construct($title);
         $this->setupVars();
         $this->addWellKnownJS(JS_JQUERY, false);
@@ -404,11 +404,11 @@ class FlipPage extends WebPage
         }
         $this->minified = 'min';
         $this->cdn      = 'cdn';
-        if($this->getGlobalSetting('use_minified', true) == false)
+        if($this->settings->getGlobalSetting('use_minified', true) == false)
         {
             $this->minified = 'no';
         }
-        if($this->getGlobalSetting('use_cdn', true) == false)
+        if($this->settings->getGlobalSetting('use_cdn', true) == false)
         {
             $this->cdn = 'no';
         }
