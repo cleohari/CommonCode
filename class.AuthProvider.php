@@ -231,7 +231,7 @@ class AuthProvider extends Provider
      * Get an array of Auth\User from a filtered set
      *
      * @param Data\Filter|boolean $filter The filter conditions or false to retreive all
-     * @param array|boolean $methodName The user fields to obtain or false to obtain all
+     * @param array|boolean $select The user fields to obtain or false to obtain all
      * @param integer|boolean $top The number of users to obtain or false to obtain all
      * @param integer|boolean $skip The number of users to skip or false to skip none
      * @param array|boolean $orderby The field to sort by and the method to sort or false to not sort
@@ -253,7 +253,7 @@ class AuthProvider extends Provider
      * Get an array of Auth\PendingUser from a filtered set
      *
      * @param Data\Filter|boolean $filter The filter conditions or false to retreive all
-     * @param array|boolean $methodName The user fields to obtain or false to obtain all
+     * @param array|boolean $select The user fields to obtain or false to obtain all
      * @param integer|boolean $top The number of users to obtain or false to obtain all
      * @param integer|boolean $skip The number of users to skip or false to skip none
      * @param array|boolean $orderby The field to sort by and the method to sort or false to not sort
@@ -275,7 +275,7 @@ class AuthProvider extends Provider
      * Get an array of Auth\Group from a filtered set
      *
      * @param Data\Filter|false $filter The filter conditions or false to retreive all
-     * @param array|false $methodName The group fields to obtain or false to obtain all
+     * @param array|false $select The group fields to obtain or false to obtain all
      * @param integer|false $top The number of groups to obtain or false to obtain all
      * @param integer|false $skip The number of groups to skip or false to skip none
      * @param array|false $orderby The field to sort by and the method to sort or false to not sort
