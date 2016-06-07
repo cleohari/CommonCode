@@ -1,13 +1,5 @@
 <?php
 namespace Auth;
-if(isset($GLOBALS['FLIPSIDE_SETTINGS_LOC']))
-{
-    require_once($GLOBALS['FLIPSIDE_SETTINGS_LOC'].'/class.FlipsideSettings.php');
-}
-else
-{
-    require_once('/var/www/secure_settings/class.FlipsideSettings.php');
-}
 
 class LDAPGroup extends Group
 {
