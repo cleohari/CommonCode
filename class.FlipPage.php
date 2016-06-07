@@ -353,8 +353,8 @@ class FlipPage extends WebPage
     {
         parent::__construct($title);
         $this->setupVars();
-        $this->add_js(JS_JQUERY, false);
-        $this->add_js(JS_FLIPSIDE, false);
+        $this->addWellKnownJS(JS_JQUERY, false);
+        $this->addWellKnownJS(JS_FLIPSIDE, false);
         $this->addBootstrap();
         $this->header = $header;
         $this->links = array();
@@ -576,7 +576,7 @@ class FlipPage extends WebPage
      */
     private function addBootstrap()
     {
-        $this->add_js(JS_BOOTSTRAP, false);
+        $this->addWellKnownJS(JS_BOOTSTRAP, false);
         $this->addWellKnownCSS(CSS_BOOTSTRAP);
         $this->addWellKnownCSS(CSS_FONTAWESOME);
     }
