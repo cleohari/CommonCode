@@ -183,7 +183,10 @@ class Filter
         $count = count($this->children);
         for($i = 0; $i < $count; $i++)
         {
-            if(!is_object($this->children[$i])) continue;
+            if(!is_object($this->children[$i]))
+            {
+                continue;
+            }
             if(strstr($this->children[$i]->var1, $substr) !== false ||
                strstr($this->children[$i]->var2, $substr) !== false)
             {
