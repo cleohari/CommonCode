@@ -15,17 +15,6 @@
  * Allow other classes to be loaded as needed
  */
 require_once('Autoload.php');
-/**
- * Require the FlipsideSettings file
- */
-if(isset($GLOBALS['FLIPSIDE_SETTINGS_LOC']))
-{
-    require_once($GLOBALS['FLIPSIDE_SETTINGS_LOC'].'/class.FlipsideSettings.php');
-}
-else
-{
-    require_once('/var/www/secure_settings/class.FlipsideSettings.php');
-}
 
 /**
  * A Singleton class to abstract access to the authentication providers.
@@ -35,21 +24,12 @@ else
 class AuthProvider extends Provider
 {
     /**
-     * Load the authentrication providers specified in the FlipsideSettings::$authProviders array
+     * Load the authentrication providers specified in the Settings $authProviders array
      */
     protected function __construct()
     {
-        $this->methods = array();
-        if(isset(FlipsideSettings::$authProviders))
-        {
-            $keys = array_keys(FlipsideSettings::$authProviders);
-            $count = count($keys);
-            for($i = 0; $i < $count; $i++)
-            {
-                $class = $keys[$i];
-                array_push($this->methods, new $class(FlipsideSettings::$authProviders[$keys[$i]]));
-            }
-        }
+        $settings = \Settings::getInstance();
+        $this->methods = $settings->getClassesByPropName('authProviders');
     }
 
     /**

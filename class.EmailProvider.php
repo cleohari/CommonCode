@@ -12,11 +12,6 @@
  */
 
 /**
- * use the FlipsideSettings class
- */
-require_once("/var/www/secure_settings/class.FlipsideSettings.php");
-
-/**
  * Allow other classes to be loaded as needed
  */
 require_once('Autoload.php');
@@ -36,17 +31,8 @@ class EmailProvider extends Provider
      */
     protected function __construct()
     {
-        $this->methods = array();
-        if(isset(FlipsideSettings::$email_providers))
-        {
-            $keys = array_keys(FlipsideSettings::$email_providers);
-            $count = count($keys);
-            for($i = 0; $i < $count; $i++)
-            {
-                $class = $keys[$i];
-                array_push($this->methods, new $class(FlipsideSettings::$email_providers[$keys[$i]]));
-            }
-        }
+        $settings = \Settings::getInstance();
+        $this->methods = $settings->getClassesByPropName('email_providers');
     }
 
     /**

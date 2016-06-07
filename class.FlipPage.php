@@ -13,19 +13,6 @@
  */
 
 /**
- * We use the FlipsideSettings class for a list of sites and settings
- * about CDNs and minified JS/CSS
- */
-if(isset($GLOBALS['FLIPSIDE_SETTINGS_LOC']))
-{
-    require_once($GLOBALS['FLIPSIDE_SETTINGS_LOC'].'/class.FlipsideSettings.php');
-}
-else
-{
-    require_once('/var/www/secure_settings/class.FlipsideSettings.php');
-}
-
-/**
  * We need the parent class
  */
 require_once('class.WebPage.php');
@@ -340,6 +327,8 @@ class FlipPage extends WebPage
     protected $cdn = null;
     /** Draw the analytics scripts */
     protected $analytics = true;
+    /** An instance of the Settings class */
+    protected $settings;
 
     /**
      * Create a webpage with JQuery, Bootstrap, etc
@@ -351,6 +340,7 @@ class FlipPage extends WebPage
      */
     public function __construct($title, $header = true)
     {
+        $this->settings = \Settings::getInstance();
         parent::__construct($title);
         $this->setupVars();
         $this->addWellKnownJS(JS_JQUERY, false);
@@ -359,19 +349,8 @@ class FlipPage extends WebPage
         $this->header = $header;
         $this->links = array();
         $this->notifications = array();
-        $this->loginUrl = 'login.php';
-        $this->logoutUrl = 'logout.php';
-        if(isset(FlipsideSettings::$global))
-        {
-            if(isset(FlipsideSettings::$global['login_url']))
-            {
-                $this->loginUrl = FlipsideSettings::$global['login_url'];
-            }
-            if(isset(FlipsideSettings::$global['logout_url']))
-            {
-                $this->logoutUrl = FlipsideSettings::$global['logout_url'];
-            }
-        }
+        $this->loginUrl = $this->settings->getGlobalSetting('login_url', 'login.php');
+        $this->logoutUrl = $this->settings->getGlobalSetting('logout_url', 'logout.php');
         $this->user = FlipSession::getUser();
         $this->addAllLinks();
     }
@@ -382,11 +361,7 @@ class FlipPage extends WebPage
      */
     protected function getSites()
     {
-        if(isset(FlipsideSettings::$sites))
-        {
-            return FlipsideSettings::$sites;
-        }
-        return array();
+        return $this->settings->getSiteLinks();
     }
 
     /**
@@ -429,16 +404,13 @@ class FlipPage extends WebPage
         }
         $this->minified = 'min';
         $this->cdn      = 'cdn';
-        if(isset(FlipsideSettings::$global))
+        if($this->settings->getGlobalSetting('use_minified', true) == false)
         {
-            if(isset(FlipsideSettings::$global['use_minified']) && !FlipsideSettings::$global['use_minified'])
-            {
-                $this->minified = 'no';
-            }
-            if(isset(FlipsideSettings::$global['use_cdn']) && !FlipsideSettings::$global['use_cdn'])
-            {
-                $this->cdn = 'no';
-            }
+            $this->minified = 'no';
+        }
+        if($this->settings->getGlobalSetting('use_cdn', true) == false)
+        {
+            $this->cdn = 'no';
         }
     }
 

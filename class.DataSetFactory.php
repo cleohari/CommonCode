@@ -12,18 +12,6 @@
  */
 
 /**
- * use the FlipsideSettings class
- */
-if(isset($GLOBALS['FLIPSIDE_SETTINGS_LOC']))
-{
-    require_once($GLOBALS['FLIPSIDE_SETTINGS_LOC'].'/class.FlipsideSettings.php');
-}
-else
-{
-    require_once('/var/www/secure_settings/class.FlipsideSettings.php');
-}
-
-/**
  * Allow other classes to be loaded as needed
  */
 require_once('Autoload.php');
@@ -31,14 +19,14 @@ require_once('Autoload.php');
 /**
  * A static class allowing the caller to easily obtain \Data\DataSet object instances
  *
- * This class will utilize the FlipsideSettings class to determine who to construct the \Data\DataSet object requested by the caller
+ * This class will utilize the Settings class to determine who to construct the \Data\DataSet object requested by the caller
  */
 class DataSetFactory
 {
     /**
-     * Obtain the \Data\DataSet given the name of the dataset used in FlipsideSettings
+     * Obtain the \Data\DataSet given the name of the dataset used in Settings
      *
-     * @param string $setName The name of the DataSet used in FlipsideSettings
+     * @param string $setName The name of the DataSet used in Settings
      *
      * @return \Data\DataSet The DataSet specified
      *
@@ -50,9 +38,9 @@ class DataSetFactory
     }
 
     /**
-     * Obtain the \Data\DataSet given the name of the dataset used in FlipsideSettings
+     * Obtain the \Data\DataSet given the name of the dataset used in the settings
      *
-     * @param string $setName The name of the DataSet used in FlipsideSettings
+     * @param string $setName The name of the DataSet used in the Settings
      *
      * @return \Data\DataSet The DataSet specified
      */
@@ -63,13 +51,14 @@ class DataSetFactory
         {
             return $instances[$setName];
         }
-        if(!isset(FlipsideSettings::$dataset) || !isset(FlipsideSettings::$dataset[$setName]))
+        $settings = \Settings::getInstance();
+        $setData = $settings->getDataSetData($setName);
+        if($setData === false)
         {
             throw new Exception('Unknown dataset name '.$setName);
         }
-        $set_data = FlipsideSettings::$dataset[$setName];
-        $class_name = '\\Data\\'.$set_data['type'];
-        $obj = new $class_name($set_data['params']);
+        $class_name = '\\Data\\'.$setData['type'];
+        $obj = new $class_name($setData['params']);
         $instances[$setName] = $obj;
         return $obj;
     }

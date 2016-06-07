@@ -13,16 +13,6 @@
 
 namespace Auth;
 
-/** We need the FlipsideSettings class to determine how to connect to the LDAP server */
-if(isset($GLOBALS['FLIPSIDE_SETTINGS_LOC']))
-{
-    require_once($GLOBALS['FLIPSIDE_SETTINGS_LOC'].'/class.FlipsideSettings.php');
-}
-else
-{
-    require_once('/var/www/secure_settings/class.FlipsideSettings.php');
-}
-
 /** 
  * Sort the provided array by the keys in $orderby 
  *
@@ -117,11 +107,8 @@ class LDAPAuthenticator extends Authenticator
         {
             return $params['host'];
         }
-        if(isset(\FlipsideSettings::$ldap['proto']))
-        {
-            return \FlipsideSettings::$ldap['proto'].'://'.\FlipsideSettings::$ldap['host'];
-        }
-        return \FlipsideSettings::$ldap['host'];
+        $settings = \Settings::getInstance();
+        return $settings->getLDAPSetting('host');
     }
 
     /**
@@ -129,8 +116,8 @@ class LDAPAuthenticator extends Authenticator
      *
      * @param array  $params The initial parameters of the authenticator
      * @param string $paramName The name of the parameter in the $paramsArray
-     * @param string $settingsLocation The location in the FlipsideSettings class
-     * @param string $settingsName The name in the FlipsideSettings class
+     * @param string $settingsLocation The location in the Settings class
+     * @param string $settingsName The name in the Settings class
      *
      * @return mixed The paramter value
      *
@@ -146,11 +133,8 @@ class LDAPAuthenticator extends Authenticator
         {
             return $params[$paramName];
         }
-        if($settingsLocation === '$ldap')
-        {
-            return \FlipsideSettings::$ldap[$settingsName];
-        }
-        return \FlipsideSettings::$ldap_auth[$settingsName];
+        $settings = \Settings::getInstance();
+        return $settings->getLDAPSetting($settingsName, ($settingsLocation !== '$ldap'));
     }
 
     /**
