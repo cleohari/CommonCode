@@ -423,7 +423,10 @@ class FlipPage extends WebPage
      */
     private function setupVars()
     {
-        if($this->minified !== null && $this->cdn !== null) return;
+        if($this->minified !== null && $this->cdn !== null)
+        {
+            return;
+        }
         $this->minified = 'min';
         $this->cdn      = 'cdn';
         if(isset(FlipsideSettings::$global))
@@ -487,7 +490,7 @@ class FlipPage extends WebPage
     /**
      * Add a Cascading Style Sheet file from its src URI
      *
-     * @param string $src The webpath to the Cascading Style Sheet file
+     * @param string $uri The webpath to the Cascading Style Sheet file
      * @param boolean $async Can the CSS be loaded asynchronously?
      */
     public function addCSSByURI($uri, $async = false)
@@ -514,6 +517,14 @@ class FlipPage extends WebPage
         $this->addWellKnownJS($type, $async);
     }
 
+    /**
+     * Add a JavaScript file from a set of files known to the framework
+     *
+     * @param string $type the ID of the JS file
+     * @param boolean $async Can the JS file be loaded asynchronously?
+     *
+     * @deprecated 2.0.0 Please use addWellKnownJS() instead
+     */
     public function add_js($type, $async = true)
     {
         $this->addWellKnownJS($type, $async);
@@ -582,6 +593,11 @@ class FlipPage extends WebPage
         return $ret;
     }
 
+    /**
+     * Get the link for the HREF
+     *
+     * @return string The HREF for the dropdown
+     */
     protected function getHrefForDropdown(&$link)
     {
         if(isset($link['_']))
@@ -689,7 +705,7 @@ class FlipPage extends WebPage
      *
      * @deprecated 2.0.0 Use the addNotification function instead 
      */
-    public function add_notification($msg, $sev = self::NOTIFICATION_INFO, $dismissible = 1)
+    public function add_notification($msg, $sev = self::NOTIFICATION_INFO, $dismissible = true)
     {
         $notice = array('msg'=>$msg, 'sev'=>$sev, 'dismissible'=>$dismissible);
         array_push($this->notifications, $notice);
@@ -699,7 +715,7 @@ class FlipPage extends WebPage
      * Add a notification to the page
      *
      * @param string $message The message to show in the notifcation
-     * @param string $sevity The severity of the notifcation
+     * @param string $severity The severity of the notifcation
      * @param boolean $dismissible Can the user dismiss the notificaton?
      */
     public function addNotification($message, $severity = self::NOTIFICATION_INFO, $dismissible = true)
@@ -791,7 +807,6 @@ class FlipPage extends WebPage
      * Draw the page
      *
      * @param boolean $header Draw the header
-     * @param boolean $analytics Include analytics on the page
      */
     public function printPage($header = true)
     {
@@ -809,8 +824,8 @@ class FlipPage extends WebPage
      * Add a link to the header
      *
      * @param string $name The name of the link
-     * @param false|string $url The URL to link to
-     * @param false|array $subment Any submenu items for the dropdown
+     * @param boolean|string $url The URL to link to
+     * @param boolean|array $submenu Any submenu items for the dropdown
      *
      * @deprecated 1.0.0 Use addLink instead
      */

@@ -9,14 +9,30 @@ class FilterClause
 
     function __construct($string = false)
     {
-        if($string !== false) $this->process_filter_string($string);
+        if($string !== false)
+        {
+            $this->process_filter_string($string);
+        }
     }
 
+    /**
+     * Find the string inside the other string
+     *
+     * @param string $haystack The string to search inside
+     * @param string $needle The string to search for
+     *
+     * @return boolean True if the needle exists in the haystack, false otherwise
+     */
     static function str_startswith($haystack, $needle)
     {
         return substr($haystack, 0, strlen($needle)) === $needle;
     }
 
+    /**
+     * Convert the string into an OData Filter
+     *
+     * @param string $string The string to turn into a filter
+     */
     protected function process_filter_string($string)
     {
         if(self::str_startswith($string, 'substringof') || self::str_startswith($string, 'contains') || 

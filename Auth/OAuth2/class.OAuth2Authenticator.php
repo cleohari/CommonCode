@@ -109,8 +109,8 @@ abstract class OAuth2Authenticator extends \Auth\Authenticator
      * @param $params The set of parameters obtained from the authentication call
      * @param $current_user The user from the current system if the user is not authorized to login via this method
      *
-     * @return SUCCESS|LOGIN_FAILED|ALREADY_PRESENT SUCCESS if the user is now logged in. ALREADY_PRESENT if the authorization was
-     *                                              successful, but the user has not authorized that login method. LOGIN_FAILED for all other errors
+     * @return integer SUCCESS if the user is now logged in. ALREADY_PRESENT if the authorization was
+     *                 successful, but the user has not authorized that login method. LOGIN_FAILED for all other errors
      */
     public function authenticate($params, &$current_user)
     {

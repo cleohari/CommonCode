@@ -1,7 +1,7 @@
 <?php
 namespace Auth;
 
-if(!function_exists('password_hash') || !function_exists('password_verify')) 
+if(!function_exists('password_hash') || !function_exists('password_verify'))
 {
     define('PASSWORD_BCRYPT', 1);
     define('PASSWORD_DEFAULT', PASSWORD_BCRYPT);
@@ -137,6 +137,11 @@ class SQLAuthenticator extends Authenticator
         return $dataTable;
     }
 
+    /**
+     * Get the data table for Pending Users
+     *
+     * @return boolean|\Data\DataTable The Pending User Data Table
+     */
     private function getPendingUserDataTable()
     {
         if(isset($this->params['pending_user_table']))
@@ -148,7 +153,10 @@ class SQLAuthenticator extends Authenticator
 
     public function login($username, $password)
     {
-        if($this->current === false) return false;
+        if($this->current === false)
+        {
+            return false;
+        }
         $userDataTable = $this->getDataTable('user');
         $filter = new \Data\Filter("uid eq '$username'");
         $users = $userDataTable->read($filter);
@@ -211,6 +219,14 @@ class SQLAuthenticator extends Authenticator
         return $dataTable->read($filter, $select, $top, $skip, $orderby);
     }
 
+    /**
+     * @param string $dataTableName The Data Table to serach
+     * @param string $className The class to obtain data in
+     * @param boolean|array $select The fields to read
+     * @param boolean|integer $top The number of entities to read
+     * @param boolean|integer $skip The number of entities to skip
+     * @param boolean|array $orderby The fields to sort by
+     */
     private function convertDataToClass($dataTableName, $className, $filter, $select, $top, $skip, $orderby)
     {
         $data = $this->getDataByFilter($dataTableName, $filter, $select, $top, $skip, $orderby);
@@ -226,11 +242,23 @@ class SQLAuthenticator extends Authenticator
         return $data;
     }
 
+    /**
+     * @param boolean|array $select The fields to read
+     * @param boolean|integer $top The number of entities to read
+     * @param boolean|integer $skip The number of entities to skip
+     * @param boolean|array $orderby The fields to sort by
+     */
     public function getGroupsByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false)
     {
         return $this->convertDataToClass('group', 'SQLGroup', $filter, $select, $top, $skip, $orderby);
     }
 
+    /**
+     * @param boolean|array $select The fields to read
+     * @param boolean|integer $top The number of entities to read
+     * @param boolean|integer $skip The number of entities to skip
+     * @param boolean|array $orderby The fields to sort by
+     */
     public function getUsersByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false)
     {
         return $this->convertDataToClass('group', 'SQLUser', $filter, $select, $top, $skip, $orderby);
@@ -238,9 +266,15 @@ class SQLAuthenticator extends Authenticator
 
     public function getPendingUserCount()
     {
-        if($this->pending === false) return 0;
+        if($this->pending === false)
+        {
+            return 0;
+        }
         $dataTable = $this->getPendingUserDataTable();
-        if($dataTable === null) return 0;
+        if($dataTable === null)
+        {
+            return 0;
+        }
         return $dataTable->count();
     }
 
@@ -275,9 +309,19 @@ class SQLAuthenticator extends Authenticator
         return $ret;
     }
 
+    /**
+     * @param \Data\Filter $filter The filter to read with
+     * @param boolean|array $select The fields to read
+     * @param boolean|integer $top The number of entities to read
+     * @param boolean|integer $skip The number of entities to skip
+     * @param boolean|array $orderby The fields to sort by
+     */
     public function getPendingUsersByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false)
     {
-        if($this->pending === false) return false;
+        if($this->pending === false)
+        {
+            return false;
+        }
         if($filter !== false && !$filter->contains('hash'))
         {
             return $this->searchPendingUsers($filter, $select, $top, $skip, $orderby);
@@ -298,7 +342,10 @@ class SQLAuthenticator extends Authenticator
 
     public function createPendingUser($user)
     {
-        if($this->pending === false) return false;
+        if($this->pending === false)
+        {
+            return false;
+        }
         $userDataTable = $this->getPendingUserDataTable();
         if(isset($user->password2))
         {

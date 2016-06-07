@@ -6,7 +6,11 @@ class SQLDataTable extends DataTable
     protected $dataset;
     protected $tablename;
 
-    function __construct($dataset, $tablename)
+    /**
+     * @param SQLDataSet $dataset The dataset to create this datatable in
+     * @param string $tablename The name of the table in the dataset
+     */
+    public function __construct($dataset, $tablename)
     {
         $this->dataset   = $dataset;
         $this->tablename = $tablename;

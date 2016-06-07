@@ -5,7 +5,7 @@ class SQLDataSet extends DataSet
 {
     protected $pdo;
 
-    function __construct($params)
+    public function __construct($params)
     {
         if(isset($params['user']))
         {
@@ -17,7 +17,14 @@ class SQLDataSet extends DataSet
         }
     }
 
-    function _get_row_count_for_query($sql)
+    /**
+     * Get the number of rows affected by the query
+     *
+     * @param string $sql The SQL string
+     *
+     * @return integer The number of rows affected by the query
+     */
+    private function _get_row_count_for_query($sql)
     {
         $stmt = $this->pdo->query($sql);
         if($stmt === false)

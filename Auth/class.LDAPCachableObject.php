@@ -1,7 +1,7 @@
 <?php
 namespace Auth;
 
-trait LDAPCachableObject 
+trait LDAPCachableObject
 {
     protected function update($obj)
     {
@@ -13,12 +13,22 @@ trait LDAPCachableObject
         {
             $auth = \AuthProvider::getInstance();
             $ldap = $auth->getAuthenticator('Auth\LDAPAuthenticator');
-            if($ldap === false) return false;
+            if($ldap === false)
+            {
+                return false;
+            }
             $this->server = $ldap->get_and_bind_server(true);
             return $this->server->update($obj);
         }
     }
 
+    /**
+     * Get the specified field from the cached object or LDAPObject
+     *
+     * @param string $fieldName The name of the field to retrieve
+     *
+     * @return mixed string|array the value of the field
+     */
     protected function getField($fieldName)
     {
         if(!is_object($this->ldapObj))
@@ -28,6 +38,13 @@ trait LDAPCachableObject
         return $this->getFieldServer($fieldName);
     }
 
+    /**
+     * Get the value of the specified field from the cached object or LDAPObject
+     *
+     * @param string $fieldName The name of the field to retrieve
+     *
+     * @return mixed string the value of the field
+     */
     protected function getFieldSingleValue($fieldName)
     {
         if(!is_object($this->ldapObj))
@@ -37,6 +54,14 @@ trait LDAPCachableObject
         return $this->getFieldServerSingleValue($fieldName);
     }
 
+    /**
+     * Set the value of the specified field in the cached object or LDAPObject
+     *
+     * @param string $fieldName The name of the field to set
+     * @param mixed $fieldValue The value to set in the field
+     *
+     * @return boolean true if the field is set and false otherwise
+     */
     protected function setField($fieldName, $fieldValue)
     {
         if(!is_object($this->ldapObj))
@@ -46,6 +71,14 @@ trait LDAPCachableObject
         return $this->setFieldServer($fieldName, $fieldValue);
     }
 
+    /**
+     * Append a value of the specified field in the cached object or LDAPObject
+     *
+     * @param string $fieldName The name of the field to set
+     * @param mixed $fieldValue The value to append to the field
+     *
+     * @return  boolean true if the field is set and false otherwise
+     */
     protected function appendField($fieldName, $fieldValue)
     {
         if(!is_object($this->ldapObj))

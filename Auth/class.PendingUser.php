@@ -35,7 +35,7 @@ class PendingUser extends User
      *
      * @param string $name The name of the group to check if the user is in
      *
-     * @return true|false True if the user is in the group, false otherwise
+     * @return boolean True if the user is in the group, false otherwise
      */
     public function isInGroupNamed($name)
     {
@@ -90,7 +90,7 @@ class PendingUser extends User
      * We need the ability to obtain the user's unhashed plain text password to allow for it to be sent 
      * to the correct backend which will hash it
      *
-     * @return string The current password
+     * @return boolean|string The current password
      */
     public function getPassword()
     {
@@ -135,7 +135,7 @@ class PendingUser extends User
      *
      * @param string $email The user's new email address
      *
-     * @return true|false true if the user's email address was changed, false otherwise
+     * @return boolean true if the user's email address was changed, false otherwise
      */
     public function setEmail($email)
     {
@@ -146,9 +146,9 @@ class PendingUser extends User
     /**
      * Set the user's given (first) name
      *
-     * @param string $name The user's new given name
+     * @param string $givenName The user's new given name
      *
-     * @return true|false true if the user's given name was changed, false otherwise
+     * @return boolean true if the user's given name was changed, false otherwise
      */
     public function setGivenName($givenName)
     {
@@ -161,7 +161,7 @@ class PendingUser extends User
      *
      * @param string $sn The user's new last name
      *
-     * @return true|false true if the user's last name was changed, false otherwise
+     * @return boolean true if the user's last name was changed, false otherwise
      */
     public function setLastName($sn)
     {
