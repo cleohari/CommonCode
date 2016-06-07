@@ -26,7 +26,7 @@ require_once('Autoload.php');
  *
  * This class will abstract out how email is sent
  */
-class EmailProvider extends Singleton
+class EmailProvider extends Provider
 {
     /** An array of methods that can be used to send email */
     protected $methods;
@@ -47,26 +47,6 @@ class EmailProvider extends Singleton
                 array_push($this->methods, new $class(FlipsideSettings::$email_providers[$keys[$i]]));
             }
         }
-    }
-
-    /**
-     * Get the email provider by name
-     *
-     * @param string $methodName The class name of the email method
-     *
-     * @return false|\Email\EmailService The Email service specified or false if it is not found
-     */
-    public function getEmailMethod($methodName)
-    {
-        $count = count($this->methods);
-        for($i = 0; $i < $count; $i++)
-        {
-            if(strcasecmp(get_class($this->methods[$i]), $methodName) === 0)
-            {
-                return $this->methods[$i];
-            }
-        }
-        return false;
     }
 
     /**
@@ -95,7 +75,7 @@ class EmailProvider extends Singleton
         }
         else
         {
-            $method = $this->getEmailMethod($methodName);
+            $method = $this->getMethodByName($methodName);
             return $method->sendEmail($email);
         }
     }

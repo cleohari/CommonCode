@@ -12,7 +12,7 @@ trait LDAPCachableObject
         catch(\Exception $ex)
         {
             $auth = \AuthProvider::getInstance();
-            $ldap = $auth->getAuthenticator('Auth\LDAPAuthenticator');
+            $ldap = $auth->getMethodByName('Auth\LDAPAuthenticator');
             if($ldap === false)
             {
                 return false;

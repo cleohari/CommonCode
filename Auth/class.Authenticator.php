@@ -201,7 +201,7 @@ class Authenticator
     /**
      * Create a new pending user
      *
-     * @param Auth\PendingUser $user The user to create
+     * @param \Auth\PendingUser $user The user to create
      *
      * @return boolean True if created, false otherwise
      *
