@@ -229,6 +229,12 @@ class FlipRESTFormat extends \Slim\Middleware
         $this->app->fmt     = $fmt;
         $this->app->odata   = new ODataParams($params);
 
+        $this->app->isLocal = false;
+        if($_SERVER['SERVER_ADDR'] === $_SERVER['REMOTE_ADDR'])
+        {
+            $this->app->isLocal = true;
+        }
+
 
         $this->next->call();
 
