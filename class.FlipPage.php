@@ -46,6 +46,7 @@ define('JS_DATATABLE_ODATA', 12);
 define('JS_CRYPTO_MD5_JS', 13);
 define('JS_JCROP', 14);
 define('JS_TYPEAHEAD', 15);
+define('JS_CHEET', 16);
 define('JS_FLIPSIDE', 20);
 define('JS_LOGIN', 21);
 
@@ -217,6 +218,16 @@ $jsArray = array(
             'cdn' => array(
                 'no'  => '//cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.js',
                 'min' => '//cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js'
+            )
+        ),
+        JS_CHEET => array(
+            'no' => array(
+                'no'  => '/js/common/cheet.min.js',
+                'min' => '/js/common/cheer.min.js'
+            ),
+            'cdn' => array(
+                'no'  => '//cdn.rawgit.com/namuol/cheet.js/master/cheet.min.js',
+                'min' => '//cdn.rawgit.com/namuol/cheet.js/master/cheet.min.js'
             )
         ),
         JS_FLIPSIDE => array(
