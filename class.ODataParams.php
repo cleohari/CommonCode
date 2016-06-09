@@ -146,4 +146,19 @@ class ODataParams
             throw new Exception('Search not yet implemented');
         }
     }
+
+    public function filterArrayPerSelect($array)
+    {
+        $flip = array_flip($this->select);
+        $count = count($leads);
+        for($i = 0; $i < $count; $i++)
+        {
+            if(is_a($array[$i], 'SerializableObject'))
+            {
+                $array[$i] = array_intersect_key($array[$i]->jsonSerialize(), $flip);
+                continue;
+            }
+            $array[$i] = array_intersect_key($array[$i], $select);
+        }
+    }
 }
