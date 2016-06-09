@@ -38,24 +38,13 @@ class User extends \SerializableObject
         return false;
     }
 
-    /**
-     * The name the user should be displayed as
-     *
-     * @return boolean|string The name the user should be displayed as
-     */
-    public function getDisplayName()
+    public function __get($propName)
     {
-        return $this->getNickName();
+        return false;
     }
 
-    /**
-     * The given (or first) name for the user
-     *
-     * @return boolean|string The user's first name
-     */
-    public function getGivenName()
+    public function __set($propName, $value)
     {
-        return $this->getUid();
     }
 
     /**
@@ -769,8 +758,8 @@ class User extends \SerializableObject
     public function jsonSerialize()
     {
         $user = array();
-        $user['displayName'] = $this->getDisplayName();
-        $user['givenName'] = $this->getGivenName();
+        $user['displayName'] = $this->displayName;
+        $user['givenName'] = $this->givenName;
         $user['jpegPhoto'] = base64_encode($this->getPhoto());
         $user['mail'] = $this->getEmail();
         $user['mobile'] = $this->getPhoneNumber();
@@ -799,8 +788,8 @@ class User extends \SerializableObject
     public function getVcard()
     {
         $ret = "BEGIN:VCARD\nVERSION:2.1\n";
-        $ret .= 'N:'.$this->getLastName().';'.$this->getGivenName()."\n";
-        $ret .= 'FN:'.$this->getGivenName()."\n";
+        $ret .= 'N:'.$this->getLastName().';'.$this->givenName."\n";
+        $ret .= 'FN:'.$this->givenName."\n";
         $titles = $this->getTitles();
         if($titles !== false)
         {

@@ -20,6 +20,8 @@ namespace Auth;
  */
 class PendingUser extends User
 {
+    protected $intData = array();
+
     public function getHash()
     {
         return false;
@@ -56,18 +58,18 @@ class PendingUser extends User
         return parent::getEmail();
     }
 
-    /**
-     * The given (or first) name for the user
-     *
-     * @return string The user's first name
-     */
-    public function getGivenName()
+    public function __get($propName)
     {
-        if(isset($this->givenName))
+        if(isset($this->intData[$propName]))
         {
-            return $this->givenName;
+            return $this->intData[$propName];
         }
-        return parent::getGivenName();
+        return parent::__get($propName);
+    }
+
+    public function __set($propName, $value)
+    {
+        $this->intData[$propName] = $value;
     }
 
     /**

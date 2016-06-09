@@ -6,8 +6,8 @@ class UserTest extends PHPUnit_Framework_TestCase
     {
         $user = new \Auth\User();
         $this->assertFalse($user->isInGroupNamed('AAR'));
-        $this->assertFalse($user->getDisplayName());
-        $this->assertFalse($user->getGivenName());
+        $this->assertFalse($user->displayName);
+        $this->assertFalse($user->givenName);
         $this->assertFalse($user->getEmail());
         $this->assertFalse($user->getUid());
         $this->assertFalse($user->getPhoto());
@@ -170,8 +170,8 @@ class UserTest extends PHPUnit_Framework_TestCase
         {
             $this->assertFalse(false);
         }
-        $this->assertFalse($user->getDisplayName());
-        $this->assertFalse($user->getGivenName());
+        $this->assertFalse($user->displayName);
+        $this->assertFalse($user->givenName);
         $this->assertFalse($user->getEmail());
         $this->assertFalse($user->getUid());
         $this->assertFalse($user->getPhoto());
@@ -223,8 +223,8 @@ class UserTest extends PHPUnit_Framework_TestCase
         {
             $this->assertFalse(false);
         }
-        $this->assertFalse($user->getDisplayName());
-        $this->assertFalse($user->getGivenName());
+        $this->assertFalse($user->displayName);
+        $this->assertFalse($user->givenName);
         $this->assertFalse($user->getEmail());
         $this->assertFalse($user->getUid());
         $this->assertFalse($user->getPhoto());
@@ -255,8 +255,8 @@ class UserTest extends PHPUnit_Framework_TestCase
         {
             $this->assertFalse(false);
         }
-        $this->assertFalse($user->getDisplayName());
-        $this->assertFalse($user->getGivenName());
+        $this->assertFalse($user->displayName);
+        $this->assertFalse($user->givenName);
         $this->assertFalse($user->getEmail());
         $this->assertFalse($user->getUid());
         $this->assertFalse($user->getPhoto());
@@ -282,7 +282,7 @@ class UserTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($user->getRegistrationTime());
         $this->assertFalse($user->isInGroupNamed('AAR'));
         $this->assertFalse($user->getEmail());
-        $this->assertFalse($user->getGivenName());
+        $this->assertFalse($user->givenName);
         $this->assertFalse($user->getLastName());
         $this->assertFalse($user->getPassword());
         $this->assertFalse($user->getLoginProviders());
@@ -297,7 +297,7 @@ class UserTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('test@example.com', $user->getEmail());
 
         $this->assertTrue($user->setGivenName('test'));
-        $this->assertEquals('test', $user->getGivenName());
+        $this->assertEquals('test', $user->givenName);
 
         $this->assertTrue($user->setLastName('test'));
         $this->assertEquals('test', $user->getLastName());

@@ -94,14 +94,13 @@ class LDAPUser extends User
         return false;
     }
 
-    public function getDisplayName()
+    public function __get($propName)
     {
-        return $this->getFieldSingleValue('displayName');
+        return $this->getFieldSingleValue($propName);
     }
 
-    public function getGivenName()
+    public function __set($propName, $value)
     {
-        return $this->getFieldSingleValue('givenName');
     }
 
     public function getEmail()

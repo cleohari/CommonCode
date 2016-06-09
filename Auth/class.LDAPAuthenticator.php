@@ -363,7 +363,7 @@ class LDAPAuthenticator extends Authenticator
         {
             $new_user->setLastName($sn);
         }
-        $givenName = $user->getGivenName();
+        $givenName = $user->givenName;
         if($givenName !== false)
         {
             $new_user->setGivenName($givenName);

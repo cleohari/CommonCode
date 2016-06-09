@@ -48,22 +48,18 @@ class FlipsideAPIUser extends User
         return false;
     }
 
-    public function getDisplayName()
+    public function __get($propName)
     {
         if($this->userData === null)
         {
-            return parent::getDisplayName();
+            return parent::__get($propName);
         }
-        return $this->userData->displayname;
+        $propName = strtolower($propName);
+        return $this->userData->{$propName};
     }
 
-    public function getGivenName()
+    public function __set($propName, $value)
     {
-        if($this->userData === null)
-        {
-            return parent::getGivenName();
-        }
-        return $this->userData->givenname;
     }
 
     public function getEmail()
