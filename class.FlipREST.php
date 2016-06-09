@@ -204,7 +204,7 @@ class FlipRESTFormat extends \Slim\Middleware
             case 'passthru':
                 return $this->app->response->getBody();
             default:
-                return 'Unknown fmt '.$fmt;
+                return 'Unknown fmt '.$this->app->fmt;
         }
     }
 
