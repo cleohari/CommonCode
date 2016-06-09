@@ -160,5 +160,6 @@ class ODataParams
             }
             $array[$i] = array_intersect_key($array[$i], $select);
         }
+        return $array;
     }
 }
