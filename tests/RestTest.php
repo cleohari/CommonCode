@@ -11,6 +11,7 @@ class RestTest extends PHPUnit_Framework_TestCase
         $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
         $_SERVER['REQUEST_URI'] = '/';
         $_SERVER['SERVER_NAME'] = 'localhost';
+        $_SERVER['SERVER_ADDR'] = '127.0.0.1';
 
         ob_start();
         $app->run();
@@ -50,6 +51,7 @@ class RestTest extends PHPUnit_Framework_TestCase
         $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
         $_SERVER['REQUEST_URI'] = '/';
         $_SERVER['SERVER_NAME'] = 'localhost';
+        $_SERVER['SERVER_ADDR'] = '127.0.0.1';
 
         $app->get('/', array($this, 'throwError'));
 

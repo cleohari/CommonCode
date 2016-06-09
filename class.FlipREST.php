@@ -183,6 +183,50 @@ class FlipRESTFormat extends \Slim\Middleware
         return $obj->xmlSerialize();
     }
 
+    private function serializeData()
+    {
+        $data = json_decode($this->app->response->getBody());
+        switch($this->app->fmt)
+        {
+            case 'data-table':
+                $this->app->response->headers->set('Content-Type', 'application/json');
+                return json_encode(array('data'=>$data));
+            case 'csv':
+                $this->app->response->headers->set('Content-Type', 'text/csv');
+                $path = $this->app->request->getPathInfo();
+                $path = strrchr($path, '/');
+                $path = substr($path, 1);
+                $this->app->response->headers->set('Content-Disposition', 'attachment; filename='.$path.'.csv');
+                return $this->createCSV($data);
+            case 'xml':
+                $this->app->response->headers->set('Content-Type', 'application/xml');
+                return $this->createXML($data);
+            case 'passthru':
+                return $this->app->response->getBody();
+            default:
+                return 'Unknown fmt '.$this->app->fmt;
+        }
+    }
+
+    private function getFormatFromHeader()
+    {
+        $mimeType = $this->app->request->headers->get('Accept');
+        if(strstr($mimeType, 'odata.streaming=true'))
+        {
+            $this->app->response->setStatus(406);
+            return 'json';
+        }
+        switch($mimeType)
+        {
+            case 'text/csv':
+                return 'csv';
+            case 'text/x-vCard':
+                return 'vcard';
+            default:
+                return 'json';
+        }
+    }
+
     public function call()
     {
         if($this->app->request->isOptions())
@@ -206,61 +250,23 @@ class FlipRESTFormat extends \Slim\Middleware
         }
         if($fmt === null)
         {
-            $mimeType = $this->app->request->headers->get('Accept');
-            if(strstr($mimeType, 'odata.streaming=true'))
-            {
-                $this->app->response->setStatus(406);
-                return;
-            }
-            switch($mimeType)
-            {
-                case 'text/csv':
-                    $fmt = 'csv';
-                    break;
-                case 'text/x-vCard':
-                    $fmt = 'vcard';
-                    break;
-                default:
-                    $fmt = 'json';
-                    break;
-            }
+            $fmt = $this->getFormatFromHeader();
         }
 
         $this->app->fmt     = $fmt;
         $this->app->odata   = new ODataParams($params);
 
+        $this->app->isLocal = false;
+        if($_SERVER['SERVER_ADDR'] === $_SERVER['REMOTE_ADDR'])
+        {
+            $this->app->isLocal = true;
+        }
 
         $this->next->call();
 
         if($this->app->response->getStatus() == 200 && $this->app->fmt !== 'json')
         {
-            $data = json_decode($this->app->response->getBody());
-            $text = false;
-            switch($this->app->fmt)
-            {
-                case 'data-table':
-                    $this->app->response->headers->set('Content-Type', 'application/json');
-                    $text = json_encode(array('data'=>$data));
-                    break;
-                case 'csv':
-                    $this->app->response->headers->set('Content-Type', 'text/csv');
-                    $path = $this->app->request->getPathInfo();
-                    $path = strrchr($path, '/');
-                    $path = substr($path, 1);
-                    $this->app->response->headers->set('Content-Disposition', 'attachment; filename='.$path.'.csv');
-                    $text = $this->createCSV($data);
-                    break;
-                case 'xml':
-                    $this->app->response->headers->set('Content-Type', 'application/xml');
-                    $text = $this->createXML($data);
-                    break;
-                case 'passthru':
-                    $text = $this->app->response->getBody();
-                    break;
-                default:
-                    $text = 'Unknown fmt '.$fmt;
-                    break;
-            }
+            $text = $this->serializeData();
             $this->app->response->setBody($text);
         }
         else if($this->app->response->getStatus() == 200)
