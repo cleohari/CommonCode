@@ -18,9 +18,11 @@ namespace Auth;
  *
  * This class is the primary method to access user information.
  * 
+ * @property string $uid The user's ID or name
  * @property string $mail The user's email address
  * @property string $sn The user's surname (last name)
  * @property string $givenName The user's given name (first name)
+ * @property array $host The service's the user can use to login
  */
 class User extends \SerializableObject
 {

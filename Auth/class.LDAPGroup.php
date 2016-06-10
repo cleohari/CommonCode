@@ -109,6 +109,17 @@ class LDAPGroup extends Group
         return LDAPUser::from_name(substr($split[0], 4), $this->server);
     }
 
+    private function getMemberDetail($members)
+    {
+        $details = array();
+        $count = count($members);
+        for($i = 0; $i < $count; $i++)
+        {
+            $details[$i] = $this->getObjectFromDN($members[$i]);
+        }
+        return $details;
+    }
+
     public function members($details = false, $recursive = true, $includeGroups = true)
     {
         $members = array();
@@ -130,14 +141,7 @@ class LDAPGroup extends Group
         }
         if($details === true)
         {
-            $details = array();
-            $count = count($members);
-            for($i = 0; $i < $count; $i++)
-            {
-                $details[$i] = $this->getObjectFromDN($members[$i]);
-            }
-            unset($members);
-            $members = $details;
+            $members = $this->getMemberDetail($members);
         }
         return $members;
     }
