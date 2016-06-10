@@ -28,6 +28,33 @@ class FilterClause
         return substr($haystack, 0, strlen($needle)) === $needle;
     }
 
+    protected function filterIsFunction($string)
+    {
+        return (self::str_startswith($string, 'substringof') || self::str_startswith($string, 'contains') ||
+                self::str_startswith($string, 'indexof'));
+    }
+
+    protected function odataOpToStd($op)
+    {
+        switch($op)
+        {
+            case 'ne':
+                return '!=';
+            case 'eq':
+                return '=';
+            case 'lt':
+                return '<';
+            case 'le':
+                return '<=';
+            case 'gt':
+                return '>';
+            case 'ge':
+                return '>=';
+            default:
+                return $op;
+        }
+    }
+
     /**
      * Convert the string into an OData Filter
      *
@@ -35,8 +62,7 @@ class FilterClause
      */
     protected function process_filter_string($string)
     {
-        if(self::str_startswith($string, 'substringof') || self::str_startswith($string, 'contains') || 
-           self::str_startswith($string, 'indexof'))
+        if($this->filterIsFunction($string))
         {
             $this->op   = strtok($string, '(');
             $this->var1 = strtok(',');
@@ -46,29 +72,8 @@ class FilterClause
         $field = strtok($string, ' ');
         $op = strtok(' ');
         $rest = strtok("\0");
-        switch($op)
-        {
-            case 'ne':
-                $op = '!=';
-                break;
-            case 'eq':
-                $op = '=';
-                break;
-            case 'lt':
-                $op = '<';
-                break;
-            case 'le':
-                $op = '<=';
-                break;
-            case 'gt':
-                $op = '>';
-                break;
-            case 'ge':
-                $op = '>=';
-                break;
-        }
         $this->var1  = $field;
-        $this->op    = $op;
+        $this->op    = $this->odataOpToStd($op);
         $this->var2  = $rest;
     }
 
