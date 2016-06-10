@@ -28,7 +28,7 @@ class SQLUser extends User
         }
         $auth_data_set = $this->auth->dataSet;
         $group_data_table = $auth_data_set['group'];
-        $uid = $this->getUid();
+        $uid = $this->uid;
         $filter = new \Data\Filter("uid eq '$uid' and gid eq '$name'");
         $groups = $group_data_table->read($filter);
         if($groups === false || !isset($groups[0]))
@@ -36,25 +36,19 @@ class SQLUser extends User
             return false;
         }
         return true;
-
     }
 
-    public function getEmail()
+    public function __get($propName)
     {
-        if(isset($this->data['mail']))
+        if(isset($this->data[$propName]))
         {
-            return $this->data['mail'];
-        }
-        return $this->getUid();
-    }
-
-    public function getUid()
-    {
-        if(isset($this->data['uid']))
-        {
-            return $this->data['uid'];
+            return $this->data[$propName];
         }
         return false;
+    }
+
+    public function __set($propName, $value)
+    {
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */

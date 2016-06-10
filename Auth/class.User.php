@@ -47,62 +47,7 @@ class User extends \SerializableObject
     {
     }
 
-    /**
-     * The email address for the user
-     *
-     * @return boolean|string The user's email address
-     */
-    public function getEmail()
-    {
-        return false;
-    }
-
-    /**
-     * The user ID for the user
-     *
-     * @return boolean|string The user's ID or username
-     */
-    public function getUid()
-    {
-        return $this->getEmail();
-    }
-
-    /**
-     * The photo for the user
-     *
-     * @return boolean|string The user's photo as a binary string
-     */ 
-    public function getPhoto()
-    {
-        return false;
-    }
-
-    /**
-     * The phone number for the user
-     *
-     * @return boolean|string The user's phone number
-     */
-    public function getPhoneNumber()
-    {
-        return false;
-    }
-
-    /**
-     * The organziation for the user
-     *
-     * @return boolean|string The user's organization
-     */
-    public function getOrganization()
-    {
-        return false;
-    }
-
-    /**
-     * The list of titles for the user
-     *
-     * @return boolean|array The user's title(s) in short format
-     */
-    public function getTitles()
+    public function __isset($propName)
     {
         return false;
     }
@@ -116,7 +61,7 @@ class User extends \SerializableObject
      */
     public function getTitleNames()
     {
-        $titles = $this->getTitles();
+        $titles = $this->title;
         if($titles === false)
         {
             return false;
@@ -146,98 +91,6 @@ class User extends \SerializableObject
     }
 
     /**
-     * The state the user's mailing address is in
-     *
-     * @return boolean|string The user's state from their mailing address
-     */
-    public function getState()
-    {
-        return false;
-    }
-
-    /**
-     * The city the user's mailing address is in
-     *
-     * @return boolean|string The user's city from their mailing address
-     */
-    public function getCity()
-    {
-        return false;
-    }
-
-    /**
-     * The last name for the user
-     *
-     * @return boolean|string The user's last name
-     */
-    public function getLastName()
-    {
-        return false;
-    }
-
-    /**
-     * The nick name for the user
-     *
-     * @return boolean|string The user's nick name
-     */
-    public function getNickName()
-    {
-        return $this->getUid();
-    }
-
-    /**
-     * The street address for the user
-     *
-     * @return boolean|string The user's street address
-     */
-    public function getAddress()
-    {
-        return false;
-    }
-
-    /**
-     * The postal (zip) code for the user's mailing address
-     *
-     * @return boolean|string The user's postal code
-     */
-    public function getPostalCode()
-    {
-        return false;
-    }
-
-    /**
-     * The country the user's mailing address is in
-     *
-     * @return boolean|string The user's country from their mailing address
-     */
-    public function getCountry()
-    {
-        return false;
-    }
-
-    /**
-     * The organizational units the user is in
-     *
-     * This is the same as Areas in Flipside speak. 
-     *
-     * @return boolean|array The user's orgnaiational units
-     */
-    public function getOrganizationUnits()
-    {
-        return false;
-    }
-
-    /**
-     * The supplemental login types that the user can use to login
-     *
-     * @return boolean|array The user's login providers
-     */
-    public function getLoginProviders()
-    {
-        return false;
-    }
-
-    /**
      * The groups the user is a part of
      *
      * @return boolean|array The user's Auth\Group structures
@@ -251,12 +104,19 @@ class User extends \SerializableObject
      * Add a supplemental login type that the user can use to login
      *
      * @param string $provider The hostname for the provider
-     *
-     * @return boolean true if the addition worked, false otherwise
      */
     public function addLoginProvider($provider)
     {
-        throw new \Exception('Cannot add provider for this login type!');
+        if(isset($this->host))
+        {
+            $tmp = $this->host;
+            $tmp[] = $provider;
+            $this->host = $tmp;
+        }
+        else
+        {
+            $this->host = array($provider);
+        }
     }
 
     /**
@@ -268,7 +128,7 @@ class User extends \SerializableObject
      */
     public function canLoginWith($provider)
     {
-        $hosts = $this->getLoginProviders();
+        $hosts = $this->host;
         if($hosts === false)
         {
             return false;
@@ -303,9 +163,9 @@ class User extends \SerializableObject
      */
     public function isProfileComplete()
     {
-        if($this->getCountry() === false || $this->getAddress() === false ||
-           $this->getPostalCode() === false || $this->getCity() === false ||
-           $this->getState() === false || $this->getPhoneNumber() === false)
+        if($this->c === false || $this->postalAddress === false ||
+           $this->postalCode === false || $this->l === false ||
+           $this->st === false || $this->mobile === false)
         {
             return false;
         }
@@ -647,7 +507,7 @@ class User extends \SerializableObject
     {
         if(isset($data->mail))
         {
-            if($data->mail !== $this->getEmail())
+            if($data->mail !== $this->mail)
             {
                 throw new \Exception('Unable to change email!');
             }
@@ -655,7 +515,7 @@ class User extends \SerializableObject
         }
         if(isset($data->uid))
         {
-            if($data->uid !== $this->getUid())
+            if($data->uid !== $this->uid)
             {
                 throw new \Exception('Unable to change uid!');
             }
@@ -760,22 +620,22 @@ class User extends \SerializableObject
         $user = array();
         $user['displayName'] = $this->displayName;
         $user['givenName'] = $this->givenName;
-        $user['jpegPhoto'] = base64_encode($this->getPhoto());
-        $user['mail'] = $this->getEmail();
-        $user['mobile'] = $this->getPhoneNumber();
-        $user['uid'] = $this->getUid();
-        $user['o'] = $this->getOrganization();
-        $user['title'] = $this->getTitles();
+        $user['jpegPhoto'] = base64_encode($this->jpegPhoto);
+        $user['mail'] = $this->mail;
+        $user['mobile'] = $this->mobile;
+        $user['uid'] = $this->uid;
+        $user['o'] = $this->o;
+        $user['title'] = $this->title;
         $user['titlenames'] = $this->getTitleNames();
-        $user['st'] = $this->getState();
-        $user['l'] = $this->getCity();
-        $user['sn'] = $this->getLastName();
-        $user['cn'] = $this->getNickName();
-        $user['postalAddress'] = $this->getAddress();
-        $user['postalCode'] = $this->getPostalCode();
-        $user['c'] = $this->getCountry();
-        $user['ou'] = $this->getOrganizationUnits();
-        $user['host'] = $this->getLoginProviders();
+        $user['st'] = $this->st;
+        $user['l'] = $this->l;
+        $user['sn'] = $this->sn;
+        $user['cn'] = $this->cn;
+        $user['postalAddress'] = $this->postalAddress;
+        $user['postalCode'] = $this->postalCode;
+        $user['c'] = $this->c;
+        $user['ou'] = $this->ou;
+        $user['host'] = $this->host;
         $user['class'] = get_class($this);
         return $user;
     }
@@ -788,16 +648,16 @@ class User extends \SerializableObject
     public function getVcard()
     {
         $ret = "BEGIN:VCARD\nVERSION:2.1\n";
-        $ret .= 'N:'.$this->getLastName().';'.$this->givenName."\n";
+        $ret .= 'N:'.$this->sn.';'.$this->givenName."\n";
         $ret .= 'FN:'.$this->givenName."\n";
-        $titles = $this->getTitles();
+        $titles = $this->title;
         if($titles !== false)
         {
             $ret .= 'TITLE:'.implode(',', $titles)."\n";
         }
         $ret .= "ORG: Austin Artistic Reconstruction\n";
-        $ret .= 'TEL;TYPE=MOBILE,VOICE:'.$this->getPhoneNumber()."\n";
-        $ret .= 'EMAIL;TYPE=PREF,INTERNET:'.$this->getEmail()."\n";
+        $ret .= 'TEL;TYPE=MOBILE,VOICE:'.$this->mobile."\n";
+        $ret .= 'EMAIL;TYPE=PREF,INTERNET:'.$this->mail."\n";
         $ret .= "END:VCARD\n";
         return $ret;
     }

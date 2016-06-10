@@ -126,7 +126,7 @@ abstract class OAuth2Authenticator extends \Auth\Authenticator
             return self::LOGIN_FAILED;
         }
         $auth = \AuthProvider::getInstance();
-        $local_users = $auth->getUsersByFilter(new \Data\Filter('mail eq '.$user->getEmail()));
+        $local_users = $auth->getUsersByFilter(new \Data\Filter('mail eq '.$user->mail));
         if($local_users !== false && isset($local_users[0]))
         {
             if($local_users[0]->canLoginWith($this->getHostName()))

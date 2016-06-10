@@ -94,108 +94,41 @@ class LDAPUser extends User
         return false;
     }
 
+    protected $valueDefaults = array(
+        'o' => 'Volunteer'
+    );
+
+    protected $multiValueProps = array(
+        'title',
+        'ou',
+        'host'
+    );
+
     public function __get($propName)
     {
+        if(isset($this->valueDefaults[$propName]))
+        {
+            $tmp = $this->getFieldSingleValue($propName);
+            if($tmp === false)
+            {
+                return $this->valueDefaults[$propName];
+            }
+            return $tmp;
+        }
+        if(in_array($propName, $this->multiValueProps))
+        {
+            $tmp = $this->getField($propName);
+            if(isset($tmp['count']))
+            {
+                unset($tmp['count']);
+            }
+            return $tmp;
+        }
         return $this->getFieldSingleValue($propName);
     }
 
     public function __set($propName, $value)
     {
-    }
-
-    public function getEmail()
-    {
-        return $this->getFieldSingleValue('mail');
-    }
-
-    public function getUid()
-    {
-        return $this->getFieldSingleValue('uid');
-    }
-
-    public function getPhoto()
-    {
-        return $this->getFieldSingleValue('jpegPhoto');
-    }
-
-    public function getPhoneNumber()
-    {
-        return $this->getFieldSingleValue('mobile');
-    }
-
-    public function getOrganization()
-    {
-        $org = $this->getFieldSingleValue('o');
-        if($org === false)
-        {
-            return 'Volunteer';
-        }
-        return $org;
-    }
-
-    public function getTitles()
-    {
-        $titles = $this->getField('title');
-        if(isset($titles['count']))
-        {
-            unset($titles['count']);
-        }
-        return $titles;
-    }
-
-    public function getState()
-    {
-        return $this->getFieldSingleValue('st');
-    }
-
-    public function getCity()
-    {
-        return $this->getFieldSingleValue('l');
-    }
-
-    public function getLastName()
-    {
-        return $this->getFieldSingleValue('sn');
-    }
-
-    public function getNickName()
-    {
-        return $this->getFieldSingleValue('cn');
-    }
-
-    public function getAddress()
-    {
-        return $this->getFieldSingleValue('postalAddress');
-    }
-
-    public function getPostalCode()
-    {
-        return $this->getFieldSingleValue('postalCode');
-    }
-
-    public function getCountry()
-    {
-        return $this->getFieldSingleValue('c');
-    }
-
-    public function getOrganizationUnits()
-    {
-        $units = $this->getField('ou');
-        if(isset($units['count']))
-        {
-            unset($units['count']);
-        }
-        return $units;
-    }
-
-    public function getLoginProviders()
-    {
-        $hosts = $this->getField('host');
-        if(isset($hosts['count']))
-        {
-            unset($hosts['count']);
-        }
-        return $hosts;
     }
 
     public function getGroups()
@@ -417,7 +350,7 @@ class LDAPUser extends User
         $auth = \AuthProvider::getInstance();
         $ldap = $auth->getMethodByName('Auth\LDAPAuthenticator');
         $ldap->get_and_bind_server(true);
-        $ldapObj = $this->server->read($ldap->user_base, new \Data\Filter('uid eq '.$this->getUid()));
+        $ldapObj = $this->server->read($ldap->user_base, new \Data\Filter('uid eq '.$this->uid));
         $ldapObj = $ldapObj[0];
         $hash = false;
         if(isset($ldapObj->userpassword))

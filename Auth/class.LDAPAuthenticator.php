@@ -351,14 +351,14 @@ class LDAPAuthenticator extends Authenticator
         $this->get_and_bind_server(true);
         $new_user = new LDAPUser();
         $new_user->setUID($user->getUID());
-        $email = $user->getEmail();
+        $email = $user->mail;
         $new_user->setEmail($email);
         $pass = $user->getPassword();
         if($pass !== false)
         {
             $new_user->setPass($pass);
         }
-        $sn = $user->getLastName();
+        $sn = $user->sn;
         if($sn !== false)
         {
             $new_user->setLastName($sn);
@@ -368,7 +368,7 @@ class LDAPAuthenticator extends Authenticator
         {
             $new_user->setGivenName($givenName);
         }
-        $hosts = $user->getLoginProviders();
+        $hosts = $user->host;
         if($hosts !== false)
         {
             $count = count($hosts);

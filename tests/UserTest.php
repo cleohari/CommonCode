@@ -8,21 +8,21 @@ class UserTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($user->isInGroupNamed('AAR'));
         $this->assertFalse($user->displayName);
         $this->assertFalse($user->givenName);
-        $this->assertFalse($user->getEmail());
-        $this->assertFalse($user->getUid());
-        $this->assertFalse($user->getPhoto());
-        $this->assertFalse($user->getPhoneNumber());
-        $this->assertFalse($user->getOrganization());
-        $this->assertFalse($user->getTitles());
-        $this->assertFalse($user->getState());
-        $this->assertFalse($user->getCity());
-        $this->assertFalse($user->getLastName());
-        $this->assertFalse($user->getNickName());
-        $this->assertFalse($user->getAddress());
-        $this->assertFalse($user->getPostalCode());
-        $this->assertFalse($user->getCountry());
-        $this->assertFalse($user->getOrganizationUnits());
-        $this->assertFalse($user->getLoginProviders());
+        $this->assertFalse($user->mail);
+        $this->assertFalse($user->uid);
+        $this->assertFalse($user->jpegPhoto);
+        $this->assertFalse($user->mobile);
+        $this->assertFalse($user->o);
+        $this->assertFalse($user->title);
+        $this->assertFalse($user->st);
+        $this->assertFalse($user->l);
+        $this->assertFalse($user->sn);
+        $this->assertFalse($user->cn);
+        $this->assertFalse($user->postalAddress);
+        $this->assertFalse($user->postalCode);
+        $this->assertFalse($user->c);
+        $this->assertFalse($user->ou);
+        $this->assertFalse($user->host);
         $this->assertFalse($user->getGroups());
         try{
             $user->addLoginProvider('google.com');
@@ -172,21 +172,21 @@ class UserTest extends PHPUnit_Framework_TestCase
         }
         $this->assertFalse($user->displayName);
         $this->assertFalse($user->givenName);
-        $this->assertFalse($user->getEmail());
-        $this->assertFalse($user->getUid());
-        $this->assertFalse($user->getPhoto());
-        $this->assertFalse($user->getPhoneNumber());
-        $this->assertEquals('Volunteer', $user->getOrganization());
-        $this->assertFalse($user->getTitles());
-        $this->assertFalse($user->getState());
-        $this->assertFalse($user->getCity());
-        $this->assertFalse($user->getLastName());
-        $this->assertFalse($user->getNickName());
-        $this->assertFalse($user->getAddress());
-        $this->assertFalse($user->getPostalCode());
-        $this->assertFalse($user->getCountry());
-        $this->assertFalse($user->getOrganizationUnits());
-        $this->assertFalse($user->getLoginProviders());
+        $this->assertFalse($user->mail);
+        $this->assertFalse($user->uid);
+        $this->assertFalse($user->jpegPhoto);
+        $this->assertFalse($user->mobile);
+        $this->assertEquals('Volunteer', $user->o);
+        $this->assertFalse($user->title);
+        $this->assertFalse($user->st);
+        $this->assertFalse($user->l);
+        $this->assertFalse($user->sn);
+        $this->assertFalse($user->cn);
+        $this->assertFalse($user->postalAddress);
+        $this->assertFalse($user->postalCode);
+        $this->assertFalse($user->c);
+        $this->assertFalse($user->ou);
+        $this->assertFalse($user->host);
         try{
             $this->assertFalse($user->getGroups());
         } catch(\Exception $e)
@@ -225,25 +225,25 @@ class UserTest extends PHPUnit_Framework_TestCase
         }
         $this->assertFalse($user->displayName);
         $this->assertFalse($user->givenName);
-        $this->assertFalse($user->getEmail());
-        $this->assertFalse($user->getUid());
-        $this->assertFalse($user->getPhoto());
-        $this->assertFalse($user->getPhoneNumber());
-        $this->assertFalse($user->getOrganization());
-        $this->assertFalse($user->getTitles());
-        $this->assertFalse($user->getState());
-        $this->assertFalse($user->getCity());
-        $this->assertFalse($user->getLastName());
-        $this->assertFalse($user->getNickName());
-        $this->assertFalse($user->getAddress());
-        $this->assertFalse($user->getPostalCode());
-        $this->assertFalse($user->getCountry());
-        $this->assertFalse($user->getOrganizationUnits());
-        $this->assertFalse($user->getLoginProviders());
+        $this->assertFalse($user->mail);
+        $this->assertFalse($user->uid);
+        $this->assertFalse($user->jpegPhoto);
+        $this->assertFalse($user->mobile);
+        $this->assertFalse($user->o);
+        $this->assertFalse($user->title);
+        $this->assertFalse($user->st);
+        $this->assertFalse($user->l);
+        $this->assertFalse($user->sn);
+        $this->assertFalse($user->cn);
+        $this->assertFalse($user->postalAddress);
+        $this->assertFalse($user->postalCode);
+        $this->assertFalse($user->c);
+        $this->assertFalse($user->ou);
+        $this->assertFalse($user->host);
         $this->assertFalse($user->getGroups());
 
         $user = new \Auth\SQLUser(array('mail'=>'test@example.com'));
-        $this->assertEquals('test@example.com', $user->getEmail());
+        $this->assertEquals('test@example.com', $user->mail);
     }
 
     public function testFlipsideAPIUser()
@@ -257,21 +257,21 @@ class UserTest extends PHPUnit_Framework_TestCase
         }
         $this->assertFalse($user->displayName);
         $this->assertFalse($user->givenName);
-        $this->assertFalse($user->getEmail());
-        $this->assertFalse($user->getUid());
-        $this->assertFalse($user->getPhoto());
-        $this->assertFalse($user->getPhoneNumber());
-        $this->assertFalse($user->getOrganization());
-        $this->assertFalse($user->getTitles());
-        $this->assertFalse($user->getState());
-        $this->assertFalse($user->getCity());
-        $this->assertFalse($user->getLastName());
-        $this->assertFalse($user->getNickName());
-        $this->assertFalse($user->getAddress());
-        $this->assertFalse($user->getPostalCode());
-        $this->assertFalse($user->getCountry());
-        $this->assertFalse($user->getOrganizationUnits());
-        $this->assertFalse($user->getLoginProviders());
+        $this->assertFalse($user->mail);
+        $this->assertFalse($user->uid);
+        $this->assertFalse($user->jpegPhoto);
+        $this->assertFalse($user->mobile);
+        $this->assertFalse($user->o);
+        $this->assertFalse($user->title);
+        $this->assertFalse($user->st);
+        $this->assertFalse($user->l);
+        $this->assertFalse($user->sn);
+        $this->assertFalse($user->cn);
+        $this->assertFalse($user->postaltAddress);
+        $this->assertFalse($user->postalCode);
+        $this->assertFalse($user->c);
+        $this->assertFalse($user->ou);
+        $this->assertFalse($user->host);
         $this->assertFalse($user->getGroups());
     }
 
@@ -281,28 +281,31 @@ class UserTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($user->getHash());
         $this->assertFalse($user->getRegistrationTime());
         $this->assertFalse($user->isInGroupNamed('AAR'));
-        $this->assertFalse($user->getEmail());
+        $this->assertFalse($user->mail);
         $this->assertFalse($user->givenName);
-        $this->assertFalse($user->getLastName());
+        $this->assertFalse($user->sn);
         $this->assertFalse($user->getPassword());
-        $this->assertFalse($user->getLoginProviders());
+        $this->assertFalse($user->host);
 
         $user->addLoginProvider('example.com');
-        $this->assertEquals(array('example.com'), $user->getLoginProviders());
+        $this->assertEquals(array('example.com'), $user->host);
 
         $user->addLoginProvider('example2.com');
-        $this->assertEquals(array('example.com', 'example2.com'), $user->getLoginProviders());
+        $this->assertEquals(array('example.com', 'example2.com'), $user->host);
 
-        $this->assertTrue($user->setEmail('test@example.com'));
-        $this->assertEquals('test@example.com', $user->getEmail());
+        $user->uid = 'test';
+        $this->assertEquals('test', $user->uid);
+
+        $user->mail = 'test@example.com';
+        $this->assertEquals('test@example.com', $user->mail);
 
         $this->assertTrue($user->setGivenName('test'));
         $this->assertEquals('test', $user->givenName);
 
-        $this->assertTrue($user->setLastName('test'));
-        $this->assertEquals('test', $user->getLastName());
+        $user->sn = 'test';
+        $this->assertEquals('test', $user->sn);
 
-        $this->assertEquals('{"hash":false,"mail":"test@example.com","uid":"test@example.com","class":"Auth\\\\PendingUser"}', json_encode($user));
+        $this->assertEquals('{"hash":false,"mail":"test@example.com","uid":"test","class":"Auth\\\\PendingUser"}', json_encode($user));
     }
 
     public function testSQLPendingUser()
@@ -311,8 +314,8 @@ class UserTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($user->getHash());
         $this->assertNotFalse($user->getRegistrationTime());
         $this->assertFalse($user->isInGroupNamed('AAR'));
-        $this->assertEquals('test@example.com', $user->getEmail());
-        $this->assertEquals('test', $user->getUid());
+        $this->assertEquals('test@example.com', $user->mail);
+        $this->assertEquals('test', $user->uid);
         $this->assertEquals('test', $user->getPassword());
         $time = $user->getRegistrationTime()->format(\DateTime::RFC822);
         $this->assertEquals('{"hash":false,"mail":"test@example.com","uid":"test","time":"'.$time.'","class":"Auth\\\\SQLPendingUser"}', json_encode($user));
@@ -322,8 +325,8 @@ class UserTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('1234', $user->getHash());
         $this->assertNotFalse($user->getRegistrationTime());
         $this->assertFalse($user->isInGroupNamed('AAR'));
-        $this->assertEquals('test@example.com', $user->getEmail());
-        $this->assertEquals('test', $user->getUid());
+        $this->assertEquals('test@example.com', $user->mail);
+        $this->assertEquals('test', $user->uid);
         $this->assertEquals('test', $user->getPassword());
         $time = $user->getRegistrationTime()->format(\DateTime::RFC822);
         $this->assertEquals('{"hash":"1234","mail":"test@example.com","uid":"test","time":"'.$time.'","class":"Auth\\\\SQLPendingUser"}', json_encode($user));
