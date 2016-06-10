@@ -22,6 +22,8 @@ namespace Auth;
  * @property string $mail The user's email address
  * @property string $sn The user's surname (last name)
  * @property string $givenName The user's given name (first name)
+ * @property string $cn The user's nick name
+ * @property string $displayName The user's display name
  * @property string $postalAddress The user's mailing address
  * @property string $postalCode The user's postal or zip code
  * @property string $l The user's city
@@ -31,6 +33,8 @@ namespace Auth;
  * @property string $jpegPhoto The user's profile photo
  * @property array $host The service's the user can use to login
  * @property array $title The user's titles in the organization
+ * @property string $o The user's organization
+ * @property array $ou The user's units or areas within the organization
  */
 class User extends \SerializableObject
 {
@@ -39,6 +43,14 @@ class User extends \SerializableObject
      * everytime
      */ 
     public static $titlenames = null;
+
+    /**
+     * An array of properties that cannot be set on a user
+     */
+    protected $unsettableElements = array(
+        'uid',
+        'email'
+    );
 
     /**
      * Is this user in the Group or a child of that group?
@@ -301,21 +313,18 @@ class User extends \SerializableObject
 
     private function checkForUnsettableElements($data)
     {
-        if(isset($data->mail))
+        $count = count($this->unsettableElements);
+        for($i = 0; $i < $count; $i++)
         {
-            if($data->mail !== $this->mail)
+            $propName = $this->unsettableElements[$i];
+            if(isset($data->{$propName}))
             {
-                throw new \Exception('Unable to change email!');
+                if($data{$propName} !== $this->{$propName})
+                {
+                    throw new \Exception('Unable to change '.$propName.'!');
+                }
+                unset($data->{$propName});
             }
-            unset($data->mail);
-        }
-        if(isset($data->uid))
-        {
-            if($data->uid !== $this->uid)
-            {
-                throw new \Exception('Unable to change uid!');
-            }
-            unset($data->uid);
         }
     }
 
