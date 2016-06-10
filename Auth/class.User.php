@@ -22,7 +22,15 @@ namespace Auth;
  * @property string $mail The user's email address
  * @property string $sn The user's surname (last name)
  * @property string $givenName The user's given name (first name)
+ * @property string $postalAddress The user's mailing address
+ * @property string $postalCode The user's postal or zip code
+ * @property string $l The user's city
+ * @property string $st The user's state or province
+ * @property string $c The user's country
+ * @property string $mobile The user's phone number
+ * @property string $jpegPhoto The user's profile photo
  * @property array $host The service's the user can use to login
+ * @property array $title The user's titles in the organization
  */
 class User extends \SerializableObject
 {
