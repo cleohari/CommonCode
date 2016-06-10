@@ -350,9 +350,8 @@ class LDAPAuthenticator extends Authenticator
     {
         $this->get_and_bind_server(true);
         $new_user = new LDAPUser();
-        $new_user->setUID($user->getUID());
-        $email = $user->mail;
-        $new_user->mail = $email;
+        $new_user->uid = $user->uid;
+        $new_user->mail = $user->mail;
         $pass = $user->getPassword();
         if($pass !== false)
         {
@@ -371,18 +370,14 @@ class LDAPAuthenticator extends Authenticator
         $hosts = $user->host;
         if($hosts !== false)
         {
-            $count = count($hosts);
-            for($i = 0; $i < $count; $i++)
-            {
-                $new_user->addLoginProvider($hosts[$i]);
-            }
+            $new_user->host = $user->host;
         }
         $ret = $new_user->flushUser();
         if($ret)
         {
             $user->delete();
         }
-        $users = $this->getUsersByFilter(new \Data\Filter('mail eq '.$email));
+        $users = $this->getUsersByFilter(new \Data\Filter('mail eq '.$user->mail));
         if($users === false || !isset($users[0]))
         {
             throw new \Exception('Error creating user!');

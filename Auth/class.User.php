@@ -17,6 +17,10 @@ namespace Auth;
  * A class to abstract access to Users regardless of the Authentication type used.
  *
  * This class is the primary method to access user information.
+ * 
+ * @property string $mail The user's email address
+ * @property string $sn The user's surname (last name)
+ * @property string $givenName The user's given name (first name)
  */
 class User extends \SerializableObject
 {

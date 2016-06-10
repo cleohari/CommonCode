@@ -123,11 +123,7 @@ class LDAPGroup extends Group
                     $members = array_merge($members, $child->members());
                 }
             }
-            else if($includeGroups === false && strncmp($rawMembers[$i], 'cn=', 3) === 0)
-            {
-                //Drop this member
-            }
-            else
+            else if($includeGroups !== false || strncmp($rawMembers[$i], 'cn=', 3) !== 0)
             {
                 array_push($members, $rawMembers[$i]);
             }
