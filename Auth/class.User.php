@@ -38,82 +38,16 @@ class User extends \SerializableObject
         return false;
     }
 
-    /**
-     * The name the user should be displayed as
-     *
-     * @return boolean|string The name the user should be displayed as
-     */
-    public function getDisplayName()
-    {
-        return $this->getNickName();
-    }
-
-    /**
-     * The given (or first) name for the user
-     *
-     * @return boolean|string The user's first name
-     */
-    public function getGivenName()
-    {
-        return $this->getUid();
-    }
-
-    /**
-     * The email address for the user
-     *
-     * @return boolean|string The user's email address
-     */
-    public function getEmail()
+    public function __get($propName)
     {
         return false;
     }
 
-    /**
-     * The user ID for the user
-     *
-     * @return boolean|string The user's ID or username
-     */
-    public function getUid()
+    public function __set($propName, $value)
     {
-        return $this->getEmail();
     }
 
-    /**
-     * The photo for the user
-     *
-     * @return boolean|string The user's photo as a binary string
-     */ 
-    public function getPhoto()
-    {
-        return false;
-    }
-
-    /**
-     * The phone number for the user
-     *
-     * @return boolean|string The user's phone number
-     */
-    public function getPhoneNumber()
-    {
-        return false;
-    }
-
-    /**
-     * The organziation for the user
-     *
-     * @return boolean|string The user's organization
-     */
-    public function getOrganization()
-    {
-        return false;
-    }
-
-    /**
-     * The list of titles for the user
-     *
-     * @return boolean|array The user's title(s) in short format
-     */
-    public function getTitles()
+    public function __isset($propName)
     {
         return false;
     }
@@ -127,7 +61,7 @@ class User extends \SerializableObject
      */
     public function getTitleNames()
     {
-        $titles = $this->getTitles();
+        $titles = $this->title;
         if($titles === false)
         {
             return false;
@@ -157,98 +91,6 @@ class User extends \SerializableObject
     }
 
     /**
-     * The state the user's mailing address is in
-     *
-     * @return boolean|string The user's state from their mailing address
-     */
-    public function getState()
-    {
-        return false;
-    }
-
-    /**
-     * The city the user's mailing address is in
-     *
-     * @return boolean|string The user's city from their mailing address
-     */
-    public function getCity()
-    {
-        return false;
-    }
-
-    /**
-     * The last name for the user
-     *
-     * @return boolean|string The user's last name
-     */
-    public function getLastName()
-    {
-        return false;
-    }
-
-    /**
-     * The nick name for the user
-     *
-     * @return boolean|string The user's nick name
-     */
-    public function getNickName()
-    {
-        return $this->getUid();
-    }
-
-    /**
-     * The street address for the user
-     *
-     * @return boolean|string The user's street address
-     */
-    public function getAddress()
-    {
-        return false;
-    }
-
-    /**
-     * The postal (zip) code for the user's mailing address
-     *
-     * @return boolean|string The user's postal code
-     */
-    public function getPostalCode()
-    {
-        return false;
-    }
-
-    /**
-     * The country the user's mailing address is in
-     *
-     * @return boolean|string The user's country from their mailing address
-     */
-    public function getCountry()
-    {
-        return false;
-    }
-
-    /**
-     * The organizational units the user is in
-     *
-     * This is the same as Areas in Flipside speak. 
-     *
-     * @return boolean|array The user's orgnaiational units
-     */
-    public function getOrganizationUnits()
-    {
-        return false;
-    }
-
-    /**
-     * The supplemental login types that the user can use to login
-     *
-     * @return boolean|array The user's login providers
-     */
-    public function getLoginProviders()
-    {
-        return false;
-    }
-
-    /**
      * The groups the user is a part of
      *
      * @return boolean|array The user's Auth\Group structures
@@ -262,12 +104,19 @@ class User extends \SerializableObject
      * Add a supplemental login type that the user can use to login
      *
      * @param string $provider The hostname for the provider
-     *
-     * @return boolean true if the addition worked, false otherwise
      */
     public function addLoginProvider($provider)
     {
-        throw new \Exception('Cannot add provider for this login type!');
+        if(isset($this->host))
+        {
+            $tmp = $this->host;
+            $tmp[] = $provider;
+            $this->host = $tmp;
+        }
+        else
+        {
+            $this->host = array($provider);
+        }
     }
 
     /**
@@ -279,7 +128,7 @@ class User extends \SerializableObject
      */
     public function canLoginWith($provider)
     {
-        $hosts = $this->getLoginProviders();
+        $hosts = $this->host;
         if($hosts === false)
         {
             return false;
@@ -314,9 +163,9 @@ class User extends \SerializableObject
      */
     public function isProfileComplete()
     {
-        if($this->getCountry() === false || $this->getAddress() === false ||
-           $this->getPostalCode() === false || $this->getCity() === false ||
-           $this->getState() === false || $this->getPhoneNumber() === false)
+        if($this->c === false || $this->postalAddress === false ||
+           $this->postalCode === false || $this->l === false ||
+           $this->st === false || $this->mobile === false)
         {
             return false;
         }
@@ -378,224 +227,6 @@ class User extends \SerializableObject
     }
 
     /**
-     * Set the user's display name
-     *
-     * @param string $name The user's new display name
-     *
-     * @return boolean true if the user's display name was changed, false otherwise
-     */
-    public function setDisplayName($name)
-    {
-        return $this->setNickName($name);
-    }
-
-    /**
-     * Set the user's given (first) name
-     *
-     * @param string $name The user's new given name
-     *
-     * @return boolean true if the user's given name was changed, false otherwise
-     */
-    public function setGivenName($name)
-    {
-        return $this->setUid($name);
-    }
-
-    /**
-     * Set the user's email address
-     *
-     * @param string $email The user's new email address
-     *
-     * @return boolean true if the user's email address was changed, false otherwise
-     *
-     * @SuppressWarnings("UnusedFormalParameter")
-     */
-    public function setEmail($email)
-    {
-        return false;
-    }
-
-    /**
-     * Set the user's user ID or user name
-     *
-     * @param string $uid The user's new user ID
-     *
-     * @return boolean true if the user's ID was changed, false otherwise
-     *
-     * @SuppressWarnings("UnusedFormalParameter")
-     */
-    public function setUid($uid)
-    {
-        return false;
-    }
-
-    /**
-     * Set the user's photo
-     *
-     * @param string $photo The user's new photo as a binary string
-     *
-     * @return boolean true if the user's photo was changed, false otherwise
-     *
-     * @SuppressWarnings("UnusedFormalParameter")
-     */
-    public function setPhoto($photo)
-    {
-        return false;
-    }
-
-    /**
-     * Set the user's phone number
-     *
-     * @param string $phone The user's new phonew number
-     *
-     * @return boolean true if the user's phone number was changed, false otherwise
-     *
-     * @SuppressWarnings("UnusedFormalParameter")
-     */
-    public function setPhoneNumber($phone)
-    {
-        return false;
-    }
-
-    /**
-     * Set the user's organization
-     *
-     * @param string $org The user's new organization
-     *
-     * @return boolean true if the user's organization was changed, false otherwise
-     *
-     * @SuppressWarnings("UnusedFormalParameter")
-     */
-    public function setOrganization($org)
-    {
-        return false;
-    }
-
-    /**
-     * Set the user's titles
-     *
-     * @param string $titles The user's new titles
-     *
-     * @return boolean true if the user's titles were changed, false otherwise
-     *
-     * @SuppressWarnings("UnusedFormalParameter")
-     */
-    public function setTitles($titles)
-    {
-        return false;
-    }
-
-    /**
-     * Set the user's state
-     *
-     * @param string $state The user's new state
-     *
-     * @return boolean true if the user's state was changed, false otherwise
-     *
-     * @SuppressWarnings("UnusedFormalParameter")
-     */
-    public function setState($state)
-    {
-        return false;
-    }
-
-    /**
-     * Set the user's city
-     *
-     * @param string $city The user's new city
-     *
-     * @return boolean true if the user's city was changed, false otherwise
-     *
-     * @SuppressWarnings("UnusedFormalParameter")
-     */
-    public function setCity($city)
-    {
-        return false;
-    }
-
-    /**
-     * Set the user's last name
-     *
-     * @param string $sn The user's new last name
-     *
-     * @return boolean true if the user's last name was changed, false otherwise
-     *
-     * @SuppressWarnings("UnusedFormalParameter")
-     */
-    public function setLastName($sn)
-    {
-        return false;
-    }
-
-    /**
-     * Set the user's nick name
-     *
-     * @param string $displayName The user's new nick name
-     *
-     * @return boolean true if the user's nick name was changed, false otherwise
-     */
-    public function setNickName($displayName)
-    {
-        return $this->setUid($displayName);
-    }
-
-    /**
-     * Set the user's mailing address
-     *
-     * @param string $address The user's new mailing address
-     *
-     * @return boolean true if the user's mailing address was changed, false otherwise
-     *
-     * @SuppressWarnings("UnusedFormalParameter")
-     */
-    public function setAddress($address)
-    {
-        return false;
-    }
-
-    /**
-     * Set the user's postal or zip code
-     *
-     * @param string $postalcode The user's new postal code
-     *
-     * @return boolean true if the user's postal code was changed, false otherwise
-     *
-     * @SuppressWarnings("UnusedFormalParameter")
-     */
-    public function setPostalCode($postalcode)
-    {
-        return false;
-    }
-
-    /**
-     * Set the user's country
-     *
-     * @param string $country The user's new country
-     *
-     * @return boolean true if the user's country was changed, false otherwise
-     *
-     * @SuppressWarnings("UnusedFormalParameter")
-     */
-    public function setCountry($country)
-    {
-        return false;
-    }
-
-    /**
-     * Set the user's organizations
-     *
-     * @param string $ous The user's new organizations
-     *
-     * @return boolean true if the user's organizations was changed, false otherwise
-     *
-     * @SuppressWarnings("UnusedFormalParameter")
-     */
-    public function setOrganizationUnits($ous)
-    {
-        return false;
-    }
-
-    /**
      * Allow write for the user
      */
     protected function enableReadWrite()
@@ -634,22 +265,22 @@ class User extends \SerializableObject
     {
         if(isset($data->displayName))
         {
-            $this->setDisplayName($data->displayName);
+            $this->displayName = $data->displayName;
             unset($data->displayName);
         }
         if(isset($data->givenName))
         {
-            $this->setGivenName($data->givenName);
+            $this->givenName = $data->givenName;
             unset($data->givenName);
         }
         if(isset($data->sn))
         {
-            $this->setLastName($data->sn);
+            $this->sn = $data->sn;
             unset($data->sn);
         }
         if(isset($data->cn))
         {
-            $this->setNickName($data->cn);
+            $this->cn = $data->cn;
             unset($data->cn);
         }
     }
@@ -658,7 +289,7 @@ class User extends \SerializableObject
     {
         if(isset($data->mail))
         {
-            if($data->mail !== $this->getEmail())
+            if($data->mail !== $this->mail)
             {
                 throw new \Exception('Unable to change email!');
             }
@@ -666,7 +297,7 @@ class User extends \SerializableObject
         }
         if(isset($data->uid))
         {
-            if($data->uid !== $this->getUid())
+            if($data->uid !== $this->uid)
             {
                 throw new \Exception('Unable to change uid!');
             }
@@ -678,27 +309,27 @@ class User extends \SerializableObject
     {
         if(isset($data->postalAddress))
         {
-            $this->setAddress($data->postalAddress);
+            $this->postalAddress = $data->postalAddress;
             unset($data->postalAddress);
         }
         if(isset($data->l))
         {
-            $this->setCity($data->l);
+            $this->l = $data->l;
             unset($data->l);
         }
         if(isset($data->st))
         {
-            $this->setState($data->st);
+            $this->st = $data->st;
             unset($data->st);
         }
         if(isset($data->postalCode))
         {
-            $this->setPostalCode($data->postalCode);
+            $this->postalCode = $data->postalCode;
             unset($data->postalCode);
         }
         if(isset($data->c))
         {
-            $this->setCountry($data->c);
+            $this->c = $data->c;
             unset($data->c);
         }
     }
@@ -707,17 +338,17 @@ class User extends \SerializableObject
     {
         if(isset($data->o))
         {
-            $this->setOrganization($data->o);
+            $this->o = $data->o;
             unset($data->o);
         }
         if(isset($data->title))
         {
-            $this->setTitles($data->title);
+            $this->title = $data->title;
             unset($data->title);
         }
         if(isset($data->ou))
         {
-            $this->setOrganizationUnits($data->ou);
+            $this->ou = $data->ou;
             unset($data->ou);
         }
     }
@@ -741,12 +372,12 @@ class User extends \SerializableObject
 
         if(isset($data->jpegPhoto))
         {
-            $this->setPhoto(base64_decode($data->jpegPhoto));
+            $this->jpegPhoto = base64_decode($data->jpegPhoto);
             unset($data->jpegPhoto);
         }
         if(isset($data->mobile))
         {
-            $this->setPhoneNumber($data->mobile);
+            $this->mobile = $data->mobile;
             unset($data->mobile);
         }
     }
@@ -769,24 +400,24 @@ class User extends \SerializableObject
     public function jsonSerialize()
     {
         $user = array();
-        $user['displayName'] = $this->getDisplayName();
-        $user['givenName'] = $this->getGivenName();
-        $user['jpegPhoto'] = base64_encode($this->getPhoto());
-        $user['mail'] = $this->getEmail();
-        $user['mobile'] = $this->getPhoneNumber();
-        $user['uid'] = $this->getUid();
-        $user['o'] = $this->getOrganization();
-        $user['title'] = $this->getTitles();
+        $user['displayName'] = $this->displayName;
+        $user['givenName'] = $this->givenName;
+        $user['jpegPhoto'] = base64_encode($this->jpegPhoto);
+        $user['mail'] = $this->mail;
+        $user['mobile'] = $this->mobile;
+        $user['uid'] = $this->uid;
+        $user['o'] = $this->o;
+        $user['title'] = $this->title;
         $user['titlenames'] = $this->getTitleNames();
-        $user['st'] = $this->getState();
-        $user['l'] = $this->getCity();
-        $user['sn'] = $this->getLastName();
-        $user['cn'] = $this->getNickName();
-        $user['postalAddress'] = $this->getAddress();
-        $user['postalCode'] = $this->getPostalCode();
-        $user['c'] = $this->getCountry();
-        $user['ou'] = $this->getOrganizationUnits();
-        $user['host'] = $this->getLoginProviders();
+        $user['st'] = $this->st;
+        $user['l'] = $this->l;
+        $user['sn'] = $this->sn;
+        $user['cn'] = $this->cn;
+        $user['postalAddress'] = $this->postalAddress;
+        $user['postalCode'] = $this->postalCode;
+        $user['c'] = $this->c;
+        $user['ou'] = $this->ou;
+        $user['host'] = $this->host;
         $user['class'] = get_class($this);
         return $user;
     }
@@ -799,16 +430,16 @@ class User extends \SerializableObject
     public function getVcard()
     {
         $ret = "BEGIN:VCARD\nVERSION:2.1\n";
-        $ret .= 'N:'.$this->getLastName().';'.$this->getGivenName()."\n";
-        $ret .= 'FN:'.$this->getGivenName()."\n";
-        $titles = $this->getTitles();
+        $ret .= 'N:'.$this->sn.';'.$this->givenName."\n";
+        $ret .= 'FN:'.$this->givenName."\n";
+        $titles = $this->title;
         if($titles !== false)
         {
             $ret .= 'TITLE:'.implode(',', $titles)."\n";
         }
         $ret .= "ORG: Austin Artistic Reconstruction\n";
-        $ret .= 'TEL;TYPE=MOBILE,VOICE:'.$this->getPhoneNumber()."\n";
-        $ret .= 'EMAIL;TYPE=PREF,INTERNET:'.$this->getEmail()."\n";
+        $ret .= 'TEL;TYPE=MOBILE,VOICE:'.$this->mobile."\n";
+        $ret .= 'EMAIL;TYPE=PREF,INTERNET:'.$this->mail."\n";
         $ret .= "END:VCARD\n";
         return $ret;
     }

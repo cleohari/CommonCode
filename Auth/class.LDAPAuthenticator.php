@@ -351,24 +351,24 @@ class LDAPAuthenticator extends Authenticator
         $this->get_and_bind_server(true);
         $new_user = new LDAPUser();
         $new_user->setUID($user->getUID());
-        $email = $user->getEmail();
-        $new_user->setEmail($email);
+        $email = $user->mail;
+        $new_user->mail = $email;
         $pass = $user->getPassword();
         if($pass !== false)
         {
             $new_user->setPass($pass);
         }
-        $sn = $user->getLastName();
+        $sn = $user->sn;
         if($sn !== false)
         {
-            $new_user->setLastName($sn);
+            $new_user->sn = $sn;
         }
-        $givenName = $user->getGivenName();
+        $givenName = $user->givenName;
         if($givenName !== false)
         {
-            $new_user->setGivenName($givenName);
+            $new_user->givenName = $givenName;
         }
-        $hosts = $user->getLoginProviders();
+        $hosts = $user->host;
         if($hosts !== false)
         {
             $count = count($hosts);

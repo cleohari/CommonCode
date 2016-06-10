@@ -32,11 +32,11 @@ class SQLAuthTest extends PHPUnit_Framework_TestCase
 
         $user = $auth->getUser($res);
         $this->assertInstanceOf('Auth\SQLUser', $user);
-        $this->assertEquals('test', $user->getUid());
+        $this->assertEquals('test', $user->uid);
  
         $user = $auth->getUserByName('test');
         $this->assertInstanceOf('Auth\SQLUser', $user);
-        $this->assertEquals('test', $user->getUid());
+        $this->assertEquals('test', $user->uid);
 
         $user = $auth->getUserByName('test1');
         $this->assertFalse($user);

@@ -67,9 +67,9 @@ class GoogleAuthenticator extends Authenticator
         else
         {
             $user = new PendingUser();
-            $user->setEmail($googleUser->email);
-            $user->setGivenName($googleUser->givenName);
-            $user->setLastName($googleUser->familyName);
+            $user->mail = $googleUser->email;
+            $user->givenName = $googleUser->givenName;
+            $user->sn = $googleUser->familyName;
             $user->addLoginProvider('google.com');
             $ret = $auth->activatePendingUser($user);
             if($ret === false)

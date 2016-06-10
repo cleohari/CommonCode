@@ -94,109 +94,98 @@ class LDAPUser extends User
         return false;
     }
 
-    public function getDisplayName()
-    {
-        return $this->getFieldSingleValue('displayName');
-    }
+    protected $valueDefaults = array(
+        'o' => 'Volunteer'
+    );
 
-    public function getGivenName()
-    {
-        return $this->getFieldSingleValue('givenName');
-    }
+    protected $multiValueProps = array(
+        'title',
+        'ou',
+        'host'
+    );
 
-    public function getEmail()
-    {
-        return $this->getFieldSingleValue('mail');
-    }
+    protected $cachedOnlyProps = array(
+        'uid'
+    );
 
-    public function getUid()
+    protected function getValueWithDefault($propName)
     {
-        return $this->getFieldSingleValue('uid');
-    }
-
-    public function getPhoto()
-    {
-        return $this->getFieldSingleValue('jpegPhoto');
-    }
-
-    public function getPhoneNumber()
-    {
-        return $this->getFieldSingleValue('mobile');
-    }
-
-    public function getOrganization()
-    {
-        $org = $this->getFieldSingleValue('o');
-        if($org === false)
+        if(isset($this->valueDefaults[$propName]))
         {
-            return 'Volunteer';
+            $tmp = $this->getFieldSingleValue($propName);
+            if($tmp === false)
+            {
+                return $this->valueDefaults[$propName];
+            }
+            return $tmp;
         }
-        return $org;
+        return false;
     }
 
-    public function getTitles()
+    protected function getMultiValueProp($propName)
     {
-        $titles = $this->getField('title');
-        if(isset($titles['count']))
+        if(in_array($propName, $this->multiValueProps))
         {
-            unset($titles['count']);
+            $tmp = $this->getField($propName);
+            if(isset($tmp['count']))
+            {
+                unset($tmp['count']);
+            }
+            return $tmp;
         }
-        return $titles;
+        return false;
     }
 
-    public function getState()
+    public function __get($propName)
     {
-        return $this->getFieldSingleValue('st');
-    }
-
-    public function getCity()
-    {
-        return $this->getFieldSingleValue('l');
-    }
-
-    public function getLastName()
-    {
-        return $this->getFieldSingleValue('sn');
-    }
-
-    public function getNickName()
-    {
-        return $this->getFieldSingleValue('cn');
-    }
-
-    public function getAddress()
-    {
-        return $this->getFieldSingleValue('postalAddress');
-    }
-
-    public function getPostalCode()
-    {
-        return $this->getFieldSingleValue('postalCode');
-    }
-
-    public function getCountry()
-    {
-        return $this->getFieldSingleValue('c');
-    }
-
-    public function getOrganizationUnits()
-    {
-        $units = $this->getField('ou');
-        if(isset($units['count']))
+        $tmp = $this->getValueWithDefault($propName);
+        if($tmp !== false)
         {
-            unset($units['count']);
+            return $tmp;
         }
-        return $units;
+        $tmp = $this->getMultiValueProp($propName);
+        if($tmp !== false)
+        {
+            return $tmp;
+        }
+        return $this->getFieldSingleValue($propName);
     }
 
-    public function getLoginProviders()
+    protected function setCachedOnlyProp($propName, $value)
     {
-        $hosts = $this->getField('host');
-        if(isset($hosts['count']))
+        if(in_array($propName, $this->cachedOnlyProps))
         {
-            unset($hosts['count']);
+            if(!is_object($this->ldapObj))
+            {
+                $this->setFieldLocal('uid', $uid);
+                return true;
+            }
+            throw new \Exception('Unsupported!');
         }
-        return $hosts;
+        return false;
+    }
+
+    protected function setMultiValueProp($propName, $value)
+    {
+        if(in_array($propName, $this->multiValueProps) && !is_array($value))
+        {
+             $this->setField($propName, array($value));
+             return true;
+        }
+        return false;
+    }
+
+    public function __set($propName, $value)
+    {
+        if($this->setCachedOnlyProp($propName, $value) === true)
+        {
+            return;
+        }
+        if($this->setMultiValueProp($propName, $value) === true)
+        {
+            return;
+        }
+        $this->setField($propName, $value);
     }
 
     public function getGroups()
@@ -304,92 +293,6 @@ class LDAPUser extends User
         return new static($user[0]);
     }
 
-    public function setDisplayName($name)
-    {
-        return $this->setField('displayName', $name);
-    }
-
-    public function setGivenName($name)
-    {
-        return $this->setField('givenName', $name);
-    }
-
-    public function setLastName($sn)
-    {
-        return $this->setField('sn', $sn);
-    }
-
-    public function setEmail($email)
-    {
-        return $this->setField('mail', $email);
-    }
-
-    public function setUid($uid)
-    {
-        if(!is_object($this->ldapObj))
-        {
-            return $this->setFieldLocal('uid', $uid);
-        }
-        else
-        {
-            throw new \Exception('Unsupported!');
-        }
-    }
-
-    public function setPhoto($photo)
-    {
-        return $this->setField('jpegPhoto', $photo);
-    }
-
-    public function setAddress($address)
-    {
-        return $this->setField('postalAddress', $address);
-    }
-
-    public function setPostalCode($postalcode)
-    {
-        $postalcode = trim($postalcode);
-        return $this->setField('postalCode', $postalcode);
-    }
-
-    public function setCountry($country)
-    {
-        return $this->setField('c', $country);
-    }
-
-    public function setState($state)
-    {
-        return $this->setField('st', $state);
-    }
-
-    public function setCity($city)
-    {
-        return $this->setField('l', $city);
-    }
-
-    public function setPhoneNumber($phone)
-    {
-        return $this->setField('mobile', $phone);
-    }
-
-    public function setTitles($titles)
-    {
-        if(!is_array($titles))
-        {
-            $titles = array($titles);
-        }
-        return $this->setField('title', $titles);
-    }
-
-    public function setOrganizationUnits($ous)
-    {
-        if(!is_array($ous))
-        {
-            $ous = array($ous);
-        }
-        return $this->setField('ou', $ous);
-    }
-
     public function flushUser()
     {
         if(is_object($this->ldapObj))
@@ -418,7 +321,7 @@ class LDAPUser extends User
         $auth = \AuthProvider::getInstance();
         $ldap = $auth->getMethodByName('Auth\LDAPAuthenticator');
         $ldap->get_and_bind_server(true);
-        $ldapObj = $this->server->read($ldap->user_base, new \Data\Filter('uid eq '.$this->getUid()));
+        $ldapObj = $this->server->read($ldap->user_base, new \Data\Filter('uid eq '.$this->uid));
         $ldapObj = $ldapObj[0];
         $hash = false;
         if(isset($ldapObj->userpassword))

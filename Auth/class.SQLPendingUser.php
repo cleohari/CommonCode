@@ -16,6 +16,19 @@ class SQLPendingUser extends PendingUser
         $this->table = $table;
     }
 
+    public function __get($propName)
+    {
+        if(is_array($this->blob->{$propName}))
+        {
+            return $this->blob->{$propName}[0];
+        }
+        return $this->blob->{$propName};
+    }
+
+    public function __set($propName, $value)
+    {
+    }
+
     public function getHash()
     {
         return $this->hash;
@@ -24,24 +37,6 @@ class SQLPendingUser extends PendingUser
     public function getRegistrationTime()
     {
         return $this->time;
-    }
-
-    public function getEmail()
-    {
-        if(is_array($this->blob->mail))
-        {
-            return $this->blob->mail[0];
-        }
-        return $this->blob->mail;
-    }
-
-    public function getUid()
-    {
-        if(is_array($this->blob->uid))
-        {
-            return $this->blob->uid[0];
-        }
-        return $this->blob->uid;
     }
 
     public function getPassword()
