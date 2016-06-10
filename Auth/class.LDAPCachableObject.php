@@ -3,6 +3,56 @@ namespace Auth;
 
 trait LDAPCachableObject
 {
+    protected function initialize($data)
+    {
+        if($data === false)
+        {
+            return;
+        }
+        if(is_string($data))
+        {
+            $this->ldapObj = $this->initializeFromDN($data);
+            return;
+        }
+        if($data instanceof \LDAP\LDAPObject)
+        {
+            $this->ldapObj = $data;
+            return;
+        }
+        $this->ldapObj = $this->initializeFromArray($data);
+    }
+
+    private function initializeFromDN($dn)
+    {
+        $filter = new \Data\Filter("dn eq $dn");
+        $data = $this->server->read($this->server->user_base, $filter);
+        if($data === false || !isset($data[0]))
+        {
+            $data = $this->server->read($this->server->group_base, $filter);
+            if($data === false || !isset($data[0]))
+            {
+                return false;
+            }
+        }
+        return $data[0];
+    }
+
+    private function initializeFromArray($array)
+    {
+        if(isset($array['extended']))
+        {
+            return $array['extended'];
+        }
+        //Generic user object
+        $filter = new \Data\Filter('mail eq '.$data['mail']);
+        $users = $this->server->read($this->server->user_base, $filter);
+        if($users === false || !isset($users[0]))
+        {
+            return false;
+        }
+        return $users[0];
+    }
+
     protected function update($obj)
     {
         try

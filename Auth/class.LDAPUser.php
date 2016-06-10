@@ -11,28 +11,7 @@ class LDAPUser extends User
     public function __construct($data = false)
     {
         $this->server = \LDAP\LDAPServer::getInstance();
-        if($data !== false && !isset($data['dn']) && !isset($data['extended']))
-        {
-            //Generic user object
-            $filter = new \Data\Filter('mail eq '.$data['mail']);
-            $users = $this->server->read($this->server->user_base, $filter);
-            if($users === false || !isset($users[0]))
-            {
-                throw new \Exception('No such LDAP User!');
-            }
-            $this->ldapObj = $users[0];
-        }
-        else
-        {
-            if(isset($data['extended']))
-            {
-                $this->ldapObj = $data['extended'];
-            }
-            else
-            {
-                $this->ldapObj = $data;
-            }
-        }
+        $this->initialize($data);
     }
 
     private function check_child_group($array)
@@ -157,7 +136,7 @@ class LDAPUser extends User
         {
             if(!is_object($this->ldapObj))
             {
-                $this->setFieldLocal('uid', $uid);
+                $this->setFieldLocal($propName, $value);
                 return true;
             }
             throw new \Exception('Unsupported!');

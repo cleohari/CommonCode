@@ -10,12 +10,8 @@ class LDAPGroup extends Group
 
     public function __construct($data)
     {
-        $this->ldapObj = $data;
         $this->server = \LDAP\LDAPServer::getInstance();
-        if(!is_object($data))
-        {
-            throw new \Exception('Unable to setup LDAPGroup!');
-        }
+        $this->initialize($data);
     }
 
     public function getGroupName()
