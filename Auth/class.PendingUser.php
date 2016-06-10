@@ -77,45 +77,6 @@ class PendingUser extends User
     }
 
     /**
-     * Set the user's email address
-     *
-     * @param string $email The user's new email address
-     *
-     * @return boolean true if the user's email address was changed, false otherwise
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-        return true;
-    }
-
-    /**
-     * Set the user's given (first) name
-     *
-     * @param string $givenName The user's new given name
-     *
-     * @return boolean true if the user's given name was changed, false otherwise
-     */
-    public function setGivenName($givenName)
-    {
-        $this->givenName = $givenName;
-        return true;
-    }
-
-    /**
-     * Set the user's last name
-     *
-     * @param string $sn The user's new last name
-     *
-     * @return boolean true if the user's last name was changed, false otherwise
-     */
-    public function setLastName($sn)
-    {
-        $this->sn = $sn;
-        return true;
-    }
-
-    /**
      * Serialize the user data into a format usable by the json_encode method
      *
      * @return array A simple keyed array representing the user

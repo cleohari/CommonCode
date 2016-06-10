@@ -227,224 +227,6 @@ class User extends \SerializableObject
     }
 
     /**
-     * Set the user's display name
-     *
-     * @param string $name The user's new display name
-     *
-     * @return boolean true if the user's display name was changed, false otherwise
-     */
-    public function setDisplayName($name)
-    {
-        return $this->setNickName($name);
-    }
-
-    /**
-     * Set the user's given (first) name
-     *
-     * @param string $name The user's new given name
-     *
-     * @return boolean true if the user's given name was changed, false otherwise
-     */
-    public function setGivenName($name)
-    {
-        return $this->setUid($name);
-    }
-
-    /**
-     * Set the user's email address
-     *
-     * @param string $email The user's new email address
-     *
-     * @return boolean true if the user's email address was changed, false otherwise
-     *
-     * @SuppressWarnings("UnusedFormalParameter")
-     */
-    public function setEmail($email)
-    {
-        return false;
-    }
-
-    /**
-     * Set the user's user ID or user name
-     *
-     * @param string $uid The user's new user ID
-     *
-     * @return boolean true if the user's ID was changed, false otherwise
-     *
-     * @SuppressWarnings("UnusedFormalParameter")
-     */
-    public function setUid($uid)
-    {
-        return false;
-    }
-
-    /**
-     * Set the user's photo
-     *
-     * @param string $photo The user's new photo as a binary string
-     *
-     * @return boolean true if the user's photo was changed, false otherwise
-     *
-     * @SuppressWarnings("UnusedFormalParameter")
-     */
-    public function setPhoto($photo)
-    {
-        return false;
-    }
-
-    /**
-     * Set the user's phone number
-     *
-     * @param string $phone The user's new phonew number
-     *
-     * @return boolean true if the user's phone number was changed, false otherwise
-     *
-     * @SuppressWarnings("UnusedFormalParameter")
-     */
-    public function setPhoneNumber($phone)
-    {
-        return false;
-    }
-
-    /**
-     * Set the user's organization
-     *
-     * @param string $org The user's new organization
-     *
-     * @return boolean true if the user's organization was changed, false otherwise
-     *
-     * @SuppressWarnings("UnusedFormalParameter")
-     */
-    public function setOrganization($org)
-    {
-        return false;
-    }
-
-    /**
-     * Set the user's titles
-     *
-     * @param string $titles The user's new titles
-     *
-     * @return boolean true if the user's titles were changed, false otherwise
-     *
-     * @SuppressWarnings("UnusedFormalParameter")
-     */
-    public function setTitles($titles)
-    {
-        return false;
-    }
-
-    /**
-     * Set the user's state
-     *
-     * @param string $state The user's new state
-     *
-     * @return boolean true if the user's state was changed, false otherwise
-     *
-     * @SuppressWarnings("UnusedFormalParameter")
-     */
-    public function setState($state)
-    {
-        return false;
-    }
-
-    /**
-     * Set the user's city
-     *
-     * @param string $city The user's new city
-     *
-     * @return boolean true if the user's city was changed, false otherwise
-     *
-     * @SuppressWarnings("UnusedFormalParameter")
-     */
-    public function setCity($city)
-    {
-        return false;
-    }
-
-    /**
-     * Set the user's last name
-     *
-     * @param string $sn The user's new last name
-     *
-     * @return boolean true if the user's last name was changed, false otherwise
-     *
-     * @SuppressWarnings("UnusedFormalParameter")
-     */
-    public function setLastName($sn)
-    {
-        return false;
-    }
-
-    /**
-     * Set the user's nick name
-     *
-     * @param string $displayName The user's new nick name
-     *
-     * @return boolean true if the user's nick name was changed, false otherwise
-     */
-    public function setNickName($displayName)
-    {
-        return $this->setUid($displayName);
-    }
-
-    /**
-     * Set the user's mailing address
-     *
-     * @param string $address The user's new mailing address
-     *
-     * @return boolean true if the user's mailing address was changed, false otherwise
-     *
-     * @SuppressWarnings("UnusedFormalParameter")
-     */
-    public function setAddress($address)
-    {
-        return false;
-    }
-
-    /**
-     * Set the user's postal or zip code
-     *
-     * @param string $postalcode The user's new postal code
-     *
-     * @return boolean true if the user's postal code was changed, false otherwise
-     *
-     * @SuppressWarnings("UnusedFormalParameter")
-     */
-    public function setPostalCode($postalcode)
-    {
-        return false;
-    }
-
-    /**
-     * Set the user's country
-     *
-     * @param string $country The user's new country
-     *
-     * @return boolean true if the user's country was changed, false otherwise
-     *
-     * @SuppressWarnings("UnusedFormalParameter")
-     */
-    public function setCountry($country)
-    {
-        return false;
-    }
-
-    /**
-     * Set the user's organizations
-     *
-     * @param string $ous The user's new organizations
-     *
-     * @return boolean true if the user's organizations was changed, false otherwise
-     *
-     * @SuppressWarnings("UnusedFormalParameter")
-     */
-    public function setOrganizationUnits($ous)
-    {
-        return false;
-    }
-
-    /**
      * Allow write for the user
      */
     protected function enableReadWrite()
@@ -483,22 +265,22 @@ class User extends \SerializableObject
     {
         if(isset($data->displayName))
         {
-            $this->setDisplayName($data->displayName);
+            $this->displayName = $data->displayName;
             unset($data->displayName);
         }
         if(isset($data->givenName))
         {
-            $this->setGivenName($data->givenName);
+            $this->givenName = $data->givenName;
             unset($data->givenName);
         }
         if(isset($data->sn))
         {
-            $this->setLastName($data->sn);
+            $this->sn = $data->sn;
             unset($data->sn);
         }
         if(isset($data->cn))
         {
-            $this->setNickName($data->cn);
+            $this->cn = $data->cn;
             unset($data->cn);
         }
     }
@@ -527,27 +309,27 @@ class User extends \SerializableObject
     {
         if(isset($data->postalAddress))
         {
-            $this->setAddress($data->postalAddress);
+            $this->postalAddress = $data->postalAddress;
             unset($data->postalAddress);
         }
         if(isset($data->l))
         {
-            $this->setCity($data->l);
+            $this->l = $data->l;
             unset($data->l);
         }
         if(isset($data->st))
         {
-            $this->setState($data->st);
+            $this->st = $data->st;
             unset($data->st);
         }
         if(isset($data->postalCode))
         {
-            $this->setPostalCode($data->postalCode);
+            $this->postalCode = $data->postalCode;
             unset($data->postalCode);
         }
         if(isset($data->c))
         {
-            $this->setCountry($data->c);
+            $this->c = $data->c;
             unset($data->c);
         }
     }
@@ -556,17 +338,17 @@ class User extends \SerializableObject
     {
         if(isset($data->o))
         {
-            $this->setOrganization($data->o);
+            $this->o = $data->o;
             unset($data->o);
         }
         if(isset($data->title))
         {
-            $this->setTitles($data->title);
+            $this->title = $data->title;
             unset($data->title);
         }
         if(isset($data->ou))
         {
-            $this->setOrganizationUnits($data->ou);
+            $this->ou = $data->ou;
             unset($data->ou);
         }
     }
@@ -590,12 +372,12 @@ class User extends \SerializableObject
 
         if(isset($data->jpegPhoto))
         {
-            $this->setPhoto(base64_decode($data->jpegPhoto));
+            $this->jpegPhoto = base64_decode($data->jpegPhoto);
             unset($data->jpegPhoto);
         }
         if(isset($data->mobile))
         {
-            $this->setPhoneNumber($data->mobile);
+            $this->mobile = $data->mobile;
             unset($data->mobile);
         }
     }

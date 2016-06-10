@@ -36,23 +36,6 @@ class UserTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($user->isProfileComplete());
         $this->assertFalse($user->validate_password('test'));
         $this->assertFalse($user->validate_reset_hash('test'));
-        $this->assertFalse($user->setDisplayName('test'));
-        $this->assertFalse($user->setGivenName('test'));
-        $this->assertFalse($user->setEmail('test@test.com'));
-        $this->assertFalse($user->setUid('test'));
-        $this->assertFalse($user->setPhoto('test'));
-        $this->assertFalse($user->setPhoneNumber('test'));
-        $this->assertFalse($user->setOrganization('test'));
-        $this->assertFalse($user->setTitles('test'));
-        $this->assertFalse($user->setTitles(array('test', 'test2')));
-        $this->assertFalse($user->setState('TX'));
-        $this->assertFalse($user->setCity('test'));
-        $this->assertFalse($user->setLastName('test'));
-        $this->assertFalse($user->setNickName('test'));
-        $this->assertFalse($user->setAddress('test'));
-        $this->assertFalse($user->setPostalCode('test'));
-        $this->assertFalse($user->setCountry('test'));
-        $this->assertFalse($user->setOrganizationUnits('test'));
         $this->assertFalse($user->getPasswordResetHash());
 
         try
@@ -195,23 +178,38 @@ class UserTest extends PHPUnit_Framework_TestCase
         }
 
         $this->assertTrue($user->setPass('test'));
-        $this->assertTrue($user->setDisplayName('test'));
-        $this->assertTrue($user->setGivenName('test'));
-        $this->assertTrue($user->setLastName('test'));
-        $this->assertTrue($user->setEmail('test@example.com'));
-        $this->assertTrue($user->setUid('test'));
-        $this->assertTrue($user->setPhoto(base64_encode('test')));
-        $this->assertTrue($user->setAddress('test'));
-        $this->assertTrue($user->setPostalCode('123456'));
-        $this->assertTrue($user->setCountry('US'));
-        $this->assertTrue($user->setState('TX'));
-        $this->assertTrue($user->setCity('test'));
-        $this->assertTrue($user->setPhoneNumber('1234567890'));
-        $this->assertTrue($user->setTitles('test'));
-        $this->assertTrue($user->setTitles(array('test', 'test2')));
-        $this->assertTrue($user->setOrganizationUnits('test'));
-        $this->assertTrue($user->setOrganizationUnits(array('test', 'test2')));
-        
+        $user->displayName = 'test';
+        $user->givenName = 'test';
+        $user->sn = 'test';
+        $user->mail = 'test@example.com';
+        $user->jpegPhoto = base64_encode('test');
+        $user->postalAddress = 'test';
+        $user->postalCode = '123456';
+        $user->c = 'US';
+        $user->st = 'TX';
+        $user->l = 'test';
+        $user->phoneNumber = '1234567890';
+        $user->title = 'test';
+        $this->assertEquals($user->title, array('test'));
+        $user->title = array('test', 'test2');
+        $this->assertEquals($user->title, array('test', 'test2'));
+
+        $user->ou = 'test';
+        $this->assertEquals($user->ou, array('test'));
+        $user->ou = array('test', 'test2');
+        $this->assertEquals($user->ou, array('test', 'test2'));
+
+        $this->assertEquals($user->displayName, 'test');
+        $this->assertEquals($user->givenName, 'test');
+        $this->assertEquals($user->mail, 'test@example.com');
+        $this->assertEquals($user->jpegPhoto, base64_encode('test'));
+        $this->assertEquals($user->phoneNumber, '1234567890');
+        $this->assertEquals($user->st, 'TX');
+        $this->assertEquals($user->l, 'test');
+        $this->assertEquals($user->sn, 'test');
+        $this->assertEquals($user->postalAddress, 'test');
+        $this->assertEquals($user->postalCode, '123456');
+        $this->assertEquals($user->c, 'US');
     }
 
     public function testSQLUser()
@@ -299,7 +297,7 @@ class UserTest extends PHPUnit_Framework_TestCase
         $user->mail = 'test@example.com';
         $this->assertEquals('test@example.com', $user->mail);
 
-        $this->assertTrue($user->setGivenName('test'));
+        $user->givenName = 'test';
         $this->assertEquals('test', $user->givenName);
 
         $user->sn = 'test';

@@ -37,10 +37,10 @@ class GitLabAuthenticator extends OAuth2Authenticator
         $resp = \Httpful\Request::get('https://gitlab.com/api/v3/user')->addHeader('Authorization', 'Bearer '.$token->access_token)->send();
         $gitlab_user = $resp->body;
         $user = new \Auth\PendingUser();
-        $user->setEmail($gitlab_user->email);
+        $user->mail = $gitlab_user->email;
         $name = explode(' ', $gitlab_user->name);
-        $user->setGivenName($name[0]);
-        $user->setLastName($name[1]);
+        $user->givenName = $name[0];
+        $user->sn = $name[1];
         $user->addLoginProvider($this->getHostName());
         return $user;
     }

@@ -104,7 +104,11 @@ class LDAPUser extends User
         'host'
     );
 
-    public function __get($propName)
+    protected $cachedOnlyProps = array(
+        'uid'
+    );
+
+    protected function getValueWithDefault($propName)
     {
         if(isset($this->valueDefaults[$propName]))
         {
@@ -115,6 +119,11 @@ class LDAPUser extends User
             }
             return $tmp;
         }
+        return false;
+    }
+
+    protected function getMultiValueProp($propName)
+    {
         if(in_array($propName, $this->multiValueProps))
         {
             $tmp = $this->getField($propName);
@@ -124,11 +133,59 @@ class LDAPUser extends User
             }
             return $tmp;
         }
+        return false;
+    }
+
+    public function __get($propName)
+    {
+        $tmp = $this->getValueWithDefault($propName);
+        if($tmp !== false)
+        {
+            return $tmp;
+        }
+        $tmp = $this->getMultiValueProp($propName);
+        if($tmp !== false)
+        {
+            return $tmp;
+        }
         return $this->getFieldSingleValue($propName);
+    }
+
+    protected function setCachedOnlyProp($propName, $value)
+    {
+        if(in_array($propName, $this->cachedOnlyProps))
+        {
+            if(!is_object($this->ldapObj))
+            {
+                $this->setFieldLocal('uid', $uid);
+                return true;
+            }
+            throw new \Exception('Unsupported!');
+        }
+        return false;
+    }
+
+    protected function setMultiValueProp($propName, $value)
+    {
+        if(in_array($propName, $this->multiValueProps) && !is_array($value))
+        {
+             $this->setField($propName, array($value));
+             return true;
+        }
+        return false;
     }
 
     public function __set($propName, $value)
     {
+        if($this->setCachedOnlyProp($propName, $value) === true)
+        {
+            return;
+        }
+        if($this->setMultiValueProp($propName, $value) === true)
+        {
+            return;
+        }
+        $this->setField($propName, $value);
     }
 
     public function getGroups()
@@ -234,92 +291,6 @@ class LDAPUser extends User
             return false;
         }
         return new static($user[0]);
-    }
-
-    public function setDisplayName($name)
-    {
-        return $this->setField('displayName', $name);
-    }
-
-    public function setGivenName($name)
-    {
-        return $this->setField('givenName', $name);
-    }
-
-    public function setLastName($sn)
-    {
-        return $this->setField('sn', $sn);
-    }
-
-    public function setEmail($email)
-    {
-        return $this->setField('mail', $email);
-    }
-
-    public function setUid($uid)
-    {
-        if(!is_object($this->ldapObj))
-        {
-            return $this->setFieldLocal('uid', $uid);
-        }
-        else
-        {
-            throw new \Exception('Unsupported!');
-        }
-    }
-
-    public function setPhoto($photo)
-    {
-        return $this->setField('jpegPhoto', $photo);
-    }
-
-    public function setAddress($address)
-    {
-        return $this->setField('postalAddress', $address);
-    }
-
-    public function setPostalCode($postalcode)
-    {
-        $postalcode = trim($postalcode);
-        return $this->setField('postalCode', $postalcode);
-    }
-
-    public function setCountry($country)
-    {
-        return $this->setField('c', $country);
-    }
-
-    public function setState($state)
-    {
-        return $this->setField('st', $state);
-    }
-
-    public function setCity($city)
-    {
-        return $this->setField('l', $city);
-    }
-
-    public function setPhoneNumber($phone)
-    {
-        return $this->setField('mobile', $phone);
-    }
-
-    public function setTitles($titles)
-    {
-        if(!is_array($titles))
-        {
-            $titles = array($titles);
-        }
-        return $this->setField('title', $titles);
-    }
-
-    public function setOrganizationUnits($ous)
-    {
-        if(!is_array($ous))
-        {
-            $ous = array($ous);
-        }
-        return $this->setField('ou', $ous);
     }
 
     public function flushUser()

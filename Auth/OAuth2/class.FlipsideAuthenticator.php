@@ -35,11 +35,11 @@ class FlipsideAuthenticator extends OAuth2Authenticator
         if(isset($github_user->name))
         {
             $name = explode(' ', $github_user->name);
-            $user->setGivenName($name[0]);
-            $user->setLastName($name[1]);
+            $user->givenName = $name[0];
+            $user->sn = $name[1];
         }
         $resp = \Httpful\Request::get('https://api.github.com/user/emails')->addHeader('Authorization', 'token '.$token['access_token'])->send();
-        $user->setEmail($resp->body[0]->email);
+        $user->mail = $resp->body[0]->email;
         $user->addLoginProvider($this->getHostName());
         return $user;
     }
