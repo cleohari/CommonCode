@@ -287,30 +287,6 @@ class User extends \SerializableObject
         }
     }
 
-    private function editNames($data)
-    {
-        if(isset($data->displayName))
-        {
-            $this->displayName = $data->displayName;
-            unset($data->displayName);
-        }
-        if(isset($data->givenName))
-        {
-            $this->givenName = $data->givenName;
-            unset($data->givenName);
-        }
-        if(isset($data->sn))
-        {
-            $this->sn = $data->sn;
-            unset($data->sn);
-        }
-        if(isset($data->cn))
-        {
-            $this->cn = $data->cn;
-            unset($data->cn);
-        }
-    }
-
     private function checkForUnsettableElements($data)
     {
         $count = count($this->unsettableElements);
@@ -328,54 +304,6 @@ class User extends \SerializableObject
         }
     }
 
-    private function editAddressElements($data)
-    {
-        if(isset($data->postalAddress))
-        {
-            $this->postalAddress = $data->postalAddress;
-            unset($data->postalAddress);
-        }
-        if(isset($data->l))
-        {
-            $this->l = $data->l;
-            unset($data->l);
-        }
-        if(isset($data->st))
-        {
-            $this->st = $data->st;
-            unset($data->st);
-        }
-        if(isset($data->postalCode))
-        {
-            $this->postalCode = $data->postalCode;
-            unset($data->postalCode);
-        }
-        if(isset($data->c))
-        {
-            $this->c = $data->c;
-            unset($data->c);
-        }
-    }
-
-    private function editOrganizationElements($data)
-    {
-        if(isset($data->o))
-        {
-            $this->o = $data->o;
-            unset($data->o);
-        }
-        if(isset($data->title))
-        {
-            $this->title = $data->title;
-            unset($data->title);
-        }
-        if(isset($data->ou))
-        {
-            $this->ou = $data->ou;
-            unset($data->ou);
-        }
-    }
-
     /**
      * Modify the user given the provided data object
      *
@@ -385,23 +313,23 @@ class User extends \SerializableObject
      */
     public function editUser($data)
     {
+        $this->checkForUnsettableElements($data);
+
         $this->enableReadWrite();
 
-        $this->checkForUnsettableElements($data);
+        /* These elements require special handling */
         $this->editUserPassword($data);
-        $this->editNames($data);
-        $this->editAddressElements($data);
-        $this->editOrganizationElements($data);
-
         if(isset($data->jpegPhoto))
         {
             $this->jpegPhoto = base64_decode($data->jpegPhoto);
             unset($data->jpegPhoto);
         }
-        if(isset($data->mobile))
+
+        /* These are generic elements */
+        $data = get_object_vars($data);
+        foreach($data as $key=>$value)
         {
-            $this->mobile = $data->mobile;
-            unset($data->mobile);
+            $this->{$key} = $value;
         }
     }
 
