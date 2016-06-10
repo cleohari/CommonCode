@@ -257,21 +257,6 @@ class LDAPUser extends User
         return new static($user[0]);
     }
 
-    public static function from_dn($dn, $data = false)
-    {
-        if($data === false)
-        {
-            throw new \Exception('data must be set for LDAPUser');
-        }
-        $filter = new \Data\Filter("dn eq $dn");
-        $user = $data->read($data->user_base, $filter);
-        if($user === false || !isset($user[0]))
-        {
-            return false;
-        }
-        return new static($user[0]);
-    }
-
     public function flushUser()
     {
         if(is_object($this->ldapObj))

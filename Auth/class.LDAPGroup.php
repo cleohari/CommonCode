@@ -68,7 +68,7 @@ class LDAPGroup extends Group
         {
             if($recursive && strncmp($rawMembers[$i], 'cn=', 3) === 0)
             {
-                $child = self::from_dn($rawMembers[$i], $this->server);
+                $child = new LDAPGroup($rawMembers[$i]);
                 if($child !== false)
                 {
                     $members = array_merge($members, $child->members());
@@ -124,7 +124,7 @@ class LDAPGroup extends Group
         {
             if($recursive && strncmp($rawMembers[$i], 'cn=', 3) === 0)
             {
-                $child = self::from_dn($rawMembers[$i], $this->server);
+                $child = new LDAPGroup($rawMembers[$i]);
                 if($child !== false)
                 {
                     $members = array_merge($members, $child->members());
@@ -243,20 +243,6 @@ class LDAPGroup extends Group
         {
             return true;
         }
-    }
-
-    public static function from_dn($dn, $data = false)
-    {
-        if($data === false)
-        {
-            throw new \Exception('data must be set for LDAPGroup');
-        }
-        $group = $data->read($dn, false, true);
-        if($group === false || !isset($group[0]))
-        {
-            return false;
-        }
-        return new static($group[0]);
     }
 
     public static function from_name($name, $data = false)
