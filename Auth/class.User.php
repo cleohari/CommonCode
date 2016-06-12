@@ -295,7 +295,7 @@ class User extends \SerializableObject
             $propName = $this->unsettableElements[$i];
             if(isset($data->{$propName}))
             {
-                if($data{$propName} !== $this->{$propName})
+                if($data->{$propName} !== $this->{$propName})
                 {
                     throw new \Exception('Unable to change '.$propName.'!');
                 }
