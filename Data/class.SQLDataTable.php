@@ -26,41 +26,8 @@ class SQLDataTable extends DataTable
         return $res[0]['Column_name'];
     }
 
-    function prefetch_all($key = false)
-    {
-        $array = $this->read(false, false);
-        if($key === false)
-        {
-            $key = $this->get_primary_key();
-        }
-        $count = count($array);
-        $this->data = array();
-        for($i = 0; $i < $count; $i++)
-        {
-            if(isset($this->data[$array[$i][$key]]))
-            {
-                if(isset($this->data[$array[$i][$key]][0]))
-                {
-                    array_push($this->data[$array[$i][$key]], $array[$i]);
-                }
-                else
-                {
-                    $this->data[$array[$i][$key]] = array($array[$i]);
-                }
-            }
-            else
-            {
-                $this->data[$array[$i][$key]] = $array[$i];
-            }
-        }
-    }
-
     function count($filter = false)
     {
-        if($this->data !== null)
-        {
-            return parent::count($filter);
-        }
         $where = false;
         if($filter !== false)
         {
@@ -79,10 +46,6 @@ class SQLDataTable extends DataTable
   
     function search($filter = false, $select = false, $count = false, $skip = false, $sort = false, $params = false)
     {
-        if($this->data !== null)
-        {
-            return parent::search($filter, $select);
-        }
         $where = false;
         if($filter !== false)
         {
