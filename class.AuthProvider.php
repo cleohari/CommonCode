@@ -25,6 +25,8 @@ class AuthProvider extends Provider
 {
     /**
      * Load the authentrication providers specified in the Settings $authProviders array
+     *
+     * @SuppressWarnings("StaticAccess")
      */
     protected function __construct()
     {
@@ -377,21 +379,7 @@ class AuthProvider extends Provider
     {
         if($methodName === false)
         {
-            $count = count($this->methods);
-            for($i = 0; $i < $count; $i++)
-            {
-                if($this->methods[$i]->pending === false)
-                {
-                    continue;
-                }
-
-                $ret = $this->methods[$i]->getTempUserByHash($hash);
-                if($ret !== false)
-                {
-                    return $ret;
-                }
-            }
-            return false;
+            return $this->callOnEach('getTempUserByHash', array($hash), 'pending');
         }
         $auth = $this->getMethodByName($methodName);
         return $auth->getTempUserByHash($hash);
@@ -477,21 +465,7 @@ class AuthProvider extends Provider
     {
         if($methodName === false)
         {
-            $count = count($this->methods);
-            for($i = 0; $i < $count; $i++)
-            {
-                if($this->methods[$i]->current === false)
-                {
-                    continue;
-                }
-
-                $ret = $this->methods[$i]->getUserByResetHash($hash);
-                if($ret !== false)
-                {
-                    return $ret;
-                }
-            }
-            return false;
+            return $this->callOnEach('getUserByResetHash', array($hash), 'current');
         }
         $auth = $this->getMethodByName($methodName);
         if($auth === false)
@@ -561,21 +535,7 @@ class AuthProvider extends Provider
     {
         if($methodName === false)
         {
-            $count = count($this->methods);
-            for($i = 0; $i < $count; $i++)
-            {
-                if($this->methods[$i]->current === false)
-                {
-                    continue;
-                }
-
-                $ret = $this->methods[$i]->getUserByAccessCode($key);
-                if($ret !== false)
-                {
-                    return $ret;
-                }
-            }
-            return false;
+            return $this->callOnEach('getUserByAccessCode', array($key), 'current');
         }
         $auth = $this->getMethodByName($methodName);
         return $auth->getUserByAccessCode($key);
