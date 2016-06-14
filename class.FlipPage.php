@@ -830,11 +830,9 @@ class FlipPage extends WebPage
         {
             $submenu['_'] = $url;
             $this->links[$name] = $submenu;
+            return;
         }
-        else
-        {
-            $this->links[$name] = $url;
-        }
+        $this->links[$name] = $url;
     }
 
     /**
