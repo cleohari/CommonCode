@@ -103,7 +103,7 @@ class Group extends \SerializableObject
         //Make sure we are bound in write mode
         $auth = \AuthProvider::getInstance();
         $ldap = $auth->getMethodByName('Auth\LDAPAuthenticator');
-        $ldap->get_and_bind_server(true);
+        $ldap->getAndBindServer(true);
         if(isset($group->description))
         {
             $this->setDescription($group->description);

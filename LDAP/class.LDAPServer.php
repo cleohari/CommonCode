@@ -61,7 +61,7 @@ function cleanupDN($distinguishedName)
 
 class LDAPServer extends \Singleton
 {
-    protected $ds;
+    protected $ldapLink;
     protected $connect;
     protected $binder;
     public $user_base;
@@ -69,7 +69,7 @@ class LDAPServer extends \Singleton
 
     protected function __construct()
     {
-        $this->ds = null;
+        $this->ldapLink = null;
         $this->binder = null;
     }
 
@@ -79,7 +79,7 @@ class LDAPServer extends \Singleton
 
     public function __wakeup()
     {
-        $this->ds = ldap_connect($this->connect);
+        $this->ldapLink = ldap_connect($this->connect);
     }
 
     private function getConnectString($name, $proto = false)
@@ -98,27 +98,27 @@ class LDAPServer extends \Singleton
     public function connect($name, $proto = false)
     {
         $connectStr = $this->getConnectString($name, $proto);
-        if($this->ds !== null)
+        if($this->ldapLink !== null)
         {
-            ldap_close($this->ds);
+            ldap_close($this->ldapLink);
         }
         $this->connect = $connectStr;
-        $this->ds      = ldap_connect($this->connect);
-        if($this->ds === false)
+        $this->ldapLink = ldap_connect($this->connect);
+        if($this->ldapLink === false)
         {
-            $this->ds = null;
+            $this->ldapLink = null;
             return false;
         }
-        ldap_set_option($this->ds, LDAP_OPT_PROTOCOL_VERSION, 3);
+        ldap_set_option($this->ldapLink, LDAP_OPT_PROTOCOL_VERSION, 3);
         return true;
     }
 
     public function disconnect()
     {
-        if($this->ds !== null)
+        if($this->ldapLink !== null)
         {
-            ldap_close($this->ds);
-            $this->ds = null;
+            ldap_close($this->ldapLink);
+            $this->ldapLink = null;
         }
         $this->connect = false;
     }
@@ -132,39 +132,34 @@ class LDAPServer extends \Singleton
     public function bind($cn = null, $password = null)
     {
         $res = false;
-        if($this->ds === null)
+        if($this->ldapLink === null)
         {
             throw new \Exception('Not connected');
         }
         $this->binder = $cn;
         if($cn === null || $password === null)
         {
-            return @ldap_bind($this->ds);
+            return @ldap_bind($this->ldapLink);
         }
         try
         {
-            $res = ldap_bind($this->ds, $cn, $password);
+            $res = ldap_bind($this->ldapLink, $cn, $password);
         }
         catch(\Exception $ex)
         {
-            $this->ds = ldap_connect($this->connect);
-            $res = @ldap_bind($this->ds, $cn, $password);
+            $this->ldapLink = ldap_connect($this->connect);
+            $res = @ldap_bind($this->ldapLink, $cn, $password);
         }
         return $res;
     }
 
     public function unbind()
     {
-        if($this->ds === null)
+        if($this->ldapLink === null)
         {
             return true;
         }
-        return @ldap_unbind($this->ds);
-    }
-
-    public function getError()
-    {
-        return ldap_error($this->ds);
+        return @ldap_unbind($this->ldapLink);
     }
 
     private function fixObject($object, &$delete = false)
@@ -205,7 +200,7 @@ class LDAPServer extends \Singleton
     {
         $dn = ldap_escape($object['dn'], true);
         $entity = $this->fixObject($object);
-        $ret = ldap_add($this->ds, $dn, $entity);
+        $ret = ldap_add($this->ldapLink, $dn, $entity);
         if($ret === false)
         {
             throw new \Exception('Failed to create object with dn='.$dn);
@@ -239,7 +234,7 @@ class LDAPServer extends \Singleton
         {
             return false;
         }
-        $res = ldap_get_entries($this->ds, $searchResult);
+        $res = ldap_get_entries($this->ldapLink, $searchResult);
         if(is_array($res))
         {
             $ldap = $res;
@@ -255,7 +250,7 @@ class LDAPServer extends \Singleton
     public function read($baseDN, $filter = false, $single = false, $attributes = false)
     {
         $filterStr = $this->filterToString($filter);
-        if($this->ds === null)
+        if($this->ldapLink === null)
         {
             throw new \Exception('Not connected');
         }
@@ -263,15 +258,15 @@ class LDAPServer extends \Singleton
         {
             if($single === true)
             {
-                $searchResult = @ldap_read($this->ds, $baseDN, $filterStr);
+                $searchResult = @ldap_read($this->ldapLink, $baseDN, $filterStr);
                 return $this->searchResultToArray($searchResult);
             }
             if($attributes !== false)
             {
-                $searchResult = @ldap_list($this->ds, $baseDN, $filterStr, $attributes);
+                $searchResult = @ldap_list($this->ldapLink, $baseDN, $filterStr, $attributes);
                 return $this->searchResultToArray($searchResult);
             }
-            $searchResult = @ldap_list($this->ds, $baseDN, $filterStr);
+            $searchResult = @ldap_list($this->ldapLink, $baseDN, $filterStr);
             return $this->searchResultToArray($searchResult);
         }
         catch(\Exception $e)
@@ -283,49 +278,49 @@ class LDAPServer extends \Singleton
     public function count($baseDN, $filter = false)
     {
         $filterStr = $this->filterToString($filter);
-        if($this->ds === null)
+        if($this->ldapLink === null)
         {
             throw new \Exception('Not connected');
         }
         try
         {
-            $sr = ldap_list($this->ds, $baseDN, $filterStr, array('dn'));
+            $searchResult = ldap_list($this->ldapLink, $baseDN, $filterStr, array('dn'));
         }
         catch(\Exception $e)
         {
             throw new \Exception($e->getMessage().' '.$filterStr, $e->getCode(), $e);
         }
-        if($sr === false)
+        if($searchResult === false)
         {
             return false;
         }
-        return ldap_count_entries($this->ds, $sr);
+        return ldap_count_entries($this->ldapLink, $searchResult);
     }
 
     public function update($object)
     {
-        $dn = ldap_escape($object['dn'], true);
+        $distinguishedName = ldap_escape($object['dn'], true);
         $delete = array();
         $entity = $this->fixObject($object, $delete);
         $ret = false;
         if(!empty($entity))
         {
-            $ret = @ldap_mod_replace($this->ds, $dn, $entity);
+            $ret = @ldap_mod_replace($this->ldapLink, $distinguishedName, $entity);
             if($ret === false)
             {
-                throw new \Exception('Failed to update object with dn='.$dn.'('.ldap_errno($this->ds).':'.ldap_error($this->ds).') '.print_r($entity, true));
+                throw new \Exception('Failed to update object with dn='.$distinguishedName.'('.ldap_errno($this->ldapLink).':'.ldap_error($this->ldapLink).') '.print_r($entity, true));
             }
         }
         if(!empty($delete))
         {
-            $ret = @ldap_mod_del($this->ds, $dn, $delete);
+            $ret = @ldap_mod_del($this->ldapLink, $distinguishedName, $delete);
         }
         return $ret;
     }
 
     public function delete($distinguishedName)
     {
-        return ldap_delete($this->ds, $distinguishedName);
+        return ldap_delete($this->ldapLink, $distinguishedName);
     }
 }
 

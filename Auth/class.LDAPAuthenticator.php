@@ -51,14 +51,14 @@ function sort_array(&$array, $orderby)
  * Swap two elements of the provided array
  *
  * @param array $array The array to swap values in
- * @param mixed $i The key of the first element to swap
- * @param mixed $j The key of the second element to swap
+ * @param mixed $indexA The key of the first element to swap
+ * @param mixed $indexB The key of the second element to swap
  */
-function swap(&$array, $i, $j)
+function swap(&$array, $indexA, $indexB)
 {
-    $tmp = $array[$i];
-    $array[$i] = $array[$j];
-    $array[$j] = $tmp;
+    $tmp = $array[$indexA];
+    $array[$indexA] = $array[$indexB];
+    $array[$indexB] = $tmp;
 }
 
 /**
@@ -73,9 +73,9 @@ class LDAPAuthenticator extends Authenticator
     /** The base DN for all groups in the LDAP server */
     public  $group_base;
     /** The DN to use to bind if not binding as the user */
-    private $bind_dn;
+    private $bindDistinguishedName;
     /** The password to use to bind if not binding as the user */
-    private $bind_pass;
+    private $bindPassword;
 
     /**
      * Create an LDAP Authenticator
@@ -88,8 +88,8 @@ class LDAPAuthenticator extends Authenticator
         $this->host       = $this->getHostParam($params);
         $this->user_base  = $this->getParam($params, 'user_base');
         $this->group_base = $this->getParam($params, 'group_base');
-        $this->bind_dn    = $this->getParam($params, 'bind_dn', '$ldap_auth', 'read_write_pass');
-        $this->bind_pass  = $this->getParam($params, 'bind_pass', '$ldap_auth', 'read_write_user');
+        $this->bindDistinguishedName = $this->getParam($params, 'bind_dn', '$ldap_auth', 'read_write_pass');
+        $this->bindPassword = $this->getParam($params, 'bind_pass', '$ldap_auth', 'read_write_user');
     }
 
     /**
@@ -146,7 +146,7 @@ class LDAPAuthenticator extends Authenticator
      *
      * @SuppressWarnings("StaticAccess")
      */
-    public function get_and_bind_server($bindWrite = false)
+    public function getAndBindServer($bindWrite = false)
     {
         $server = \LDAP\LDAPServer::getInstance();
         $server->user_base = $this->user_base;
@@ -158,7 +158,7 @@ class LDAPAuthenticator extends Authenticator
         }
         else
         {
-            $ret = $server->bind($this->bind_dn, $this->bind_pass);
+            $ret = $server->bind($this->bindDistinguishedName, $this->bindPassword);
         }
         if($ret === false)
         {
@@ -177,7 +177,7 @@ class LDAPAuthenticator extends Authenticator
      */
     public function login($username, $password)
     {
-        $server = $this->get_and_bind_server();
+        $server = $this->getAndBindServer();
         if($server === false)
         {
             return false;
@@ -228,7 +228,7 @@ class LDAPAuthenticator extends Authenticator
 
     public function getGroupByName($name)
     {
-        $server = $this->get_and_bind_server();
+        $server = $this->getAndBindServer();
         if($server === false)
         {
             return false;
@@ -238,7 +238,7 @@ class LDAPAuthenticator extends Authenticator
 
     public function getGroupsByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false)
     {
-        $server = $this->get_and_bind_server();
+        $server = $this->getAndBindServer();
         if($server === false)
         {
             return false;
@@ -268,7 +268,7 @@ class LDAPAuthenticator extends Authenticator
 
     public function getActiveUserCount()
     {
-        $server = $this->get_and_bind_server();
+        $server = $this->getAndBindServer();
         if($server === false)
         {
             return false;
@@ -317,7 +317,7 @@ class LDAPAuthenticator extends Authenticator
      */
     public function getUsersByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false)
     {
-        $server = $this->get_and_bind_server();
+        $server = $this->getAndBindServer();
         if($server === false)
         {
             return false;
@@ -348,7 +348,7 @@ class LDAPAuthenticator extends Authenticator
 
     public function activatePendingUser($user)
     {
-        $this->get_and_bind_server(true);
+        $this->getAndBindServer(true);
         $newUser = new LDAPUser();
         $newUser->uid = $user->uid;
         $newUser->mail = $user->mail;
@@ -357,10 +357,9 @@ class LDAPAuthenticator extends Authenticator
         {
             $newUser->setPass($pass);
         }
-        $sn = $user->sn;
-        if($sn !== false)
+        if($user->sn !== false)
         {
-            $newUser->sn = $sn;
+            $newUser->sn = $user->sn;
         }
         $givenName = $user->givenName;
         if($givenName !== false)

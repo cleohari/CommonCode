@@ -184,7 +184,7 @@ class LDAPUser extends User
         $ldap = $auth->getMethodByName('Auth\LDAPAuthenticator');
         if($ldap !== false)
         {
-            $ldap->get_and_bind_server(true);
+            $ldap->getAndBindServer(true);
         }
     }
 

@@ -67,7 +67,7 @@ trait LDAPCachableObject
             {
                 return false;
             }
-            $this->server = $ldap->get_and_bind_server(true);
+            $this->server = $ldap->getAndBindServer(true);
             return $this->server->update($obj);
         }
     }
