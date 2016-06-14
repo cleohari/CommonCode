@@ -55,9 +55,9 @@ class LDAPGroup extends Group
         return $rawMembers;
     }
 
-    private function getIDFromDN($dn)
+    private function getIDFromDN($distinguishedName)
     {
-        $split = explode(',', $dn);
+        $split = explode(',', $distinguishedName);
         if(strncmp('cn=', $split[0], 3) === 0)
         {
             return substr($split[0], 3);
@@ -92,20 +92,20 @@ class LDAPGroup extends Group
         return $members;
     }
 
-    private function getObjectFromDN($dn)
+    private function getObjectFromDN($distinguishedName)
     {
-        $split = explode(',', $dn);
-        if(strncmp('cn=', $dn, 3) === 0)
+        $split = explode(',', $distinguishedName);
+        if(strncmp('cn=', $distinguishedName, 3) === 0)
         {
             if(count($split) === 1)
             {
-                return LDAPGroup::from_name($dn, $this->server);
+                return LDAPGroup::from_name($distinguishedName, $this->server);
             }
             return LDAPGroup::from_name(substr($split[0], 3), $this->server);
         }
         if(count($split) === 1)
         {
-            return LDAPUser::from_name($dn, $this->server);
+            return LDAPUser::from_name($distinguishedName, $this->server);
         }
         return LDAPUser::from_name(substr($split[0], 4), $this->server);
     }
@@ -205,14 +205,14 @@ class LDAPGroup extends Group
 
     public function addMember($name, $isGroup = false, $flush = true)
     {
-        $dn = false;
+        $distinguishedName = false;
         if($isGroup)
         {
-            $dn = 'cn='.$name.','.$this->server->group_base;
+            $distinguishedName = 'cn='.$name.','.$this->server->group_base;
         }
         else
         {
-            $dn = 'uid='.$name.','.$this->server->user_base;
+            $distinguishedName = 'uid='.$name.','.$this->server->user_base;
         }
         $propName   = false;
         $rawMembers = $this->getMembersField($propName);
@@ -220,7 +220,7 @@ class LDAPGroup extends Group
         {
             unset($rawMembers['count']);
         }
-        if(in_array($dn, $rawMembers) || in_array($name, $rawMembers))
+        if(in_array($distinguishedName, $rawMembers) || in_array($name, $rawMembers))
         {
             return true;
         }
@@ -234,7 +234,7 @@ class LDAPGroup extends Group
         }
         else
         {
-            array_push($rawMembers, $dn);
+            array_push($rawMembers, $distinguishedName);
         }
         $tmp = strtolower($propName);
         $this->ldapObj->$tmp = $rawMembers;
