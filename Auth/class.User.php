@@ -257,13 +257,6 @@ class User extends \SerializableObject
      */
     protected function enableReadWrite()
     {
-        //Make sure we are bound in write mode
-        $auth = \AuthProvider::getInstance();
-        $ldap = $auth->getMethodByName('Auth\LDAPAuthenticator');
-        if($ldap !== false)
-        {
-            $ldap->get_and_bind_server(true);
-        }
     }
 
     /**

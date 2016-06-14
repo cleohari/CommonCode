@@ -167,6 +167,22 @@ class LDAPUser extends User
         $this->setField($propName, $value);
     }
 
+    /**
+     * Allow write for the user
+     *
+     * @SuppressWarnings("StaticAccess")
+     */
+    protected function enableReadWrite()
+    {
+        //Make sure we are bound in write mode
+        $auth = \AuthProvider::getInstance();
+        $ldap = $auth->getMethodByName('Auth\LDAPAuthenticator');
+        if($ldap !== false)
+        {
+            $ldap->get_and_bind_server(true);
+        }
+    }
+
     public function getGroups()
     {
         $res = array();
@@ -208,29 +224,22 @@ class LDAPUser extends User
         {
             return $this->setFieldLocal('userPassword', $this->generateLDAPPass($password));
         }
-        else
+        $obj = array('dn'=>$this->ldapObj->dn);
+        $obj['userPassword'] = $this->generateLDAPPass($password);
+        if(isset($this->ldapObj->uniqueidentifier))
         {
-            $obj = array('dn'=>$this->ldapObj->dn);
-            $obj['userPassword'] = $this->generateLDAPPass($password);
-            if(isset($this->ldapObj->uniqueidentifier))
-            {
-                $obj['uniqueIdentifier'] = null;
-            }
-            //Make sure we are bound in write mode
-            $auth = \AuthProvider::getInstance();
-            $ldap = $auth->getMethodByName('Auth\LDAPAuthenticator');
-            $ldap->get_and_bind_server(true);
-            return $this->update($obj);
+            $obj['uniqueIdentifier'] = null;
         }
+        //Make sure we are bound in write mode
+        $auth = \AuthProvider::getInstance();
+        $ldap = $auth->getMethodByName('Auth\LDAPAuthenticator');
+        $ldap->get_and_bind_server(true);
+        return $this->update($obj);
     }
 
     public function validate_password($password)
     {
-        if($this->server->bind($this->ldapObj->dn, $password))
-        {
-            return true;
-        }
-        return false;
+        return $this->server->bind($this->ldapObj->dn, $password) !== false;
     }
 
     public function validate_reset_hash($hash)
@@ -282,9 +291,7 @@ class LDAPUser extends User
     public function getPasswordResetHash()
     {
         //Make sure we are bound in write mode
-        $auth = \AuthProvider::getInstance();
-        $ldap = $auth->getMethodByName('Auth\LDAPAuthenticator');
-        $ldap->get_and_bind_server(true);
+        $this->enableReadWrite();
         $ldapObj = $this->server->read($ldap->user_base, new \Data\Filter('uid eq '.$this->uid));
         $ldapObj = $ldapObj[0];
         $hash = false;
@@ -308,9 +315,7 @@ class LDAPUser extends User
     public function delete()
     {
         //Make sure we are bound in write mode
-        $auth = \AuthProvider::getInstance();
-        $ldap = $auth->getMethodByName('Auth\LDAPAuthenticator');
-        $ldap->get_and_bind_server(true);
+        $this->enableReadWrite();
         return $this->server->delete($this->ldapObj->dn);
     }
 }
