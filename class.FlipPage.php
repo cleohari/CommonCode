@@ -396,12 +396,12 @@ class FlipPage extends WebPage
             $this->add_links();
             $this->addLink('Logout', $this->logoutUrl);
         }
-        $about_menu = array(
+        $aboutMenu = array(
             'Burning Flipside'=>'https://www.burningflipside.com/about/event',
             'AAR, LLC'=>'https://www.burningflipside.com/organization/aar',
             'Privacy Policy'=>'https://www.burningflipside.com/about/privacy'
         );
-        $this->addLink('About', 'http://www.burningflipside.com/about', $about_menu);
+        $this->addLink('About', 'http://www.burningflipside.com/about', $aboutMenu);
     }
 
     /**

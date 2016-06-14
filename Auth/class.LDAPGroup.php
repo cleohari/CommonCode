@@ -8,6 +8,11 @@ class LDAPGroup extends Group
     private $ldapObj;
     private $server;
 
+    /**
+     * Initialize a LDAPGroup object
+     *
+     * @SuppressWarnings("StaticAccess")
+     */
     public function __construct($data)
     {
         $this->server = \LDAP\LDAPServer::getInstance();

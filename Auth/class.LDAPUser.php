@@ -8,13 +8,18 @@ class LDAPUser extends User
     private $ldapObj;
     private $server;
 
+    /**
+     * Initialize a LDAPUser object
+     *
+     * @SuppressWarnings("StaticAccess")
+     */
     public function __construct($data = false)
     {
         $this->server = \LDAP\LDAPServer::getInstance();
         $this->initialize($data);
     }
 
-    private function check_child_group($array)
+    private function checkChildGroup($array)
     {
         $res = false;
         for($i = 0; $i < $array['count']; $i++)
@@ -47,7 +52,7 @@ class LDAPUser extends User
         {
             return true;
         }
-        return $this->check_child_group($group[$listName]);
+        return $this->checkChildGroup($group[$listName]);
     }
 
     public function isInGroupNamed($name)
@@ -199,10 +204,7 @@ class LDAPUser extends User
             }
             return $res;
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
 
     public function addLoginProvider($provider)
@@ -231,9 +233,7 @@ class LDAPUser extends User
             $obj['uniqueIdentifier'] = null;
         }
         //Make sure we are bound in write mode
-        $auth = \AuthProvider::getInstance();
-        $ldap = $auth->getMethodByName('Auth\LDAPAuthenticator');
-        $ldap->get_and_bind_server(true);
+        $this->enableReadWrite();
         return $this->update($obj);
     }
 
@@ -292,7 +292,7 @@ class LDAPUser extends User
     {
         //Make sure we are bound in write mode
         $this->enableReadWrite();
-        $ldapObj = $this->server->read($ldap->user_base, new \Data\Filter('uid eq '.$this->uid));
+        $ldapObj = $this->server->read($this->server->user_base, new \Data\Filter('uid eq '.$this->uid));
         $ldapObj = $ldapObj[0];
         $hash = false;
         if(isset($ldapObj->userpassword))

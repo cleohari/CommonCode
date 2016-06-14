@@ -27,17 +27,17 @@ function sort_array(&$array, $orderby)
     {
         for($j = $i; $j < $count; $j++)
         {
-            $d = strcasecmp($array[$i][$keys[0]][0], $array[$j][$keys[0]][0]);
+            $data = strcasecmp($array[$i][$keys[0]][0], $array[$j][$keys[0]][0]);
             switch($orderby[$keys[0]])
             {
                 case 1:
-                    if($d > 0)
+                    if($data > 0)
                     {
                         swap($array, $i, $j);
                     }
                     break;
                 case 0:
-                    if($d < 0)
+                    if($data < 0)
                     {
                         swap($array, $i, $j);
                     }
@@ -146,13 +146,13 @@ class LDAPAuthenticator extends Authenticator
      *
      * @SuppressWarnings("StaticAccess")
      */
-    public function get_and_bind_server($bind_write = false)
+    public function get_and_bind_server($bindWrite = false)
     {
         $server = \LDAP\LDAPServer::getInstance();
         $server->user_base = $this->user_base;
         $server->group_base = $this->group_base;
         $server->connect($this->host);
-        if($bind_write === false)
+        if($bindWrite === false)
         {
             $ret = $server->bind();
         }
@@ -349,30 +349,30 @@ class LDAPAuthenticator extends Authenticator
     public function activatePendingUser($user)
     {
         $this->get_and_bind_server(true);
-        $new_user = new LDAPUser();
-        $new_user->uid = $user->uid;
-        $new_user->mail = $user->mail;
+        $newUser = new LDAPUser();
+        $newUser->uid = $user->uid;
+        $newUser->mail = $user->mail;
         $pass = $user->getPassword();
         if($pass !== false)
         {
-            $new_user->setPass($pass);
+            $newUser->setPass($pass);
         }
         $sn = $user->sn;
         if($sn !== false)
         {
-            $new_user->sn = $sn;
+            $newUser->sn = $sn;
         }
         $givenName = $user->givenName;
         if($givenName !== false)
         {
-            $new_user->givenName = $givenName;
+            $newUser->givenName = $givenName;
         }
         $hosts = $user->host;
         if($hosts !== false)
         {
-            $new_user->host = $user->host;
+            $newUser->host = $user->host;
         }
-        $ret = $new_user->flushUser();
+        $ret = $newUser->flushUser();
         if($ret)
         {
             $user->delete();
