@@ -181,7 +181,7 @@ class DataSetTest extends PHPUnit_Framework_TestCase
     {
         try
         {
-             \DataSetFactory::get_data_set('Unknown');
+             \DataSetFactory::getDataSetByName('Unknown');
              $this->assertFalse(true);
         }
         catch(\Exception $ex)
