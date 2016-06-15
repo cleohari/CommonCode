@@ -1,4 +1,7 @@
 {
     "name": "BurningFlipside/CommonCode",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "require": {
+        "slim/slim": "^3.0"
+    }
 }
