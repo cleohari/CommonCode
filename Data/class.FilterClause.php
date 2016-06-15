@@ -110,7 +110,24 @@ class FilterClause
         return $str.')';
     }
 
-    public function to_mongo_filter()
+    private function getMongoIndexOfOperator()
+    {
+        $field = $this->var1;
+        $case  = false;
+        if(self::str_startswith($this->var1, 'tolower'))
+        {
+            $field = substr($this->var1, strpos($this->var1, '(') + 1);
+            $field = substr($field, 0, strpos($field, ')'));
+            $case = true;
+        }
+        if($case)
+        {
+            return array($field=>array('$regex'=>new \MongoRegex('/'.$this->var2.'/i')));
+        }
+        return array($field=>$this->var2);       
+    }
+
+    public function toMongoFilter()
     {
         $this->var2 = trim($this->var2, "'");
         if($this->var1 === '_id')
@@ -134,22 +151,7 @@ class FilterClause
             case 'substringof':
                 return array($this->var1=>array('$regex'=>new MongoRegex('/'.$this->var2.'/i')));
             case 'indexof':
-                $field = $this->var1;
-                $case  = false;
-                if(self::str_startswith($this->var1, 'tolower'))
-                {
-                    $field = substr($this->var1, strpos($this->var1, '(') + 1);
-                    $field = substr($field, 0, strpos($field, ')'));
-                    $case = true;
-                }
-                if($case)
-                {
-                    return array($field=>array('$regex'=>new \MongoRegex('/'.$this->var2.'/i')));
-                }
-                else
-                {
-                    return array($field=>$this->var2);
-                }
+                return $this->getMongoIndexOfOperator();
         }
     }
 

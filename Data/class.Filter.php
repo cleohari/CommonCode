@@ -119,16 +119,16 @@ class Filter
             if($this->children[$i] === 'and')
             {
                 $old = array_pop($ret);
-                array_push($ret, array('$and'=>array($old, $this->children[++$i]->to_mongo_filter())));
+                array_push($ret, array('$and'=>array($old, $this->children[++$i]->toMongoFilter())));
             }
             else if($this->children[$i] === 'or')
             {
                 $old = array_pop($ret);
-                array_push($ret, array('$or'=>array($old, $this->children[++$i]->to_mongo_filter())));
+                array_push($ret, array('$or'=>array($old, $this->children[++$i]->toMongoFilter())));
             }
             else
             {
-                array_push($ret, $this->children[$i]->to_mongo_filter());
+                array_push($ret, $this->children[$i]->toMongoFilter());
             }
         }
         if(count($ret) == 1 && is_array($ret[0]))
