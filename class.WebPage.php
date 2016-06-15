@@ -296,18 +296,6 @@ class WebPage
      *
      * @return string The full URL of the requested page
      *
-     * @deprecated 1.0.0 This funciton is deprectated and will be remoted. Please use currentURL() instead
-     */
-    public function current_url()
-    {
-        return $this->currentURL();
-    }
-
-    /**
-     * Get the currently requested URL
-     *
-     * @return string The full URL of the requested page
-     *
      * @SuppressWarnings("Superglobals")
      */
     public function currentURL()

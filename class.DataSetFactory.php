@@ -24,20 +24,6 @@ require_once('Autoload.php');
 class DataSetFactory
 {
     /**
-     * Obtain the \Data\DataSet given the name of the dataset used in Settings
-     *
-     * @param string $setName The name of the DataSet used in Settings
-     *
-     * @return \Data\DataSet The DataSet specified
-     *
-     * @deprecated 2.0.0 Utilize the getDataSetByName() instead
-     */
-    public static function get_data_set($setName)
-    {
-        return static::getDataSetByName($setName);
-    }
-
-    /**
      * Obtain the \Data\DataSet given the name of the dataset used in the settings
      *
      * @param string $setName The name of the DataSet used in the Settings
@@ -61,6 +47,20 @@ class DataSetFactory
         $obj = new $class_name($setData['params']);
         $instances[$setName] = $obj;
         return $obj;
+    }
+
+    /**
+     * Obtain the \Data\DataTable given the name of the dataset used in the settings and the name of the table
+     *
+     * @param string $dataSetName The name of the DataSet used in the Settings
+     * @param string $dataTableName The name of the DataTable
+     *
+     * @return \Data\DataTable The DataTable specified
+     */
+    public static function getDataTableByNames($dataSetName, $dataTableName)
+    {
+        $dataSet = self::getDataSetByName($dataSetName);
+        return $dataSet[$dataTableName];
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */

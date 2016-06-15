@@ -428,19 +428,6 @@ class FlipPage extends WebPage
     /**
      * Add a JavaScript file from its src URI
      *
-     * @param string $src The webpath to the JavaScript file
-     * @param boolean $async Can the JavaScript be loaded asynchronously?
-     *
-     * @deprecated 2.0.0 Please use addJSByURI() instead
-     */
-    public function add_js_from_src($src, $async = true)
-    {
-        $this->addJSByURI($src, $async);
-    }
-
-    /**
-     * Add a JavaScript file from its src URI
-     *
      * @param string $uri The webpath to the JavaScript file
      * @param boolean $async Can the JavaScript be loaded asynchronously?
      */
@@ -455,19 +442,6 @@ class FlipPage extends WebPage
         $closeTag = $this->createCloseTag('script');
         $this->addHeadTag($jsTag);
         $this->addHeadTag($closeTag);
-    }
-
-    /**
-     * Add a Cascading Style Sheet file from its src URI
-     *
-     * @param string $src The webpath to the Cascading Style Sheet file
-     * @param boolean $import Can the CSS be loaded asynchronously?
-     *
-     * @deprecated 2.0.0 Please use addCSSByURI() instead
-     */
-    public function add_css_from_src($src, $import = false)
-    {
-        $this->addCSSByURI($src, $import);
     }
 
     /**
@@ -490,32 +464,6 @@ class FlipPage extends WebPage
     /**
      * Add a JavaScript file from a set of files known to the framework
      *
-     * @param string $type the ID of the JS file
-     * @param boolean $async Can the JS file be loaded asynchronously?
-     *
-     * @deprecated 2.0.0 Please use addWellKnownJS() instead
-     */
-    public function addJS($type, $async = true)
-    {
-        $this->addWellKnownJS($type, $async);
-    }
-
-    /**
-     * Add a JavaScript file from a set of files known to the framework
-     *
-     * @param string $type the ID of the JS file
-     * @param boolean $async Can the JS file be loaded asynchronously?
-     *
-     * @deprecated 2.0.0 Please use addWellKnownJS() instead
-     */
-    public function add_js($type, $async = true)
-    {
-        $this->addWellKnownJS($type, $async);
-    }
-
-    /**
-     * Add a JavaScript file from a set of files known to the framework
-     *
      * @param string $jsFileID the ID of the JS file
      * @param boolean $async Can the JS file be loaded asynchronously?
      */
@@ -525,19 +473,6 @@ class FlipPage extends WebPage
         $this->setupVars();
         $src = $jsArray[$jsFileID][$this->cdn][$this->minified];
         $this->addJSByURI($src, $async);
-    }
-
-    /**
-     * Add a CSS file from a set of files known to the framework
-     *
-     * @param string $type the ID of the CSS file
-     * @param boolean $import Can the CSS file be loaded asynchronously?
-     *
-     * @deprecated 2.0.0 Please use addWellKnownCSS() instead
-     */
-    public function add_css($type, $import = false)
-    {
-        $this->addWellKnownCSS($type, $import);
     }
 
     /**
@@ -682,21 +617,6 @@ class FlipPage extends WebPage
     /**
      * Add a notification to the page
      *
-     * @param string $msg The message to show in the notifcation
-     * @param string $sev The severity of the notifcation
-     * @param boolean $dismissible Can the user dismiss the notificaton?
-     *
-     * @deprecated 2.0.0 Use the addNotification function instead 
-     */
-    public function add_notification($msg, $sev = self::NOTIFICATION_INFO, $dismissible = true)
-    {
-        $notice = array('msg'=>$msg, 'sev'=>$sev, 'dismissible'=>$dismissible);
-        array_push($this->notifications, $notice);
-    }
-
-    /**
-     * Add a notification to the page
-     *
      * @param string $message The message to show in the notifcation
      * @param string $severity The severity of the notifcation
      * @param boolean $dismissible Can the user dismiss the notificaton?
@@ -801,20 +721,6 @@ class FlipPage extends WebPage
             $this->addHeader();
         }
         parent::printPage();
-    }
-
-    /**
-     * Add a link to the header
-     *
-     * @param string $name The name of the link
-     * @param boolean|string $url The URL to link to
-     * @param boolean|array $submenu Any submenu items for the dropdown
-     *
-     * @deprecated 1.0.0 Use addLink instead
-     */
-    public function add_link($name, $url = false, $submenu = false)
-    {
-        $this->addLink($name, $url, $submenu);
     }
 
     /**
