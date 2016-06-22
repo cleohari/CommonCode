@@ -6,14 +6,14 @@ class LDAPTest extends PHPUnit_Framework_TestCase
     {
         $server = \LDAP\LDAPServer::getInstance();
         $this->assertInstanceOf('LDAP\LDAPServer', $server);
-        $res = $server->connect('ldap://ldap.forumsys.com');
+        $res = $server->connect('ldap://directory.verisign.com');
         $this->assertTrue($res);
     }
 
     public function testDisconnect()
     {
         $server = \LDAP\LDAPServer::getInstance();
-        $res = $server->connect('ldap://ldap.forumsys.com');
+        $res = $server->connect('ldap://directory.verisign.com');
         $this->assertTrue($res);
         $server->disconnect();
         $this->assertTrue(true);
@@ -22,7 +22,7 @@ class LDAPTest extends PHPUnit_Framework_TestCase
     public function testAnonymousBind()
     {
         $server = \LDAP\LDAPServer::getInstance();
-        $res = $server->connect('ldap://ldap.forumsys.com');
+        $res = $server->connect('ldap://directory.verisign.com');
         $this->assertTrue($res);
         $res = $server->bind();
         $this->assertTrue($res);
@@ -40,7 +40,7 @@ class LDAPTest extends PHPUnit_Framework_TestCase
     public function testRead()
     {
         $server = \LDAP\LDAPServer::getInstance();
-        $res = $server->connect('ldap://ldap.forumsys.com');
+        $res = $server->connect('ldap://directory.verisign.com');
         $this->assertTrue($res);
         $res = $server->bind('cn=read-only-admin,dc=example,dc=com','password');
         $this->assertTrue($res);

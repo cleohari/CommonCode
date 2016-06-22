@@ -8,6 +8,12 @@ services:
   - mysql
   - mongodb
 
+addons:
+  apt:
+    packages:
+    - ldap-utils
+    - slapd
+
 before_install:
   - echo "extension=ldap.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
   - mysql -e 'create database auth;'
@@ -17,6 +23,11 @@ install:
 
 before_script:
   - mkdir -p build/logs
+  - mkdir /tmp/slapd
+  - slapd -f tests/travis/LDAP/slapd.conf -h ldap://localhost:3389 &
+  - sleep 3
+  - ldapadd -h localhost:3389 -D cn=admin,dc=example,dc=com -w test -f tests/travis/LDAP/base.ldif
+  - ldapadd -h localhost:3389 -D cn=admin,dc=example,dc=com -w test -f tests/travis/LDAP/INITIAL_TESTDATA.ldif
 
 script:
   - phpunit -c phpunit_travis.xml --coverage-clover build/logs/clover.xml

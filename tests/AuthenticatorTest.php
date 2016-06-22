@@ -67,35 +67,6 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase
         $this->assertNull($auth->getUser(false));
     }
 
-    public function testLDAPAuthenticator()
-    {
-        $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
-        $params = array('current'=>true, 'pending'=>false, 'supplement'=>false, 'host'=>'ldap://ldap.forumsys.com', 'user_base'=>'dc=example,dc=com', 'group_base'=>'dc=example,dc=com', 
-                        'bind_dn'=>'cn=read-only-admin,dc=example,dc=com', 'bind_pass'=>'password');
-        $auth = new \Auth\LDAPAuthenticator($params);
-        $this->assertNotNull($auth);
-        $this->assertInstanceOf('Auth\LDAPAuthenticator', $auth);
-
-        $users = $auth->getUsersByFilter(false);
-        $this->assertNotNull($users);
-
-        $users = $auth->getUsersByFilter(false, array('cn', 'mail'));
-        $this->assertNotNull($users);
-        $count = count($users);
-        for($i = 0; $i < $count; $i++)
-        {
-            $this->assertCount(2, $users[$i]);
-        }
-
-        $users = $auth->getUsersByFilter(false, false, 1, 1);
-        $this->assertNotNull($users);
-        $this->assertCount(1, $users);
-
-        $users = $auth->getUsersByFilter(false, false, false, false, array('mail'));
-        $this->assertNotNull($users);
-
-    }
-
     public function testFlipsideAuthenticator()
     {
         $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
