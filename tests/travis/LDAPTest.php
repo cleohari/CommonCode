@@ -51,18 +51,18 @@ class LDAPTest extends PHPUnit_Framework_TestCase
         $this->assertNotFalse($data);
         $this->assertContainsOnlyInstancesOf('LDAP\LDAPObject', $data);
 
-        $data = $server->read('dc=example,dc=com', '(mail=pasteur@ldap.forumsys.com)');
+        $data = $server->read('dc=example,dc=com', '(mail=test.entry@example.com)');
         $this->assertNotFalse($data);
         $this->assertContainsOnlyInstancesOf('LDAP\LDAPObject', $data);
         $this->assertCount(1, $data);
 
-        $data = $server->read('dc=example,dc=com', '(mail=pasteur@ldap.forumsys.com)', false, array('telephonenumber'));
+        $data = $server->read('dc=example,dc=com', '(mail=test.entry@example.com)', false, array('givenName'));
         $this->assertNotFalse($data);
         $this->assertContainsOnlyInstancesOf('LDAP\LDAPObject', $data);
         $this->assertCount(1, $data);
         $this->assertArrayHasKey('telephonenumber', $data[0]);
 
-        $data = $server->read('uid=pasteur,dc=example,dc=com', false, true);
+        $data = $server->read('cn=existing,dc=example,dc=com', false, true);
         $this->assertNotFalse($data);
         $this->assertContainsOnlyInstancesOf('LDAP\LDAPObject', $data);
         $this->assertCount(1, $data);
