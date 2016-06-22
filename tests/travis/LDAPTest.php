@@ -60,7 +60,7 @@ class LDAPTest extends PHPUnit_Framework_TestCase
         $this->assertNotFalse($data);
         $this->assertContainsOnlyInstancesOf('LDAP\LDAPObject', $data);
         $this->assertCount(1, $data);
-        $this->assertArrayHasKey('telephonenumber', $data[0]);
+        $this->assertArrayHasKey('givenName', $data[0]);
 
         $data = $server->read('cn=existing,dc=example,dc=com', false, true);
         $this->assertNotFalse($data);
