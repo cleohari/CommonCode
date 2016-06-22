@@ -2,18 +2,20 @@
 require_once('Autoload.php');
 class LDAPTest extends PHPUnit_Framework_TestCase
 {
+    private $LDAPSERVER = 'ldap://localhost:3389';
+
     public function testConnect()
     {
         $server = \LDAP\LDAPServer::getInstance();
         $this->assertInstanceOf('LDAP\LDAPServer', $server);
-        $res = $server->connect('ldap://directory.verisign.com');
+        $res = $server->connect($this->LDAPSERVER);
         $this->assertTrue($res);
     }
 
     public function testDisconnect()
     {
         $server = \LDAP\LDAPServer::getInstance();
-        $res = $server->connect('ldap://directory.verisign.com');
+        $res = $server->connect($this->LDAPSERVER);
         $this->assertTrue($res);
         $server->disconnect();
         $this->assertTrue(true);
@@ -22,7 +24,7 @@ class LDAPTest extends PHPUnit_Framework_TestCase
     public function testAnonymousBind()
     {
         $server = \LDAP\LDAPServer::getInstance();
-        $res = $server->connect('ldap://directory.verisign.com');
+        $res = $server->connect($this->LDAPSERVER);
         $this->assertTrue($res);
         $res = $server->bind();
         $this->assertTrue($res);
@@ -31,18 +33,18 @@ class LDAPTest extends PHPUnit_Framework_TestCase
     public function testBind()
     {
         $server = \LDAP\LDAPServer::getInstance();
-        $res = $server->connect('ldap://ldap.forumsys.com');
+        $res = $server->connect($this->LDAPSERVER);
         $this->assertTrue($res);
-        $res = $server->bind('cn=read-only-admin,dc=example,dc=com','password');
+        $res = $server->bind('cn=admin,dc=example,dc=com','test');
         $this->assertTrue($res);
     }
 
     public function testRead()
     {
         $server = \LDAP\LDAPServer::getInstance();
-        $res = $server->connect('ldap://directory.verisign.com');
+        $res = $server->connect($this->LDAPSERVER);
         $this->assertTrue($res);
-        $res = $server->bind('cn=read-only-admin,dc=example,dc=com','password');
+        $res = $server->bind('cn=admin,dc=example,dc=com','test');
         $this->assertTrue($res);
       
         $data = $server->read('dc=example,dc=com');
@@ -69,9 +71,9 @@ class LDAPTest extends PHPUnit_Framework_TestCase
     public function testCount()
     {
         $server = \LDAP\LDAPServer::getInstance();
-        $res = $server->connect('ldap://ldap.forumsys.com');
+        $res = $server->connect($this->LDAPSERVER);
         $this->assertTrue($res);
-        $res = $server->bind('cn=read-only-admin,dc=example,dc=com','password');
+        $res = $server->bind('cn=admin,dc=example,dc=com','test');
         $this->assertTrue($res);
 
         $count = $server->count('dc=example,dc=com');
