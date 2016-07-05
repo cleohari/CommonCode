@@ -113,7 +113,26 @@ class SQLDataSet extends DataSet
         throw new \Exception('No such table '.$name);
     }
 
-    function read($tablename, $where = false, $select = '*', $count = false, $skip = false, $sort = false)
+    /**
+     * @param array $sort The array to sort by or false to not sort
+     */
+    private function getOrderByClause($sort)
+    {
+        if(empty($sort))
+        {
+            return false;
+        }
+        $sql = ' ORDER BY ';
+        $tmp = array();
+        foreach($sort as $sort_col=>$dir)
+        {
+            array_push($tmp, $sort_col.' '.($dir === 1 ? 'ASC' : 'DESC'));
+        }
+        $sql .= implode($tmp, ',');
+        return $sql;
+    }
+
+    public function read($tablename, $where = false, $select = '*', $count = false, $skip = false, $sort = false)
     {
         if($select === false)
         {
@@ -135,15 +154,10 @@ class SQLDataSet extends DataSet
                 $sql .= " LIMIT $skip, $count";
             }
         }
-        if($sort !== false)
+        $tmp = $this->getOrderByClause($sort);
+        if($tmp !== false)
         {
-            $sql .= ' ORDER BY ';
-            $tmp = array();
-            foreach($sort as $sort_col=>$dir)
-            {
-                array_push($tmp, $sort_col.' '.($dir === 1 ? 'ASC' : 'DESC'));
-            }
-            $sql .= implode($tmp, ',');
+            $sql .= $tmp;
         }
         $stmt = $this->pdo->query($sql, \PDO::FETCH_ASSOC);
         if($stmt === false)
