@@ -132,6 +132,33 @@ class SQLDataSet extends DataSet
         return $sql;
     }
 
+    private function getLimitClause($count, $skip)
+    {
+        if($count === false)
+        {
+            return false;
+        }
+        $count = intval($count);
+        if($skip !== false)
+        {
+            $skip = intval($count);
+            return " LIMIT $skip, $count";
+        }
+        return ' LIMIT '.$count;
+    }
+
+    /**
+     * Read data from the specified SQL table
+     *
+     * @param string $tablename The name of the table to read from
+     * @param string $where The where caluse of the SQL statement
+     * @param string $select The colums to read
+     * @param string $count The number of rows to read
+     * @param string $skip The number of rows to skip over
+     * @param array $sort The array to sort by or false to not sort
+     *
+     * @return array An array of all the returned records
+     */
     public function read($tablename, $where = false, $select = '*', $count = false, $skip = false, $sort = false)
     {
         if($select === false)
@@ -143,16 +170,10 @@ class SQLDataSet extends DataSet
         {
             $sql .= ' WHERE '.$where;
         }
-        if($count !== false)
+        $tmp = $this->getLimitClause($count, $skip)
+        if($tmp !== false)
         {
-            if($skip === false)
-            {
-                $sql .= ' LIMIT '.(int)$count;
-            }
-            else
-            {
-                $sql .= " LIMIT $skip, $count";
-            }
+            $sql .= $tmp;
         }
         $tmp = $this->getOrderByClause($sort);
         if($tmp !== false)
