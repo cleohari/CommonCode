@@ -127,6 +127,30 @@ class FilterClause
         return array($field=>$this->var2);       
     }
 
+    private function opToMongo($op)
+    {
+        switch($op)
+        {
+            case '!=':
+                return '$ne';
+            case '<';
+                return '$lt';
+            case '<=':
+                return '$lte';
+            case '>':
+                return '$gt';
+            case '>=':
+                return '$gte';
+            default:
+                return $op;
+        }
+    }
+
+    private function getMongoClauseArray($op, $var2)
+    {
+        return array($this->opToMongo($op)=>$var2);
+    }
+
     public function toMongoFilter()
     {
         $this->var2 = trim($this->var2, "'");
@@ -136,22 +160,14 @@ class FilterClause
         }
         switch($this->op)
         {
-            case '!=':
-                return array($this->var1=>array('$ne'=>$this->var2));
             case '=':
                 return array($this->var1=>$this->var2);
-            case '<';
-                return array($this->var1=>array('$lt'=>$this->var2));
-            case '<=':
-                return array($this->var1=>array('$lte'=>$this->var2));
-            case '>':
-                return array($this->var1=>array('$gt'=>$this->var2));
-            case '>=':
-                return array($this->var1=>array('$gte'=>$this->var2));
             case 'substringof':
                 return array($this->var1=>array('$regex'=>new MongoRegex('/'.$this->var2.'/i')));
             case 'indexof':
                 return $this->getMongoIndexOfOperator();
+            default:
+                return array($this->var1=>$this->getMongoClauseArray($this->op, $this->var2));
         }
     }
 
