@@ -352,24 +352,13 @@ class LDAPAuthenticator extends Authenticator
         $newUser = new LDAPUser();
         $newUser->uid = $user->uid;
         $newUser->mail = $user->mail;
+        $newUser->sn = $user->sn;
+        $newUser->givenName = $user->givenName;
+        $newUser->host = $user->host;
         $pass = $user->getPassword();
         if($pass !== false)
         {
             $newUser->setPass($pass);
-        }
-        if($user->sn !== false)
-        {
-            $newUser->sn = $user->sn;
-        }
-        $givenName = $user->givenName;
-        if($givenName !== false)
-        {
-            $newUser->givenName = $givenName;
-        }
-        $hosts = $user->host;
-        if($hosts !== false)
-        {
-            $newUser->host = $user->host;
         }
         $ret = $newUser->flushUser();
         if($ret)
@@ -377,7 +366,7 @@ class LDAPAuthenticator extends Authenticator
             $user->delete();
         }
         $users = $this->getUsersByFilter(new \Data\Filter('mail eq '.$user->mail));
-        if($users === false || !isset($users[0]))
+        if(empty($users))
         {
             throw new \Exception('Error creating user!');
         }
