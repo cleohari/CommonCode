@@ -227,13 +227,8 @@ class FlipRESTFormat extends \Slim\Middleware
         }
     }
 
-    public function call()
+    private function getFormat($params)
     {
-        if($this->app->request->isOptions())
-        {
-            return;
-        }
-        $params = $this->app->request->params();
         $fmt = null;
         if(isset($params['fmt']))
         {
@@ -245,12 +240,27 @@ class FlipRESTFormat extends \Slim\Middleware
             if(strstr($fmt, 'odata.streaming=true'))
             {
                 $this->app->response->setStatus(406);
-                return;
+                return false;
             }
         }
         if($fmt === null)
         {
             $fmt = $this->getFormatFromHeader();
+        }
+        return $fmt;
+    }
+
+    public function call()
+    {
+        if($this->app->request->isOptions())
+        {
+            return;
+        }
+        $params = $this->app->request->params();
+        $fmt = $this->getFormat($params);
+        if($fmt === false)
+        {
+            return;
         }
 
         $this->app->fmt     = $fmt;
