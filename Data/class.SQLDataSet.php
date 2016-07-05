@@ -170,7 +170,7 @@ class SQLDataSet extends DataSet
         {
             $sql .= ' WHERE '.$where;
         }
-        $tmp = $this->getLimitClause($count, $skip)
+        $tmp = $this->getLimitClause($count, $skip);
         if($tmp !== false)
         {
             $sql .= $tmp;
