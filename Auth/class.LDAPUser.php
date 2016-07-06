@@ -55,6 +55,11 @@ class LDAPUser extends User
         return $this->checkChildGroup($group[$listName]);
     }
 
+    private function uidInMemberUid($group, $uid)
+    {
+        return (isset($group['memberUid']) && in_array($uid, $group['memberUid']));
+    }
+
     public function isInGroupNamed($name)
     {
         $filter = new \Data\Filter('cn eq '.$name);
@@ -69,7 +74,7 @@ class LDAPUser extends User
             {
                 $ret = $this->isInListOrChild('uniquemember', $group, $dn);
             }
-            if($ret === false && isset($group['memberUid']) && in_array($uid, $group['memberUid']))
+            if($ret === false && $this->uidInMemberUid($group, $uid))
             {
                 return true;
             }
@@ -251,7 +256,7 @@ class LDAPUser extends User
         return false;
     }
 
-    public static function from_name($name, $data = false)
+    public static function from_name($name, $data)
     {
         if($data === false)
         {
@@ -259,7 +264,7 @@ class LDAPUser extends User
         }
         $filter = new \Data\Filter("uid eq $name");
         $user = $data->read($data->user_base, $filter);
-        if($user === false || !isset($user[0]))
+        if(empty($user))
         {
             return false;
         }
@@ -288,21 +293,22 @@ class LDAPUser extends User
         return $ret;
     }
 
+    private function getHashFromUser($ldapObj)
+    {
+        if(isset($ldapObj->userpassword))
+        {
+            return hash('sha512', $ldapObj->dn.';'.$ldapObj->userpassword[0].';'.$ldapObj->mail[0]);
+        }
+        return hash('sha512', $ldapObj->dn.';'.openssl_random_pseudo_bytes(10).';'.$ldapObj->mail[0]);
+    }
+
     public function getPasswordResetHash()
     {
         //Make sure we are bound in write mode
         $this->enableReadWrite();
         $ldapObj = $this->server->read($this->server->user_base, new \Data\Filter('uid eq '.$this->uid));
         $ldapObj = $ldapObj[0];
-        $hash = false;
-        if(isset($ldapObj->userpassword))
-        {
-            $hash = hash('sha512', $ldapObj->dn.';'.$ldapObj->userpassword[0].';'.$ldapObj->mail[0]);
-        }
-        else
-        {
-            $hash = hash('sha512', $ldapObj->dn.';'.openssl_random_pseudo_bytes(10).';'.$ldapObj->mail[0]);
-        }
+        $hash = $this->getHashFromUser($ldapObj);
         $obj = array('dn'=>$this->ldapObj->dn);
         $obj['uniqueIdentifier'] = $hash;
         if($this->server->update($obj) === false)
