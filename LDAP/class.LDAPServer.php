@@ -162,6 +162,18 @@ class LDAPServer extends \Singleton
         return @ldap_unbind($this->ldapLink);
     }
 
+    private function fixChildArray(&$array, $key, &$entity)
+    {
+         $count = count($array);
+         for($i = 0; $i < $count; $i++)
+         {
+             if(isset($array[$i]))
+             {
+                 $entity[$key][$i] = $array[$i];
+             }
+         }
+    }
+
     private function fixObject($object, &$delete = false)
     {
         $entity = $object;
@@ -176,16 +188,8 @@ class LDAPServer extends \Singleton
         {
             if(is_array($entity[$keys[$i]]))
             {
-                $array = $entity[$keys[$i]];
+                $this->fixChildArray($entity[$keys[$i]], $keys[$i], $entity);
                 unset($entity[$keys[$i]]);
-                $count1 = count($array);
-                for($j = 0; $j < $count1; $j++)
-                {
-                    if(isset($array[$j]))
-                    {
-                        $entity[$keys[$i]][$j] = $array[$j];
-                    }
-                }
             }
             else if($delete !== false && $entity[$keys[$i]] === null)
             {
