@@ -47,17 +47,7 @@ class EmailProvider extends Provider
     {
         if($methodName === false)
         {
-            $res = false;
-            $count = count($this->methods);
-            for($i = 0; $i < $count; $i++)
-            {
-                $res = $this->methods[$i]->sendEmail($email);
-                if($res !== false)
-                {
-                    return $res;
-                }
-            }
-            return $res;
+            return $this->callOnEach('sendEmail', array($email));
         }
         else
         {

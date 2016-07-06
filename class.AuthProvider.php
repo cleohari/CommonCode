@@ -120,7 +120,7 @@ class AuthProvider extends Provider
      *
      * @return Auth\Group|false The merged returnValue
      */
-    private function mergeResult(&$returnValue, $res)
+    public function mergeResult(&$returnValue, $res)
     {
         if($res === false)
         {
@@ -132,63 +132,6 @@ class AuthProvider extends Provider
             return;
         }
         $returnValue->merge($res);
-    }
-
-    /**
-     * Calls the indicated function on each Authenticator and merges the result
-     *
-     * @param string $functionName The function to call
-     * @param array $args The arguments for the function
-     * @param string $checkField A field to check if it is set a certain way before calling the function
-     * @param mixed $checkValue The value that field should be set to to not call the function
-     *
-     * @return Auth\Group|Auth\User|false The merged returnValue
-     */
-    private function callOnEach($functionName, $args, $checkField = false, $checkValue = false)
-    {
-        $ret = false;
-        $count = count($this->methods);
-        for($i = 0; $i < $count; $i++)
-        {
-            if($checkField !== false)
-            {
-                if($this->methods[$i]->{$checkField} === $checkValue)
-                {
-                    continue;
-                }
-            }
-            $res = call_user_func_array(array($this->methods[$i], $functionName), $args);
-            $this->mergeResult($ret, $res);
-        }
-        return $ret;
-    }
-
-    /**
-     * Calls the indicated function on each Authenticator and add the result
-     *
-     * @param string $functionName The function to call
-     * @param string $checkField A field to check if it is set a certain way before calling the function
-     * @param mixed $checkValue The value that field should be set to to not call the function
-     *
-     * @return integer The added returnValue
-     */
-    private function addFromEach($functionName, $checkField = false, $checkValue = false)
-    {
-        $retCount = 0;
-        $count = count($this->methods);
-        for($i = 0; $i < $count; $i++)
-        {
-            if($checkField !== false)
-            {
-                if($this->methods[$i]->{$checkField} === $checkValue)
-                {
-                    continue;
-                }
-            }
-            $res = call_user_func(array($this->methods[$i], $functionName));
-            $retCount += $res;
-        }
-        return $retCount;
     }
 
     /**
@@ -225,7 +168,7 @@ class AuthProvider extends Provider
     {
         if($methodName === false)
         {
-            return $this->callOnEach('getUsersByFilter', array($filter, $select, $top, $skip, $orderby), 'current');
+            return $this->callOnEach('getUsersByFilter', array($filter, $select, $top, $skip, $orderby), 'current', false, array($this, 'mergeResult'));
         }
         $auth = $this->getMethodByName($methodName);
         return $auth->getUsersByFilter($filter, $select, $top, $skip, $orderby);
@@ -247,7 +190,7 @@ class AuthProvider extends Provider
     {
         if($methodName === false)
         {
-            return $this->callOnEach('getPendingUsersByFilter', array($filter, $select, $top, $skip, $orderby), 'pending');
+            return $this->callOnEach('getPendingUsersByFilter', array($filter, $select, $top, $skip, $orderby), 'pending', false, array($this, 'mergeResult'));
         }
         $auth = $this->getMethodByName($methodName);
         return $auth->getPendingUsersByFilter($filter, $select, $top, $skip, $orderby);
@@ -269,7 +212,7 @@ class AuthProvider extends Provider
     {
         if($methodName === false)
         {
-            return $this->callOnEach('getGroupsByFilter', array($filter, $select, $top, $skip, $orderby), 'current');
+            return $this->callOnEach('getGroupsByFilter', array($filter, $select, $top, $skip, $orderby), 'current', false, array($this, 'mergeResult'));
         }
         $auth = $this->getMethodByName($methodName);
         return $auth->getGroupsByFilter($filter, $select, $top, $skip, $orderby);
