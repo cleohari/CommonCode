@@ -126,29 +126,29 @@ class LDAPServer extends \Singleton
     /**
      * Bind (login0 to the LDAP Server
      *
-     * @param string $cn The common name to bind with, null to bind anonymously
+     * @param string $commonName The common name to bind with, null to bind anonymously
      * @param string $password The password to bind with, null to bind anonymously
      */
-    public function bind($cn = null, $password = null)
+    public function bind($commonName = null, $password = null)
     {
         $res = false;
         if($this->ldapLink === null)
         {
             throw new \Exception('Not connected');
         }
-        $this->binder = $cn;
-        if($cn === null || $password === null)
+        $this->binder = $commonName;
+        if($commonName === null || $password === null)
         {
             return @ldap_bind($this->ldapLink);
         }
         try
         {
-            $res = ldap_bind($this->ldapLink, $cn, $password);
+            $res = ldap_bind($this->ldapLink, $commonName, $password);
         }
         catch(\Exception $ex)
         {
             $this->ldapLink = ldap_connect($this->connect);
-            $res = @ldap_bind($this->ldapLink, $cn, $password);
+            $res = @ldap_bind($this->ldapLink, $commonName, $password);
         }
         return $res;
     }
@@ -202,12 +202,12 @@ class LDAPServer extends \Singleton
 
     public function create($object)
     {
-        $dn = ldap_escape($object['dn'], true);
+        $distinguishedName = ldap_escape($object['dn'], true);
         $entity = $this->fixObject($object);
-        $ret = ldap_add($this->ldapLink, $dn, $entity);
+        $ret = ldap_add($this->ldapLink, $distinguishedName, $entity);
         if($ret === false)
         {
-            throw new \Exception('Failed to create object with dn='.$dn);
+            throw new \Exception('Failed to create object with dn='.$distinguishedName);
         }
         return $ret;
     }
