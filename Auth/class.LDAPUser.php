@@ -4,6 +4,8 @@ namespace Auth;
 class LDAPUser extends User
 {
     use LDAPCachableObject;
+    use LDAPGettableObject;
+    use LDAPSettableObject;
 
     private $ldapObj;
     private $server;
