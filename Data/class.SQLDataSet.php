@@ -114,7 +114,7 @@ class SQLDataSet extends DataSet
     }
 
     /**
-     * @param array $sort The array to sort by or false to not sort
+     * @param false|array $sort The array to sort by or false to not sort
      */
     private function getOrderByClause($sort)
     {
@@ -157,7 +157,7 @@ class SQLDataSet extends DataSet
      * @param string $skip The number of rows to skip over
      * @param array $sort The array to sort by or false to not sort
      *
-     * @return array An array of all the returned records
+     * @return false|array An array of all the returned records
      */
     public function read($tablename, $where = false, $select = '*', $count = false, $skip = false, $sort = false)
     {
@@ -186,7 +186,7 @@ class SQLDataSet extends DataSet
             return false;
         }
         $ret = $stmt->fetchAll();
-        if($ret === false || empty($ret))
+        if(empty($ret))
         {
             return false;
         }
