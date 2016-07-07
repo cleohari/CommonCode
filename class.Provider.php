@@ -90,5 +90,15 @@ class Provider extends Singleton
         }
         return $ret;
     }
+
+    protected function callFunction($methodName, $functionName, $args, $checkField = false, $checkValue = false, $resFunction = null)
+    {
+        if($methodName === false)
+        {
+            return $this->callOnEach($functionName, $args, $checkField, $checkValue, $resFunction);
+        }
+        $method = $this->getMethodByName($methodName);
+        return call_user_func_array(array($method, $functionName), $args);
+    }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */

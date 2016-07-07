@@ -166,12 +166,8 @@ class AuthProvider extends Provider
      */
     public function getUsersByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false, $methodName = false)
     {
-        if($methodName === false)
-        {
-            return $this->callOnEach('getUsersByFilter', array($filter, $select, $top, $skip, $orderby), 'current', false, array($this, 'mergeResult'));
-        }
-        $auth = $this->getMethodByName($methodName);
-        return $auth->getUsersByFilter($filter, $select, $top, $skip, $orderby);
+        return $this->callFunction($methodName, 'getUsersByFilter', array($filter, $select, $top, $skip, $orderby), 
+                                   'current', false, array($this, 'mergeResult'));
     }
 
     /**
@@ -188,12 +184,8 @@ class AuthProvider extends Provider
      */
     public function getPendingUsersByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false, $methodName = false)
     {
-        if($methodName === false)
-        {
-            return $this->callOnEach('getPendingUsersByFilter', array($filter, $select, $top, $skip, $orderby), 'pending', false, array($this, 'mergeResult'));
-        }
-        $auth = $this->getMethodByName($methodName);
-        return $auth->getPendingUsersByFilter($filter, $select, $top, $skip, $orderby);
+        return $this->callFunction($methodName, 'getPendingUsersByFilter', array($filter, $select, $top, $skip, $orderby),
+                                   'pending', false, array($this, 'mergeResult'));
     }
 
     /**
@@ -210,12 +202,8 @@ class AuthProvider extends Provider
      */
     public function getGroupsByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false, $methodName = false)
     {
-        if($methodName === false)
-        {
-            return $this->callOnEach('getGroupsByFilter', array($filter, $select, $top, $skip, $orderby), 'current', false, array($this, 'mergeResult'));
-        }
-        $auth = $this->getMethodByName($methodName);
-        return $auth->getGroupsByFilter($filter, $select, $top, $skip, $orderby);
+        return $this->callFunction($methodName, 'getGroupsByFilter', array($filter, $select, $top, $skip, $orderby),
+                                   'current', false, array($this, 'mergeResult'));
     }
 
     /**
