@@ -260,7 +260,7 @@ class LDAPGroup extends Group
         $group = $data->read($data->group_base, $filter);
         if($group === false || !isset($group[0]))
         {
-            return false;
+            return null;
         }
         return new static($group[0]);
     }

@@ -219,19 +219,26 @@ class LDAPAuthenticator extends Authenticator
      *
      * @param \stdClass	$data The AuthData from the session
      *
-     * @return \Auth\LDAPUser The LDAPUser represented by this data
+     * @return null|\Auth\LDAPUser The LDAPUser represented by this data
      */
     public function getUser($data)
     {
         return new LDAPUser($data);
     }
 
+    /**
+     * Obtain the group based on the group name
+     *
+     * @param string $name The Group's name
+     *
+     * @return null|\Auth\LDAPGroup The LDAPGroup represented by the name or null if not found
+     */
     public function getGroupByName($name)
     {
         $server = $this->getAndBindServer();
         if($server === false)
         {
-            return false;
+            return null;
         }
         return LDAPGroup::from_name($name, $server);
     }
@@ -271,7 +278,7 @@ class LDAPAuthenticator extends Authenticator
         $server = $this->getAndBindServer();
         if($server === false)
         {
-            return false;
+            return 0;
         }
         return $server->count($this->user_base);
     }
@@ -314,6 +321,8 @@ class LDAPAuthenticator extends Authenticator
      * @param boolean|integer $top The number of records to return
      * @param boolean|integer $skip The number of records to skip
      * @param boolean|array   $orderby The fields to sort by
+     *
+     * @return array|boolean False if no users found, an array of user objects otherwise
      */
     public function getUsersByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false)
     {

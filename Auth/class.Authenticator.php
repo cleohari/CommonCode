@@ -24,7 +24,7 @@ class Authenticator
      * @param string $username The username
      * @param string $password The password
      *
-     * @return mixed False if unsuccessfuly login, opaque data otherwise
+     * @return boolean|array False if unsuccessfuly login, opaque data otherwise
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
@@ -52,7 +52,7 @@ class Authenticator
      *
      * @param mixed $data The data returned from login
      *
-     * @return Auth\User The user object if successfully logged in or null otherwise
+     * @return null|Auth\User The user object if successfully logged in or null otherwise
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */
@@ -66,7 +66,7 @@ class Authenticator
      *
      * @param string $name The name of the group
      *
-     * @return Auth\Group The group object
+     * @return null|Auth\Group The group object
      *
      * @SuppressWarnings("UnusedFormalParameter")
      */

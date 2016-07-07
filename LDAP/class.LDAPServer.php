@@ -296,7 +296,7 @@ class LDAPServer extends \Singleton
         }
         if($searchResult === false)
         {
-            return false;
+            return 0;
         }
         return ldap_count_entries($this->ldapLink, $searchResult);
     }
