@@ -4,10 +4,12 @@ namespace Auth;
 class SQLGroup extends Group
 {
     private $data;
+    private $auth;
 
-    public function __construct($data)
+    public function __construct($data, $auth = false)
     {
         $this->data = $data;
+        $this->auth = $auth;
     }
 
     public function getGroupName()

@@ -189,28 +189,26 @@ class SQLAuthenticator extends Authenticator
         return new SQLUser($data, $this);
     }
 
-    public function getGroupByName($name)
+    private function getEntityByFilter($tableName, $filterStr, $className)
     {
-        $groupDataTable = $this->getDataTable('group');
-        $filter = new \Data\Filter("gid eq '$name'");
-        $groups = $groupDataTable->read($filter);
-        if($groups === false || !isset($groups[0]))
+        $dataTable = $this->getDataTable($tableName);
+        $filter = new \Data\Filter($filterStr);
+        $entities = $dataTable->read($filter);
+        if(empty($entities))
         {
             return null;
         }
-        return new SQLGroup($groups[0]);
+        return new $className($entities[0], $this);
+    }
+
+    public function getGroupByName($name)
+    {
+        return $this->getEntityByFilter('group', "gid eq '$name'", 'SQLGroup');
     }
 
     public function getUserByName($name)
     {
-        $userDataTable = $this->getDataTable('user');
-        $filter = new \Data\Filter("uid eq '$name'");
-        $users = $userDataTable->read($filter);
-        if($users === false || !isset($users[0]))
-        {
-            return null;
-        }
-        return new SQLUser($users[0], $this);
+        return $this->getEntityByFilter('user', "uid eq '$name'", 'SQLUser');
     }
 
     private function getDataByFilter($dataTableName, $filter, $select, $top, $skip, $orderby)
