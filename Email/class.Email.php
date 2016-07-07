@@ -323,6 +323,18 @@ class Email extends \SerializableObject
         return empty($this->attachments) !== true;
     }
 
+    protected function addBodyIfPresent($body, $encoding)
+    {
+        $rawMessage = '';
+        if($body !== false && strlen($body) > 0)
+        {
+            $rawMessage .= "\n--alt-{$boundary}\n";
+            $rawMessage .= "Content-Type: $encoding\n\n";
+            $rawMessage .= $body."\n";
+        }
+        return $rawMessage;
+    }
+
     /**
      * Serialize the message to a raw MIME encoded format suitable for sending over SMTP
      *
@@ -351,20 +363,8 @@ class Email extends \SerializableObject
         $rawMessage .= 'Content-type: Multipart/Mixed; boundary="'.$boundary.'"'."\n";
         $rawMessage .= "\n--{$boundary}\n";
         $rawMessage .= 'Content-type: Multipart/Alternative; boundary="alt-'.$boundary.'"'."\n";
-        $textBody    = $this->getTextBody();
-        if($textBody !== false && strlen($textBody) > 0)
-        {
-            $rawMessage .= "\n--alt-{$boundary}\n";
-            $rawMessage .= "Content-Type: text/plain\n\n";
-            $rawMessage .= $textBody."\n";
-        }
-        $htmlBody = $this->getHTMLBody();
-        if($htmlBody !== false && strlen($htmlBody) > 0)
-        {
-            $rawMessage .= "\n--alt-{$boundary}\n";
-            $rawMessage .= 'Content-Type: text/html; charset="UTF-8"'."\n\n";
-            $rawMessage .= $htmlBody."\n";
-        }
+        $rawMessage .= $this->addBodyIfPresent($this->getTextBody(), 'text/plain');
+        $rawMessage .= $this->addBodyIfPresent($this->getHTMLBody(), 'text/html; charset="UTF-8"');
         $rawMessage .= "\n--alt-{$boundary}--\n";
         foreach($this->attachments as $attachment)
         {
