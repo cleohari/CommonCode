@@ -203,12 +203,12 @@ class SQLAuthenticator extends Authenticator
 
     public function getGroupByName($name)
     {
-        return $this->getEntityByFilter('group', "gid eq '$name'", 'SQLGroup');
+        return $this->getEntityByFilter('group', "gid eq '$name'", '\Auth\SQLGroup');
     }
 
     public function getUserByName($name)
     {
-        return $this->getEntityByFilter('user', "uid eq '$name'", 'SQLUser');
+        return $this->getEntityByFilter('user', "uid eq '$name'", '\Auth\SQLUser');
     }
 
     private function getDataByFilter($dataTableName, $filter, $select, $top, $skip, $orderby)
