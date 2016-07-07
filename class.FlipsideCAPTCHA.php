@@ -46,40 +46,31 @@ class FlipsideCAPTCHA implements JsonSerializable
         $this->random_id = $this->validIDs[$this->random_id];
     }
 
-    public function get_question()
+    protected function getCaptchField($fieldName)
     {
         $dataset = DataSetFactory::getDataSetByName('profiles');
         $datatable = $dataset['captcha'];
-        $data = $datatable->read(new \Data\Filter('id eq '.$this->random_id), array('question'));
-        if($data === false)
+        $data = $datatable->read(new \Data\Filter('id eq '.$this->random_id), array($fieldName));
+        if(empty($data))
         {
             return false;
         }
-        return $data[0]['question'];
+        return $data[0][$fieldName];
+    }
+
+    public function get_question()
+    {
+        return $this->getCaptchField('question');
     }
 
     public function get_hint()
     {
-        $dataset = DataSetFactory::getDataSetByName('profiles');
-        $datatable = $dataset['captcha'];
-        $data = $datatable->read(new \Data\Filter('id eq '.$this->random_id), array('hint'));
-        if($data === false)
-        {
-            return false;
-        }
-        return $data[0]['hint'];
+        return $this->getCaptchField('hint');
     }
 
     private function get_answer()
     {
-        $dataset = DataSetFactory::getDataSetByName('profiles');
-        $datatable = $dataset['captcha'];
-        $data = $datatable->read(new \Data\Filter('id eq '.$this->random_id), array('answer'));
-        if($data === false)
-        {
-            return false;
-        }
-        return $data[0]['answer'];
+        return $this->getCaptchField('answer');
     }
 
     public function is_answer_right($answer)
