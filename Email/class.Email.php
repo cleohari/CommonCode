@@ -144,6 +144,23 @@ class Email extends \SerializableObject
     }
 
     /**
+     * Create the address string given an email address and if specified a name
+     *
+     * @param string $email The email address
+     * @param string $name  The name to associate with the address
+     *
+     * @return string The email address and name format
+     */
+    protected constructEmailAddressString($email, $name = false)
+    {
+        if($name === false)
+        {
+            return $email;
+        }
+        return $name.' <'.$email.'>';
+    }
+
+    /**
      * Set the address the email should be sent from
      *
      * @param string $email The email address to send from
@@ -151,12 +168,7 @@ class Email extends \SerializableObject
      */
     public function setFromAddress($email, $name = false)
     {
-        $address = $email;
-        if($name !== false)
-        {
-            $address = $name.' <'.$email.'>';
-        }
-        $this->sender = $address;
+        $this->sender = $this->constructEmailAddressString($email, $name);
     }
 
     /**
@@ -201,12 +213,7 @@ class Email extends \SerializableObject
      */
     protected function addAddress(&$list, $email, $name = false)
     {
-        $address = $email;
-        if($name !== false)
-        {
-            $address = $name.' <'.$email.'>';
-        }
-        array_push($list, $address);
+        array_push($list, $this->constructEmailAddressString($email, $name));
     }
 
     /**
@@ -217,12 +224,7 @@ class Email extends \SerializableObject
      */
     public function setReplyTo($email, $name = false)
     {
-        $address = $email;
-        if($name !== false)
-        {
-            $address = $name.' <'.$email.'>';
-        }
-        $this->replyTo = $address;
+        $this->replyTo = $this->constructEmailAddressString($email, $name);
     }
 
     /**
