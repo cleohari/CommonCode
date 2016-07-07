@@ -13,6 +13,8 @@ class LDAPUser extends User
     /**
      * Initialize a LDAPUser object
      *
+     * @param boolean|array|object $data The data to initialize the LDAPUser with or false for an empty User
+     *
      * @SuppressWarnings("StaticAccess")
      */
     public function __construct($data = false)

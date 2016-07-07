@@ -251,6 +251,16 @@ class LDAPServer extends \Singleton
         return $res;
     }
 
+    /**
+     * Get data from the LDAP Server
+     *
+     * @param string $baseDN The distinguished name to start the search from
+     * @param boolean|string|\Data\Filter $filter The fiter to use
+     * @param boolean $single Read only the base DN
+     * @param boolean|array $attributes The list of attributes to read
+     *
+     * @return boolean|array The results from the LDAP Server
+     */
     public function read($baseDN, $filter = false, $single = false, $attributes = false)
     {
         $filterStr = $this->filterToString($filter);

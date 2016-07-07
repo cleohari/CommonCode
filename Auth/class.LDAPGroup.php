@@ -250,6 +250,10 @@ class LDAPGroup extends Group
         }
     }
 
+    /**
+     * @param string $name The Group Name
+     * @param boolean|LDAP\LDAPServer $data The server to read from
+     */
     public static function from_name($name, $data = false)
     {
         if($data === false)

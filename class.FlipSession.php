@@ -28,6 +28,11 @@ class FlipSession extends Singleton
     /**
      * Get a variable from the session
      *
+     * @param string $name The name of variable to obtain from the session
+     * @param mixed $default The default value
+     *
+     * @return mixed The value stored in the session or the default if not set
+     *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
     public static function getVar($name, $default = false)
@@ -44,6 +49,9 @@ class FlipSession extends Singleton
 
     /**
      * Set a variable in the session
+     *
+     * @param string $name The name of variable to set in the session
+     * @param mixed $value The value to store in the variable
      *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
