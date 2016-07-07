@@ -39,10 +39,10 @@ class SQLAuthTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('test', $user->uid);
 
         $user = $auth->getUserByName('test1');
-        $this->assertFalse($user);
+        $this->assertNull($user);
 
         $group = $auth->getGroupByName('test');
-        $this->assertFalse($group);
+        $this->assertNull($group);
 
         $dataSet->raw_query('INSERT INTO tblgroup VALUES (\'test\', \'test\', \'Test Group\');');
 

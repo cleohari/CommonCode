@@ -208,7 +208,7 @@ class SQLAuthenticator extends Authenticator
         $users = $userDataTable->read($filter);
         if($users === false || !isset($users[0]))
         {
-            return false;
+            return null;
         }
         return new SQLUser($users[0], $this);
     }
