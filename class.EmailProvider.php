@@ -45,15 +45,7 @@ class EmailProvider extends Provider
      */
     public function sendEmail($email, $methodName = false)
     {
-        if($methodName === false)
-        {
-            return $this->callOnEach('sendEmail', array($email));
-        }
-        else
-        {
-            $method = $this->getMethodByName($methodName);
-            return $method->sendEmail($email);
-        }
+        $this->callFunction($methodName, 'sendEmail', array($email));
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */

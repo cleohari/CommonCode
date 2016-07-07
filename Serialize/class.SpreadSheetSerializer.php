@@ -1,20 +1,8 @@
 <?php
 namespace Serialize;
 
-abstract class SpreadSheetSerializer implements ISerializer
+abstract class SpreadSheetSerializer extends Serializer
 {
-    public function supportsType($type)
-    {
-        foreach($this->types as $t)
-        {
-            if(strcasecmp($t, $type) === 0)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private function getKeysFromData($array)
     {
         $first = reset($array);

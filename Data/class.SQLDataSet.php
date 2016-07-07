@@ -55,28 +55,12 @@ class SQLDataSet extends DataSet
 
     function _tableExists($name)
     {
-        if($this->_get_row_count_for_query('SHOW TABLES LIKE '.$this->pdo->quote('tbl'.$name)) > 0)
-        {
-            return true;
-        }
-        else if($this->_get_row_count_for_query('SELECT * FROM sqlite_master WHERE name LIKE '.$this->pdo->quote('tbl'.$name)) > 0)
-        {
-            return true;
-        }
-        return false;
+        return $this->_tableExistsNoPrefix('tbl'.$name);
     }
 
     function _viewExists($name)
     {
-        if($this->_get_row_count_for_query('SHOW TABLES LIKE '.$this->pdo->quote('v'.$name)) > 0)
-        {
-            return true;
-        }
-        else if($this->_get_row_count_for_query('SELECT * FROM sqlite_master WHERE name LIKE '.$this->pdo->quote('v'.$name)) > 0)
-        {
-            return true;
-        }
-        return false;
+        return $this->_tableExistsNoPrefix('v'.$name);
     }
 
     function tableExists($name)
