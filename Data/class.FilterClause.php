@@ -9,7 +9,7 @@ class FilterClause
 
     function __construct($string = false)
     {
-        if($string !== false)
+        if(is_string($string))
         {
             $this->process_filter_string($string);
         }

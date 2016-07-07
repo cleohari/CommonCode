@@ -58,7 +58,7 @@ class Provider extends Singleton
      *
      * @param string $functionName The function to call
      * @param array $args The arguments for the function
-     * @param string $checkField A field to check if it is set a certain way before calling the function
+     * @param boolean|string $checkField A field to check if it is set a certain way before calling the function
      * @param mixed $checkValue The value that field should be set to to not call the function
      * @param callable $resFunction Function to call on the result, otherwise the function will return on the first non-false result
      *

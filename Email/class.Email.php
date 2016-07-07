@@ -381,7 +381,7 @@ class Email extends \SerializableObject
     /**
      * Serialize a recipient so that it can be sent over SMTP
      *
-     * @param string $recipient The recipient in the format 'name <email@address>'
+     * @param string|array $recipient The recipient in the format 'name <email@address>'
      *
      * @return string A text version of the recipient name and address suitable for sending over SMTP
      */
