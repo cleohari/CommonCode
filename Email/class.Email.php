@@ -323,7 +323,7 @@ class Email extends \SerializableObject
         return empty($this->attachments) !== true;
     }
 
-    protected function addBodyIfPresent($body, $encoding)
+    protected function addBodyIfPresent($body, $encoding, $boundary)
     {
         $rawMessage = '';
         if($body !== false && strlen($body) > 0)
@@ -363,8 +363,8 @@ class Email extends \SerializableObject
         $rawMessage .= 'Content-type: Multipart/Mixed; boundary="'.$boundary.'"'."\n";
         $rawMessage .= "\n--{$boundary}\n";
         $rawMessage .= 'Content-type: Multipart/Alternative; boundary="alt-'.$boundary.'"'."\n";
-        $rawMessage .= $this->addBodyIfPresent($this->getTextBody(), 'text/plain');
-        $rawMessage .= $this->addBodyIfPresent($this->getHTMLBody(), 'text/html; charset="UTF-8"');
+        $rawMessage .= $this->addBodyIfPresent($this->getTextBody(), 'text/plain', $boundary);
+        $rawMessage .= $this->addBodyIfPresent($this->getHTMLBody(), 'text/html; charset="UTF-8"', $boundary);
         $rawMessage .= "\n--alt-{$boundary}--\n";
         foreach($this->attachments as $attachment)
         {
