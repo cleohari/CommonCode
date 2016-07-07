@@ -151,7 +151,7 @@ class Email extends \SerializableObject
      *
      * @return string The email address and name format
      */
-    protected constructEmailAddressString($email, $name = false)
+    protected function constructEmailAddressString($email, $name = false)
     {
         if($name === false)
         {
