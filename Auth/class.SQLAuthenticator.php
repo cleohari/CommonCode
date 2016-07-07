@@ -196,7 +196,7 @@ class SQLAuthenticator extends Authenticator
         $groups = $groupDataTable->read($filter);
         if($groups === false || !isset($groups[0]))
         {
-            return false;
+            return null;
         }
         return new SQLGroup($groups[0]);
     }

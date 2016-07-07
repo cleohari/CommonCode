@@ -101,7 +101,7 @@ class GoogleAuthenticator extends Authenticator
         }
         catch(\Exception $e)
         {
-            return false;
+            return null;
         }
     }
 }
