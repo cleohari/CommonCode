@@ -135,10 +135,10 @@ class SQLDataSet extends DataSet
      * Read data from the specified SQL table
      *
      * @param string $tablename The name of the table to read from
-     * @param string $where The where caluse of the SQL statement
+     * @param boolean|string $where The where caluse of the SQL statement
      * @param string $select The colums to read
-     * @param string $count The number of rows to read
-     * @param string $skip The number of rows to skip over
+     * @param boolean|string $count The number of rows to read
+     * @param boolean|string $skip The number of rows to skip over
      * @param array $sort The array to sort by or false to not sort
      *
      * @return false|array An array of all the returned records
