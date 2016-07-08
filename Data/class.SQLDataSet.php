@@ -139,7 +139,7 @@ class SQLDataSet extends DataSet
      * @param string $select The colums to read
      * @param boolean|string $count The number of rows to read
      * @param boolean|string $skip The number of rows to skip over
-     * @param array $sort The array to sort by or false to not sort
+     * @param boolean|array $sort The array to sort by or false to not sort
      *
      * @return false|array An array of all the returned records
      */

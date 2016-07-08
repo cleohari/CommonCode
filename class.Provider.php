@@ -109,8 +109,12 @@ class Provider extends Singleton
         {
             return $this->callOnEach($functionName, $args, $checkField, $checkValue, $resFunction);
         }
-        $method = $this->getMethodByName($methodName);
-        return call_user_func_array(array($method, $functionName), $args);
+        if(is_string($methodName))
+        {
+            $method = $this->getMethodByName($methodName);
+            return call_user_func_array(array($method, $functionName), $args);
+        }
+        return false;
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
