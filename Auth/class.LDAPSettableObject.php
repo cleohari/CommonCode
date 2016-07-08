@@ -21,8 +21,8 @@ trait LDAPSettableObject
     {
         if(in_array($propName, $this->multiValueProps) && !is_array($value))
         {
-             $this->setField($propName, array($value));
-             return true;
+            $this->setField($propName, array($value));
+            return true;
         }
         return false;
     }

@@ -167,7 +167,7 @@ class AuthProvider extends Provider
     public function getUsersByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false, $methodName = false)
     {
         return $this->callFunction($methodName, 'getUsersByFilter', array($filter, $select, $top, $skip, $orderby), 
-                                   'current', false, array($this, 'mergeResult'));
+                                    'current', false, array($this, 'mergeResult'));
     }
 
     /**
@@ -185,7 +185,7 @@ class AuthProvider extends Provider
     public function getPendingUsersByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false, $methodName = false)
     {
         return $this->callFunction($methodName, 'getPendingUsersByFilter', array($filter, $select, $top, $skip, $orderby),
-                                   'pending', false, array($this, 'mergeResult'));
+                                    'pending', false, array($this, 'mergeResult'));
     }
 
     /**
@@ -203,7 +203,7 @@ class AuthProvider extends Provider
     public function getGroupsByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false, $methodName = false)
     {
         return $this->callFunction($methodName, 'getGroupsByFilter', array($filter, $select, $top, $skip, $orderby),
-                                   'current', false, array($this, 'mergeResult'));
+                                    'current', false, array($this, 'mergeResult'));
     }
 
     /**

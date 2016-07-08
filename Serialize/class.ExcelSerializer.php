@@ -7,7 +7,7 @@ class ExcelSerializer extends SpreadSheetSerializer
 {
     protected $types = array('xlsx', 'xls', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel');
 
-    protected function setRowFromArray(&$sheat, $row, $array, $count=0)
+    protected function setRowFromArray(&$sheat, $row, $array, $count = 0)
     {
         if($count === 0)
         {

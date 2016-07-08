@@ -164,14 +164,14 @@ class LDAPServer extends \Singleton
 
     private function fixChildArray(&$array, $key, &$entity)
     {
-         $count = count($array);
-         for($i = 0; $i < $count; $i++)
-         {
-             if(isset($array[$i]))
-             {
-                 $entity[$key][$i] = $array[$i];
-             }
-         }
+        $count = count($array);
+        for($i = 0; $i < $count; $i++)
+        {
+            if(isset($array[$i]))
+            {
+                $entity[$key][$i] = $array[$i];
+            }
+        }
     }
 
     private function fixObject($object, &$delete = false)
@@ -337,4 +337,4 @@ class LDAPServer extends \Singleton
         return ldap_delete($this->ldapLink, $distinguishedName);
     }
 }
-
+/* vim: set tabstop=4 shiftwidth=4 expandtab: */
