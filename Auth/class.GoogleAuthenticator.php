@@ -92,7 +92,7 @@ class GoogleAuthenticator extends Authenticator
             $oauth2Service = new \Google_Service_Oauth2($this->client);
             $googleUser = $oauth2Service->userinfo->get();
             $profileUser = new \Auth\PendingUser();
-            $profileUser->addLoginProvider($this->getHostName());
+            $profileUser->addLoginProvider('google.com');
             $profileUser->mail = $googleUser->email;
             $profileUser->sn = $googleUser->familyName;
             $profileUser->givenName = $googleUser->givenName;
