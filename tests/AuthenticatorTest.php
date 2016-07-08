@@ -23,7 +23,7 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0, $auth->getActiveUserCount(false));
         $this->assertEquals(0, $auth->getPendingUserCount(false));
         $this->assertEquals(0, $auth->getGroupCount(false));
-        $this->assertFalse($auth->getSupplementLink());
+        $this->assertEmpty($auth->getSupplementLink());
         $this->assertFalse($auth->createPendingUser(false));
         $this->assertFalse($auth->activatePendingUser(false));
         $this->assertFalse($auth->getUserByResetHash(false));
@@ -50,7 +50,7 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($auth->pending);
         $this->assertTrue($auth->supplement);
 
-        $this->assertFalse($auth->getSupplementLink());
+        $this->assertEmpty($auth->getSupplementLink());
         $this->assertFalse($auth->getHostName(false));
     }
 

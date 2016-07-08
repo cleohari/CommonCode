@@ -195,7 +195,7 @@ class Authenticator
      */
     public function getSupplementLink()
     {
-        return false;
+        return '';
     }
 
     /**
