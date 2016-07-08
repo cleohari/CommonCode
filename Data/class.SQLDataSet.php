@@ -40,7 +40,7 @@ class SQLDataSet extends DataSet
         return $count;
     }
 
-    function _tableExistsNoPrefix($name)
+    private function _tableExistsNoPrefix($name)
     {
         if($this->_get_row_count_for_query('SHOW TABLES LIKE '.$this->pdo->quote($name)) > 0)
         {
@@ -53,17 +53,17 @@ class SQLDataSet extends DataSet
         return false;
     }
 
-    function _tableExists($name)
+    private function _tableExists($name)
     {
         return $this->_tableExistsNoPrefix('tbl'.$name);
     }
 
-    function _viewExists($name)
+    private function _viewExists($name)
     {
         return $this->_tableExistsNoPrefix('v'.$name);
     }
 
-    function tableExists($name)
+    public function tableExists($name)
     {
         if($this->_tableExists($name))
         {
@@ -80,7 +80,7 @@ class SQLDataSet extends DataSet
         return false;
     }
 
-    function getTable($name)
+    public function getTable($name)
     {
         if($this->_tableExists($name))
         {
@@ -177,7 +177,7 @@ class SQLDataSet extends DataSet
         return $ret;
     }
 
-    function update($tablename, $where, $data)
+    public function update($tablename, $where, $data)
     {
         $set = array();
         if(is_object($data))
@@ -199,7 +199,7 @@ class SQLDataSet extends DataSet
         return true;
     }
 
-    function create($tablename, $data)
+    public function create($tablename, $data)
     {
         $set = array();
         if(is_object($data))
@@ -222,7 +222,7 @@ class SQLDataSet extends DataSet
         return true;
     }
 
-    function delete($tablename, $where)
+    public function delete($tablename, $where)
     {
         $sql = "DELETE FROM $tablename WHERE $where";
         if($this->pdo->exec($sql) === false)
@@ -232,7 +232,7 @@ class SQLDataSet extends DataSet
         return true;
     }
 
-    function raw_query($sql)
+    public function raw_query($sql)
     {
         $stmt = $this->pdo->query($sql, \PDO::FETCH_ASSOC);
         if($stmt === false)

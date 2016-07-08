@@ -7,7 +7,7 @@ class FilterClause
     public $var2;
     public $op;
 
-    function __construct($string = false)
+    public function __construct($string = false)
     {
         if(is_string($string))
         {
@@ -23,7 +23,7 @@ class FilterClause
      *
      * @return boolean True if the needle exists in the haystack, false otherwise
      */
-    static function str_startswith($haystack, $needle)
+    protected static function str_startswith($haystack, $needle)
     {
         return substr($haystack, 0, strlen($needle)) === $needle;
     }
@@ -171,7 +171,7 @@ class FilterClause
         }
     }
 
-    function php_compare($value)
+    public function php_compare($value)
     {
         switch($this->op)
         {
