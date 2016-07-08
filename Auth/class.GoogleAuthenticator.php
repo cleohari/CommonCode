@@ -91,12 +91,13 @@ class GoogleAuthenticator extends Authenticator
             $this->client->setAccessToken($data);
             $oauth2Service = new \Google_Service_Oauth2($this->client);
             $googleUser = $oauth2Service->userinfo->get();
-            $profileUser = array();
-            $profileUser['mail'] = $googleUser->email;
-            $profileUser['sn'] = $googleUser->familyName;
-            $profileUser['givenName'] = $googleUser->givenName;
-            $profileUser['displayName'] = $googleUser->name;
-            $profileUser['jpegPhoto'] = base64_encode(file_get_contents($googleUser->picture));
+            $profileUser = new \Auth\PendingUser();
+            $profileUser->addLoginProvider($this->getHostName());
+            $profileUser->mail = $googleUser->email;
+            $profileUser->sn = $googleUser->familyName;
+            $profileUser->givenName = $googleUser->givenName;
+            $profileUser->displayName = $googleUser->name;
+            $profileUser->jpegPhoto = base64_encode(file_get_contents($googleUser->picture));
             return $profileUser;
         }
         catch(\Exception $e)
