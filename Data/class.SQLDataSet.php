@@ -98,7 +98,7 @@ class SQLDataSet extends DataSet
     }
 
     /**
-     * @param false|array $sort The array to sort by or false to not sort
+     * @param boolean|array $sort The array to sort by or false to not sort
      */
     private function getOrderByClause($sort)
     {
