@@ -140,7 +140,7 @@ class LDAPAuthenticator extends Authenticator
     /**
      * Return an instance to the \LDAP\LDAPServer object instance
      *
-     * @param boolean $bind_write Should we be able to write to the server?
+     * @param boolean $bindWrite Should we be able to write to the server?
      *
      * @return \LDAP\LDAPServer|false The server instance if the binding was successful, otherwise false
      *
