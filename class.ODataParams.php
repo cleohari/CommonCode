@@ -150,7 +150,7 @@ class ODataParams
     public function filterArrayPerSelect($array)
     {
         $flip = array_flip($this->select);
-        $count = count($leads);
+        $count = count($array);
         for($i = 0; $i < $count; $i++)
         {
             if(is_a($array[$i], 'SerializableObject'))
@@ -158,7 +158,7 @@ class ODataParams
                 $array[$i] = array_intersect_key($array[$i]->jsonSerialize(), $flip);
                 continue;
             }
-            $array[$i] = array_intersect_key($array[$i], $select);
+            $array[$i] = array_intersect_key($array[$i], $this->select);
         }
         return $array;
     }
