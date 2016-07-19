@@ -18,6 +18,22 @@ class EmailTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($email->getSubject());
         $this->assertEmpty($email->getHTMLBody());
         $this->assertEmpty($email->getTextBody());
+        $this->assertFalse($email->hasAttachments());
+
+        $email->setReplyTo('not-test@example.com', 'Not Test User');
+        $this->assertEquals('Not Test User <not-test@example.com>', $email->getReplyTo());
+
+        $email->addToAddress('me@me.com', 'Me');
+        $this->assertEquals($email->getToAddresses(), array('Me <me@me.com>'));
+
+        $email->addCCAddress('cc@me.com', 'Me');
+        $this->assertEquals($email->getCCAddresses(), array('Me <cc@me.com>'));
+
+        $email->addBCCAddress('bcc@me.com', 'Me');
+        $this->assertEquals($email->getBCCAddresses(), array('Me <bcc@me.com>'));
+
+        $email->setSubject('Test Subject');
+        $this->assertEquals($email->getSubject(), 'Test Subject');
     }
 
     public function testEmailService()
