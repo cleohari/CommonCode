@@ -112,6 +112,10 @@ class Provider extends Singleton
         if(is_string($methodName))
         {
             $method = $this->getMethodByName($methodName);
+            if($method === false)
+            {
+                return false;
+            }
             return call_user_func_array(array($method, $functionName), $args);
         }
         return false;
