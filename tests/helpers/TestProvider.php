@@ -16,4 +16,14 @@ class TestProvider extends Provider
     {
         return $this->callFunction($methodName, 'expectFalse', array());
     }
+
+    public function badCall()
+    {
+        return $this->callFunction(true, 'expectFalse', array());
+    }
+
+    public function allParams($checkValue, $callback)
+    {
+        return $this->callFunction(false, 'expectTrue', array(), 'check', $checkValue, $callback);
+    }
 }

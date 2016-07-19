@@ -80,7 +80,7 @@ class Provider extends Singleton
             $res = call_user_func_array(array($this->methods[$i], $functionName), $args);
             if($resFunction !== null)
             {
-                call_user_func($resFunction, $ret, $res);
+                call_user_func_array($resFunction, array(&$ret, $res));
                 continue;
             }
             if($res !== false)
