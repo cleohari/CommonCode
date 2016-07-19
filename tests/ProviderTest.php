@@ -5,6 +5,7 @@ class ProviderTest extends PHPUnit_Framework_TestCase
 {
     public $check = true;
     private $wasCalled = false;
+    private $value = 1;
 
     public function testProvider()
     {
@@ -36,6 +37,16 @@ class ProviderTest extends PHPUnit_Framework_TestCase
         $res = $provider->allParams(false, array($this, 'mustCall'));
         $this->assertTrue($res);
         $this->assertTrue($this->wasCalled);
+
+        $res = $provider->addInt(true);
+        $this->assertEquals($res, 0);
+
+        $res = $provider->addInt(false);
+        $this->assertEquals($res, 1);
+
+        $this->value = 2;
+        $res = $provider->addInt(false);
+        $this->assertEquals($res, 2);
     }
 
     public function expectTrue()
@@ -53,5 +64,10 @@ class ProviderTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($res);
         $ret = $res;
         $this->wasCalled = true;
+    }
+
+    public function addValue()
+    {
+        return $this->value;
     }
 }

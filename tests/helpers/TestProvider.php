@@ -26,4 +26,9 @@ class TestProvider extends Provider
     {
         return $this->callFunction(false, 'expectTrue', array(), 'check', $checkValue, $callback);
     }
+
+    public function addInt($checkValue)
+    {
+        return $this->addFromEach('addValue', 'check', $checkValue);
+    }
 }
