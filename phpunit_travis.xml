@@ -16,6 +16,7 @@
                 <directory>./libs</directory>
                 <directory>./js</directory>
                 <directory>./vendor</directory>
+                <file>./cron.php</file>
             </exclude>
         </whitelist>
     </filter>
