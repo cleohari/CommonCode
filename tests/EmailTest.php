@@ -34,6 +34,20 @@ class EmailTest extends PHPUnit_Framework_TestCase
 
         $email->setSubject('Test Subject');
         $this->assertEquals($email->getSubject(), 'Test Subject');
+
+        $this->assertEquals($email->encodeRecipients('test@test.com'), 'test@test.com');
+        
+        $res = $email->encodeRecipients('Test User <test@test.com>');
+        $this->assertEquals($res, '=?UTF-8?B?VGVzdCBVc2VyIA==?= <test@test.com>');
+
+        $res = $email->encodeRecipients(array('test@test.com', 'me@me.com'));
+        $this->assertEquals($res, 'test@test.com, me@me.com');
+
+        $res = $email->encodeRecipients(array('Test User <test@test.com>', 'me@me.com'));
+        $this->assertEquals($res, '=?UTF-8?B?VGVzdCBVc2VyIA==?= <test@test.com>, me@me.com');
+
+        $res = $email->encodeRecipients(array('Test User <test@test.com>', 'Bob Smith <me@me.com>'));
+        $this->assertEquals($res, '=?UTF-8?B?VGVzdCBVc2VyIA==?= <test@test.com>, =?UTF-8?B?Qm9iIFNtaXRoIA==?= <me@me.com>');
     }
 
     public function testEmailService()
