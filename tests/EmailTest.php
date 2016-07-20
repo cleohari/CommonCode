@@ -1,5 +1,6 @@
 <?php
 require_once('Autoload.php');
+require_once('vendor/autoload.php');
 class EmailTest extends PHPUnit_Framework_TestCase
 {
     public function testEmail()
@@ -48,6 +49,50 @@ class EmailTest extends PHPUnit_Framework_TestCase
 
         $res = $email->encodeRecipients(array('Test User <test@test.com>', 'Bob Smith <me@me.com>'));
         $this->assertEquals($res, '=?UTF-8?B?VGVzdCBVc2VyIA==?= <test@test.com>, =?UTF-8?B?Qm9iIFNtaXRoIA==?= <me@me.com>');
+    }
+
+    public function testParsedEmail()
+    {
+        $email = new \Email\Email();
+        $Parser = new PlancakeEmailParser($email->getRawMessage());
+
+        $from = $Parser->getHeader('from');
+        $to = $Parser->getHeader('to');
+        $subject = $Parser->getHeader('subject'); 
+
+        $this->assertEquals('=?UTF-8?B?QnVybmluZyBGbGlwc2lkZSA=?= <webmaster@burningflipside.com>', $from);
+        $this->assertEmpty($to);
+        $this->assertEmpty($subject);
+
+        $email->setFromAddress('sender@test.com', 'Test Sender');
+        $email->setReplyTo('reply@test.com', 'Test Reply');
+        $email->addToAddress('to@test.com', 'Test Recipient');
+        $email->addCCAddress('cc@test.com', 'Test Carbon Copy');
+        $email->addBCCAddress('bcc@me.com', 'Test Blind Carbon Copy');
+        $email->setSubject('Test Subject');
+        $email->setHTMLBody('Test HTML Body');
+        $email->appendToHTMLBody('<br/>');
+        $email->setTextBody('Test Text Body');
+        $email->appendToTextBody('.');
+
+        $Parser = new PlancakeEmailParser($email->getRawMessage());
+
+        $from = $Parser->getHeader('from');
+        $to = $Parser->getHeader('to');
+        $cc = $Parser->getHeader('cc');
+        $bcc = $Parser->getHeader('bcc');
+        $subject = $Parser->getHeader('subject');
+
+        $txtBody = $Parser->getPlainBody();
+        $htmBody = $Parser->getHTMLBody();
+
+        $this->assertEquals('=?UTF-8?B?VGVzdCBTZW5kZXIg?= <sender@test.com>', $from);
+        $this->assertEquals('=?UTF-8?B?VGVzdCBSZWNpcGllbnQg?= <to@test.com>', $to);
+        $this->assertEquals('=?UTF-8?B?VGVzdCBDYXJib24gQ29weSA=?= <cc@test.com>', $cc);
+        $this->assertEquals('=?UTF-8?B?VGVzdCBCbGluZCBDYXJib24gQ29weSA=?= <bcc@me.com>', $bcc);
+        $this->assertEquals('Test Subject', $subject);
+        $this->assertEquals('Test Text Body.', $txtBody);
+        //$this->assertEquals('Test HTML Body<br/>', $htmBody);
     }
 
     public function testEmailService()
