@@ -138,7 +138,7 @@ class WebPage
      */
     protected function printOpenHtml()
     {
-        echo '<HTML>';
+        echo '<HTML lang="en">';
     }
 
     /**
