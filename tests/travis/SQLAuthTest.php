@@ -53,6 +53,7 @@ class SQLAuthTest extends PHPUnit_Framework_TestCase
         $user = $auth->getUserByName('test');
         $this->assertTrue($user->isInGroupNamed('test'));
         $this->assertFalse($user->isInGroupNamed('test1'));
+        $user->mail = 'test@test.com';
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
