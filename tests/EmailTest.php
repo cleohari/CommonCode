@@ -92,6 +92,7 @@ class EmailTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('=?UTF-8?B?VGVzdCBCbGluZCBDYXJib24gQ29weSA=?= <bcc@me.com>', $bcc);
         $this->assertEquals('Test Subject', $subject);
         $this->assertEquals('Test Text Body.', $txtBody);
+        // Waiting for https://github.com/plancake/official-library-php-email-parser/pull/25
         //$this->assertEquals('Test HTML Body<br/>', $htmBody);
     }
 
