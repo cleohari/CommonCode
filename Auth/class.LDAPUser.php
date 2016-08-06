@@ -213,7 +213,6 @@ class LDAPUser extends User
         {
             $obj['cn'] = $obj['uid'];
         }
-        print_r($obj);
         $ret = $this->server->create($obj);
         return $ret;
     }

@@ -203,6 +203,7 @@ class LDAPServer extends \Singleton
     public function create($object)
     {
         $distinguishedName = ldap_escape($object['dn'], true);
+        print_r($object);
         $entity = $this->fixObject($object);
         print_r($entity);
         $ret = ldap_add($this->ldapLink, $distinguishedName, $entity);
