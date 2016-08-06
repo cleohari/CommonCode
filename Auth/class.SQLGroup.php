@@ -14,18 +14,18 @@ class SQLGroup extends Group
 
     public function getGroupName()
     {
-        if(isset($data['gid']))
+        if(isset($this->data['gid']))
         {
-            return $data['gid'];
+            return $this->data['gid'];
         }
         return false;
     }
 
     public function getDescription()
     {
-        if(isset($data['description']))
+        if(isset($this->data['description']))
         {
-            return $data['description'];
+            return $this->data['description'];
         }
         return false;
     }

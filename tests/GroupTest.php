@@ -92,5 +92,18 @@ class GroupTest extends PHPUnit_Framework_TestCase
         $this->assertNotFalse($ids);
         $this->assertCount(0, $ids);
     }
+
+    public function testSQLGroup()
+    {
+        $group = new \Auth\SQLGroup(array(), false);
+        $this->assertFalse($group->getGroupName());
+        $this->assertFalse($group->getDescription());
+        $this->assertEmpty($group->members());
+        $this->assertEmpty($group->getMemberUids());
+
+        $group = new \Auth\SQLGroup(array('gid'=>'testGid', 'description'=>'Test Group'), false);
+        $this->assertEquals($group->getGroupName(), 'testGid');
+        $this->assertEquals($group->getDescription(), 'Test Group');
+    }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
