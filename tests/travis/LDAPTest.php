@@ -95,6 +95,11 @@ class LDAPTest extends PHPUnit_Framework_TestCase
         $auth = new \Auth\LDAPAuthenticator($params);
         $this->assertNotFalse($auth->getAndBindServer());
         $this->assertNotFalse($auth->getAndBindServer(true));
+
+        $params['bind_pass'] = 'test1';
+        $auth = new \Auth\LDAPAuthenticator($params);
+        $this->assertNotFalse($auth->getAndBindServer());
+        $this->assertFalse($auth->getAndBindServer(true));
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
