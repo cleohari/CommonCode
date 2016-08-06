@@ -25,6 +25,9 @@ class GroupTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($user->addMember('test', true));
         $this->assertFalse($user->addMember('test', false, false));
         $this->assertFalse($user->addMember('test', true, false));
+        $json = json_encode($user);
+        $this->assertEquals($json, '{"cn":false,"description":false,"member":[]}');
+        $this->assertFalse(\Auth\Group::from_name('test'));
     }
 
     public function testLDAPGroup()
