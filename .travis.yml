@@ -27,6 +27,7 @@ before_script:
   - slapd -f tests/travis/LDAP/slapd.conf -h ldap://localhost:3389 &
   - sleep 3
   - ldapadd -h localhost:3389 -D cn=admin,dc=example,dc=com -w test -f tests/travis/LDAP/base.ldif
+  - ldapadd -h localhost:3389 -D cn=admin,dc=example,dc=com -w test -f tests/travis/LDAP/user.ldif
   - ldapadd -h localhost:3389 -D cn=admin,dc=example,dc=com -w test -f tests/travis/LDAP/INITIAL_TESTDATA.ldif
 
 script:
