@@ -93,6 +93,8 @@ class LDAPTest extends PHPUnit_Framework_TestCase
         $params['bind_dn'] = 'cn=admin,dc=example,dc=com';
         $params['bind_pass'] = 'test';
         $auth = new \Auth\LDAPAuthenticator($params);
+        $this->assertNotFalse($auth->getAndBindServer());
+        $this->assertNotFalse($auth->getAndBindServer(true));
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
