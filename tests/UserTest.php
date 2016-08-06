@@ -71,6 +71,9 @@ class UserTest extends PHPUnit_Framework_TestCase
         $vcard = $user->getVcard();
         $this->assertEquals("BEGIN:VCARD\nVERSION:2.1\nN:;\nFN:\nORG: Austin Artistic Reconstruction\nTEL;TYPE=MOBILE,VOICE:\nEMAIL;TYPE=PREF,INTERNET:\nEND:VCARD\n", $vcard);
 
+        $json = json_encode($user);
+        $this->assertEquals('{"displayName":false,"givenName":false,"jpegPhoto":"","mail":false,"mobile":false,"uid":false,"o":false,"title":false,"titlenames":false,"st":false,"l":false,"sn":false,"cn":false,"postalAddress":false,"postalCode":false,"c":false,"ou":false,"host":false,"class":"Auth\\\\User"}', $json);
+
         $data = new \stdClass();
         $user->editUser($data);
         $this->assertFalse(false);
