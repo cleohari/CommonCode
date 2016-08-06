@@ -44,6 +44,13 @@ class SortArrayTest extends PHPUnit_Framework_TestCase
         $rev[] = array('a'=>'1', 'b'=>'9');
         \Auth\sort_array($array, array('a'=>0));
         $this->assertEquals($array, $rev);
+        $rev = array();
+        $rev[] = array('a'=>'6', 'b'=>'4');
+        $rev[] = array('a'=>'5', 'b'=>'5');
+        $rev[] = array('a'=>'4', 'b'=>'6');
+        $rev[] = array('a'=>'3', 'b'=>'7');
+        $rev[] = array('a'=>'2', 'b'=>'8');
+        $rev[] = array('a'=>'1', 'b'=>'9');
         \Auth\sort_array($array, array('b'=>1));
         $this->assertEquals($array, $rev);
     }
