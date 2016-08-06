@@ -88,13 +88,22 @@ class LDAPTest extends PHPUnit_Framework_TestCase
         $params['pending'] = true;
         $params['supplement'] = false;
         $params['host'] = $this->LDAPSERVER;
-        $params['user_base'] = 'dc=example,dc=com';
+        $params['user_base'] = 'dc=users,dc=example,dc=com';
         $params['group_base'] = 'dc=example,dc=com';
         $params['bind_dn'] = 'cn=admin,dc=example,dc=com';
         $params['bind_pass'] = 'test';
         $auth = new \Auth\LDAPAuthenticator($params);
         $this->assertNotFalse($auth->getAndBindServer());
         $this->assertNotFalse($auth->getAndBindServer(true));
+
+        $pendingUser = new \Auth\PendingUser();
+        $pendingUser->uid = 'test1';
+        $pendingUser->mail = 'test@test.com';
+        $pendingUser->sn = 'User';
+        $pendingUser->givenName = 'Test';
+        $pendingUser->host = 'test.com';
+
+        $this->assertNotFalse($auth->activatePendingUser($pendingUser));
 
         $params['bind_pass'] = 'test1';
         $auth = new \Auth\LDAPAuthenticator($params);
