@@ -80,5 +80,19 @@ class LDAPTest extends PHPUnit_Framework_TestCase
         $count = $server->count('dc=example,dc=com');
         $this->assertGreaterThan(0, $count);
     }
+
+    public function testLDAPAuthenticator()
+    {
+        $params = array();
+        $params['current'] = true;
+        $params['pending'] = true;
+        $params['supplement'] = false;
+        $params['host'] = $this->LDAPSERVER;
+        $params['user_base'] = 'dc=example,dc=com';
+        $params['group_base'] = 'dc=example,dc=com';
+        $params['bind_dn'] = 'cn=admin,dc=example,dc=com';
+        $params['bind_pass'] = 'test';
+        $auth = new \Auth\LDAPAuthenticator($params);
+    }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
