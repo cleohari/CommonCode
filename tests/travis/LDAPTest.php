@@ -103,6 +103,7 @@ class LDAPTest extends PHPUnit_Framework_TestCase
         $pendingUser->host = 'test.com';
 
         $this->assertNotFalse($auth->activatePendingUser($pendingUser));
+        $this->assertGreaterThan($auth->getActiveUserCount(), 0);
 
         $params['bind_pass'] = 'test1';
         $auth = new \Auth\LDAPAuthenticator($params);
