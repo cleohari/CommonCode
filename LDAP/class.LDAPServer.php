@@ -189,7 +189,7 @@ class LDAPServer extends \Singleton
             if(is_array($entity[$keys[$i]]))
             {
                 $this->fixChildArray($entity[$keys[$i]], $keys[$i], $entity);
-                unset($entity[$keys[$i]]);
+                //unset($entity[$keys[$i]]);
             }
             else if($delete !== false && $entity[$keys[$i]] === null)
             {
