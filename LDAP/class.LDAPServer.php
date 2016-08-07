@@ -317,8 +317,10 @@ class LDAPServer extends \Singleton
         $delete = array();
         $entity = $this->fixObject($object, $delete);
         $ret = false;
+        print_r($entity);
         if(!empty($entity))
         {
+            echo 'mod_replace';
             $ret = @ldap_mod_replace($this->ldapLink, $distinguishedName, $entity);
             var_dump($ret);
             if($ret === false)
@@ -328,8 +330,6 @@ class LDAPServer extends \Singleton
         }
         if(!empty($delete))
         {
-            echo 'Here';
-            print_r($delete);
             $ret = @ldap_mod_del($this->ldapLink, $distinguishedName, $delete);
         }
         var_dump($ret);
