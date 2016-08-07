@@ -316,6 +316,7 @@ class LDAPServer extends \Singleton
         $distinguishedName = ldap_escape($object['dn'], true);
         $delete = array();
         $entity = $this->fixObject($object, $delete);
+        print_r($entity);
         $ret = false;
         if(!empty($entity))
         {

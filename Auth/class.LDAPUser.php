@@ -154,7 +154,6 @@ class LDAPUser extends User
         $password = $this->generateLDAPPass($password);
         if(!is_object($this->ldapObj))
         {
-            echo 'Here!';
             return $this->setFieldLocal('userPassword', $password);
         }
         $obj = array('dn'=>$this->ldapObj->dn);
@@ -165,7 +164,6 @@ class LDAPUser extends User
         }
         //Make sure we are bound in write mode
         $this->enableReadWrite();
-        print_r($obj);
         return $this->update($obj);
     }
 
