@@ -151,18 +151,21 @@ class LDAPUser extends User
 
     public function setPass($password)
     {
+        $password = $this->generateLDAPPass($password);
         if(!is_object($this->ldapObj))
         {
-            return $this->setFieldLocal('userPassword', $this->generateLDAPPass($password));
+            echo 'Here!';
+            return $this->setFieldLocal('userPassword', $password);
         }
         $obj = array('dn'=>$this->ldapObj->dn);
-        $obj['userPassword'] = $this->generateLDAPPass($password);
+        $obj['userPassword'] = $password;
         if(isset($this->ldapObj->uniqueidentifier))
         {
             $obj['uniqueIdentifier'] = null;
         }
         //Make sure we are bound in write mode
         $this->enableReadWrite();
+        print_r($obj);
         return $this->update($obj);
     }
 
