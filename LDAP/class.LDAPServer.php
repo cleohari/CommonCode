@@ -316,11 +316,11 @@ class LDAPServer extends \Singleton
         $distinguishedName = ldap_escape($object['dn'], true);
         $delete = array();
         $entity = $this->fixObject($object, $delete);
-        print_r($entity);
         $ret = false;
         if(!empty($entity))
         {
             $ret = @ldap_mod_replace($this->ldapLink, $distinguishedName, $entity);
+            var_dump($ret);
             if($ret === false)
             {
                 throw new \Exception('Failed to update object with dn='.$distinguishedName.'('.ldap_errno($this->ldapLink).':'.ldap_error($this->ldapLink).') '.print_r($entity, true));
@@ -328,8 +328,11 @@ class LDAPServer extends \Singleton
         }
         if(!empty($delete))
         {
+            echo 'Here';
+            print_r($delete);
             $ret = @ldap_mod_del($this->ldapLink, $distinguishedName, $delete);
         }
+        var_dump($ret);
         return $ret;
     }
 
