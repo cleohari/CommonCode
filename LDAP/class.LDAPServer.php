@@ -323,6 +323,7 @@ class LDAPServer extends \Singleton
             if($ret === false)
             {
                 $string = 'Failed to update object with dn='.$distinguishedName.'('.ldap_errno($this->ldapLink).':'.ldap_error($this->ldapLink).') '.print_r($entity, true);
+                echo $string;
                 throw new \Exception($string);
             }
         }
