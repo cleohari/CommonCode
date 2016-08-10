@@ -66,7 +66,7 @@ class SQLAuthTest extends PHPUnit_Framework_TestCase
         $params['pending'] = true;
         $params['supplement'] = false;
         $params['current_data_set'] = 'auth';
-        $auth = new \Auth\LDAPAuthenticator($params);
+        $auth = new \Auth\SQLAuthenticator($params);
         $this->assertFalse($auth->login('test', 'test')); 
     }
 }
