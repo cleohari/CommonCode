@@ -55,5 +55,19 @@ class SQLAuthTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($user->isInGroupNamed('test1'));
         $user->mail = 'test@test.com';
     }
+
+    /**
+     * @depends testSQLAuthenticator
+     */
+    public function testFunctionsNonCurrent()
+    {
+        $params = array();
+        $params['current'] = false;
+        $params['pending'] = true;
+        $params['supplement'] = false;
+        $params['current_data_set'] = 'auth';
+        $auth = new \Auth\LDAPAuthenticator($params);
+        $this->assertFalse($auth->login('test', 'test')); 
+    }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
