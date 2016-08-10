@@ -101,6 +101,14 @@ class SQLAuthTest extends PHPUnit_Framework_TestCase
         $user = $auth->activatePendingUser($pendingUser);
         $this->assertNotFalse($user);
         $this->assertGreaterThan(0, $auth->getPendingUserCount());
+
+        $hash = $user->getHash();
+        $this->assertNotFalse($hash);
+        $tmpUser = $auth->getTempUserByHash($hash);
+        $this->assertEquals($user, $tmpUser);
+
+        $tmpUser = $auth->getTempUserByHash('1234567890');
+        $this->assertFalse($tmpUser);
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
