@@ -85,7 +85,7 @@ class SQLAuthTest extends PHPUnit_Framework_TestCase
         $params['current'] = false;
         $params['pending'] = true;
         $params['supplement'] = false;
-        $params['current_data_set'] = 'pending_auth';
+        $params['pending_data_set'] = 'pending_auth';
         $auth = new \Auth\SQLAuthenticator($params);
 
         $dataSet = \DataSetFactory::getDataSetByName('pending_auth');
