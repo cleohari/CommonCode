@@ -54,6 +54,17 @@ class SQLAuthTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($user->isInGroupNamed('test'));
         $this->assertFalse($user->isInGroupNamed('test1'));
         $user->mail = 'test@test.com';
+
+        $pendingUser = new \Auth\PendingUser();
+        $pendingUser->uid = 'test1';
+        $pendingUser->mail = 'test@test.com';
+        $pendingUser->sn = 'User';
+        $pendingUser->givenName = 'Test';
+        $pendingUser->host = 'test.com';
+
+        $user = $auth->activatePendingUser($pendingUser);
+        $this->assertFalse($user);
+        $this->assertEquals(0, $auth->getPendingUserCount());
     }
 
     /**
