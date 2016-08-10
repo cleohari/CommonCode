@@ -69,5 +69,38 @@ class SQLAuthTest extends PHPUnit_Framework_TestCase
         $auth = new \Auth\SQLAuthenticator($params);
         $this->assertFalse($auth->login('test', 'test')); 
     }
+
+    /**
+     * @depends testSQLAuthenticator
+     */
+    public function testPending()
+    {
+        $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
+        if(!isset(FlipsideSettings::$dataset['pending_auth']))
+        {
+            $params = array('dsn'=>'mysql:host=localhost;dbname=p_auth', 'host'=>'localhost', 'user'=>'root', 'pass'=>'');
+            FlipsideSettings::$dataset['pending_auth'] = array('type'=>'SQLDataSet', 'params'=>$params);
+        }
+        $params = array();
+        $params['current'] = false;
+        $params['pending'] = true;
+        $params['supplement'] = false;
+        $params['current_data_set'] = 'pending_auth';
+        $auth = new \Auth\SQLAuthenticator($params);
+
+        $dataSet = \DataSetFactory::getDataSetByName('pending_auth');
+        $dataSet->raw_query('CREATE TABLE users (hash VARCHAR(255), data VARCHAR(4096), time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, UNIQUE KEY `hash` (`hash`));');
+
+        $pendingUser = new \Auth\PendingUser();
+        $pendingUser->uid = 'test1';
+        $pendingUser->mail = 'test@test.com';
+        $pendingUser->sn = 'User';
+        $pendingUser->givenName = 'Test';
+        $pendingUser->host = 'test.com';
+
+        $user = $auth->activatePendingUser($pendingUser);
+        $this->assertNotFalse($user);
+        $this->assertGreaterThan(0, $auth->getPendingUserCount());
+    }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
