@@ -102,13 +102,12 @@ class SQLAuthTest extends PHPUnit_Framework_TestCase
         $this->assertNotFalse($user);
         $this->assertGreaterThan(0, $auth->getPendingUserCount());
 
-        $hash = $user->getHash();
-        $this->assertNotFalse($hash);
-        $tmpUser = $auth->getTempUserByHash($hash);
-        $this->assertEquals($user, $tmpUser);
-
         $tmpUser = $auth->getTempUserByHash('1234567890');
         $this->assertFalse($tmpUser);
+
+        $users = $dataSet['users']->read();
+        $tmpUser = $auth->getTempUserByHash($users[0]['hash']);
+        $this->assertNotFalse($tmpUser);
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
