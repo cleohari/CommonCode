@@ -163,7 +163,7 @@ class FilterClause
             case '=':
                 return array($this->var1=>$this->var2);
             case 'substringof':
-                return array($this->var1=>array('$regex'=>new MongoRegex('/'.$this->var2.'/i')));
+                return array($this->var1=>array('$regex'=>new \MongoRegex('/'.$this->var2.'/i')));
             case 'indexof':
                 return $this->getMongoIndexOfOperator();
             default:

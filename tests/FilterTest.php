@@ -67,6 +67,14 @@ class FilterTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($clause->op, '<=');
         $this->assertEquals($clause->var1, 'a');
         $this->assertEquals($clause->var2, 'b');
+
+        $filter = new \Data\Filter('a xy b');
+        $clauses = $filter->getChildren();
+        $this->assertCount(1, $clauses);
+        $clause = $clauses[0];
+        $this->assertEquals($clause->op, 'xy');
+        $this->assertEquals($clause->var1, 'a');
+        $this->assertEquals($clause->var2, 'b');
     }
 
     public function testParenseParsing()
@@ -129,6 +137,9 @@ class FilterTest extends PHPUnit_Framework_TestCase
         $filter->addToSQLString(' AND 1=1');
         $sql = $filter->to_sql_string();
         $this->assertEquals($sql, 'a=b OR c=d AND 1=1');
+        $filter = new \Data\Filter('contains(a,b)');
+        $sql = $filter->to_sql_string();
+        $this->assertEquals($sql, "a LIKE '%b%'");
     }
 
     public function testLDAP()
@@ -157,6 +168,8 @@ class FilterTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('(&(a=b)(c=d))', $filter->to_ldap_string());
         $filter = new \Data\Filter('a eq b or c eq d');
         $this->assertEquals('(|(a=b)(c=d))', $filter->to_ldap_string());
+        $filter = new \Data\Filter('a ne b');
+        $this->assertEquals('(!(a=b))', $filter->to_ldap_string());
     }
 
     public function testMongo()
@@ -190,6 +203,35 @@ class FilterTest extends PHPUnit_Framework_TestCase
 
         $filter = new \Data\Filter('a ge b');
         $this->assertEquals(array('a'=>array('$gte'=>'b')), $filter->to_mongo_filter());
+
+        $filter = new \Data\Filter('a xy b');
+        $this->assertEquals(array('a'=>array('xy'=>'b')), $filter->to_mongo_filter());
+
+        $filter = new \Data\Filter('_id eq 4af9f23d8ead0e1d32000000');
+        $comp = array('_id'=>new MongoId('4af9f23d8ead0e1d32000000'));
+        $this->assertEquals($comp, $filter->to_mongo_filter());
+
+        $filter = new \Data\Filter('substringof(a,b)');
+        $mongo = $filter->to_mongo_filter();
+        $this->assertArrayHasKey('a', $mongo);
+        $array = $mongo['a'];
+        $this->assertArrayHasKey('$regex', $array);
+        $regex = $array['$regex'];
+        $this->assertEquals($regex->regex, 'b');
+        $this->assertEquals($regex->flags, 'i');
+
+        $filter = new \Data\Filter('indexof(a,b)');
+        $mongo = $filter->to_mongo_filter();
+        $this->assertEquals(array('a'=>'b'), $mongo);
+
+        $filter = new \Data\Filter('indexof(tolower(a),b)');
+        $mongo = $filter->to_mongo_filter();
+        $this->assertArrayHasKey('a', $mongo);
+        $array = $mongo['a'];
+        $this->assertArrayHasKey('$regex', $array);
+        $regex = $array['$regex'];
+        $this->assertEquals($regex->regex, 'b');
+        $this->assertEquals($regex->flags, 'i');
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
