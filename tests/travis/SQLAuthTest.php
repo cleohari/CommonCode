@@ -126,10 +126,13 @@ class SQLAuthTest extends PHPUnit_Framework_TestCase
      */
     public function testHash()
     {
-        require_once('Auth/class.SQLAuthenticator.php');
-        $hash = @\Auth\password_hash('test');
-        $this->assertNotFalse($hash);
-        $this->assertTrue(\Auth\password_verify('test', $hash));
+        if(version_compare(PHP_VERSION, '5.5.0', '<'))
+        {
+            require_once('Auth/class.SQLAuthenticator.php');
+            $hash = @\Auth\password_hash('test');
+            $this->assertNotFalse($hash);
+            $this->assertTrue(\Auth\password_verify('test', $hash));
+        }
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
