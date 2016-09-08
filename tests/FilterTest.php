@@ -126,5 +126,29 @@ class FilterTest extends PHPUnit_Framework_TestCase
         $sql = $filter->to_sql_string();
         $this->assertEquals($sql, 'a=b OR c=d');
     }
+
+    public function testLDAP()
+    {
+        $filter = new \Data\Filter('a eq b and c eq d or e eq f');
+        try
+        {
+            $filter->to_ldap_string();
+            $this->assertFalse(true);
+        }
+        catch(\Exception $ex)
+        {
+            $this->assertFalse(false);
+        }
+        $filter = new \Data\Filter('a eq b or c eq d and e eq f');
+        try
+        {
+            $filter->to_ldap_string();
+            $this->assertFalse(true);
+        }
+        catch(\Exception $ex)
+        {
+            $this->assertFalse(false);
+        }
+    }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
