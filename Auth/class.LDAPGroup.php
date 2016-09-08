@@ -147,7 +147,7 @@ class LDAPGroup extends Group
         return $members;
     }
 
-    public function getNonMemebers($select = false)
+    public function getNonMembers($select = false)
     {
         $data = array();
         $groupFilter = '(&(cn=*)(!(cn='.$this->getGroupName().'))';
