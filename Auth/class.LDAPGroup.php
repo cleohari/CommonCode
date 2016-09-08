@@ -205,14 +205,10 @@ class LDAPGroup extends Group
 
     public function addMember($name, $isGroup = false, $flush = true)
     {
-        $distinguishedName = false;
+        $distinguishedName = 'uid='.$name.','.$this->server->user_base;
         if($isGroup)
         {
             $distinguishedName = 'cn='.$name.','.$this->server->group_base;
-        }
-        else
-        {
-            $distinguishedName = 'uid='.$name.','.$this->server->user_base;
         }
         $propName   = false;
         $rawMembers = $this->getMembersField($propName);
