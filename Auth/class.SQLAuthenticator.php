@@ -235,7 +235,7 @@ class SQLAuthenticator extends Authenticator
         $count = count($data);
         for($i = 0; $i < $count; $i++)
         {
-            $data[$i] = new $className($groups[$i], $this);
+            $data[$i] = new $className($data[$i], $this);
         }
         return $data;
     }
