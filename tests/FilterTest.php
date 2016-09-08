@@ -125,6 +125,10 @@ class FilterTest extends PHPUnit_Framework_TestCase
         $filter = new \Data\Filter('a eq b or c eq d');
         $sql = $filter->to_sql_string();
         $this->assertEquals($sql, 'a=b OR c=d');
+        $filter = new \Data\Filter('a eq b or c eq d');
+        $filter->addToSQLString(' AND 1=1');
+        $sql = $filter->to_sql_string();
+        $this->assertEquals($sql, 'a=b OR c=d AND 1=1');
     }
 
     public function testLDAP()
@@ -171,6 +175,21 @@ class FilterTest extends PHPUnit_Framework_TestCase
         $filter = new \Data\Filter('a eq b and c eq d or e eq f');
         $comp = array('$or' => array(array('$and' => array(array('a'=>'b'), array('c'=>'d'))), array('e'=>'f')));
         $this->assertEquals($comp, $filter->to_mongo_filter());
+
+        $filter = new \Data\Filter('a ne b');
+        $this->assertEquals(array('a'=>array('$ne'=>'b')), $filter->to_mongo_filter());
+
+        $filter = new \Data\Filter('a lt b');
+        $this->assertEquals(array('a'=>array('$lt'=>'b')), $filter->to_mongo_filter());
+
+        $filter = new \Data\Filter('a le b');
+        $this->assertEquals(array('a'=>array('$lte'=>'b')), $filter->to_mongo_filter());
+
+        $filter = new \Data\Filter('a gt b');
+        $this->assertEquals(array('a'=>array('$gt'=>'b')), $filter->to_mongo_filter());
+
+        $filter = new \Data\Filter('a ge b');
+        $this->assertEquals(array('a'=>array('$gte'=>'b')), $filter->to_mongo_filter());
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
