@@ -149,6 +149,28 @@ class FilterTest extends PHPUnit_Framework_TestCase
         {
             $this->assertFalse(false);
         }
+        $filter = new \Data\Filter('a eq b and c eq d');
+        $this->assertEquals('(&(a=b)(c=d))', $filter->to_ldap_string());
+        $filter = new \Data\Filter('a eq b or c eq d');
+        $this->assertEquals('(|(a=b)(c=d))', $filter->to_ldap_string());
+    }
+
+    public function testMongo()
+    {
+        $filter = new \Data\Filter('a eq b');
+        $this->assertEquals(array('a'=>'b'), $filter->to_mongo_filter());
+
+        $filter = new \Data\Filter('a eq b and c eq d');
+        $comp = array('$and' => array(array('a'=>'b'), array('c'=>'d')));
+        $this->assertEquals($comp, $filter->to_mongo_filter());
+
+        $filter = new \Data\Filter('a eq b or c eq d');
+        $comp = array('$or' => array(array('a'=>'b'), array('c'=>'d')));
+        $this->assertEquals($comp, $filter->to_mongo_filter());
+
+        $filter = new \Data\Filter('a eq b and c eq d or e eq f');
+        $comp = array('$or' => array(array('$and' => array(array('a'=>'b'), array('c'=>'d'))), array('e'=>'f')));
+        $this->assertEquals($comp, $filter->to_mongo_filter());
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
