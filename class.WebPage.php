@@ -185,7 +185,7 @@ class WebPage
      *
      * @param string $tag The tag to add to the page header
      */
-    protected function addHeadTag($tag)
+    public function addHeadTag($tag)
     {
         array_push($this->head_tags, $tag);
     }
