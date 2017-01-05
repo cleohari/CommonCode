@@ -689,7 +689,7 @@ class FlipPage extends WebPage
      */
     public function addNotification($message, $severity=self::NOTIFICATION_INFO, $dismissible=true)
     {
-        array_push($this->notificatons, array('msg'=>$message, 'sev'=>$severity, 'dismissible'=>$dismissible)); 
+        array_push($this->notifications, array('msg'=>$message, 'sev'=>$severity, 'dismissible'=>$dismissible)); 
     }
 
     /**
