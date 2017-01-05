@@ -20,13 +20,13 @@ class OAuth2Auth extends \Slim\Middleware
 
     public function __construct($headers)
     {
-        $this->headers = $headers;
+        $this->headers = array_change_key_case($headers);
     }
 
     public function call()
     {
         // no auth header
-        if(!isset($this->headers['Authorization']))
+        if(!isset($this->headers['authorization']))
         {
             if(FlipSession::isLoggedIn())
             {
@@ -40,7 +40,7 @@ class OAuth2Auth extends \Slim\Middleware
         } 
         else 
         {
-            if(strncmp($this->headers['Authorization'], 'Basic', 5) == 0)
+            if(strncmp($this->headers['authorization'], 'Basic', 5) == 0)
             {
                 $auth = \AuthProvider::getInstance();
                 $auth->login($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']);
@@ -53,16 +53,16 @@ class OAuth2Auth extends \Slim\Middleware
             try
             {
                 $auth = AuthProvider::getInstance();
-                $header = $this->headers['Authorization'];
+                $header = $this->headers['authorization'];
                 if(strncmp($header, 'Basic', 5) === 0)
                 {
-                    $data = substr($this->headers['Authorization'], 6);
+                    $data = substr($this->headers['authorization'], 6);
                     $userpass = explode(':', base64_decode($data));
                     $this->app->user = $auth->getUserByLogin($userpass[0], $userpass[1]);
                 }
                 else
                 {
-                    $key = substr($this->headers['Authorization'], 7);
+                    $key = substr($this->headers['authorization'], 7);
                     $user = $auth->getUserByAccessCode($key);
                     if($user !== FALSE)
                     {
@@ -165,6 +165,68 @@ class FlipRESTFormat extends \Slim\Middleware
         return ob_get_clean();
     }
 
+    private function create_excel(&$array)
+    {
+        require_once dirname(__FILE__) . '/libs/PHPExcel/Classes/PHPExcel.php';
+        $ssheat = new PHPExcel();
+        $sheat = $ssheat->setActiveSheetIndex(0);
+        if(is_array($array))
+        {
+            $first = reset($array);
+            $keys = false;
+            if(is_array($first))
+            {
+                $keys = array_keys($first);
+            }
+            else if(is_object($first))
+            {
+                $keys = array_keys(get_object_vars($first));
+            }
+            $col_count = count($keys);
+            for($i = 0; $i < $col_count; $i++)
+            {
+                $sheat->setCellValueByColumnAndRow($i, 1, $keys[$i]);
+            }
+            $row_count = count($array);
+            for($i = 0; $i < $row_count; $i++)
+            {
+                $row = $array[$i];
+                if(is_object($row))
+                {
+                    $row = get_object_vars($row);
+                }
+                for($j = 0; $j < $col_count; $j++)
+                {
+                    $colName = $keys[$j];
+                    if(isset($row[$colName]))
+                    {
+                        $value = $row[$colName];
+                        if(is_object($value))
+                        {
+                            switch($colName)
+                            {
+                                case '_id':
+                                    $value = $value->{'$id'};
+                                default:
+                                    $value = json_encode($value);
+                                    break;
+                            }
+                        }
+                        else if(is_array($value))
+                        {
+                            $value = implode(',', $value);
+                        }
+                        $sheat->setCellValueByColumnAndRow($j, 2+$i, $value);
+                    }
+                }
+            }
+        }
+        $writer = PHPExcel_IOFactory::createWriter($ssheat, 'Excel2007');
+        ob_start();
+        $writer->save('php://output');
+        return ob_get_clean();
+    }
+
     private function create_xml(&$array, $path)
     {
         $obj = new SerializableObject($array);
@@ -208,6 +270,9 @@ class FlipRESTFormat extends \Slim\Middleware
                 case 'text/x-vCard':
                     $fmt = 'vcard';
                     break;
+                case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+                    $fmt = 'xlsx';
+                    break;
                 default:
                     $fmt = 'json';
                     break;
@@ -237,6 +302,14 @@ class FlipRESTFormat extends \Slim\Middleware
                     $path = substr($path, 1);
                     $this->app->response->headers->set('Content-Disposition', 'attachment; filename='.$path.'.csv');
                     $text = $this->create_csv($data);
+                    break;
+                case 'xlsx':
+                    $this->app->response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                    $path = $this->app->request->getPathInfo();
+                    $path = strrchr($path, '/');
+                    $path = substr($path, 1);
+                    $this->app->response->headers->set('Content-Disposition', 'attachment; filename='.$path.'.xlsx');
+                    $text = $this->create_excel($data);
                     break;
                 case 'xml':
                     $this->app->response->headers->set('Content-Type', 'application/xml');
@@ -272,6 +345,8 @@ class FlipREST extends \Slim\Slim
         $this->add(new FlipRESTFormat());
         $error_handler = array($this, 'error_handler');
         $this->error($error_handler);
+        $not_found_handler = array($this, 'not_found_handler');
+        $this->notFound($not_found_handler);
     }
 
     function route_get($uri, $handler)
@@ -306,6 +381,25 @@ class FlipREST extends \Slim\Slim
         $this->response->headers->set('Content-Type', 'application/json');
         error_log(print_r($error, true));
         echo json_encode($error);
+    }
+
+    function not_found_handler()
+    {
+        $accept = $this->request->headers->get('Accept');
+        if(strcmp($accept, 'application/json') == 0)
+        {
+            $error = array(
+                'code' => 404,
+                'message' => 'Not Found'
+            );
+            $this->response->headers->set('Content-Type', 'application/json');
+            $this->response->setStatus(404);
+            echo json_encode($error);
+        }
+        else
+        {
+            $this->defaultNotFound();
+        }
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
