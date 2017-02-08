@@ -8,12 +8,25 @@ class SQLPendingUser extends PendingUser
     private $blob;
     private $table;
 
-    function __construct($data, $table = false)
+    public function __construct($data, $table = false)
     {
         $this->hash = $data['hash'];
         $this->time = new \DateTime($data['time']);
         $this->blob = json_decode($data['data']);
         $this->table = $table;
+    }
+
+    public function __get($propName)
+    {
+        if(is_array($this->blob->{$propName}))
+        {
+            return $this->blob->{$propName}[0];
+        }
+        return $this->blob->{$propName};
+    }
+
+    public function __set($propName, $value)
+    {
     }
 
     public function getHash()
@@ -26,25 +39,7 @@ class SQLPendingUser extends PendingUser
         return $this->time;
     }
 
-    function getEmail()
-    {
-        if(is_array($this->blob->mail))
-        {
-            return $this->blob->mail[0];
-        }
-        return $this->blob->mail;
-    }
-
-    function getUid()
-    {
-        if(is_array($this->blob->uid))
-        {
-            return $this->blob->uid[0];
-        }
-        return $this->blob->uid;
-    }
-
-    function getPassword()
+    public function getPassword()
     {
         if(is_array($this->blob->password))
         {
@@ -64,4 +59,3 @@ class SQLPendingUser extends PendingUser
     }
 }
 
-?>

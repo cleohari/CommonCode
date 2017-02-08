@@ -23,56 +23,68 @@ class OAuth2Auth extends \Slim\Middleware
         $this->headers = array_change_key_case($headers);
     }
 
+    private function getUserFromSession()
+    {
+        if(FlipSession::isLoggedIn())
+        {
+            return FlipSession::getUser();
+        }
+        return false;
+    }
+
+    /*
+     * @SuppressWarnings("Superglobals")
+     * @SuppressWarnings("StaticAccess")
+     */
+    private function getUserFromBasicAuth($header)
+    {
+        $auth = \AuthProvider::getInstance();
+        $auth->login($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']);
+        $user = FlipSession::getUser();
+        if($user === false)
+        {
+            $data = substr($header, 6);
+            $userpass = explode(':', base64_decode($data));
+            $user = $auth->getUserByLogin($userpass[0], $userpass[1]);
+        }
+        return $user;
+    }
+
+    /*
+     * @SuppressWarnings("StaticAccess")
+     */
+    private function getUserFromToken($header)
+    {
+        $auth = \AuthProvider::getInstance();
+        $key = substr($header, 7);
+        return $auth->getUserByAccessCode($key);
+    }
+
+    private function getUserFromHeader($header)
+    {
+        if(strncmp($header, 'Basic', 5) == 0)
+        {
+            return $this->getUserFromBasicAuth($header);
+        }
+        return $this->getUserFromToken($header);
+    }
+
     public function call()
     {
         // no auth header
         if(!isset($this->headers['authorization']))
         {
-            if(FlipSession::isLoggedIn())
-            {
-                $user = FlipSession::getUser();
-                $this->app->user = $user;
-            }
-            else
-            {
-                $this->app->getLog()->error("No authorization header or session");
-            }
-        } 
-        else 
+            $this->app->user = $this->getUserFromSession();
+        }
+        else
         {
-            if(strncmp($this->headers['authorization'], 'Basic', 5) == 0)
-            {
-                $auth = \AuthProvider::getInstance();
-                $auth->login($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']);
-                $user = FlipSession::getUser();
-                if($user !== false)
-                {
-                    $this->app->user = $user;
-                }
-            }
-            try
-            {
-                $auth = AuthProvider::getInstance();
-                $header = $this->headers['authorization'];
-                if(strncmp($header, 'Basic', 5) === 0)
-                {
-                    $data = substr($this->headers['authorization'], 6);
-                    $userpass = explode(':', base64_decode($data));
-                    $this->app->user = $auth->getUserByLogin($userpass[0], $userpass[1]);
-                }
-                else
-                {
-                    $key = substr($this->headers['authorization'], 7);
-                    $user = $auth->getUserByAccessCode($key);
-                    if($user !== FALSE)
-                    {
-                        $this->app->user = $user;
-                    }
-                }
-            }
-            catch(\Exception $e)
-            {
-            }
+            $header = $this->headers['Authorization'];
+            $this->app->user = $this->getUserFromHeader($header);
+        }
+
+        if($this->app->user === false)
+        {
+            $this->app->getLog()->error("No user found for call");
         }
 
         // this line is required for the application to proceed
@@ -102,9 +114,9 @@ class FlipRESTFormat extends \Slim\Middleware
         }
     }
 
-    private function create_csv(&$array)
+    private function createCSV(&$array)
     {
-        if (count($array) == 0)
+        if(count($array) == 0)
         {
             return null;
         }
@@ -123,7 +135,7 @@ class FlipRESTFormat extends \Slim\Middleware
                 $keys = array_keys(get_object_vars($first));
             }
             fputcsv($df, $keys);
-            foreach ($array as $row)
+            foreach($array as $row)
             {
                 if(is_array($row))
                 {
@@ -227,19 +239,58 @@ class FlipRESTFormat extends \Slim\Middleware
         return ob_get_clean();
     }
 
-    private function create_xml(&$array, $path)
+    private function createXML(&$array)
     {
         $obj = new SerializableObject($array);
         return $obj->xmlSerialize();
     }
 
-    public function call()
+    private function serializeData()
     {
-        if($this->app->request->isOptions())
+        $data = json_decode($this->app->response->getBody());
+        switch($this->app->fmt)
         {
-            return;
+            case 'data-table':
+                $this->app->response->headers->set('Content-Type', 'application/json');
+                return json_encode(array('data'=>$data));
+            case 'csv':
+                $this->app->response->headers->set('Content-Type', 'text/csv');
+                $path = $this->app->request->getPathInfo();
+                $path = strrchr($path, '/');
+                $path = substr($path, 1);
+                $this->app->response->headers->set('Content-Disposition', 'attachment; filename='.$path.'.csv');
+                return $this->createCSV($data);
+            case 'xml':
+                $this->app->response->headers->set('Content-Type', 'application/xml');
+                return $this->createXML($data);
+            case 'passthru':
+                return $this->app->response->getBody();
+            default:
+                return 'Unknown fmt '.$this->app->fmt;
         }
-        $params = $this->app->request->params();
+    }
+
+    private function getFormatFromHeader()
+    {
+        $mimeType = $this->app->request->headers->get('Accept');
+        if(strstr($mimeType, 'odata.streaming=true'))
+        {
+            $this->app->response->setStatus(406);
+            return 'json';
+        }
+        switch($mimeType)
+        {
+            case 'text/csv':
+                return 'csv';
+            case 'text/x-vCard':
+                return 'vcard';
+            default:
+                return 'json';
+        }
+    }
+
+    private function getFormat($params)
+    {
         $fmt = null;
         if(isset($params['fmt']))
         {
@@ -251,80 +302,43 @@ class FlipRESTFormat extends \Slim\Middleware
             if(strstr($fmt, 'odata.streaming=true'))
             {
                 $this->app->response->setStatus(406);
-                return;
+                return false;
             }
         }
         if($fmt === null)
         {
-            $mime_type = $this->app->request->headers->get('Accept');
-            if(strstr($mime_type, 'odata.streaming=true'))
-            {
-                $this->app->response->setStatus(406);
-                return;
-            }
-            switch($mime_type)
-            {
-                case 'text/csv':
-                    $fmt = 'csv';
-                    break;
-                case 'text/x-vCard':
-                    $fmt = 'vcard';
-                    break;
-                case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-                    $fmt = 'xlsx';
-                    break;
-                default:
-                    $fmt = 'json';
-                    break;
-            }
+            $fmt = $this->getFormatFromHeader();
+        }
+        return $fmt;
+    }
+
+    public function call()
+    {
+        if($this->app->request->isOptions())
+        {
+            return;
+        }
+        $params = $this->app->request->params();
+        $fmt = $this->getFormat($params);
+        if($fmt === false)
+        {
+            return;
         }
 
         $this->app->fmt     = $fmt;
         $this->app->odata   = new ODataParams($params);
 
+        $this->app->isLocal = false;
+        if($_SERVER['SERVER_ADDR'] === $_SERVER['REMOTE_ADDR'])
+        {
+            $this->app->isLocal = true;
+        }
 
         $this->next->call();
 
         if($this->app->response->getStatus() == 200 && $this->app->fmt !== 'json')
         {
-            $data = json_decode($this->app->response->getBody());
-            $text = '';
-            switch($this->app->fmt)
-            {
-                case 'data-table':
-                    $this->app->response->headers->set('Content-Type', 'application/json');
-                    $text = json_encode(array('data'=>$data));
-                    break;
-                case 'csv':
-                    $this->app->response->headers->set('Content-Type', 'text/csv');
-                    $path = $this->app->request->getPathInfo();
-                    $path = strrchr($path, '/');
-                    $path = substr($path, 1);
-                    $this->app->response->headers->set('Content-Disposition', 'attachment; filename='.$path.'.csv');
-                    $text = $this->create_csv($data);
-                    break;
-                case 'xlsx':
-                    $this->app->response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                    $path = $this->app->request->getPathInfo();
-                    $path = strrchr($path, '/');
-                    $path = substr($path, 1);
-                    $this->app->response->headers->set('Content-Disposition', 'attachment; filename='.$path.'.xlsx');
-                    $text = $this->create_excel($data);
-                    break;
-                case 'xml':
-                    $this->app->response->headers->set('Content-Type', 'application/xml');
-                    $path = $this->app->request->getPathInfo();
-                    $path = strrchr($path, '/');
-                    $path = substr($path, 1);
-                    $text = $this->create_xml($data, $path);
-                    break;
-                case 'passthru':
-                    $text = $this->app->response->getBody();
-                    break;
-                default:
-                    $text = 'Unknown fmt '.$fmt;
-                    break;
-            }
+            $text = $this->serializeData();
             $this->app->response->setBody($text);
         }
         else if($this->app->response->getStatus() == 200)
@@ -336,47 +350,39 @@ class FlipRESTFormat extends \Slim\Middleware
 
 class FlipREST extends \Slim\Slim
 {
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
         $this->config('debug', false);
-        $headers = apache_request_headers();
+        $headers = array();
+        if(php_sapi_name() !== "cli")
+        {
+            $headers = apache_request_headers();
+        }
         $this->add(new OAuth2Auth($headers));
         $this->add(new FlipRESTFormat());
-        $error_handler = array($this, 'error_handler');
-        $this->error($error_handler);
-        $not_found_handler = array($this, 'not_found_handler');
-        $this->notFound($not_found_handler);
+        $errorHandler = array($this, 'errorHandler');
+        $this->error($errorHandler);
     }
 
-    function route_get($uri, $handler)
-    {
-        return $this->get($uri, $handler);
-    }
-
-    function route_post($uri, $handler)
-    {
-        return $this->post($uri, $handler);
-    }
-
-    function get_json_body($array=false)
+    public function get_json_body($array = false)
     {
         return $this->getJsonBody($array);
     }
 
-    function getJsonBody($array=false)
+    public function getJsonBody($array = false)
     {
         $body = $this->request->getBody();
         return json_decode($body, $array);
     }
 
-    function error_handler($e)
+    public function errorHandler($exception)
     {
         $error = array(
-            'code' => $e->getCode(),
-            'message' => $e->getMessage(),
-            'file' => $e->getFile(),
-            'line' => $e->getLine(),
+            'code' => $exception->getCode(),
+            'message' => $exception->getMessage(),
+            'file' => $exception->getFile(),
+            'line' => $exception->getLine(),
         );
         $this->response->headers->set('Content-Type', 'application/json');
         error_log(print_r($error, true));
@@ -403,4 +409,3 @@ class FlipREST extends \Slim\Slim
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
-?>

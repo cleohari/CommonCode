@@ -5,17 +5,15 @@ function MongofillAutoload($classname)
 {
     $classname = str_replace('/', '\\', $classname);
     $classname = ltrim($classname, '\\');
-    $filename  = '';
     $namespace = '';
-    if ($lastNsPos = strrpos($classname, '\\'))
+    if($lastNsPos = strrpos($classname, '\\'))
     {
         $namespace = substr($classname, 0, $lastNsPos);
         $classname = substr($classname, $lastNsPos + 1);
-        $filename  = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
     }
     if(strlen($namespace))
     {
-        $namespace.=DIRECTORY_SEPARATOR;
+        $namespace .= DIRECTORY_SEPARATOR;
     }
     $filename = __DIR__.'/../libs/mongofill/src/'.$namespace.$classname.'.php';
     if(is_readable($filename))
@@ -48,14 +46,7 @@ class MongoDataSet extends DataSet
         else
         {
             require __DIR__.'/../libs/mongofill/src/functions.php';
-            if(version_compare(PHP_VERSION, '5.3.0', '>='))
-            {
-                spl_autoload_register('\Data\MongofillAutoload', true, true);
-            }
-            else
-            {
-                spl_autoload_register('\Data\MongofillAutoload');
-            }
+            autoLoadHandler('\Data\MongofillAutoload');
             $this->setupMongoClient($params);
         }
     }
@@ -65,7 +56,7 @@ class MongoDataSet extends DataSet
         $collections = $this->db->getCollectionNames();
         if(in_array($name, $collections))
         {
-             return true;
+            return true;
         }
         return false;
     }
@@ -84,6 +75,10 @@ class MongoDataSet extends DataSet
 
     private function setupMongoClient($params)
     {
+        if($params === false)
+        {
+            return;
+        }
         if(isset($params['user']))
         {
             $this->client = new \MongoClient('mongodb://'.$params['host'].'/'.$params['db'], array('username'=>$params['user'], 'password'=>$params['pass']));
@@ -97,6 +92,10 @@ class MongoDataSet extends DataSet
 
     private function setupMongoManager($params)
     {
+        if($params === false)
+        {
+            return;
+        }
         if(isset($params['user']))
         {
             $this->manager = new \MongoDB\Driver\Manager('mongodb://'.$params['user'].':'.$params['pass'].'@'.$params['host'].'/'.$params['db']);
@@ -108,4 +107,4 @@ class MongoDataSet extends DataSet
         $this->db_name = $params['db'];
     }
 }
-?>
+/* vim: set tabstop=4 shiftwidth=4 expandtab: */

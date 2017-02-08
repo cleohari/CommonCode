@@ -6,91 +6,68 @@ class FlipAdminPage extends FlipPage
     public $user;
     public $is_admin = false;
 
-    function __construct($title, $admin_group='LDAPAdmins')
+    public function __construct($title, $adminGroup = 'LDAPAdmins')
     {
         $this->user = FlipSession::getUser();
-        if($this->user === false || $this->user === null)
-        {
-            $this->is_admin = false;
-        }
-        else
-        {
-            $this->is_admin = $this->user->isInGroupNamed($admin_group);
-        }
+        $this->is_admin = $this->userIsAdmin($adminGroup);
         parent::__construct($title);
-        if($this->minified === 'min')
+        $adminCSS = '/css/common/admin.min.css';
+        if($this->minified !== 'min')
         {
-            $this->add_css_from_src('/css/common/admin.min.css');
+            $adminCSS = '/css/common/admin.css';
         }
-        else
-        {
-            $this->add_css_from_src('/css/common/admin.css');
-        }
-        $this->add_js(JS_METISMENU, false);
+        $this->addCSSByURI($adminCSS);
+        $this->addWellKnownJS(JS_METISMENU, false);
     }
 
-    function addAllLinks()
+    protected function userIsAdmin($adminGroup)
     {
         if($this->user === false || $this->user === null)
         {
-            $this->add_link('<i class="fa fa-sign-in"></i> Login', $this->login_url);
+            return false;
+        }
+        return $this->user->isInGroupNamed($adminGroup);
+    }
+
+    protected function addAllLinks()
+    {
+        if($this->user === false || $this->user === null)
+        {
+            $this->addLink('<i class="fa fa-sign-in"></i> Login', $this->loginUrl);
         }
         else
         {
             $this->add_links();
-            $this->add_link('<i class="fa fa-sign-out"></i> Logout', $this->logout_url);
+            $this->addLink('<i class="fa fa-sign-out"></i> Logout', $this->logoutUrl);
         }
     }
 
-    function addHeader()
+    protected function getDropdown($link, $name)
     {
-        $sites = '';
-        foreach($this->sites as $link => $site_name)
+        $ret  = '<li>';
+        $href = $this->getHrefForDropdown($link);
+        $ret .= $this->createLink($name.' <i class="fa fa-arrow-right"></i>', $href);
+        $ret .= '<ul>';
+        $subNames = array_keys($link);
+        foreach($subNames as $subName)
         {
-            $sites .= '<li><a href="'.$site_name.'">'.$link.'</a></li>';
+            $ret .= $this->getLinkByName($subName, $link);
         }
-        $side_nav = '';
-        $link_names = array_keys($this->links);
-        foreach($link_names as $link_name)
-        {
-            if(is_array($this->links[$link_name]))
-            {
-                $side_nav .= '<li>';
-                if(isset($this->links[$link_name]['_']))
-                {
-                    $side_nav .= $this->create_link($link_name.' <i class="fa fa-arrow-right"></i>', $this->links[$link_name]['_']);
-                }
-                else
-                {
-                    $side_nav .= $this->create_link($link_name.' <i class="fa fa-arrow-right"></i>');
-                }
-                $side_nav .= '<ul>';
-                $sub_names = array_keys($this->links[$link_name]);
-                foreach($sub_names as $sub_name)
-                {
-                    if(strcmp($sub_name, '_') === 0)
-                    {
-                        continue;
-                    }
-                    $side_nav .='<li>'.$this->create_link($sub_name, $this->links[$link_name][$sub_name]).'</li>';
-                }
-                $side_nav .= '</ul></li>';
-            }
-            else
-            {
-                $side_nav .= '<li>'.$this->create_link($link_name, $this->links[$link_name]).'</li>';
-            }
-        }
+        $ret .= '</ul></li>';
+        return $ret;
+    }
+
+    protected function addHeader()
+    {
+        $sites   = $this->getSiteLinksForHeader();
+        $sideNav = $this->getLinksMenus();
+        $log     = '<a href="https://profiles.burningflipside.com/logout.php"><i class="fa fa-sign-out"></i></a>';
         if($this->user === false || $this->user === null)
         {
-            $log = '<a href="https://profiles.burningflipside.com/login.php?return='.$this->current_url().'"><i class="fa fa-sign-in"></i></a>';
-        }
-        else
-        {
-            $log = '<a href="https://profiles.burningflipside.com/logout.php"><i class="fa fa-sign-out"></i></a>';
+            $log = '<a href="https://profiles.burningflipside.com/login.php?return='.$this->currentUrl().'"><i class="fa fa-sign-in"></i></a>';
         }
         $this->body = '<div id="wrapper">
-                  <nav class="navbar navbar-default navbar-static-top" role=navigation" style="margin-bottom: 0">
+                  <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
                       <div class="navbar-header">
                           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
                               <span class="sr-only">Toggle Navigation</span>
@@ -118,7 +95,7 @@ class FlipAdminPage extends FlipPage
                       <div class="navbar-default sidebar" role="navigation">
                           <div class="sidebar-nav navbar-collapse" style="height: 1px;">
                               <ul class="nav" id="side-menu">
-                                  '.$side_nav.'
+                                  '.$sideNav.'
                               </ul>
                           </div>
                       </div>
@@ -131,39 +108,18 @@ class FlipAdminPage extends FlipPage
     const CARD_YELLOW = 'panel-yellow';
     const CARD_RED    = 'panel-red';
 
-    function add_card($icon_name, $big_text, $little_text, $link='#', $color = self::CARD_BLUE, $text_color=false)
+    public function add_card($iconName, $bigText, $littleText, $link = '#', $color = self::CARD_BLUE)
     {
-        if($text_color === false)
-        {
-            switch($color)
-            {
-                default:
-                    $text_color='';
-                    break;
-                case self::CARD_BLUE:
-                    $text_color='text-primary';
-                    break;
-                case self::CARD_GREEN:
-                    $text_color='text-success';
-                    break;
-                case self::CARD_YELLOW:
-                    $text_color='text-warning';
-                    break;
-                case self::CARD_RED:
-                    $text_color='text-danger';
-                    break;
-            }
-        }
         $card = '<div class="col-lg-3 col-md-6">
                      <div class="panel '.$color.'">
                          <div class="panel-heading">
                              <div class="row">
                                  <div class="col-xs-3">
-                                     <i class="fa '.$icon_name.'" style="font-size: 5em;"></i>
+                                     <i class="fa '.$iconName.'" style="font-size: 5em;"></i>
                                  </div>
                                  <div class="col-xs-9 text-right">
-                                     <div style="font-size: 40px;">'.$big_text.'</div>
-                                     <div>'.$little_text.'</div>
+                                     <div style="font-size: 40px;">'.$bigText.'</div>
+                                     <div>'.$littleText.'</div>
                                  </div>
                              </div>
                          </div>
@@ -179,14 +135,14 @@ class FlipAdminPage extends FlipPage
         $this->body .= $card;
     }
 
-    function print_page($header=true)
+    public function printPage($header = true)
     {
         if($this->user === false || $this->user === null)
         {
             $this->body = '
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">You must <a href="'.$this->login_url.'?return='.$this->current_url().'">log in <span class="glyphicon glyphicon-log-in"></span></a> to access the '.$this->title.' Admin system!</h1>
+                <h1 class="page-header">You must <a href="'.$this->loginUrl.'?return='.$this->currentUrl().'">log in <span class="glyphicon glyphicon-log-in"></span></a> to access the '.$this->title.' Admin system!</h1>
             </div>
         </div>';
         }
@@ -199,8 +155,7 @@ class FlipAdminPage extends FlipPage
             </div>
         </div>';
         }
-        parent::print_page();
+        parent::printPage();
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
-?>

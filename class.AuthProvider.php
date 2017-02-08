@@ -15,57 +15,23 @@
  * Allow other classes to be loaded as needed
  */
 require_once('Autoload.php');
-/**
- * Require the FlipsideSettings file
- */
-require_once '/var/www/secure_settings/class.FlipsideSettings.php';
 
 /**
  * A Singleton class to abstract access to the authentication providers.
  *
  * This class is the primary method to access user data, login, and other authenication information.
  */
-class AuthProvider extends Singleton
+class AuthProvider extends Provider
 {
-    /** The authentication methods loaded by the provider */
-    protected $methods;
-
     /**
-     * Load the authentrication providers specified in the FlipsideSettings::$authProviders array
+     * Load the authentrication providers specified in the Settings $authProviders array
+     *
+     * @SuppressWarnings("StaticAccess")
      */
     protected function __construct()
     {
-        $this->methods = array();
-        if(isset(FlipsideSettings::$authProviders))
-        {
-            $keys = array_keys(FlipsideSettings::$authProviders);
-            $count = count($keys);
-            for($i = 0; $i < $count; $i++)
-            {
-                $class = $keys[$i];
-                array_push($this->methods, new $class(FlipsideSettings::$authProviders[$keys[$i]]));
-            }
-        }
-    }
-
-    /**
-     * Get the Authenticator class instance by name
-     *
-     * @param string $methodName The class name of the Authenticator to get the instance for
-     *
-     * @return Auth\Authenticator|false The specified Authenticator class instance or false if it is not loaded
-     */
-    public function getAuthenticator($methodName)
-    {
-        $count = count($this->methods);
-        for($i = 0; $i < $count; $i++)
-        {
-            if(strcasecmp(get_class($this->methods[$i]), $methodName) === 0)
-            {
-                return $this->methods[$i];
-            }
-        }
-        return false;
+        $settings = \Settings::getInstance();
+        $this->methods = $settings->getClassesByPropName('authProviders');
     }
 
     /**
@@ -128,7 +94,7 @@ class AuthProvider extends Singleton
      */
     public function isLoggedIn($data, $methodName)
     {
-        $auth = $this->getAuthenticator($methodName);
+        $auth = $this->getMethodByName($methodName);
         return $auth->isLoggedIn($data);
     }
 
@@ -142,8 +108,30 @@ class AuthProvider extends Singleton
      */
     public function getUser($data, $methodName)
     {
-        $auth = $this->getAuthenticator($methodName);
+        $auth = $this->getMethodByName($methodName);
         return $auth->getUser($data);
+    }
+
+    /**
+     * Merge or set the returnValue as appropriate
+     *
+     * @param false|Auth\Group|Auth\User $returnValue The value to merge to
+     * @param Auth\Group|Auth\User $res The value to merge from
+     *
+     * @return Auth\Group|false The merged returnValue
+     */
+    public function mergeResult(&$returnValue, $res)
+    {
+        if($res === false)
+        {
+            return;
+        }
+        if($returnValue === false)
+        {
+            $returnValue = $res;
+            return;
+        }
+        $returnValue->merge($res);
     }
 
     /**
@@ -158,130 +146,53 @@ class AuthProvider extends Singleton
     {
         if($methodName === false)
         {
-            $ret = false;
-            $res = false;
-            $count = count($this->methods);
-            for($i = 0; $i < $count; $i++)
-            {
-                if($this->methods[$i]->current === false) continue;
-
-                $res = $this->methods[$i]->getGroupByName($name);
-                if($res !== false)
-                {
-                    if($ret === false)
-                    {
-                        $ret = $res;
-                    }
-                    else
-                    {
-                        $ret->merge($res);
-                    }
-                }
-            }
-            return $ret;
+            return $this->callOnEach('getGroupByName', array($name));
         }
-        else
-        {
-            $auth = $this->getAuthenticator($methodName);
-            return $auth->getGroupByName($name);
-        }
+        $auth = $this->getMethodByName($methodName);
+        return $auth->getGroupByName($name);
     }
 
     /**
      * Get an array of Auth\User from a filtered set
      *
-     * @param Data\Filter|false $filter The filter conditions or false to retreive all
-     * @param array|false $methodName The user fields to obtain or false to obtain all
-     * @param integer|false $top The number of users to obtain or false to obtain all
-     * @param integer|false $skip The number of users to skip or false to skip none
-     * @param array|false $orderby The field to sort by and the method to sort or false to not sort
-     * @param string|false $methodName The AuthMethod if information is desired only from a particular Auth\Authenticator
+     * @param Data\Filter|boolean $filter The filter conditions or false to retreive all
+     * @param array|boolean $select The user fields to obtain or false to obtain all
+     * @param integer|boolean $top The number of users to obtain or false to obtain all
+     * @param integer|boolean $skip The number of users to skip or false to skip none
+     * @param array|boolean $orderby The field to sort by and the method to sort or false to not sort
+     * @param string|boolean $methodName The AuthMethod if information is desired only from a particular Auth\Authenticator
      *
-     * @return array|false An array of Auth\User objects or false if no users were found
+     * @return array|boolean An array of Auth\User objects or false if no users were found
      */
-    public function getUsersByFilter($filter, $select=false, $top=false, $skip=false, $orderby=false, $methodName = false)
+    public function getUsersByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false, $methodName = false)
     {
-        if($methodName === false)
-        {
-            $ret = false;
-            $res = false;
-            $count = count($this->methods);
-            for($i = 0; $i < $count; $i++)
-            {
-                if($this->methods[$i]->current === false) continue;
-
-                $res = $this->methods[$i]->getUsersByFilter($filter, $select, $top, $skip, $orderby);
-                if($res !== false)
-                {
-                    if($ret === false)
-                    {
-                        $ret = $res;
-                    }
-                    else
-                    {
-                        $ret->merge($res);
-                    }
-                }
-            }
-            return $ret;
-        }
-        else
-        {
-            $auth = $this->getAuthenticator($methodName);
-            return $auth->getUsersByFilter($filter, $select, $top, $skip, $orderby);
-        }
+        return $this->callFunction($methodName, 'getUsersByFilter', array($filter, $select, $top, $skip, $orderby), 
+                                    'current', false, array($this, 'mergeResult'));
     }
 
     /**
      * Get an array of Auth\PendingUser from a filtered set
      *
-     * @param Data\Filter|false $filter The filter conditions or false to retreive all
-     * @param array|false $methodName The user fields to obtain or false to obtain all
-     * @param integer|false $top The number of users to obtain or false to obtain all
-     * @param integer|false $skip The number of users to skip or false to skip none
-     * @param array|false $orderby The field to sort by and the method to sort or false to not sort
-     * @param string|false $methodName The AuthMethod if information is desired only from a particular Auth\Authenticator
+     * @param Data\Filter|boolean $filter The filter conditions or false to retreive all
+     * @param array|boolean $select The user fields to obtain or false to obtain all
+     * @param integer|boolean $top The number of users to obtain or false to obtain all
+     * @param integer|boolean $skip The number of users to skip or false to skip none
+     * @param array|boolean $orderby The field to sort by and the method to sort or false to not sort
+     * @param string|boolean $methodName The AuthMethod if information is desired only from a particular Auth\Authenticator
      *
-     * @return array|false An array of Auth\PendingUser objects or false if no pending users were found
+     * @return array|boolean An array of Auth\PendingUser objects or false if no pending users were found
      */
-    public function getPendingUsersByFilter($filter, $select=false, $top=false, $skip=false, $orderby=false, $methodName = false)
+    public function getPendingUsersByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false, $methodName = false)
     {
-        if($methodName === false)
-        {
-            $ret = false;
-            $res = false;
-            $count = count($this->methods);
-            for($i = 0; $i < $count; $i++)
-            {
-                if($this->methods[$i]->pending === false) continue;
-
-                $res = $this->methods[$i]->getPendingUsersByFilter($filter, $select, $top, $skip, $orderby);
-                if($res !== false)
-                {
-                    if($ret === false)
-                    {
-                        $ret = $res;
-                    }
-                    else
-                    {
-                        $ret->merge($res);
-                    }
-                }
-            }
-            return $ret;
-        }
-        else
-        {
-            $auth = $this->getAuthenticator($methodName);
-            return $auth->getPendingUsersByFilter($filter, $select, $top, $skip, $orderby);
-        }
+        return $this->callFunction($methodName, 'getPendingUsersByFilter', array($filter, $select, $top, $skip, $orderby),
+                                    'pending', false, array($this, 'mergeResult'));
     }
 
     /**
      * Get an array of Auth\Group from a filtered set
      *
      * @param Data\Filter|false $filter The filter conditions or false to retreive all
-     * @param array|false $methodName The group fields to obtain or false to obtain all
+     * @param array|false $select The group fields to obtain or false to obtain all
      * @param integer|false $top The number of groups to obtain or false to obtain all
      * @param integer|false $skip The number of groups to skip or false to skip none
      * @param array|false $orderby The field to sort by and the method to sort or false to not sort
@@ -289,37 +200,10 @@ class AuthProvider extends Singleton
      *
      * @return array|false An array of Auth\Group objects or false if no pending users were found
      */
-    public function getGroupsByFilter($filter, $select=false, $top=false, $skip=false, $orderby=false, $methodName = false)
+    public function getGroupsByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false, $methodName = false)
     {
-        if($methodName === false)
-        {
-            $ret = false;
-            $res = false;
-            $count = count($this->methods);
-            for($i = 0; $i < $count; $i++)
-            {
-                if($this->methods[$i]->current === false) continue;
-
-                $res = $this->methods[$i]->getGroupsByFilter($filter, $select, $top, $skip, $orderby);
-                if($res !== false)
-                {
-                    if($ret === false)
-                    {
-                        $ret = $res;
-                    }
-                    else
-                    {
-                        $ret->merge($res);
-                    }
-                }
-            }
-            return $ret;
-        }
-        else
-        {
-            $auth = $this->getAuthenticator($methodName);
-            return $auth->getGroupsByFilter($filter, $select, $top, $skip, $orderby);
-        }
+        return $this->callFunction($methodName, 'getGroupsByFilter', array($filter, $select, $top, $skip, $orderby),
+                                    'current', false, array($this, 'mergeResult'));
     }
 
     /**
@@ -333,21 +217,10 @@ class AuthProvider extends Singleton
     {
         if($methodName === false)
         {
-            $userCount = 0;
-            $count = count($this->methods);
-            for($i = 0; $i < $count; $i++)
-            {
-                if($this->methods[$i]->current === false) continue;
-
-                $userCount += $this->methods[$i]->getActiveUserCount();
-            }
-            return $userCount;
+            return $this->addFromEach('getActiveUserCount', 'current');
         }
-        else
-        {
-            $auth = $this->getAuthenticator($methodName);
-            return $auth->getActiveUserCount();
-        }
+        $auth = $this->getMethodByName($methodName);
+        return $auth->getActiveUserCount();
     }
 
     /**
@@ -361,21 +234,10 @@ class AuthProvider extends Singleton
     {
         if($methodName === false)
         {
-            $userCount = 0;
-            $count = count($this->methods);
-            for($i = 0; $i < $count; $i++)
-            {
-                if($this->methods[$i]->pending === false) continue;
-
-                $userCount += $this->methods[$i]->getPendingUserCount();
-            }
-            return $userCount;
+            return $this->addFromEach('getPendingUserCount', 'pending');
         }
-        else
-        {
-            $auth = $this->getAuthenticator($methodName);
-            return $auth->getPendingUserCount();
-        }
+        $auth = $this->getMethodByName($methodName);
+        return $auth->getPendingUserCount();
     }
 
     /**
@@ -389,21 +251,10 @@ class AuthProvider extends Singleton
     {
         if($methodName === false)
         {
-            $groupCount = 0;
-            $count = count($this->methods);
-            for($i = 0; $i < $count; $i++)
-            {
-                if($this->methods[$i]->current === false) continue;
-
-                $groupCount += $this->methods[$i]->getGroupCount();
-            }
-            return $groupCount;
+            return $this->addFromEach('getGroupCount', 'current');
         }
-        else
-        {
-            $auth = $this->getAuthenticator($methodName);
-            return $auth->getGroupCount();
-        }
+        $auth = $this->getMethodByName($methodName);
+        return $auth->getGroupCount();
     }
 
     /**
@@ -420,7 +271,10 @@ class AuthProvider extends Singleton
         $count = count($this->methods);
         for($i = 0; $i < $count; $i++)
         {
-            if($this->methods[$i]->supplement === false) continue;
+            if($this->methods[$i]->supplement === false)
+            {
+                continue;
+            }
 
             array_push($ret, $this->methods[$i]->getSupplementLink());
         }
@@ -437,15 +291,11 @@ class AuthProvider extends Singleton
      */
     public function impersonateUser($userArray)
     {
-        if(is_object($userArray))
+        if(!is_object($userArray))
         {
-            \FlipSession::setUser($userArray);
+            $userArray = new $userArray['class']($userArray);
         }
-        else
-        {
-            $user = new $userArray['class']($userArray);
-            \FlipSession::setUser($user);
-        }
+        \FlipSession::setUser($userArray);
     }
 
     /**
@@ -460,24 +310,10 @@ class AuthProvider extends Singleton
     {
         if($methodName === false)
         {
-            $count = count($this->methods);
-            for($i = 0; $i < $count; $i++)
-            {
-                if($this->methods[$i]->pending === false) continue;
-
-                $ret = $this->methods[$i]->getTempUserByHash($hash);
-                if($ret !== false)
-                {
-                    return $ret;
-                }
-            }
-            return false;
+            return $this->callOnEach('getTempUserByHash', array($hash), 'pending');
         }
-        else
-        {
-            $auth = $this->getAuthenticator($methodName);
-            return $auth->getTempUserByHash($hash);
-        }
+        $auth = $this->getMethodByName($methodName);
+        return $auth->getTempUserByHash($hash);
     }
 
     /**
@@ -486,7 +322,7 @@ class AuthProvider extends Singleton
      * @param array $user An array of information about the user to create
      * @param string|false $methodName The AuthMethod if information is desired only from a particular Auth\Authenticator
      *
-     * @return true|false true if the user was successfully created. Otherwise false.
+     * @return boolean true if the user was successfully created. Otherwise false.
      */
     public function createPendingUser($user, $methodName = false)
     {
@@ -495,7 +331,10 @@ class AuthProvider extends Singleton
             $count = count($this->methods);
             for($i = 0; $i < $count; $i++)
             {
-                if($this->methods[$i]->pending === false) continue;
+                if($this->methods[$i]->pending === false)
+                {
+                    continue;
+                }
 
                 $ret = $this->methods[$i]->createPendingUser($user);
                 if($ret !== false)
@@ -505,11 +344,8 @@ class AuthProvider extends Singleton
             }
             return false;
         }
-        else
-        {
-            $auth = $this->getAuthenticator($methodName);
-            return $auth->createPendingUser($user);
-        }
+        $auth = $this->getMethodByName($methodName);
+        return $auth->createPendingUser($user);
     }
 
     /**
@@ -521,7 +357,7 @@ class AuthProvider extends Singleton
      * @param Auth\PendingUser $user The user to turn into a current user
      * @param string|false $methodName The AuthMethod if information is desired only from a particular Auth\Authenticator
      *
-     * @return true|false true if the user was successfully created. Otherwise false.
+     * @return boolean true if the user was successfully created. Otherwise false.
      */
     public function activatePendingUser($user, $methodName = false)
     {
@@ -530,7 +366,10 @@ class AuthProvider extends Singleton
             $count = count($this->methods);
             for($i = 0; $i < $count; $i++)
             {
-                if($this->methods[$i]->current === false) continue;
+                if($this->methods[$i]->current === false)
+                {
+                    continue;
+                }
 
                 $ret = $this->methods[$i]->activatePendingUser($user);
                 if($ret !== false)
@@ -541,11 +380,8 @@ class AuthProvider extends Singleton
             }
             return false;
         }
-        else
-        {
-            $auth = $this->getAuthenticator($methodName);
-            return $auth->activatePendingUser($user);
-        }
+        $auth = $this->getMethodByName($methodName);
+        return $auth->activatePendingUser($user);
     }
 
     /**
@@ -560,28 +396,14 @@ class AuthProvider extends Singleton
     {
         if($methodName === false)
         {
-            $count = count($this->methods);
-            for($i = 0; $i < $count; $i++)
-            {
-                if($this->methods[$i]->current === false) continue;
-
-                $ret = $this->methods[$i]->getUserByResetHash($hash);
-                if($ret !== false)
-                {
-                    return $ret;
-                }
-            }
-            return false;
+            return $this->callOnEach('getUserByResetHash', array($hash), 'current');
         }
-        else
+        $auth = $this->getMethodByName($methodName);
+        if($auth === false)
         {
-            $auth = $this->getAuthenticator($methodName);
-            if($auth === false)
-            {
-                return $this->getUserByResetHash($hash, false);
-            }
-            return $auth->getUserByResetHash($hash);
+            return $this->getUserByResetHash($hash, false);
         }
+        return $auth->getUserByResetHash($hash);
     }
 
     /**
@@ -596,7 +418,10 @@ class AuthProvider extends Singleton
         $count = count($this->methods);
         for($i = 0; $i < $count; $i++)
         {
-            if($this->methods[$i]->supplement === false) continue;
+            if($this->methods[$i]->supplement === false)
+            {
+                continue;
+            }
 
             if($this->methods[$i]->getHostName() === $host)
             {
@@ -606,7 +431,15 @@ class AuthProvider extends Singleton
         return false;
     }
 
-    public function deletePendingUsersByFilter($filter, $methodName=false)
+    /**
+     * Delete any pending users that match the filter
+     *
+     * @param \Data\Filter|boolean $filter The filter to delete with or false to delete all
+     * @param string|boolean $methodName The AuthMethod if information is desired only from a particular Auth\Authenticator
+     *
+     * @return boolean True if the users were deleted, false otherwise
+     */
+    public function deletePendingUsersByFilter($filter, $methodName = false)
     {
         $users = $this->getPendingUsersByFilter($filter, false, false, false, false, $methodName);
         if($users === false)
@@ -620,6 +453,23 @@ class AuthProvider extends Singleton
         }
         return true;
     }
+
+    /**
+     * Get the user by the one time access code
+     *
+     * @param string $key The user's access code
+     * @param string|boolean $methodName The AuthMethod if information is desired only from a particular Auth\Authenticator
+     *
+     * @return boolean|\Auth\User The User specified by the access code or false otherwise
+     */
+    public function getUserByAccessCode($key, $methodName = false)
+    {
+        if($methodName === false)
+        {
+            return $this->callOnEach('getUserByAccessCode', array($key), 'current');
+        }
+        $auth = $this->getMethodByName($methodName);
+        return $auth->getUserByAccessCode($key);
+    }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
-?>

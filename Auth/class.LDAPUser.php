@@ -3,45 +3,27 @@ namespace Auth;
 
 class LDAPUser extends User
 {
-    private $ldap_obj;
+    use LDAPCachableObject;
+    use LDAPGettableObject;
+    use LDAPSettableObject;
+
+    private $ldapObj;
     private $server;
 
-    function __construct($data=false)
+    /**
+     * Initialize a LDAPUser object
+     *
+     * @param boolean|array|object $data The data to initialize the LDAPUser with or false for an empty User
+     *
+     * @SuppressWarnings("StaticAccess")
+     */
+    public function __construct($data = false)
     {
-        if($data !== false && !isset($data['dn']) && !isset($data['extended']))
-        {
-            //Generic user object
-            $this->server = \LDAP\LDAPServer::getInstance();
-            $filter = new \Data\Filter('mail eq '.$data['mail']);
-            $users = $this->server->read($this->server->user_base, $filter);
-            if($users === false || !isset($users[0]))
-            {
-                throw new \Exception('No such LDAP User!');
-            }
-            $this->ldap_obj = $users[0];
-        }
-        else
-        {
-            if(isset($data['extended']))
-            {
-                $this->ldap_obj = $data['extended'];
-            }
-            else
-            {
-                $this->ldap_obj = $data;
-            }
-            if(is_object($this->ldap_obj))
-            {
-                $this->server   = $this->ldap_obj->server;
-            }
-            if($this->server === null)
-            {
-                $this->server = \LDAP\LDAPServer::getInstance();
-            }
-        }
+        $this->server = \LDAP\LDAPServer::getInstance();
+        $this->initialize($data);
     }
 
-    private function check_child_group($array)
+    private function checkChildGroup($array)
     {
         $res = false;
         for($i = 0; $i < $array['count']; $i++)
@@ -50,220 +32,92 @@ class LDAPUser extends User
             {
                 $dn = explode(',', $array[$i]);
                 $res = $this->isInGroupNamed(substr($dn[0], 3));
-                if($res) return $res;
+                if($res)
+                {
+                    return $res;
+                }
             }
         }
         return $res;
     }
 
-    function isInGroupNamed($name)
+    /**
+     * @param string $listName The name of the list to search
+     * @param Group $group The group to search inside
+     * @param string $dn The distringuished name to search for
+     */
+    private function isInListOrChild($listName, $group, $dn)
+    {
+        if(!isset($group[$listName]))
+        {
+            return false;
+        }
+        if(in_array($dn, $group[$listName]))
+        {
+            return true;
+        }
+        return $this->checkChildGroup($group[$listName]);
+    }
+
+    private function uidInMemberUid($group, $uid)
+    {
+        return (isset($group['memberUid']) && in_array($uid, $group['memberUid']));
+    }
+
+    public function isInGroupNamed($name)
     {
         $filter = new \Data\Filter('cn eq '.$name);
         $group = $this->server->read($this->server->group_base, $filter);
         if(!empty($group))
         {
             $group = $group[0];
-            $dn  = $this->ldap_obj->dn;
-            $uid = $this->ldap_obj->uid[0];
-            if(isset($group['member']))
+            $dn  = $this->ldapObj->dn;
+            $uid = $this->ldapObj->uid[0];
+            $ret = $this->isInListOrChild('member', $group, $dn);
+            if($ret === false)
             {
-                if(in_array($dn, $group['member']))
-                {
-                    return true;
-                }
-                else
-                {
-                    return $this->check_child_group($group['member']);
-                }
+                $ret = $this->isInListOrChild('uniquemember', $group, $dn);
             }
-            else if(isset($group['uniquemember']))
-            {
-                if(in_array($dn, $group['uniquemember']))
-                {
-                    return true;
-                }
-                else
-                {
-                    return $this->check_child_group($group['uniquemember']);
-                }
-            }
-            else if(isset($group['memberUid']) && in_array($uid, $group['memberUid']))
+            if($ret === false && $this->uidInMemberUid($group, $uid))
             {
                 return true;
             }
+            return $ret;
         }
         return false;
     }
 
-    function getDisplayName()
+    protected $valueDefaults = array(
+        'o' => 'Volunteer'
+    );
+
+    protected $multiValueProps = array(
+        'title',
+        'ou',
+        'host'
+    );
+
+    protected $cachedOnlyProps = array(
+        'uid'
+    );
+
+    /**
+     * Allow write for the user
+     *
+     * @SuppressWarnings("StaticAccess")
+     */
+    protected function enableReadWrite()
     {
-        if(!isset($this->ldap_obj->displayname) || !isset($this->ldap_obj->displayname[0]))
+        //Make sure we are bound in write mode
+        $auth = \AuthProvider::getInstance();
+        $ldap = $auth->getMethodByName('Auth\LDAPAuthenticator');
+        if($ldap !== false)
         {
-            return $this->getGivenName();
+            $ldap->getAndBindServer(true);
         }
-        return $this->ldap_obj->displayname[0];
     }
 
-    function getGivenName()
-    {
-        if(!isset($this->ldap_obj->givenname) || !isset($this->ldap_obj->givenname[0]))
-        {
-            return false;
-        }
-        return $this->ldap_obj->givenname[0];
-    }
-
-    function getEmail()
-    {
-        if(!isset($this->ldap_obj->mail) || !isset($this->ldap_obj->mail[0]))
-        {
-            return false;
-        }
-        return $this->ldap_obj->mail[0];
-    }
-
-    function getUid()
-    {
-        if(!isset($this->ldap_obj->uid) || !isset($this->ldap_obj->uid[0]))
-        {
-            return false;
-        }
-        return $this->ldap_obj->uid[0];
-    }
-
-    function getPhoto()
-    {
-        if(!isset($this->ldap_obj->jpegphoto) || !isset($this->ldap_obj->jpegphoto[0]))
-        {
-            return false;
-        }
-        return $this->ldap_obj->jpegphoto[0];
-    }
-
-    function getPhoneNumber()
-    {
-        if(!isset($this->ldap_obj->mobile) || !isset($this->ldap_obj->mobile[0]))
-        {
-            return false;
-        }
-        return $this->ldap_obj->mobile[0];
-    }
-
-    function getOrganization()
-    {
-        if(!isset($this->ldap_obj->o) || !isset($this->ldap_obj->o[0]))
-        {
-            return 'Volunteer';
-        }
-        return $this->ldap_obj->o[0];
-    }
-
-    function getTitles()
-    {
-        if(!isset($this->ldap_obj->title) || !isset($this->ldap_obj->title[0]))
-        {
-            return false;
-        }
-        $titles = $this->ldap_obj->title;
-        if(isset($titles['count']))
-        {
-            unset($titles['count']);
-        }
-        return $titles;
-    }
-
-    function getState()
-    {
-        if(!isset($this->ldap_obj->st) || !isset($this->ldap_obj->st[0]))
-        {
-            return false;
-        }
-        return $this->ldap_obj->st[0];;
-    }
-
-    function getCity()
-    {
-        if(!isset($this->ldap_obj->l) || !isset($this->ldap_obj->l[0]))
-        {
-            return false;
-        }
-        return $this->ldap_obj->l[0];;
-    }
-
-    function getLastName()
-    {
-        if(!isset($this->ldap_obj->sn) || !isset($this->ldap_obj->sn[0]))
-        {
-            return false;
-        }
-        return $this->ldap_obj->sn[0];;
-    }
-
-    function getNickName()
-    {
-        if(!isset($this->ldap_obj->cn) || !isset($this->ldap_obj->cn[0]))
-        {
-            return false;
-        }
-        return $this->ldap_obj->cn[0];;
-    }
-
-    function getAddress()
-    {
-        if(!isset($this->ldap_obj->postaladdress) || !isset($this->ldap_obj->postaladdress[0]))
-        {
-            return false;
-        } 
-        return $this->ldap_obj->postaladdress[0];
-    }
-
-    function getPostalCode()
-    {
-        if(!isset($this->ldap_obj->postalcode) || !isset($this->ldap_obj->postalcode[0]))
-        {
-            return false;
-        }
-        return $this->ldap_obj->postalcode[0];;
-    }
-
-    function getCountry()
-    {
-        if(!isset($this->ldap_obj->c) || !isset($this->ldap_obj->c[0]))
-        {
-            return false;
-        }
-        return $this->ldap_obj->c[0];
-    }
-
-    function getOrganizationUnits()
-    {
-        if(!isset($this->ldap_obj->ou))
-        {
-            return false;
-        }
-        $units = $this->ldap_obj->ou;
-        if(isset($units['count']))
-        {
-            unset($units['count']);
-        }
-        return $units;
-    }
-
-    function getLoginProviders()
-    {
-        if(!isset($this->ldap_obj->host))
-        {
-            return false;
-        }
-        $hosts = $this->ldap_obj->host;
-        if(isset($hosts['count']))
-        {
-            unset($hosts['count']);
-        }
-        return $hosts;
-    }
-
-    function getGroups()
+    public function getGroups()
     {
         $res = array();
         $groups = $this->server->read($this->server->group_base);
@@ -279,92 +133,55 @@ class LDAPUser extends User
             }
             return $res;
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
 
-    function addLoginProvider($provider)
+    public function addLoginProvider($provider)
     {
-        if(!is_object($this->ldap_obj))
-        {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            $this->ldap_obj['host'] = $provider;
-        }
-        else
-        {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            if(isset($this->ldap_obj->host))
-            {
-                $obj['host'] = $this->ldap_obj->host;
-                $obj['host'][$obj['host']['count']] = $provider;
-                $obj['host']['count']++;
-            }
-            else
-            {
-                $obj['host'] = $provider;
-            }
-            return $this->server->update($obj);
-        }
+        return $this->appendField('host', $provider);
     }
 
     private function generateLDAPPass($pass)
     {
-        mt_srand((double)microtime()*1000000);
+        mt_srand((double)microtime() * 1000000);
         $salt = pack("CCCC", mt_rand(), mt_rand(), mt_rand(), mt_rand());
-        $hash = base64_encode(pack('H*',sha1($pass.$salt)).$salt);
+        $hash = base64_encode(pack('H*', sha1($pass.$salt)).$salt);
         return '{SSHA}'.$hash;
     }
 
-    function setPass($password)
+    public function setPass($password)
     {
-        if(!is_object($this->ldap_obj))
+        $password = $this->generateLDAPPass($password);
+        if(!is_object($this->ldapObj))
         {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            $this->ldap_obj['userPassword'] = $this->generateLDAPPass($password);
+            return $this->setFieldLocal('userPassword', $password);
         }
-        else
+        $obj = array('dn'=>$this->ldapObj->dn);
+        $obj['userPassword'] = $password;
+        if(isset($this->ldapObj->uniqueidentifier))
         {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            $obj['userPassword'] = $this->generateLDAPPass($password);
-            if(isset($this->ldap_obj->uniqueidentifier))
-            {
-               $obj['uniqueIdentifier'] = null;
-            }
-            //Make sure we are bound in write mode
-            $auth = \AuthProvider::getInstance();
-            $ldap = $auth->getAuthenticator('Auth\LDAPAuthenticator');
-            $ldap->get_and_bind_server(true);
-            return $this->server->update($obj);
+            $obj['uniqueIdentifier'] = null;
         }
+        //Make sure we are bound in write mode
+        $this->enableReadWrite();
+        return $this->update($obj);
     }
 
-    function validate_password($password)
+    public function validate_password($password)
     {
-        if($this->server->bind($this->ldap_obj->dn, $password))
+        return $this->server->bind($this->ldapObj->dn, $password) !== false;
+    }
+
+    public function validate_reset_hash($hash)
+    {
+        if(isset($this->ldapObj->uniqueidentifier) && strcmp($this->ldapObj->uniqueidentifier[0], $hash) === 0)
         {
             return true;
         }
         return false;
     }
 
-    function validate_reset_hash($hash)
-    {
-        if(isset($this->ldap_obj->uniqueidentifier) && strcmp($this->ldap_obj->uniqueidentifier[0], $hash) === 0)
-        {
-            return true;
-        }
-        return false;
-    }
-
-    static function from_name($name, $data=false)
+    public static function from_name($name, $data)
     {
         if($data === false)
         {
@@ -372,347 +189,23 @@ class LDAPUser extends User
         }
         $filter = new \Data\Filter("uid eq $name");
         $user = $data->read($data->user_base, $filter);
-        if($user === false || !isset($user[0]))
+        if(empty($user))
         {
             return false;
         }
         return new static($user[0]);
     }
 
-    static function from_dn($dn, $data=false)
+    public function flushUser()
     {
-        if($data === false)
-        {
-            throw new \Exception('data must be set for LDAPUser');
-        }
-        $filter = new \Data\Filter("dn eq $dn");
-        $user = $data->read($data->user_base, $filter);
-        if($user === false || !isset($user[0]))
-        {
-            return false;
-        }
-        return new static($user[0]);
-    }
-
-    private function update($obj)
-    {
-        try
-        {
-            return $this->server->update($obj);
-        }
-        catch(\Exception $ex)
-        {
-            $auth = \AuthProvider::getInstance();
-            $ldap = $auth->getAuthenticator('Auth\LDAPAuthenticator');
-            $this->server = $ldap->get_and_bind_server(true);
-            return $this->server->update($obj);
-        }
-    }
-
-    function setDisplayName($name)
-    {
-        if(!is_object($this->ldap_obj))
-        {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            if(strlen($name) > 0)
-            {
-                $this->ldap_obj['displayName'] = $name;
-            }
-            else if(isset($this->ldap_obj['displayName']))
-            {
-                unset($this->ldap_obj['displayName']);
-            }
-        }
-        else
-        {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            if(strlen($name) > 0)
-            {
-                $obj['displayName'] = $name;
-            }
-            else
-            {
-                $obj['displayName'] = null;
-            }
-            $this->ldap_obj->displayname = array($name);
-            return $this->update($obj);
-        }
-    }
-
-    function setGivenName($name)
-    {
-        if(!is_object($this->ldap_obj))
-        {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            $this->ldap_obj['givenName'] = $name;
-        }
-        else
-        {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            $obj['givenName'] = $name;
-            $this->ldap_obj->givenname = array($name);
-            return $this->update($obj);
-        }
-    }
-
-    function setLastName($sn)
-    {
-        if(!is_object($this->ldap_obj))
-        {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            $this->ldap_obj['sn'] = $sn;
-        }
-        else
-        {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            $obj['sn'] = $sn;
-            $this->ldap_obj->sn = array($sn);
-            return $this->update($obj);
-        }
-    }
-
-    function setEmail($email)
-    {
-        if(!is_object($this->ldap_obj))
-        {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            $this->ldap_obj['mail'] = $email;
-        }
-        else
-        {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            $obj['mail'] = $email;
-            $this->ldap_obj->mail = array($email);
-            return $this->update($obj);
-        }
-    }
-
-    function setUid($uid)
-    {
-        if(!is_object($this->ldap_obj))
-        {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            $this->ldap_obj['uid'] = $uid;
-        }
-        else
-        {
-            throw new \Exception('Unsupported!');
-        }
-    }
-
-    function setPhoto($photo)
-    {
-        if(!is_object($this->ldap_obj))
-        {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            $this->ldap_obj['jpegPhoto'] = $photo;
-        }
-        else
-        {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            $obj['jpegPhoto'] = $photo;
-            $this->ldap_obj->jpegphoto = array($photo);
-            return $this->update($obj);
-        }
-    }
-
-    function setAddress($address)
-    {
-        if(!is_object($this->ldap_obj))
-        {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            $this->ldap_obj['postalAddress'] = $address;
-        }
-        else
-        {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            $obj['postalAddress'] = $address;
-            $this->ldap_obj->postaladdress = array($address);
-            return $this->update($obj);
-        }
-    }
-
-    function setPostalCode($postalcode)
-    {
-        $postalcode = trim($postalcode);
-        if(!is_object($this->ldap_obj))
-        {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            $this->ldap_obj['postalCode'] = $postalcode;
-        }
-        else
-        {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            $obj['postalCode'] = $postalcode;
-            $this->ldap_obj->postalcode = array($postalcode);
-            return $this->update($obj);
-        }
-    }
-
-    function setCountry($country)
-    {
-        if(!is_object($this->ldap_obj))
-        {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            $this->ldap_obj['c'] = $country;
-        }
-        else
-        {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            $obj['c'] = $country;
-            $this->ldap_obj->c = array($country);
-            return $this->update($obj);
-        }
-    }
-
-    function setState($state)
-    {
-        if(!is_object($this->ldap_obj))
-        {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            $this->ldap_obj['st'] = $state;
-        }
-        else
-        {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            $obj['st'] = $state;
-            $this->ldap_obj->st = array($state);
-            return $this->update($obj);
-        }
-    }
-
-    function setCity($city)
-    {
-        if(!is_object($this->ldap_obj))
-        {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            $this->ldap_obj['l'] = $city;
-        }
-        else
-        {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            $obj['l'] = $city;
-            $this->ldap_obj->l = array($city);
-            return $this->update($obj);
-        }
-    }
-
-    function setPhoneNumber($phone)
-    {
-        if(!is_object($this->ldap_obj))
-        {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            $this->ldap_obj['mobile'] = $phone;
-        }
-        else
-        {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            $obj['mobile'] = $phone;
-            $this->ldap_obj->mobile = array($phone);
-            return $this->update($obj);
-        }
-    }
-
-    function setTitles($titles)
-    {
-        if(!is_object($this->ldap_obj))
-        {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            $this->ldap_obj['title'] = $titles;
-        }
-        else
-        {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            if($titles === '') $titles = null;
-            $obj['title'] = $titles;
-            if(is_array($titles))
-            {
-                $this->ldap_obj->title = $titles;
-            }
-            else
-            {
-                $this->ldap_obj->title = array($titles);
-            }
-            return $this->update($obj);
-        }
-    }
-
-    function setOrganizationUnits($ous)
-    {
-        if(!is_object($this->ldap_obj))
-        {
-            if($this->ldap_obj === false)
-            {
-                $this->ldap_obj = array();
-            }
-            $this->ldap_obj['ou'] = $ous;
-        }
-        else
-        {
-            $obj = array('dn'=>$this->ldap_obj->dn);
-            if($ous === '') $ous = null;
-            $obj['ou'] = $ous;
-            if(is_array($ous))
-            {
-                $this->ldap_obj->ou = $ous;
-            }
-            else
-            {
-                $this->ldap_obj->ou = array($ous);
-            }
-            return $this->update($obj);
-        }
-    }
-
-    function flushUser()
-    {
-        if(is_object($this->ldap_obj))
+        if(is_object($this->ldapObj))
         {
             //In this mode we are always up to date
             return true;
         }
-        $obj = $this->ldap_obj;
+        $obj = $this->ldapObj;
         $obj['objectClass'] = array('top', 'inetOrgPerson', 'extensibleObject');
-        $obj['dn'] = 'uid='.$this->ldap_obj['uid'].','.$this->server->user_base;
+        $obj['dn'] = 'uid='.$this->ldapObj['uid'].','.$this->server->user_base;
         if(!isset($obj['sn']))
         {
             $obj['sn'] = $obj['uid'];
@@ -725,24 +218,23 @@ class LDAPUser extends User
         return $ret;
     }
 
+    private function getHashFromUser($ldapObj)
+    {
+        if(isset($ldapObj->userpassword))
+        {
+            return hash('sha512', $ldapObj->dn.';'.$ldapObj->userpassword[0].';'.$ldapObj->mail[0]);
+        }
+        return hash('sha512', $ldapObj->dn.';'.openssl_random_pseudo_bytes(10).';'.$ldapObj->mail[0]);
+    }
+
     public function getPasswordResetHash()
     {
         //Make sure we are bound in write mode
-        $auth = \AuthProvider::getInstance();
-        $ldap = $auth->getAuthenticator('Auth\LDAPAuthenticator');
-        $ldap->get_and_bind_server(true);
-        $ldap_obj = $this->server->read($ldap->user_base, new \Data\Filter('uid eq '.$this->getUid()));
-        $ldap_obj = $ldap_obj[0];
-        $hash = false;
-        if(isset($ldap_obj->userpassword))
-        {
-            $hash = hash('sha512', $ldap_obj->dn.';'.$ldap_obj->userpassword[0].';'.$ldap_obj->mail[0]);
-        }
-        else
-        {
-            $hash = hash('sha512', $ldap_obj->dn.';'.openssl_random_pseudo_bytes(10).';'.$ldap_obj->mail[0]);
-        }
-        $obj = array('dn'=>$this->ldap_obj->dn);
+        $this->enableReadWrite();
+        $ldapObj = $this->server->read($this->server->user_base, new \Data\Filter('uid eq '.$this->uid));
+        $ldapObj = $ldapObj[0];
+        $hash = $this->getHashFromUser($ldapObj);
+        $obj = array('dn'=>$this->ldapObj->dn);
         $obj['uniqueIdentifier'] = $hash;
         if($this->server->update($obj) === false)
         {
@@ -754,11 +246,8 @@ class LDAPUser extends User
     public function delete()
     {
         //Make sure we are bound in write mode
-        $auth = \AuthProvider::getInstance();
-        $ldap = $auth->getAuthenticator('Auth\LDAPAuthenticator');
-        $ldap->get_and_bind_server(true);
-        return $this->server->delete($this->ldap_obj->dn);
+        $this->enableReadWrite();
+        return $this->server->delete($this->ldapObj->dn);
     }
 }
-
-?>
+/* vim: set tabstop=4 shiftwidth=4 expandtab: */

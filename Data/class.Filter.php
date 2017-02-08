@@ -7,7 +7,12 @@ class Filter
     protected $string;
     protected $sqlAppend = '';
 
-    function __construct($string = false)
+    /**
+     * Creates a new filter object
+     *
+     * @param false|string $string The string to create the filter from or false for an empty filter
+     */
+    public function __construct($string = false)
     {
         if($string !== false)
         {
@@ -22,7 +27,7 @@ class Filter
         //First check for parenthesis...
         if($string[0] === '(' && substr($string, -1) === ')')
         {
-            $string = substr($string, 1, strlen($string)-2);
+            $string = substr($string, 1, strlen($string) - 2);
             $parens = true;
         }
         if(preg_match('/(.+?)( and | or )(.+)/', $string, $clauses) === 0)
@@ -30,15 +35,21 @@ class Filter
             return array(new FilterClause($string));
         }
         $children = array();
-        if($parens) array_push($children, '(');
+        if($parens)
+        {
+            array_push($children, '(');
+        }
         $children = array_merge($children, self::process_string($clauses[1]));
         array_push($children, trim($clauses[2]));
         $children = array_merge($children, self::process_string($clauses[3]));
-        if($parens) array_push($children, ')');
+        if($parens)
+        {
+            array_push($children, ')');
+        }
         return $children;
     }
 
-    function to_sql_string()
+    public function to_sql_string()
     {
         $ret = '';
         $count = count($this->children);
@@ -46,25 +57,25 @@ class Filter
         {
             if($this->children[$i] === '(' || $this->children[$i] === ')')
             {
-                $ret.=$this->children[$i];
+                $ret .= $this->children[$i];
             }
             else if($this->children[$i] === 'and')
             {
-                $ret.=' AND ';
+                $ret .= ' AND ';
             }
             else if($this->children[$i] === 'or')
             {
-                $ret.=' OR ';
+                $ret .= ' OR ';
             }
             else
             {
-                $ret.=$this->children[$i]->to_sql_string();
+                $ret .= $this->children[$i]->to_sql_string();
             }
         }
         return $ret.$this->sqlAppend;
     }
 
-    function to_ldap_string()
+    public function to_ldap_string()
     {
         $ret = '';
         $count = count($this->children);
@@ -89,7 +100,7 @@ class Filter
             }
             else
             {
-                $ret.=$this->children[$i]->to_ldap_string();
+                $ret .= $this->children[$i]->to_ldap_string();
             }
         }
         if($count === 1 && $prefix === '')
@@ -99,7 +110,7 @@ class Filter
         return '('.$prefix.$ret.')';
     }
 
-    function to_mongo_filter()
+    public function to_mongo_filter()
     {
         $ret = array();
         $count = count($this->children);
@@ -108,27 +119,26 @@ class Filter
             if($this->children[$i] === 'and')
             {
                 $old = array_pop($ret);
-                array_push($ret, array('$and'=>array($old, $this->children[++$i]->to_mongo_filter())));
+                array_push($ret, array('$and'=>array($old, $this->children[++$i]->toMongoFilter())));
             }
             else if($this->children[$i] === 'or')
             {
                 $old = array_pop($ret);
-                array_push($ret, array('$or'=>array($old, $this->children[++$i]->to_mongo_filter())));
+                array_push($ret, array('$or'=>array($old, $this->children[++$i]->toMongoFilter())));
             }
             else
             {
-                array_push($ret, $this->children[$i]->to_mongo_filter());
+                array_push($ret, $this->children[$i]->toMongoFilter());
             }
         }
         if(count($ret) == 1 && is_array($ret[0]))
         {
-            //print_r(json_encode($ret[0])); die();
             return $ret[0];
         }
         return $ret;
     }
 
-    function filter_array(&$array)
+    public function filter_array(&$array)
     {
         $res = array();
         if(is_array($array))
@@ -173,7 +183,10 @@ class Filter
         $count = count($this->children);
         for($i = 0; $i < $count; $i++)
         {
-            if(!is_object($this->children[$i])) continue;
+            if(!is_object($this->children[$i]))
+            {
+                continue;
+            }
             if(strstr($this->children[$i]->var1, $substr) !== false ||
                strstr($this->children[$i]->var2, $substr) !== false)
             {
@@ -184,7 +197,7 @@ class Filter
 
     public function addToSQLString($string)
     {
-        $this->sqlAppend.=$string;
+        $this->sqlAppend .= $string;
     }
 
     public function appendChild($child)
@@ -209,4 +222,3 @@ class Filter
         return $this->children;
     }
 }
-?>

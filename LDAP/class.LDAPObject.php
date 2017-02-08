@@ -3,21 +3,27 @@ namespace LDAP;
 
 class LDAPObject extends \SerializableObject
 {
-     public $server;
+    public $server;
 
-     function __construct($array=false, $server=false)
-     {
-         parent::__construct($array);
-         $this->server = $server;
-     }
+    function __construct($array = false, $server = false)
+    {
+        parent::__construct($array);
+        $this->server = $server;
+    }
 
-     public function jsonSerialize()
-     {
-         $ret = array();
-         foreach ($this as $key => $value)
-         {
-            if($key === 'server' || $key === 'count') continue;
-            if(is_numeric($key)) continue;
+    public function jsonSerialize()
+    {
+        $ret = array();
+        foreach($this as $key => $value)
+        {
+            if($key === 'server' || $key === 'count')
+            {
+                continue;
+            }
+            if(is_numeric($key))
+            {
+                continue;
+            }
             if($key === 'jpegphoto')
             {
                 $ret[$key] = base64_encode($value[0]);
@@ -31,9 +37,8 @@ class LDAPObject extends \SerializableObject
             {
                 $ret[$key] = $value;
             }
-         }
-         return $ret;
-     }
+        }
+        return $ret;
+    }
 }
-
-?>
+/* vim: set tabstop=4 shiftwidth=4 expandtab: */

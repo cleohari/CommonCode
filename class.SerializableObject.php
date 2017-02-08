@@ -16,20 +16,27 @@
  *
  * This class can be serialized to various formats
  */
-class SerializableObject implements ArrayAccess,JsonSerializable
+class SerializableObject implements ArrayAccess, JsonSerializable
 {
     /**
      * Create the object from an array
      *
-     * @param array $array The array of object properties
+     * @param boolean|array $array The array of object properties
      */
-    public function __construct($array=false)
+    public function __construct($array = false)
     {
-        if($array !== false && is_array($array))
+        if($array !== false)
         {
-            foreach($array as $key => $value)
+            if(is_object($array))
             {
-                $this->{$key} = $value;
+                $array = get_object_vars($array);
+            }
+            if(is_array($array))
+            {
+                foreach($array as $key => $value)
+                {
+                    $this->{$key} = $value;
+                }
             }
         }
     }
@@ -37,11 +44,11 @@ class SerializableObject implements ArrayAccess,JsonSerializable
     /**
      * Serialize the object into a format consumable by json_encode
      *
-     * @return mixed The object in a more serialized format
+     * @return array The object in a more serialized format
      */
     public function jsonSerialize()
     {
-        return $this;
+        return (array)$this;
     }
 
     /**
@@ -54,18 +61,50 @@ class SerializableObject implements ArrayAccess,JsonSerializable
         $xml = new XmlWriter();
         $xml->openMemory();
         $xml->startDocument('1.0');
+        if(version_compare(PHP_VERSION, '7.0.0', '>='))
+        {
+            $this->php7XmlSerialize($xml);
+        }
+        else
+        {
+            $this->oldPhpSerialize($xml);
+        }
+        $xml->endElement();
+        return $xml->outputMemory(true);
+    }
+
+    private function php7XmlSerialize(XMLWriter $xml)
+    {
         if(isset($this[0]))
         {
             $xml->startElement('Array');
-            $this->array2XML($xml, 'Entity', (array)$this);
+            $this->array2XML($xml, 'Entity', get_object_vars($this));
             $xml->endElement();
         }
         else
         {
             $this->object2XML($xml, $this);
         }
-        $xml->endElement();
-        return $xml->outputMemory(true);
+    }
+
+    private function oldPhpSerialize(XMLWriter $xml)
+    {
+        $tmp = json_decode(json_encode($this), false);
+        $tmpA = $tmp;
+        if(is_object($tmp))
+        {
+            $tmpA = get_object_vars($tmp);
+        }
+        if(isset($tmpA[0]))
+        {
+            $xml->startElement('Array');
+            $this->array2XML($xml, 'Entity', $tmpA);
+            $xml->endElement();
+        }
+        else
+        {
+            $this->object2XML($xml, $tmp);
+        }
     }
 
     /**
@@ -86,7 +125,7 @@ class SerializableObject implements ArrayAccess,JsonSerializable
             {
                 $xml->startElement($key);
                 $this->object2XML($xml, $value);
-		$xml->endElement();
+                $xml->endElement();
             }
             else
             {
@@ -104,6 +143,18 @@ class SerializableObject implements ArrayAccess,JsonSerializable
     }
 
     /**
+     * Determine if an array has any string keys
+     *
+     * @param array $array The array to test
+     * 
+     * @return boolean True if the array has string keys, false otherwise
+     */
+    private function arrayHasStringKeys(array $array)
+    {
+        return count(array_filter(array_keys($array), 'is_string')) > 0;
+    }
+
+    /**
      * Convert an array to XML without document tags
      *
      * @param XmlWriter $xml The XMLWriter to write the object to
@@ -112,31 +163,32 @@ class SerializableObject implements ArrayAccess,JsonSerializable
      */
     private function array2XML(XMLWriter $xml, $keyParent, $data)
     {
-        foreach($data as $key => $value)
+        $data = array_values($data);
+        $count = count($data);
+        for($i = 0; $i < $count; $i++)
         {
-	    if(is_string($value))
-            {
-                $xml->writeElement($keyParent, $value);
-                continue;
-            }
-            if(is_numeric($key))
+            $value = $data[$i];
+            if(is_array($value) && isset($value[0]))
             {
                 $xml->startElement($keyParent);
-            }
- 
-            if(is_object($value))
-            {
-                $this->object2XML($xml, $value);
-            }
-            else if(is_array($value))
-            {
-                $this->array2XML($xml, $key, $value);
-                continue;
-            }
- 
-            if(is_numeric($key))
-            {
+                $this->array2XML($xml, 'Child', $value);
                 $xml->endElement();
+            }
+            else if(is_array($value) && $this->arrayHasStringKeys($value))
+            {
+                $xml->startElement($keyParent);
+                $this->object2XML($xml, $value);
+                $xml->endElement();
+            }
+            else if(is_object($value))
+            {
+                $xml->startElement($keyParent);
+                $this->object2XML($xml, $value);
+                $xml->endElement();
+            }
+            else
+            {
+                $xml->writeElement($keyParent, $value);
             }
         }
     }
@@ -229,4 +281,3 @@ class SerializableObject implements ArrayAccess,JsonSerializable
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
-?>

@@ -1,6 +1,9 @@
 <?php
 require_once('Autoload.php');
-if(!isset($_SESSION) && php_sapi_name() !== 'cli') { session_start(); }
+if(!isset($_SESSION) && php_sapi_name() !== 'cli')
+{
+    session_start();
+}
 if(!isset($_SESSION['ip_address']) && isset($_SERVER['REMOTE_ADDR']))
 {
     $_SESSION['ip_address'] = $_SERVER['REMOTE_ADDR'];
@@ -17,7 +20,7 @@ class FlipSession extends Singleton
      *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    static function doesVarExist($name)
+    public static function doesVarExist($name)
     {
         return isset($_SESSION[$name]);
     }
@@ -25,9 +28,14 @@ class FlipSession extends Singleton
     /**
      * Get a variable from the session
      *
+     * @param string $name The name of variable to obtain from the session
+     * @param mixed $default The default value
+     *
+     * @return mixed The value stored in the session or the default if not set
+     *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    static function getVar($name, $default = false)
+    public static function getVar($name, $default = false)
     {
         if(FlipSession::doesVarExist($name))
         {
@@ -42,9 +50,12 @@ class FlipSession extends Singleton
     /**
      * Set a variable in the session
      *
+     * @param string $name The name of variable to set in the session
+     * @param mixed $value The value to store in the variable
+     *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    static function setVar($name, $value)
+    public static function setVar($name, $value)
     {
         $_SESSION[$name] = $value;
     }
@@ -54,7 +65,7 @@ class FlipSession extends Singleton
      *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    static function isLoggedIn()
+    public static function isLoggedIn()
     {
         if(isset($_SESSION['flipside_user']))
         {
@@ -76,7 +87,7 @@ class FlipSession extends Singleton
      *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    static function getUser()
+    public static function getUser()
     {
         if(isset($_SESSION['flipside_user']))
         {
@@ -103,7 +114,7 @@ class FlipSession extends Singleton
      *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    static function setUser($user)
+    public static function setUser($user)
     {
         $_SESSION['flipside_user'] = $user;
     }
@@ -113,7 +124,7 @@ class FlipSession extends Singleton
      *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    static function getUserEmail()
+    public static function getUserEmail()
     {
         if(isset($_SESSION['flipside_email']))
         {
@@ -137,7 +148,7 @@ class FlipSession extends Singleton
      *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    static function end()
+    public static function end()
     {
         if(isset($_SESSION) && !empty($_SESSION))
         {
@@ -146,7 +157,7 @@ class FlipSession extends Singleton
         }
     }
 
-    static function unserializePhpSession($sessionData)
+    public static function unserializePhpSession($sessionData)
     {
         $res = array();
         $offset = 0;
@@ -156,8 +167,11 @@ class FlipSession extends Singleton
             $pos = strpos($sessionData, "|", $offset);
             $len = $pos - $offset;
             $name = substr($sessionData, $offset, $len);
-            if($name === false) break;
-            $offset += $len+1;
+            if($name === false)
+            {
+                break;
+            }
+            $offset += $len + 1;
             $data = @unserialize(substr($sessionData, $offset));
             $res[$name] = $data;
             $offset += strlen(serialize($data));
@@ -165,7 +179,7 @@ class FlipSession extends Singleton
         return $res;
     }
 
-    static function getAllSessions()
+    public static function getAllSessions()
     {
         $res = array();
         $sessFiles = scandir(ini_get('session.save_path'));
@@ -185,7 +199,7 @@ class FlipSession extends Singleton
             else
             {
                 $tmp = FlipSession::unserializePhpSession($sessionData);
-                $tmp['sid' ] = $sessionId;
+                $tmp['sid'] = $sessionId;
                 array_push($res, $tmp);
             }
         }
@@ -196,16 +210,15 @@ class FlipSession extends Singleton
         return $res;
     }
 
-    static function getSessionById($sid)
+    public static function getSessionById($sid)
     {
         $sessionData = file_get_contents(ini_get('session.save_path').'/sess_'.$sid);
         return FlipSession::unserializePhpSession($sessionData);
     }
 
-    static function deleteSessionById($sid)
+    public static function deleteSessionById($sid)
     {
-       return unlink(ini_get('session.save_path').'/sess_'.$sid); 
+        return unlink(ini_get('session.save_path').'/sess_'.$sid); 
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
-?>

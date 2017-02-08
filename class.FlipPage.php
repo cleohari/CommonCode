@@ -13,285 +13,283 @@
  */
 
 /**
- * We use the FlipsideSettings class for a list of sites and settings
- * about CDNs and minified JS/CSS
- */
-if(isset($GLOBALS['FLIPSIDE_SETTINGS_LOC']))
-{
-    require_once($GLOBALS['FLIPSIDE_SETTINGS_LOC'].'/class.FlipsideSettings.php');
-}
-else
-{
-    require_once('/var/www/secure_settings/class.FlipsideSettings.php');
-}
-
-/**
  * We need the parent class
  */
 require_once('class.WebPage.php');
 
-define('JS_JQUERY',       0);
-define('JS_JQUERY_UI',    1);
-define('JS_BOOTSTRAP',    2);
+define('JS_JQUERY', 0);
+define('JS_JQUERY_UI', 1);
+define('JS_BOOTSTRAP', 2);
 define('JQUERY_VALIDATE', 3);
-define('JQUERY_TOUCH',    4);
-define('JS_TINYNAV',      5);
+define('JQUERY_TOUCH', 4);
+define('JS_TINYNAV', 5);
 define('JS_BOOTSTRAP_FH', 6);
 define('JS_BOOTSTRAP_SW', 7);
-define('JS_DATATABLE',    8);
-define('JS_CHART',        9);
-define('JS_METISMENU',    10);
-define('JS_BOOTBOX',         11);
+define('JS_DATATABLE', 8);
+define('JS_CHART', 9);
+define('JS_METISMENU', 10);
+define('JS_BOOTBOX', 11);
 define('JS_DATATABLE_ODATA', 12);
-define('JS_CRYPTO_MD5_JS',   13);
-define('JS_JCROP',           14);
-define('JS_TYPEAHEAD',       15);
-define('JS_FLIPSIDE',     20);
-define('JS_LOGIN',        21);
+define('JS_CRYPTO_MD5_JS', 13);
+define('JS_JCROP', 14);
+define('JS_TYPEAHEAD', 15);
+define('JS_CHEET', 16);
+define('JS_FLIPSIDE', 20);
+define('JS_LOGIN', 21);
 
-define('CSS_JQUERY_UI',    0);
-define('CSS_BOOTSTRAP',    1);
+define('CSS_JQUERY_UI', 0);
+define('CSS_BOOTSTRAP', 1);
 define('CSS_BOOTSTRAP_FH', 2);
 define('CSS_BOOTSTRAP_SW', 3);
-define('CSS_DATATABLE',    4);
-define('CSS_JCROP',        5);
-define('CSS_FONTAWESOME',  6);
+define('CSS_DATATABLE', 4);
+define('CSS_JCROP', 5);
+define('CSS_FONTAWESOME', 6);
 
-global $js_array;
-$js_array = array(
-     JS_JQUERY => array(
-         'no' => array(
-             'no'  => '/js/common/jquery.js',
-             'min' => '/js/common/jquery.min.js'
-         ),
-         'cdn' => array(
-             'no'  => '//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.js',
-             'min' => '//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js'
-         )
-     ),
-     JS_JQUERY_UI => array(
-         'no' => array(
-             'no'  => '/js/common/jquery-ui.js',
-             'min' => '/js/common/jquery-ui.min.js'
-         ),
-         'cdn' => array(
-             'no'  => '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.js',
-             'min' => '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js'
-         )
-     ),
-     JS_BOOTSTRAP => array(
-         'no' => array(
-             'no'  => '/js/common/bootstrap.js',
-             'min' => '/js/common/bootstrap.min.js'
-         ),
-         'cdn' => array(
-             'no'  => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.js',
-             'min' => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js'
-         )
-     ),
-     JQUERY_VALIDATE => array(
-         'no' => array(
-             'no'  => '/js/common/jquery.validate.js',
-             'min' => '/js/common/jquery.validate.min.js'
-         ),
-         'cdn' => array(
-             'no'  => '//ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.js',
-             'min' => '//ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.min.js'
-         )
-     ),
-     JQUERY_TOUCH => array(
-         'no' => array(
-             'no'  => '/js/common/jquery.ui.touch-punch.min.js',
-             'min' => '/js/common/jquery.ui.touch-punch.min.js'
-         ),
-         'cdn' => array(
-             'no'  => '//cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js',
-             'min' => '//cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js'
-         )
-     ),
-     JS_TINYNAV => array(
-         'no' => array(
-             'no'  => '/js/common/tinynav.js',
-             'min' => '/js/common/tinynav.min.js'
-         ),
-         'cdn' => array(
-             'no'  => '//cdnjs.cloudflare.com/ajax/libs/TinyNav.js/1.2.0/tinynav.js',
-             'min' => '//cdnjs.cloudflare.com/ajax/libs/TinyNav.js/1.2.0/tinynav.min.js'
-         )
-     ),
-     JS_BOOTSTRAP_FH => array(
-         'no' => array(
-             'no'  => '/js/common/bootstrap-formhelpers.js',
-             'min' => '/js/common/bootstrap-formhelpers.min.js'
-         ),
-         'cdn' => array(
-             'no'  => '//cdnjs.cloudflare.com/ajax/libs/bootstrap-formhelpers/2.3.0/js/bootstrap-formhelpers.js',
-             'min' => '//cdnjs.cloudflare.com/ajax/libs/bootstrap-formhelpers/2.3.0/js/bootstrap-formhelpers.min.js'
-         )
-     ),
-     JS_BOOTSTRAP_SW => array(
-         'no' => array(
-             'no'  => '/js/common/bootstrap-switch.js',
-             'min' => '/js/common/bootstrap-switch.min.js'
-         ),
-         'cdn' => array(
-             'no'  => '//cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.2/js/bootstrap-switch.js',
-             'min' => '//cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.2/js/bootstrap-switch.min.js'
-         )
-     ),
-     JS_DATATABLE => array(
-         'no' => array(
-             'no'  => '/js/common/jquery.dataTables.js',
-             'min' => '/js/common/jquery.dataTables.min.js'
-         ),
-         'cdn' => array(
-             'no'  => '//cdn.datatables.net/1.10.7/js/jquery.dataTables.js',
-             'min' => '//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js'
-         )
-     ),
-     JS_CHART => array(
-         'no' => array(
-             'no'  => '/js/common/Chart.js',
-             'min' => '/js/common/Chart.min.js'
-         ),
-         'cdn' => array(
-             'no'  => '//cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js',
-             'min' => '//cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'
-         )
-     ),
-     JS_METISMENU => array(
-         'no' => array(
-             'no'  => '/js/common/metisMenu.js',
-             'min' => '/js/common/metisMenu.min.js'
-         ),
-         'cdn' => array(
-             'no'  => '//cdnjs.cloudflare.com/ajax/libs/metisMenu/2.0.2/metisMenu.js',
-             'min' => '//cdnjs.cloudflare.com/ajax/libs/metisMenu/2.0.2/metisMenu.min.js'
-         )
-     ),
-     JS_BOOTBOX => array(
-         'no' => array(
-             'no'  => '/js/common/bootbox.js',
-             'min' => '/js/common/bootbox.min.js'
-         ),
-         'cdn' => array(
-             'no'  => '//cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.3.0/bootbox.js',
-             'min' => '//cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.3.0/bootbox.min.js'
-         )
-     ),
-     JS_DATATABLE_ODATA => array(
-         'no' => array(
-             'no'  => '/js/common/jquery.dataTables.odata.js',
-             'min' => '/js/common/jquery.dataTables.odata.js',
-         ),
-         'cdn' => array(
-             'no'  => '/js/common/jquery.dataTables.odata.js',
-             'min' => '/js/common/jquery.dataTables.odata.js',
-         )
-     ),
-     JS_CRYPTO_MD5_JS => array(
-         'no' => array(
-             'no'  => '/js/common/md5.js',
-             'min' => '/js/common/md5.js',
-         ),
-         'cdn' => array(
-             'no'  => '//cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/md5.js',
-             'min' => '//cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/md5.js',
-         )
-     ),
-     JS_JCROP => array(
-         'no' => array(
-             'no'  => '/js/common/jquery.Jcrop.min.js',
-             'min' => '/js/common/jquery.Jcrop.min.js'
-         ),
-         'cdn' => array(
-             'no'  => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/0.9.12/js/jquery.Jcrop.min.js',
-             'min' => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/0.9.12/js/jquery.Jcrop.min.js'
-         )
-     ),
-     JS_TYPEAHEAD => array(
-         'no' => array(
-             'no'  => '/js/common/typeahead.bundle.js',
-             'min' => '/js/common/typeahead.bundle.min.js'
-         ),
-         'cdn' => array(
-             'no'  => '//cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.js',
-             'min' => '//cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js'
-         )
-     ),
-     JS_FLIPSIDE => array(
-         'no' => array(
-             'no'  => '/js/common/flipside.js',
-             'min' => '/js/common/flipside.min.js'
-         ),
-         'cdn' => array(
-             'no'  => '/js/common/flipside.js',
-             'min' => '/js/common/flipside.min.js'
-         )
-     ),
-     JS_LOGIN => array(
-         'no' => array(
-             'no'  => '/js/common/login.js',
-             'min' => '/js/common/login.min.js'
-         ),
-         'cdn' => array(
-             'no'  => '/js/common/login.js',
-             'min' => '/js/common/login.min.js'
-         )
-     )
+global $jsArray;
+$jsArray = array(
+        JS_JQUERY => array(
+            'no' => array(
+                'no'  => '/js/common/jquery.js',
+                'min' => '/js/common/jquery.min.js'
+            ),
+            'cdn' => array(
+                'no'  => '//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.js',
+                'min' => '//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js'
+            )
+        ),
+        JS_JQUERY_UI => array(
+            'no' => array(
+                'no'  => '/js/common/jquery-ui.js',
+                'min' => '/js/common/jquery-ui.min.js'
+            ),
+            'cdn' => array(
+                'no'  => '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.js',
+                'min' => '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js'
+            )
+        ),
+        JS_BOOTSTRAP => array(
+            'no' => array(
+                'no'  => '/js/common/bootstrap.js',
+                'min' => '/js/common/bootstrap.min.js'
+            ),
+            'cdn' => array(
+                'no'  => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.js',
+                'min' => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js'
+            )
+        ),
+        JQUERY_VALIDATE => array(
+            'no' => array(
+                'no'  => '/js/common/jquery.validate.js',
+                'min' => '/js/common/jquery.validate.min.js'
+            ),
+            'cdn' => array(
+                'no'  => '//ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.js',
+                'min' => '//ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.min.js'
+            )
+        ),
+        JQUERY_TOUCH => array(
+            'no' => array(
+                'no'  => '/js/common/jquery.ui.touch-punch.min.js',
+                'min' => '/js/common/jquery.ui.touch-punch.min.js'
+            ),
+            'cdn' => array(
+                'no'  => '//cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js',
+                'min' => '//cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js'
+            )
+        ),
+        JS_TINYNAV => array(
+            'no' => array(
+                'no'  => '/js/common/tinynav.js',
+                'min' => '/js/common/tinynav.min.js'
+            ),
+            'cdn' => array(
+                'no'  => '//cdnjs.cloudflare.com/ajax/libs/TinyNav.js/1.2.0/tinynav.js',
+                'min' => '//cdnjs.cloudflare.com/ajax/libs/TinyNav.js/1.2.0/tinynav.min.js'
+            )
+        ),
+        JS_BOOTSTRAP_FH => array(
+            'no' => array(
+                'no'  => '/js/common/bootstrap-formhelpers.js',
+                'min' => '/js/common/bootstrap-formhelpers.min.js'
+            ),
+            'cdn' => array(
+                'no'  => '//cdnjs.cloudflare.com/ajax/libs/bootstrap-formhelpers/2.3.0/js/bootstrap-formhelpers.js',
+                'min' => '//cdnjs.cloudflare.com/ajax/libs/bootstrap-formhelpers/2.3.0/js/bootstrap-formhelpers.min.js'
+            )
+        ),
+        JS_BOOTSTRAP_SW => array(
+            'no' => array(
+                'no'  => '/js/common/bootstrap-switch.js',
+                'min' => '/js/common/bootstrap-switch.min.js'
+            ),
+            'cdn' => array(
+                'no'  => '//cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.2/js/bootstrap-switch.js',
+                'min' => '//cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.2/js/bootstrap-switch.min.js'
+            )
+        ),
+        JS_DATATABLE => array(
+            'no' => array(
+                'no'  => '/js/common/jquery.dataTables.js',
+                'min' => '/js/common/jquery.dataTables.min.js'
+            ),
+            'cdn' => array(
+                'no'  => '//cdn.datatables.net/1.10.7/js/jquery.dataTables.js',
+                'min' => '//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js'
+            )
+        ),
+        JS_CHART => array(
+            'no' => array(
+                'no'  => '/js/common/Chart.js',
+                'min' => '/js/common/Chart.min.js'
+            ),
+            'cdn' => array(
+                'no'  => '//cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js',
+                'min' => '//cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'
+            )
+        ),
+        JS_METISMENU => array(
+            'no' => array(
+                'no'  => '/js/common/metisMenu.js',
+                'min' => '/js/common/metisMenu.min.js'
+            ),
+            'cdn' => array(
+                'no'  => '//cdnjs.cloudflare.com/ajax/libs/metisMenu/2.0.2/metisMenu.js',
+                'min' => '//cdnjs.cloudflare.com/ajax/libs/metisMenu/2.0.2/metisMenu.min.js'
+            )
+        ),
+        JS_BOOTBOX => array(
+            'no' => array(
+                'no'  => '/js/common/bootbox.js',
+                'min' => '/js/common/bootbox.min.js'
+            ),
+            'cdn' => array(
+                'no'  => '//cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.3.0/bootbox.js',
+                'min' => '//cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.3.0/bootbox.min.js'
+            )
+        ),
+        JS_DATATABLE_ODATA => array(
+            'no' => array(
+                'no'  => '/js/common/jquery.dataTables.odata.js',
+                'min' => '/js/common/jquery.dataTables.odata.js',
+            ),
+            'cdn' => array(
+                'no'  => '/js/common/jquery.dataTables.odata.js',
+                'min' => '/js/common/jquery.dataTables.odata.js',
+            )
+        ),
+        JS_CRYPTO_MD5_JS => array(
+            'no' => array(
+                'no'  => '/js/common/md5.js',
+                'min' => '/js/common/md5.js',
+            ),
+            'cdn' => array(
+                'no'  => '//cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/md5.js',
+                'min' => '//cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/md5.js',
+            )
+        ),
+        JS_JCROP => array(
+            'no' => array(
+                'no'  => '/js/common/jquery.Jcrop.min.js',
+                'min' => '/js/common/jquery.Jcrop.min.js'
+            ),
+            'cdn' => array(
+                'no'  => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/0.9.12/js/jquery.Jcrop.min.js',
+                'min' => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/0.9.12/js/jquery.Jcrop.min.js'
+            )
+        ),
+        JS_TYPEAHEAD => array(
+            'no' => array(
+                'no'  => '/js/common/typeahead.bundle.js',
+                'min' => '/js/common/typeahead.bundle.min.js'
+            ),
+            'cdn' => array(
+                'no'  => '//cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.js',
+                'min' => '//cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js'
+            )
+        ),
+        JS_CHEET => array(
+            'no' => array(
+                'no'  => '/js/common/cheet.min.js',
+                'min' => '/js/common/cheer.min.js'
+            ),
+            'cdn' => array(
+                'no'  => '//cdn.rawgit.com/namuol/cheet.js/master/cheet.min.js',
+                'min' => '//cdn.rawgit.com/namuol/cheet.js/master/cheet.min.js'
+            )
+        ),
+        JS_FLIPSIDE => array(
+            'no' => array(
+                'no'  => '/js/common/flipside.js',
+                'min' => '/js/common/flipside.min.js'
+            ),
+            'cdn' => array(
+                'no'  => '/js/common/flipside.js',
+                'min' => '/js/common/flipside.min.js'
+            )
+        ),
+        JS_LOGIN => array(
+            'no' => array(
+                'no'  => '/js/common/login.js',
+                'min' => '/js/common/login.min.js'
+            ),
+            'cdn' => array(
+                'no'  => '/js/common/login.js',
+                'min' => '/js/common/login.min.js'
+            )
+        )
 );
 
-global $css_array;
-$css_array = array(
+global $cssArray;
+$cssArray = array(
     CSS_JQUERY_UI => array(
         'no' => array(
-             'no'  => '/css/common/jquery-ui.css',
-             'min' => '/css/common/jquery-ui.min.css'
-         ),
-         'cdn' => array(
-             'no'  => '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css',
-             'min' => '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.min.css'
-         )
+                'no'  => '/css/common/jquery-ui.css',
+                'min' => '/css/common/jquery-ui.min.css'
+            ),
+            'cdn' => array(
+                'no'  => '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css',
+                'min' => '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.min.css'
+            )
     ),
     CSS_BOOTSTRAP => array(
-         'no' => array(
-             'no'  => '/css/common/bootstrap.css',
-             'min' => '/css/common/bootstrap.min.css'
-         ),
-         'cdn' => array(
-             'no'  => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css',
-             'min' => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'
-         )
+            'no' => array(
+                'no'  => '/css/common/bootstrap.css',
+                'min' => '/css/common/bootstrap.min.css'
+            ),
+            'cdn' => array(
+                'no'  => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css',
+                'min' => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'
+            )
     ),
     CSS_BOOTSTRAP_FH => array(
         'no' => array(
-             'no'  => '/css/common/bootstrap-formhelpers.css',
-             'min' => '/css/common/bootstrap-formhelpers.min.css'
-         ),
-         'cdn' => array(
-             'no'  => '//cdnjs.cloudflare.com/ajax/libs/bootstrap-formhelpers/2.3.0/css/bootstrap-formhelpers.css',
-             'min' => '//cdnjs.cloudflare.com/ajax/libs/bootstrap-formhelpers/2.3.0/css/bootstrap-formhelpers.min.css'
-         )
+                'no'  => '/css/common/bootstrap-formhelpers.css',
+                'min' => '/css/common/bootstrap-formhelpers.min.css'
+            ),
+            'cdn' => array(
+                'no'  => '//cdnjs.cloudflare.com/ajax/libs/bootstrap-formhelpers/2.3.0/css/bootstrap-formhelpers.css',
+                'min' => '//cdnjs.cloudflare.com/ajax/libs/bootstrap-formhelpers/2.3.0/css/bootstrap-formhelpers.min.css'
+            )
     ),
     CSS_BOOTSTRAP_SW => array(
-         'no' => array(
-             'no'  => '/css/common/bootstrap-switch.css',
-             'min' => '/css/common/bootstrap-switch.min.css'
-         ),
-         'cdn' => array(
-             'no'  => '//cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.2/css/bootstrap3/bootstrap-switch.css',
-             'min' => '//cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.2/css/bootstrap3/bootstrap-switch.min.css'
-         )
+            'no' => array(
+                'no'  => '/css/common/bootstrap-switch.css',
+                'min' => '/css/common/bootstrap-switch.min.css'
+            ),
+            'cdn' => array(
+                'no'  => '//cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.2/css/bootstrap3/bootstrap-switch.css',
+                'min' => '//cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.2/css/bootstrap3/bootstrap-switch.min.css'
+            )
     ),
     CSS_DATATABLE => array(
         'no' => array(
-             'no'  => '/css/common/jquery.dataTables.css',
-             'min' => '/css/common/jquery.dataTables.min.css'
-         ),
-         'cdn' => array(
-             'no'  => '//cdn.datatables.net/1.10.7/css/jquery.dataTables.css',
-             'min' => '//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css'
-         )
+                'no'  => '/css/common/jquery.dataTables.css',
+                'min' => '/css/common/jquery.dataTables.min.css'
+            ),
+            'cdn' => array(
+                'no'  => '//cdn.datatables.net/1.10.7/css/jquery.dataTables.css',
+                'min' => '//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css'
+            )
     ),
     CSS_JCROP => array(
         'no'  => array(
@@ -324,8 +322,6 @@ class FlipPage extends WebPage
 {
     /** The currently logged in user or null if no user is logged in */
     public $user;
-    /** An array of websites to link to globally*/
-    public $sites;
     /** An array of links to put in the header */
     public $links;
     /** An array of notifications to draw on the page */
@@ -333,64 +329,56 @@ class FlipPage extends WebPage
     /** Should we draw the header? */
     public $header;
     /** The login page URL */
-    public $login_url;
+    public $loginUrl;
     /** The logout page URL */
-    public $logout_url;
+    public $logoutUrl;
     /** Should we use minified JS/CSS? */
     protected $minified = null;
     /** Should we use local JS/CSS or Content Delivery Networks? */
     protected $cdn = null;
+    /** Draw the analytics scripts */
+    protected $analytics = true;
+    /** An instance of the Settings class */
+    protected $settings;
 
     /**
      * Create a webpage with JQuery, Bootstrap, etc
      *
      * @param string $title The webpage title
      * @param boolean $header Draw the header bar?
+     *
+     * @SuppressWarnings("StaticAccess")
      */
-    function __construct($title, $header=true)
+    public function __construct($title, $header = true)
     {
+        $this->settings = \Settings::getInstance();
         parent::__construct($title);
-        $this->add_js(JS_JQUERY, false);
-        $this->add_js(JS_FLIPSIDE, false);
+        $this->setupVars();
+        $this->addWellKnownJS(JS_JQUERY, false);
+        $this->addWellKnownJS(JS_FLIPSIDE, false);
         $this->addBootstrap();
         $this->header = $header;
-        if(isset(FlipsideSettings::$sites))
-        {
-            $this->sites = FlipsideSettings::$sites;
-        }
-        else
-        {
-            $this->sites = array();
-        }
         $this->links = array();
         $this->notifications = array();
-        $this->minified = 'min';
-        $this->cdn      = 'cdn';
-        if(isset(FlipsideSettings::$global))
-        {
-            if(isset(FlipsideSettings::$global['use_minified']) && !FlipsideSettings::$global['use_minified'])
-            {
-                $this->minified = 'no';
-            }
-            if(isset(FlipsideSettings::$global['use_cdn']) && !FlipsideSettings::$global['use_cdn'])
-            {
-                $this->cdn = 'no';
-            }
-            if(isset(FlipsideSettings::$global['login_url']))
-            {
-                $this->login_url = FlipsideSettings::$global['login_url'];
-            }
-            if(isset(FlipsideSettings::$global['logout_url']))
-            {
-                $this->logout_url = FlipsideSettings::$global['logout_url'];
-            }
-        }
+        $this->loginUrl = $this->settings->getGlobalSetting('login_url', 'login.php');
+        $this->logoutUrl = $this->settings->getGlobalSetting('logout_url', 'logout.php');
         $this->user = FlipSession::getUser();
         $this->addAllLinks();
     }
 
     /**
+     * Get the external site links for this page 
+     *
+     */
+    protected function getSites()
+    {
+        return $this->settings->getSiteLinks();
+    }
+
+    /**
      * Add the links to be used in the header
+     *
+     * @SuppressWarnings("Superglobals")
      *
      * @todo Consider pulling the about menu from the settings file or a DB
      */
@@ -400,20 +388,20 @@ class FlipPage extends WebPage
         {
             if(isset($_SERVER['REQUEST_URI']) && strstr($_SERVER['REQUEST_URI'], 'logout.php') === false)
             {
-                $this->addLink('Login', $this->login_url);
+                $this->addLink('Login', $this->loginUrl);
             }
         }
         else
         {
             $this->add_links();
-            $this->addLink('Logout', $this->logout_url);
+            $this->addLink('Logout', $this->logoutUrl);
         }
-        $about_menu = array(
+        $aboutMenu = array(
             'Burning Flipside'=>'https://www.burningflipside.com/about/event',
             'AAR, LLC'=>'https://www.burningflipside.com/organization/aar',
             'Privacy Policy'=>'https://www.burningflipside.com/about/privacy'
         );
-        $this->addLink('About', 'http://www.burningflipside.com/about', $about_menu);
+        $this->addLink('About', 'http://www.burningflipside.com/about', $aboutMenu);
     }
 
     /**
@@ -421,33 +409,20 @@ class FlipPage extends WebPage
      */
     private function setupVars()
     {
-        if($this->minified !== null && $this->cdn !== null) return;
+        if($this->minified !== null && $this->cdn !== null)
+        {
+            return;
+        }
         $this->minified = 'min';
         $this->cdn      = 'cdn';
-        if(isset(FlipsideSettings::$global))
+        if($this->settings->getGlobalSetting('use_minified', true) == false)
         {
-            if(isset(FlipsideSettings::$global['use_minified']) && !FlipsideSettings::$global['use_minified'])
-            {
-                $this->minified = 'no';
-            }
-            if(isset(FlipsideSettings::$global['use_cdn']) && !FlipsideSettings::$global['use_cdn'])
-            {
-                $this->cdn = 'no';
-            }
+            $this->minified = 'no';
         }
-    }
-
-    /**
-     * Add a JavaScript file from its src URI
-     *
-     * @param string $src The webpath to the JavaScript file
-     * @param boolean $async Can the JavaScript be loaded asynchronously?
-     *
-     * @deprecated 2.0.0 Please use addJSByURI() instead
-     */
-    function add_js_from_src($src, $async=true)
-    {
-        $this->addJSByURI($src, $async);
+        if($this->settings->getGlobalSetting('use_cdn', true) == false)
+        {
+            $this->cdn = 'no';
+        }
     }
 
     /**
@@ -456,65 +431,34 @@ class FlipPage extends WebPage
      * @param string $uri The webpath to the JavaScript file
      * @param boolean $async Can the JavaScript be loaded asynchronously?
      */
-    public function addJSByURI($uri, $async=true)
+    public function addJSByURI($uri, $async = true)
     {
         $attributes = array('src'=>$uri, 'type'=>'text/javascript');
         if($async === true)
         {
             $attributes['async'] = true;
         }
-        $js_tag = $this->createOpenTag('script', $attributes);
-        $close_tag = $this->createCloseTag('script');
-        $this->addHeadTag($js_tag);
-        $this->addHeadTag($close_tag);
+        $jsTag = $this->createOpenTag('script', $attributes);
+        $closeTag = $this->createCloseTag('script');
+        $this->addHeadTag($jsTag);
+        $this->addHeadTag($closeTag);
     }
 
     /**
      * Add a Cascading Style Sheet file from its src URI
      *
-     * @param string $src The webpath to the Cascading Style Sheet file
-     * @param boolean $import Can the CSS be loaded asynchronously?
-     *
-     * @deprecated 2.0.0 Please use addCSSByURI() instead
-     */
-    function add_css_from_src($src, $import=false)
-    {
-        $this->addCSSByURI($src, $import);
-    }
-
-    /**
-     * Add a Cascading Style Sheet file from its src URI
-     *
-     * @param string $src The webpath to the Cascading Style Sheet file
+     * @param string $uri The webpath to the Cascading Style Sheet file
      * @param boolean $async Can the CSS be loaded asynchronously?
      */
-    public function addCSSByURI($uri, $async=false)
+    public function addCSSByURI($uri, $async = false)
     {
         $attributes = array('rel'=>'stylesheet', 'href'=>$uri, 'type'=>'text/css');
-        if($async === true && $this->import_support === true)
+        if($async === true && $this->importSupport === true)
         {
             $attributes['rel'] = 'import';
         }
-        $css_tag = $this->createOpenTag('link', $attributes, true);
-        $this->addHeadTag($css_tag);
-    }
-
-    /**
-     * Add a JavaScript file from a set of files known to the framework
-     *
-     * @param string $type the ID of the JS file
-     * @param boolean $async Can the JS file be loaded asynchronously?
-     *
-     * @deprecated 2.0.0 Please use addWellKnownJS() instead
-     */
-    function addJS($type, $async=true)
-    {
-        $this->addWellKnownJS($type, $async);
-    }
-
-    function add_js($type, $async=true)
-    {
-        $this->addWellKnownJS($type, $async);
+        $cssTag = $this->createOpenTag('link', $attributes, true);
+        $this->addHeadTag($cssTag);
     }
 
     /**
@@ -523,25 +467,12 @@ class FlipPage extends WebPage
      * @param string $jsFileID the ID of the JS file
      * @param boolean $async Can the JS file be loaded asynchronously?
      */
-    public function addWellKnownJS($jsFileID, $async=true)
+    public function addWellKnownJS($jsFileID, $async = true)
     {
-        global $js_array;
+        global $jsArray;
         $this->setupVars();
-        $src = $js_array[$jsFileID][$this->cdn][$this->minified];
+        $src = $jsArray[$jsFileID][$this->cdn][$this->minified];
         $this->addJSByURI($src, $async);
-    }
-
-    /**
-     * Add a CSS file from a set of files known to the framework
-     *
-     * @param string $type the ID of the CSS file
-     * @param boolean $import Can the CSS file be loaded asynchronously?
-     *
-     * @deprecated 2.0.0 Please use addWellKnownCSS() instead
-     */
-    function add_css($type, $import=false)
-    {
-        $this->addWellKnownCSS($type, $import);
     }
 
     /**
@@ -550,11 +481,11 @@ class FlipPage extends WebPage
      * @param string $cssFileID the ID of the CSS file
      * @param boolean $async Can the CSS file be loaded asynchronously?
      */
-    public function addWellKnownCSS($cssFileID, $async=true)
+    public function addWellKnownCSS($cssFileID, $async = true)
     {
-        global $css_array;
+        global $cssArray;
         $this->setupVars();
-        $src = $css_array[$cssFileID][$this->cdn][$this->minified];
+        $src = $cssArray[$cssFileID][$this->cdn][$this->minified];
         $this->addCSSByURI($src, $async);
     }
 
@@ -563,9 +494,76 @@ class FlipPage extends WebPage
      */
     private function addBootstrap()
     {
-        $this->add_js(JS_BOOTSTRAP, false);
-        $this->add_css(CSS_BOOTSTRAP);
-        $this->add_css(CSS_FONTAWESOME);
+        $this->addWellKnownJS(JS_BOOTSTRAP, false);
+        $this->addWellKnownCSS(CSS_BOOTSTRAP);
+        $this->addWellKnownCSS(CSS_FONTAWESOME);
+    }
+
+    protected function getSiteLinksForHeader()
+    {
+        $sites = $this->getSites();
+        $names = array_keys($sites);
+        $ret = '';
+        foreach($names as $name)
+        {
+            $ret .= '<li>'.$this->createLink($name, $sites[$name]).'</li>';
+        }
+        return $ret;
+    }
+
+    /**
+     * Get the link for the HREF
+     *
+     * @return string The HREF for the dropdown
+     */
+    protected function getHrefForDropdown(&$link)
+    {
+        if(isset($link['_']))
+        {
+            $ret = $link['_'];
+            unset($link['_']);
+            return $ret;
+        }
+        return '#';
+    }
+
+    protected function getDropdown($link, $name)
+    {
+        $ret = '<li class="dropdown">';
+        $href = $this->getHrefForDropdown($link);
+        $ret .= '<a href="'.$href.'" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">'.$name.' <span class="caret"></span></a>';
+        $ret .= '<ul class="dropdown-menu">';
+        $subNames = array_keys($link);
+        foreach($subNames as $subName)
+        {
+            $ret .= $this->getLinkByName($subName, $link);
+        }
+        $ret .= '</ul></li>';
+        return $ret;
+    }
+
+    protected function getLinkByName($name, $links)
+    {
+        if(is_array($links[$name]))
+        {
+            return $this->getDropdown($links[$name], $name);
+        }
+        if($links[$name] === false)
+        {
+            return '<li>'.$name.'</li>';
+        }
+        return '<li>'.$this->createLink($name, $links[$name]).'</li>';
+    }
+
+    protected function getLinksMenus()
+    {
+        $names = array_keys($this->links);
+        $ret = '';
+        foreach($names as $name)
+        {
+            $ret .= $this->getLinkByName($name, $this->links);
+        }
+        return $ret;
     }
 
     /**
@@ -573,56 +571,9 @@ class FlipPage extends WebPage
      */
     protected function addHeader()
     {
-        $sites = '';
-        $site_names = array_keys($this->sites);
-        foreach($site_names as $site_name)
-        {
-            $sites.='<li>'.$this->create_link($site_name, $this->sites[$site_name]).'</li>';
-        }
-        $links = '';
-        $link_names = array_keys($this->links);
-        foreach($link_names as $link_name)
-        {
-            if(is_array($this->links[$link_name]))
-            {
-                $links.='<li class="dropdown">';
-                if(isset($this->links[$link_name]['_']))
-                {
-                    $links.='<a href="'.$this->links[$link_name]['_'].'" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">'.$link_name.' <span class="caret"></span></a>';
-                    unset($this->links[$link_name]['_']);
-                }
-                else
-                {
-                    $links.='<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">'.$link_name.' <span class="caret"></span></a>';
-                }
-                $links.='<ul class="dropdown-menu">';
-                $sub_names = array_keys($this->links[$link_name]);
-                foreach($sub_names as $sub_name)
-                {
-                    if($this->links[$link_name][$sub_name] === false)
-                    {
-                        $links.='<li>'.$sub_name.'</li>';
-                    }
-                    else
-                    {
-                        $links.='<li>'.$this->create_link($sub_name, $this->links[$link_name][$sub_name]).'</li>';
-                    }
-                }
-                $links.='</ul></li>';
-            }
-            else
-            {
-                if($this->links[$link_name] === false)
-                {
-                    $links.='<li>'.$link_name.'</li>';
-                }
-                else
-                {
-                    $links.='<li>'.$this->create_link($link_name, $this->links[$link_name]).'</li>';
-                }
-            }
-        }
-        $header ='<nav class="navbar navbar-default navbar-fixed-top">
+        $sites = $this->getSiteLinksForHeader();
+        $links = $this->getLinksMenus();
+        $header = '<nav class="navbar navbar-default navbar-fixed-top">
                       <div class="container-fluid">
                           <!-- Brand and toggle get grouped for better mobile display -->
                           <div class="navbar-header">
@@ -651,7 +602,7 @@ class FlipPage extends WebPage
                       </div>
                   </nav>';
         $this->body = $header.$this->body;
-        $this->body_tags.='style="padding-top: 60px;"';
+        $this->body_tags .= 'style="padding-top: 60px;"';
     }
 
     /** Notification that is green for success */
@@ -666,28 +617,11 @@ class FlipPage extends WebPage
     /**
      * Add a notification to the page
      *
-     * @param string $msg The message to show in the notifcation
-     * @param string $sev The severity of the notifcation
-     * @param boolean $dismissible Can the user dismiss the notificaton?
-     *
-     * @deprecated 2.0.0 Use the addNotification function instead 
-     */
-    function add_notification($msg, $sev=self::NOTIFICATION_INFO, $dismissible=1)
-    {
-        $notice = array('msg'=>$msg, 'sev'=>$sev, 'dismissible'=>$dismissible);
-        array_push($this->notifications, $notice);
-    }
-
-    /**
-     * Add a notification to the page
-     *
      * @param string $message The message to show in the notifcation
-     * @param string $sevity The severity of the notifcation
+     * @param string $severity The severity of the notifcation
      * @param boolean $dismissible Can the user dismiss the notificaton?
-     *
-     * @deprecated 2.0.0 Use the addNotification function instead
      */
-    public function addNotification($message, $severity=self::NOTIFICATION_INFO, $dismissible=true)
+    public function addNotification($message, $severity = self::NOTIFICATION_INFO, $dismissible = true)
     {
         array_push($this->notifications, array('msg'=>$message, 'sev'=>$severity, 'dismissible'=>$dismissible)); 
     }
@@ -697,7 +631,12 @@ class FlipPage extends WebPage
      */
     private function renderNotifications()
     {
-        for($i = 0; $i < count($this->notifications); $i++)
+        $count = count($this->notifications);
+        if($count === 0)
+        {
+            return;
+        }
+        for($i = 0; $i < $count; $i++)
         {
             $class = 'alert '.$this->notifications[$i]['sev'];
             $button = '';
@@ -720,10 +659,10 @@ class FlipPage extends WebPage
                     break;
             }
             $style = '';
-            if($i+1 < count($this->notifications))
+            if(($i + 1) < count($this->notifications))
             {
                 //Not the last notification, remove the end margin
-                $style='style="margin: 0px;"';
+                $style = 'style="margin: 0px;"';
             }
             $this->body = '
                 <div class="'.$class.'" role="alert" '.$style.'>
@@ -734,24 +673,28 @@ class FlipPage extends WebPage
     }
 
     /**
-     * Draw the page
-     *
-     * @param boolean $header Draw the header
+     * Add the no script block
      */
-    function print_page($header=true)
+    private function addNoScript()
     {
-        if(count($this->notifications) > 0)
-        {
-            $this->renderNotifications();
-        }
-        $this->body = '
-            <noscript>
+        $this->body = '<noscript>
                 <div class="alert alert-danger alert-dismissible" role="alert">
                     <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                     <strong>Error!</strong> This site makes extensive use of JavaScript. Please enable JavaScript or this site will not function.
                 </div>
-            </noscript>
-        '.$this->body.'<script>
+            </noscript>'.$this->body;
+    }
+
+    /**
+     * Add the analytics script block
+     */
+    private function addAnalyticsBlock()
+    {
+        if($this->analytics === false)
+        {
+            return;
+        }
+        $this->body = $this->body.'<script>
   (function(i,s,o,g,r,a,m){i[\'GoogleAnalyticsObject\']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -761,46 +704,18 @@ class FlipPage extends WebPage
   ga(\'send\', \'pageview\');
 
 </script>';
-        if($this->header || $header)
-        {
-            $this->addHeader();
-        }
-        parent::printPage();
     }
 
     /**
      * Draw the page
      *
      * @param boolean $header Draw the header
-     * @param boolean $analytics Include analytics on the page
      */
-    public function printPage($header=true, $analytics=true)
+    public function printPage($header = true)
     {
-        if(count($this->notifications) > 0)
-        {
-            $this->renderNotifications();
-        }
-        $this->body = '
-            <noscript>
-                <div class="alert alert-danger alert-dismissible" role="alert">
-                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <strong>Error!</strong> This site makes extensive use of JavaScript. Please enable JavaScript or this site will not function.
-                </div>
-            </noscript>
-        '.$this->body;
-        if($analytics)
-        {
-            $this->body.='<script>
-  (function(i,s,o,g,r,a,m){i[\'GoogleAnalyticsObject\']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,\'script\',\'//www.google-analytics.com/analytics.js\',\'ga\');
-
-  ga(\'create\', \'UA-64901342-1\', \'auto\');
-  ga(\'send\', \'pageview\');
-
-</script>';
-        }
+        $this->renderNotifications();
+        $this->addNoScript();
+        $this->addAnalyticsBlock();
         if($this->header || $header)
         {
             $this->addHeader();
@@ -812,52 +727,38 @@ class FlipPage extends WebPage
      * Add a link to the header
      *
      * @param string $name The name of the link
-     * @param false|string $url The URL to link to
-     * @param false|array $subment Any submenu items for the dropdown
-     *
-     * @deprecated 1.0.0 Use addLink instead
+     * @param boolean|string $url The URL to link to
+     * @param boolean|array $submenu Any submenu items for the dropdown
      */
-    function add_link($name, $url=false, $submenu=false)
-    {
-        $this->addLink($name, $url, $submenu);
-    }
-
-    /**
-     * Add a link to the header
-     *
-     * @param string $name The name of the link
-     * @param false|string $url The URL to link to
-     * @param false|array $subment Any submenu items for the dropdown
-     */
-    public function addLink($name, $url=false, $submenu=false)
+    public function addLink($name, $url = false, $submenu = false)
     {
         if(is_array($submenu))
         {
             $submenu['_'] = $url;
             $this->links[$name] = $submenu;
+            return;
         }
-        else
-        {
-            $this->links[$name] = $url;
-        }
+        $this->links[$name] = $url;
     }
 
     /**
      * Add the login form to the page
+     *
+     * @SuppressWarnings("StaticAccess")
      */
-    function add_login_form()
+    public function add_login_form()
     {
         $auth = \AuthProvider::getInstance();
-        $auth_links = $auth->getSupplementaryLinks();
-        $auth_links_str = '';
-        $count = count($auth_links);
+        $authLinks = $auth->getSupplementaryLinks();
+        $authLinksStr = '';
+        $count = count($authLinks);
         for($i = 0; $i < $count; $i++)
         {
-            $auth_links_str .= $auth_links[$i];
+            $authLinksStr .= $authLinks[$i];
         }
         if($count > 0)
         {
-            $auth_links_str = 'Sign in with '.$auth_links_str;
+            $authLinksStr = 'Sign in with '.$authLinksStr;
         }
         $this->body .= '<div class="modal fade" role="dialog" id="login-dialog" title="Login" aria-hidden="true">
                             <div class="modal-dialog">
@@ -873,10 +774,10 @@ class FlipPage extends WebPage
                                         <form id="login_dialog_form" role="form">
                                             <input class="form-control" type="text" name="username" placeholder="Username or Email" required autofocus/>
                                             <input class="form-control" type="password" name="password" placeholder="Password" required/>
-                                            <input type="hidden" name="return" value="'.$this->current_url().'"/>
+                                            <input type="hidden" name="return" value="'.$this->currentUrl().'"/>
                                             <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
                                         </form>
-                                        '.$auth_links_str.'
+                                        '.$authLinksStr.'
                                     </div>
                                 </div>
                             </div>
@@ -886,9 +787,8 @@ class FlipPage extends WebPage
     /**
      * Add additional links
      */
-    function add_links()
+    public function add_links()
     {
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
-?>

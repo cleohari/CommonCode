@@ -13,9 +13,6 @@
 
 namespace Auth;
 
-/** We need the FlipsideSettings class to determine how to connect to the LDAP server */
-require_once("/var/www/secure_settings/class.FlipsideSettings.php");
-
 /** 
  * Sort the provided array by the keys in $orderby 
  *
@@ -30,14 +27,20 @@ function sort_array(&$array, $orderby)
     {
         for($j = $i; $j < $count; $j++)
         {
-            $d = strcasecmp($array[$i][$keys[0]][0], $array[$j][$keys[0]][0]);
+            $data = strcasecmp($array[$i][$keys[0]][0], $array[$j][$keys[0]][0]);
             switch($orderby[$keys[0]])
             {
                 case 1:
-                    if($d > 0) swap($array, $i, $j);
+                    if($data > 0)
+                    {
+                        swap($array, $i, $j);
+                    }
                     break;
                 case 0:
-                    if($d < 0) swap($array, $i, $j);
+                    if($data < 0)
+                    {
+                        swap($array, $i, $j);
+                    }
                     break;
             }
         }
@@ -48,14 +51,14 @@ function sort_array(&$array, $orderby)
  * Swap two elements of the provided array
  *
  * @param array $array The array to swap values in
- * @param mixed $i The key of the first element to swap
- * @param mixed $j The key of the second element to swap
+ * @param mixed $indexA The key of the first element to swap
+ * @param mixed $indexB The key of the second element to swap
  */
-function swap(&$array, $i, $j)
+function swap(&$array, $indexA, $indexB)
 {
-    $tmp = $array[$i];
-    $array[$i] = $array[$j];
-    $array[$j] = $tmp;
+    $tmp = $array[$indexA];
+    $array[$indexA] = $array[$indexB];
+    $array[$indexB] = $tmp;
 }
 
 /**
@@ -70,9 +73,9 @@ class LDAPAuthenticator extends Authenticator
     /** The base DN for all groups in the LDAP server */
     public  $group_base;
     /** The DN to use to bind if not binding as the user */
-    private $bind_dn;
+    private $bindDistinguishedName;
     /** The password to use to bind if not binding as the user */
-    private $bind_pass;
+    private $bindPassword;
 
     /**
      * Create an LDAP Authenticator
@@ -82,75 +85,80 @@ class LDAPAuthenticator extends Authenticator
     public function __construct($params)
     {
         parent::__construct($params);
+        $this->host       = $this->getHostParam($params);
+        $this->user_base  = $this->getParam($params, 'user_base');
+        $this->group_base = $this->getParam($params, 'group_base');
+        $this->bindDistinguishedName = $this->getParam($params, 'bind_dn', '$ldap_auth', 'read_write_pass');
+        $this->bindPassword = $this->getParam($params, 'bind_pass', '$ldap_auth', 'read_write_user');
+    }
+
+    /**
+     * Return the host string for this authenticator
+     *
+     * @param array $params The initial parameters of the authenticator
+     *
+     * @return string The host string
+     *
+     * @SuppressWarnings("StaticAccess")
+     */
+    private function getHostParam($params)
+    {
         if(isset($params['host']))
         {
-            $this->host = $params['host'];
+            return $params['host'];
         }
-        else
+        $settings = \Settings::getInstance();
+        return $settings->getLDAPSetting('host');
+    }
+
+    /**
+     * Return the required paramter for this authenticator
+     *
+     * @param array  $params The initial parameters of the authenticator
+     * @param string $paramName The name of the parameter in the $paramsArray
+     * @param string $settingsLocation The location in the Settings class
+     * @param string $settingsName The name in the Settings class
+     *
+     * @return mixed The paramter value
+     *
+     * @SuppressWarnings("StaticAccess")
+     */
+    private function getParam($params, $paramName, $settingsLocation = '$ldap', $settingsName = false)
+    {
+        if($settingsName === false)
         {
-            if(isset(\FlipsideSettings::$ldap['proto']))
-            {
-                $this->host = \FlipsideSettings::$ldap['proto'].'://'.\FlipsideSettings::$ldap['host'];
-            }
-            else
-            {
-                $this->host = \FlipsideSettings::$ldap['host'];
-            }
+            $settingsName = $paramName;
         }
-        if(isset($params['user_base']))
+        if(isset($params[$paramName]))
         {
-           $this->user_base = $params['user_base'];
+            return $params[$paramName];
         }
-        else
-        {
-            $this->user_base = \FlipsideSettings::$ldap['user_base'];
-        }
-        if(isset($params['group_base']))
-        {
-            $this->group_base = $params['group_base'];
-        }
-        else
-        {
-            $this->group_base = \FlipsideSettings::$ldap['group_base'];
-        }
-        if(isset($params['bind_dn']))
-        {
-            $this->bind_dn = $params['bind_dn'];
-        }
-        else
-        {
-            $this->bind_dn = \FlipsideSettings::$ldap_auth['read_write_user'];
-        }
-        if(isset($params['bind_pass']))
-        {
-            $this->bind_pass = $params['bind_pass'];
-        }
-        else
-        {
-            $this->bind_pass = \FlipsideSettings::$ldap_auth['read_write_pass'];
-        }
+        $settings = \Settings::getInstance();
+        return $settings->getLDAPSetting($settingsName, ($settingsLocation !== '$ldap'));
     }
 
     /**
      * Return an instance to the \LDAP\LDAPServer object instance
      *
-     * @param boolean $bind_write Should we be able to write to the server?
+     * @param boolean $bindWrite Should we be able to write to the server?
      *
      * @return \LDAP\LDAPServer|false The server instance if the binding was successful, otherwise false
+     *
+     * @SuppressWarnings("StaticAccess")
      */
-    public function get_and_bind_server($bind_write=false)
+    public function getAndBindServer($bindWrite = false)
     {
         $server = \LDAP\LDAPServer::getInstance();
         $server->user_base = $this->user_base;
         $server->group_base = $this->group_base;
         $server->connect($this->host);
-        if($bind_write === false)
+        if($bindWrite === false)
         {
             $ret = $server->bind();
         }
         else
         {
-            $ret = $server->bind($this->bind_dn, $this->bind_pass);
+            $ret = $server->bind($this->bindDistinguishedName, $this->bindPassword);
         }
         if($ret === false)
         {
@@ -169,7 +177,7 @@ class LDAPAuthenticator extends Authenticator
      */
     public function login($username, $password)
     {
-        $server = $this->get_and_bind_server();
+        $server = $this->getAndBindServer();
         if($server === false)
         {
             return false;
@@ -211,26 +219,33 @@ class LDAPAuthenticator extends Authenticator
      *
      * @param \stdClass	$data The AuthData from the session
      *
-     * @return \Auth\LDAPUser The LDAPUser represented by this data
+     * @return null|\Auth\LDAPUser The LDAPUser represented by this data
      */
     public function getUser($data)
     {
         return new LDAPUser($data);
     }
 
+    /**
+     * Obtain the group based on the group name
+     *
+     * @param string $name The Group's name
+     *
+     * @return null|\Auth\LDAPGroup The LDAPGroup represented by the name or null if not found
+     */
     public function getGroupByName($name)
     {
-        $server = $this->get_and_bind_server();
+        $server = $this->getAndBindServer();
         if($server === false)
         {
-            return false;
+            return null;
         }
         return LDAPGroup::from_name($name, $server);
     }
 
-    public function getGroupsByFilter($filter, $select=false, $top=false, $skip=false, $orderby=false)
+    public function getGroupsByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false)
     {
-        $server = $this->get_and_bind_server();
+        $server = $this->getAndBindServer();
         if($server === false)
         {
             return false;
@@ -244,6 +259,7 @@ class LDAPAuthenticator extends Authenticator
         {
             return false;
         }
+        $this->processFilteringParams($groups, $select, $top, $skip, $orderby);
         $count = count($groups);
         for($i = 0; $i < $count; $i++)
         {
@@ -259,17 +275,58 @@ class LDAPAuthenticator extends Authenticator
 
     public function getActiveUserCount()
     {
-        $server = $this->get_and_bind_server();
+        $server = $this->getAndBindServer();
         if($server === false)
         {
-            return false;
+            return 0;
         }
         return $server->count($this->user_base);
     }
 
-    public function getUsersByFilter($filter, $select=false, $top=false, $skip=false, $orderby=false)
+    /**
+     * @param array           $data The array data to filter and sort
+     * @param boolean|array   $select The fields to return
+     * @param boolean|integer $top The number of records to return
+     * @param boolean|integer $skip The number of records to skip
+     * @param boolean|array   $orderby The fields to sort by
+     */
+    private function processFilteringParams(&$data, &$select, $top, $skip, $orderby)
     {
-        $server = $this->get_and_bind_server();
+        if($orderby !== false)
+        {
+            sort_array($data, $orderby);
+        }
+        if($select !== false)
+        {
+            $select = array_flip($select);
+        }
+        if($skip !== false && $top !== false)
+        {
+            $data = array_slice($data, $skip, $top);
+        }
+        else if($top !== false)
+        {
+            $data = array_slice($data, 0, $top);
+        }
+        else if($skip !== false)
+        {
+            $data = array_slice($data, $skip);
+        }
+    }
+
+    
+    /**
+     * @param boolean|\Data\Filter $filter The filter to user when reading users
+     * @param boolean|array   $select The fields to return
+     * @param boolean|integer $top The number of records to return
+     * @param boolean|integer $skip The number of records to skip
+     * @param boolean|array   $orderby The fields to sort by
+     *
+     * @return array|boolean False if no users found, an array of user objects otherwise
+     */
+    public function getUsersByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false)
+    {
+        $server = $this->getAndBindServer();
         if($server === false)
         {
             return false;
@@ -283,27 +340,7 @@ class LDAPAuthenticator extends Authenticator
         {
             return false;
         }
-        $count = count($users);
-        if($orderby !== false)
-        {
-            sort_array($users, $orderby);
-        }
-        if($select !== false)
-        {
-            $select = array_flip($select);
-        }
-        if($skip !== false && $top !== false)
-        {
-            $users = array_slice($users, $skip, $top);
-        }
-        else if($top !== false)
-        {
-            $users = array_slice($users, 0, $top);
-        }
-        else if($skip !== false)
-        {
-            $users = array_slice($users, $skip);
-        }
+        $this->processFilteringParams($users, $select, $top, $skip, $orderby);
         $count = count($users);
         for($i = 0; $i < $count; $i++)
         {
@@ -320,42 +357,25 @@ class LDAPAuthenticator extends Authenticator
 
     public function activatePendingUser($user)
     {
-        $this->get_and_bind_server(true);
-        $new_user = new LDAPUser();
-        $new_user->setUID($user->getUID());
-        $email = $user->getEmail();
-        $new_user->setEmail($email);
+        $this->getAndBindServer(true);
+        $newUser = new LDAPUser();
+        $newUser->uid = $user->uid;
+        $newUser->mail = $user->mail;
+        $newUser->sn = $user->sn;
+        $newUser->givenName = $user->givenName;
+        $newUser->host = $user->host;
         $pass = $user->getPassword();
         if($pass !== false)
         {
-            $new_user->setPass($pass);
+            $newUser->setPass($pass);
         }
-        $sn = $user->getLastName();
-        if($sn !== false)
-        {
-            $new_user->setLastName($sn);
-        }
-        $givenName = $user->getGivenName();
-        if($givenName !== false)
-        {
-            $new_user->setGivenName($givenName);
-        }
-        $hosts = $user->getLoginProviders();
-        if($hosts !== false)
-        {
-            $count = count($hosts);
-            for($i = 0; $i < $count; $i++)
-            {
-                $new_user->addLoginProvider($hosts[$i]);
-            }
-        }
-        $ret = $new_user->flushUser();
+        $ret = $newUser->flushUser();
         if($ret)
         {
             $user->delete();
         }
-        $users = $this->getUsersByFilter(new \Data\Filter('mail eq '.$email));
-        if($users === false || !isset($users[0]))
+        $users = $this->getUsersByFilter(new \Data\Filter('mail eq '.$user->mail));
+        if(empty($users))
         {
             throw new \Exception('Error creating user!');
         }
@@ -373,4 +393,3 @@ class LDAPAuthenticator extends Authenticator
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
-?>

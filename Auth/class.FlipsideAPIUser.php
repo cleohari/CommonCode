@@ -2,7 +2,7 @@
 namespace Auth;
 if(!class_exists('Httpful\Request'))
 {
-    require('/var/www/common/libs/httpful/bootstrap.php');
+    require(realpath(dirname(__FILE__)).'/../libs/httpful/bootstrap.php');
 }
 
 class FlipsideAPIUser extends User
@@ -10,12 +10,23 @@ class FlipsideAPIUser extends User
     private $userData;
     private $groupData = null;
 
-    public function __construct($data)
+    public function __construct($data = false)
     {
-        $this->userData = $data['extended'];
+        if(($data !== false) && !isset($data['extended']))
+        {
+            //Generic user object
+            //TODO get from API
+        }
+        else
+        {
+            if(isset($data['extended']))
+            {
+                $this->userData = $data['extended'];
+            }
+        }
     }
 
-    function isInGroupNamed($name)
+    public function isInGroupNamed($name)
     {
         if($this->groupData === null)
         {
@@ -37,85 +48,18 @@ class FlipsideAPIUser extends User
         return false;
     }
 
-    function getDisplayName()
+    public function __get($propName)
     {
-        return $this->userData->displayname;
+        if($this->userData === null)
+        {
+            return parent::__get($propName);
+        }
+        $propName = strtolower($propName);
+        return $this->userData->{$propName};
     }
 
-    function getGivenName()
+    public function __set($propName, $value)
     {
-        return $this->userData->givenname;
-    }
-
-    function getEmail()
-    {
-        return $this->userData->mail;
-    }
-
-    function getUid()
-    {
-        return $this->userData->uid;
-    }
-
-    function getPhoneNumber()
-    {
-        return $this->userData->mobile;
-    }
-
-    function getOrganization()
-    {
-        return $this->userData->o;
-    }
-
-    function getTitles()
-    {
-        return $this->userData->title;
-    }
-
-    function getState()
-    {
-        return $this->userData->st;
-    }
-
-    function getCity()
-    {
-        return $this->userData->l;
-    }
-
-    function getLastName()
-    {
-        return $this->userData->sn;
-    }
-
-    function getNickName()
-    {
-        return $this->userData->displayname;
-    }
-
-    function getAddress()
-    {
-        return $this->userData->postaladdress;
-    }
-
-    function getPostalCode()
-    {
-        return $this->userData->postalcode;
-    }
-
-    function getCountry()
-    {
-        return $this->userData->c;
-    }
-
-    function getOrganizationUnits()
-    {
-        return $this->userData->ou;
-    }
-
-    function getLoginProviders()
-    {
-        return $this->userData->host;
     }
 }
 
-?>

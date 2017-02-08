@@ -20,6 +20,8 @@ namespace Auth;
  */
 class PendingUser extends User
 {
+    protected $intData = array();
+
     public function getHash()
     {
         return false;
@@ -35,53 +37,30 @@ class PendingUser extends User
      *
      * @param string $name The name of the group to check if the user is in
      *
-     * @return true|false True if the user is in the group, false otherwise
+     * @return boolean True if the user is in the group, false otherwise
      */
     public function isInGroupNamed($name)
     {
         return false;
     }
 
-    /**
-     * The email address for the user
-     *
-     * @return string The user's email address
-     */
-    public function getEmail()
+    public function __get($propName)
     {
-        if(isset($this->email))
+        if(isset($this->intData[$propName]))
         {
-            return $this->email;
+            return $this->intData[$propName];
         }
-        return parent::getEmail();
+        return parent::__get($propName);
     }
 
-    /**
-     * The given (or first) name for the user
-     *
-     * @return string The user's first name
-     */
-    public function getGivenName()
+    public function __set($propName, $value)
     {
-        if(isset($this->givenName))
-        {
-            return $this->givenName;
-        }
-        return parent::getGivenName();
+        $this->intData[$propName] = $value;
     }
 
-    /**
-     * The last name for the user
-     *
-     * @return string The user's last name
-     */
-    public function getLastName()
+    public function __isset($propName)
     {
-        if(isset($this->sn))
-        {
-            return $this->sn;
-        }
-        return parent::getLastName();
+        return isset($this->intData[$propName]);
     }
 
     /**
@@ -90,83 +69,11 @@ class PendingUser extends User
      * We need the ability to obtain the user's unhashed plain text password to allow for it to be sent 
      * to the correct backend which will hash it
      *
-     * @return string The current password
+     * @return boolean|string The current password
      */
     public function getPassword()
     {
         return false;
-    }
-
-    /**
-     * The supplemental login types that the user can use to login
-     *
-     * @return array The user's login providers
-     */
-    function getLoginProviders()
-    {
-        if(isset($this->host))
-        {
-            return $this->host;
-        }
-        return parent::getLoginProviders();
-    }
-
-    /**
-     * Add a supplemental login type that the user can use to login
-     *
-     * @param string $provider The hostname for the provider
-     *
-     * @return true|false true if the addition worked, false otherwise
-     */
-    function addLoginProvider($provider)
-    {
-        if(isset($this->host))
-        {
-            array_push($this->host, $provider);
-        }
-        else
-        {
-            $this->host = array($provider);
-        }
-    }
-
-    /**
-     * Set the user's email address
-     *
-     * @param string $email The user's new email address
-     *
-     * @return true|false true if the user's email address was changed, false otherwise
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-        return true;
-    }
-
-    /**
-     * Set the user's given (first) name
-     *
-     * @param string $name The user's new given name
-     *
-     * @return true|false true if the user's given name was changed, false otherwise
-     */
-    public function setGivenName($givenName)
-    {
-        $this->givenName = $givenName;
-        return true;
-    }
-
-    /**
-     * Set the user's last name
-     *
-     * @param string $sn The user's new last name
-     *
-     * @return true|false true if the user's last name was changed, false otherwise
-     */
-    public function setLastName($sn)
-    {
-        $this->sn = $sn;
-        return true;
     }
 
     /**
@@ -178,9 +85,13 @@ class PendingUser extends User
     {
         $user = array();
         $user['hash'] = $this->getHash();
-        $user['mail'] = $this->getEmail();
-        $user['uid'] = $this->getUid();
-        $user['time'] = $this->getRegistrationTime()->format(\DateTime::RFC822);
+        $user['mail'] = $this->mail;
+        $user['uid'] = $this->uid;
+        $time = $this->getRegistrationTime();
+        if($time !== false)
+        {
+            $user['time'] = $time->format(\DateTime::RFC822);
+        }
         $user['class'] = get_class($this);
         return $user; 
     }
@@ -188,7 +99,7 @@ class PendingUser extends User
     public function sendEmail()
     {
         $email_msg = new \Email\Email();
-        $email_msg->addToAddress($this->getEmail());
+        $email_msg->addToAddress($this->mail);
         $email_msg->setTextBody('Thank you for signing up with Burning Flipside. Your registration is not complete until you goto the address below.
                 https://profiles.burningflipside.com/finish.php?hash='.$this->getHash().'
                 Thank you,
@@ -211,4 +122,3 @@ class PendingUser extends User
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
-?>

@@ -29,17 +29,9 @@ class FlipsideAuthenticator extends OAuth2Authenticator
         {
             $token = \FlipSession::getVar('OAuthToken');
         }
-        $resp = \Httpful\Request::get('https://api.github.com/user')->addHeader('Authorization', 'token '.$token['access_token'])->send();
-        $github_user = $resp->body;
-        $user = new \Auth\PendingUser();
-        if(isset($github_user->name))
-        {
-            $name = explode(' ', $github_user->name);
-            $user->setGivenName($name[0]);
-            $user->setLastName($name[1]);
-        }
-        $resp = \Httpful\Request::get('https://api.github.com/user/emails')->addHeader('Authorization', 'token '.$token['access_token'])->send();
-        $user->setEmail($resp->body[0]->email);
+        $resp = \Httpful\Request::get('https://profiles.burningflipside.com/api/v1/users/me')->addHeader('Authorization', 'token '.$token['access_token'])->send();
+        $data = array('extended'=>$resp->body);
+        $user = new \Auth\FlipsideAPIUser($data);
         $user->addLoginProvider($this->getHostName());
         return $user;
     }
@@ -74,4 +66,3 @@ class FlipsideAuthenticator extends OAuth2Authenticator
         return new \Auth\FlipsideAPIUser($data);
     }
 }
-?>

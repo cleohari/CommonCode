@@ -10,11 +10,11 @@ namespace LDAP;
  * @param string|array $ignore Set of characters to leave untouched
  * @return string The escaped string
  */
-function ldap_escape($subject, $dn = FALSE, $ignore = NULL)
+function ldap_escape($subject, $distinguishedName = false, $ignore = NULL)
 {
     // The base array of characters to escape
     // Flip to keys for easy use of unset()
-    $search = array_flip($dn ? array('\\', '+', '<', '>', ';', '"', '#') : array('\\', '*', '(', ')', "\x00"));
+    $search = array_flip($distinguishedName ? array('\\', '+', '<', '>', ';', '"', '#') : array('\\', '*', '(', ')', "\x00"));
 
     // Process characters to ignore
     if(is_array($ignore))
@@ -38,24 +38,30 @@ function ldap_escape($subject, $dn = FALSE, $ignore = NULL)
     $result = str_replace($search, $replace, $subject);
 
     // Encode leading/trailing spaces in DN values
-    if($dn)
+    if($distinguishedName)
     {
-        if($result[0] == ' ')
-        {
-            $result = '\\20'.substr($result, 1);
-        }
-        if($result[strlen($result) - 1] == ' ')
-        {
-            $result = substr($result, 0, -1).'\\20';
-        }
+        $result = cleanupDN($result);
     }
 
     return $result;
 }
 
+function cleanupDN($distinguishedName)
+{
+    if($distinguishedName[0] == ' ')
+    {
+        $distinguishedName = '\\20'.substr($distinguishedName, 1);
+    }
+    if($distinguishedName[strlen($distinguishedName) - 1] == ' ')
+    {
+        $distinguishedName = substr($distinguishedName, 0, -1).'\\20';
+    }
+    return $distinguishedName;
+}
+
 class LDAPServer extends \Singleton
 {
-    protected $ds;
+    protected $ldapLink;
     protected $connect;
     protected $binder;
     public $user_base;
@@ -63,7 +69,7 @@ class LDAPServer extends \Singleton
 
     protected function __construct()
     {
-        $this->ds = null;
+        $this->ldapLink = null;
         $this->binder = null;
     }
 
@@ -73,10 +79,10 @@ class LDAPServer extends \Singleton
 
     public function __wakeup()
     {
-        $this->ds = ldap_connect($this->connect);
+        $this->ldapLink = ldap_connect($this->connect);
     }
 
-    private function _get_connect_string($name, $proto=false)
+    private function getConnectString($name, $proto = false)
     {
         if(strstr($name, ':') !== false)
         {
@@ -89,81 +95,86 @@ class LDAPServer extends \Singleton
         return $name;
     }
 
-    function connect($name, $proto=false)
+    public function connect($name, $proto = false)
     {
-        $connect_str = $this->_get_connect_string($name, $proto);
-        if($this->ds === null)
+        $connectStr = $this->getConnectString($name, $proto);
+        if($this->ldapLink !== null)
         {
-            $this->connect = $connect_str;
-            $this->ds      = ldap_connect($this->connect);
+            ldap_close($this->ldapLink);
         }
-        else
+        $this->connect = $connectStr;
+        $this->ldapLink = ldap_connect($this->connect);
+        if($this->ldapLink === false)
         {
-            ldap_close($this->ds);
-            $this->connect = $connect_str;
-            $this->ds      = ldap_connect($this->connect);
-        }
-        if($this->ds === false)
-        {
-            $this->ds = null;
+            $this->ldapLink = null;
             return false;
         }
-        ldap_set_option($this->ds, LDAP_OPT_PROTOCOL_VERSION, 3);
+        ldap_set_option($this->ldapLink, LDAP_OPT_PROTOCOL_VERSION, 3);
         return true;
     }
 
-    function disconnect()
+    public function disconnect()
     {
-        if($this->ds !== null)
+        if($this->ldapLink !== null)
         {
-            ldap_close($this->ds);
-            $this->ds = null;
+            ldap_close($this->ldapLink);
+            $this->ldapLink = null;
         }
         $this->connect = false;
     }
 
-    function bind($cn=null,$password=null)
+    /**
+     * Bind (login0 to the LDAP Server
+     *
+     * @param string $commonName The common name to bind with, null to bind anonymously
+     * @param string $password The password to bind with, null to bind anonymously
+     */
+    public function bind($commonName = null, $password = null)
     {
         $res = false;
-        if($this->ds === null)
+        if($this->ldapLink === null)
         {
             throw new \Exception('Not connected');
         }
-        $this->binder = $cn;
-        if($cn === null || $password === null)
+        $this->binder = $commonName;
+        if($commonName === null || $password === null)
         {
-            $res = @ldap_bind($this->ds);
+            return @ldap_bind($this->ldapLink);
         }
-        else
+        try
         {
-            try
-            {
-                $res = ldap_bind($this->ds, $cn, $password);
-            }
-            catch(\Exception $ex)
-            {
-                $this->ds = ldap_connect($this->connect);
-                $res = @ldap_bind($this->ds, $cn, $password);
-            }
+            $res = ldap_bind($this->ldapLink, $commonName, $password);
+        }
+        catch(\Exception $ex)
+        {
+            $this->ldapLink = ldap_connect($this->connect);
+            $res = @ldap_bind($this->ldapLink, $commonName, $password);
         }
         return $res;
     }
 
-    function unbind()
+    public function unbind()
     {
-        if($this->ds === null)
+        if($this->ldapLink === null)
         {
             return true;
         }
-        return @ldap_unbind($this->ds);
+        return @ldap_unbind($this->ldapLink);
     }
 
-    function get_error()
+    private function fixChildArray(&$array, $key, &$entity)
     {
-        return ldap_error($this->ds);
+        $count = count($array);
+        for($i = 0; $i < $count; $i++)
+        {
+            if(isset($array[$i]))
+            {
+                $entity[$key][$i] = $array[$i];
+            }
+        }
     }
 
-    private function _fix_object($object, &$delete = false)
+    private function fixObject($object, &$delete = false)
     {
         $entity = $object;
         if(!is_array($object))
@@ -172,19 +183,13 @@ class LDAPServer extends \Singleton
         }
         unset($entity['dn']);
         $keys = array_keys($entity);
-        for($i = 0; $i < count($keys); $i++)
+        $count = count($keys);
+        for($i = 0; $i < $count; $i++)
         {
             if(is_array($entity[$keys[$i]]))
             {
-                $array = $entity[$keys[$i]];
-                unset($entity[$keys[$i]]);
-                for($j = 0; $j < count($array); $j++)
-                {
-                    if(isset($array[$j]))
-                    {
-                        $entity[$keys[$i]][$j] = $array[$j];
-                    }
-                }
+                $this->fixChildArray($entity[$keys[$i]], $keys[$i], $entity);
+                //unset($entity[$keys[$i]]);
             }
             else if($delete !== false && $entity[$keys[$i]] === null)
             {
@@ -195,64 +200,45 @@ class LDAPServer extends \Singleton
         return $entity;
     }
 
-    function create($object)
+    public function create($object)
     {
-        $dn = ldap_escape($object['dn'], true);
-        $entity = $this->_fix_object($object);
-        $ret = ldap_add($this->ds, $dn, $entity);
+        $distinguishedName = ldap_escape($object['dn'], true);
+        $entity = $this->fixObject($object);
+        $ret = ldap_add($this->ldapLink, $distinguishedName, $entity);
         if($ret === false)
         {
-            throw new \Exception('Failed to create object with dn='.$dn);
+            throw new \Exception('Failed to create object with dn='.$distinguishedName);
         }
         return $ret;
     }
 
-    function read($base_dn, $filter=false, $single=false, $attributes=false)
+    /**
+     * Get the LDAP filter represented by the passed object
+     *
+     * @param boolean|string|\Data\Filter $filter The fiter to use
+     *
+     * @return string The filter in LDAP format
+     */
+    private function filterToString($filter)
     {
-        $filter_str = '(objectclass=*)';
-        if($filter !== false)
+        if($filter === false)
         {
-            if(is_string($filter))
-            {
-                $filter_str = $filter;
-            }
-            else
-            {
-                $filter_str = $filter->to_ldap_string();
-            }
+            return '(objectclass=*)';
         }
-        if($this->ds === null)
+        if(is_string($filter))
         {
-            throw new \Exception('Not connected');
+            return $filter;
         }
-        $sr = false;
-        try
-        {
-            if($single === true)
-            {
-                $sr = @ldap_read($this->ds, $base_dn, $filter_str);
-            }
-            else
-            {
-                if($attributes !== false)
-                {
-                    $sr = @ldap_list($this->ds, $base_dn, $filter_str, $attributes);
-                }
-                else
-                {
-                    $sr = @ldap_list($this->ds, $base_dn, $filter_str);
-                }
-            }
-        }
-        catch(\Exception $e)
-        {
-            throw new \Exception($e->getMessage().' '.$filter_str, $e->getCode(), $e);
-        }
-        if($sr === false)
+        return $filter->to_ldap_string();
+    }
+
+    private function searchResultToArray($searchResult)
+    {
+        if($searchResult === false)
         {
             return false;
         }
-        $res = ldap_get_entries($this->ds, $sr);
+        $res = ldap_get_entries($this->ldapLink, $searchResult);
         if(is_array($res))
         {
             $ldap = $res;
@@ -265,56 +251,91 @@ class LDAPServer extends \Singleton
         return $res;
     }
 
-    function count($base_dn, $filter=false)
+    /**
+     * Get data from the LDAP Server
+     *
+     * @param string $baseDN The distinguished name to start the search from
+     * @param boolean|string|\Data\Filter $filter The fiter to use
+     * @param boolean $single Read only the base DN
+     * @param boolean|array $attributes The list of attributes to read
+     *
+     * @return boolean|array The results from the LDAP Server
+     */
+    public function read($baseDN, $filter = false, $single = false, $attributes = false)
     {
-        $filter_str = '(objectclass=*)';
-        if($filter !== false)
-        {
-            $filter_str = $filter->to_ldap_string();
-        }
-        if($this->ds === null)
+        $filterStr = $this->filterToString($filter);
+        if($this->ldapLink === null)
         {
             throw new \Exception('Not connected');
         }
         try
         {
-            $sr = ldap_list($this->ds, $base_dn, $filter_str, array('dn'));
+            if($single === true)
+            {
+                $searchResult = @ldap_read($this->ldapLink, $baseDN, $filterStr);
+                return $this->searchResultToArray($searchResult);
+            }
+            if($attributes !== false)
+            {
+                $searchResult = @ldap_list($this->ldapLink, $baseDN, $filterStr, $attributes);
+                return $this->searchResultToArray($searchResult);
+            }
+            $searchResult = @ldap_list($this->ldapLink, $baseDN, $filterStr);
+            return $this->searchResultToArray($searchResult);
         }
         catch(\Exception $e)
         {
-            throw new \Exception($e->getMessage().' '.$filter_str, $e->getCode(), $e);
+            throw new \Exception($e->getMessage().' '.$filterStr, $e->getCode(), $e);
         }
-        if($sr === false)
-        {
-            return false;
-        }
-        return ldap_count_entries($this->ds, $sr);
     }
 
-    function update($object)
+    public function count($baseDN, $filter = false)
     {
-        $dn = ldap_escape($object['dn'], true);
+        $filterStr = $this->filterToString($filter);
+        if($this->ldapLink === null)
+        {
+            throw new \Exception('Not connected');
+        }
+        try
+        {
+            $searchResult = ldap_list($this->ldapLink, $baseDN, $filterStr, array('dn'));
+        }
+        catch(\Exception $e)
+        {
+            throw new \Exception($e->getMessage().' '.$filterStr, $e->getCode(), $e);
+        }
+        if($searchResult === false)
+        {
+            return 0;
+        }
+        return ldap_count_entries($this->ldapLink, $searchResult);
+    }
+
+    public function update($object)
+    {
+        $distinguishedName = ldap_escape($object['dn'], true);
         $delete = array();
-        $entity = $this->_fix_object($object, $delete);
+        $entity = $this->fixObject($object, $delete);
+        $ret = false;
         if(!empty($entity))
         {
-            $ret = @ldap_mod_replace($this->ds, $dn, $entity);
+            $ret = @ldap_mod_replace($this->ldapLink, $distinguishedName, $entity);
             if($ret === false)
             {
-                throw new \Exception('Failed to update object with dn='.$dn.'('.ldap_errno($this->ds).':'.ldap_error($this->ds).') '.print_r($entity, true));
+                $string = 'Failed to update object with dn='.$distinguishedName.' ('.ldap_errno($this->ldapLink).':'.ldap_error($this->ldapLink).') '.print_r($entity, true);
+                throw new \Exception($string);
             }
         }
         if(!empty($delete))
         {
-            $ret = @ldap_mod_del($this->ds, $dn, $delete);
+            $ret = @ldap_mod_del($this->ldapLink, $distinguishedName, $delete);
         }
         return $ret;
     }
 
-    function delete($dn)
+    public function delete($distinguishedName)
     {
-        return ldap_delete($this->ds, $dn);
+        return ldap_delete($this->ldapLink, $distinguishedName);
     }
 }
-
-?>
+/* vim: set tabstop=4 shiftwidth=4 expandtab: */

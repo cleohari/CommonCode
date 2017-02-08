@@ -3,36 +3,58 @@ namespace Auth;
 
 class SQLUser extends User
 {
-    private $uid;
+    private $data;
+    private $auth;
 
-    function __construct($data)
+    /**
+     * Initialize a SQLUser object
+     *
+     * @param boolean|array $data The data to initialize the SQLUser with or false for an empty User
+     * @param boolean|\Auth\SQLAuthenticator The SQLAuthenticator instance that produced this user
+     */
+    public function __construct($data = false, $auth = false)
     {
-        $this->uid = $data['extended'];
+        $this->data = array();
+        $this->auth = $auth;
+        if($data !== false)
+        {
+            $this->data = $data;
+            if(isset($data['extended']))
+            {
+                $this->data = $data['extended'];
+            }
+        }
     }
 
-    function isInGroupNamed($name)
+    public function isInGroupNamed($name)
     {
-        $auth_data_set = \DataSetFactory::get_data_set('authentication');
+        if($this->auth === false)
+        {
+            return false;
+        }
+        $auth_data_set = $this->auth->dataSet;
         $group_data_table = $auth_data_set['group'];
-        $filter = new \Data\Filter("uid eq '$this->uid' and gid eq '$name'");
+        $uid = $this->uid;
+        $filter = new \Data\Filter("uid eq '$uid' and gid eq '$name'");
         $groups = $group_data_table->read($filter);
         if($groups === false || !isset($groups[0]))
         {
             return false;
         }
         return true;
-
     }
 
-    function getEmail()
+    public function __get($propName)
     {
-        return $this->uid;
+        if(isset($this->data[$propName]))
+        {
+            return $this->data[$propName];
+        }
+        return false;
     }
 
-    function getUid()
+    public function __set($propName, $value)
     {
-        return $this->uid;
     }
 }
-
-?>
+/* vim: set tabstop=4 shiftwidth=4 expandtab: */

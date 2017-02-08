@@ -1,0 +1,13 @@
+{
+    "name": "BurningFlipside/CommonCode",
+    "version": "1.0.0",
+    "require-dev": {
+        "Plancake/EmailParser": "dev-master"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/plancake/official-library-php-email-parser.git"
+        }
+    ]
+}

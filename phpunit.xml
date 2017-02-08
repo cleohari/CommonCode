@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit colors="true" verbose="true" stderr="true" backupGlobals="false">
+<phpunit colors="true" verbose="true" stderr="true" backupGlobals="false" backupStaticAttributes="false">
     <testsuites>
         <testsuite name="Common Code Test Suite">
             <directory>./tests/</directory>
+            <exclude>./tests/travis</exclude>
         </testsuite>
     </testsuites>
 
@@ -14,6 +15,8 @@
                 <directory>./tests</directory>
                 <directory>./libs</directory>
                 <directory>./js</directory>
+                <directory>./vendor</directory>
+                <file>./cron.php</file>
             </exclude>
         </whitelist>
     </filter>

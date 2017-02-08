@@ -144,21 +144,31 @@ class Email extends \SerializableObject
     }
 
     /**
+     * Create the address string given an email address and if specified a name
+     *
+     * @param string $email The email address
+     * @param string $name  The name to associate with the address
+     *
+     * @return string The email address and name format
+     */
+    protected function constructEmailAddressString($email, $name = false)
+    {
+        if($name === false)
+        {
+            return $email;
+        }
+        return $name.' <'.$email.'>';
+    }
+
+    /**
      * Set the address the email should be sent from
      *
      * @param string $email The email address to send from
      * @param string $name  The name to associate with the from address
      */
-    public function setFromAddress($email, $name=false)
+    public function setFromAddress($email, $name = false)
     {
-        if($name !== false)
-        {
-            $this->sender = $name.' <'.$email.'>';
-        }
-        else
-        {
-            $this->sender = $email;
-        }
+        $this->sender = $this->constructEmailAddressString($email, $name);
     }
 
     /**
@@ -167,7 +177,7 @@ class Email extends \SerializableObject
      * @param string $email The email address to send to
      * @param string $name  The name to associate with the address
      */
-    public function addToAddress($email, $name=false)
+    public function addToAddress($email, $name = false)
     {
         $this->addAddress($this->to, $email, $name);
     }
@@ -178,7 +188,7 @@ class Email extends \SerializableObject
      * @param string $email The email address to send to
      * @param string $name  The name to associate with the address
      */
-    public function addCCAddress($email, $name=false)
+    public function addCCAddress($email, $name = false)
     {
         $this->addAddress($this->cc, $email, $name);
     }
@@ -189,7 +199,7 @@ class Email extends \SerializableObject
      * @param string $email The email address to send to
      * @param string $name  The name to associate with the address
      */
-    public function addBCCAddress($email, $name=false)
+    public function addBCCAddress($email, $name = false)
     {
         $this->addAddress($this->bcc, $email, $name);
     }
@@ -201,14 +211,9 @@ class Email extends \SerializableObject
      * @param string $email The email address to send to
      * @param string $name  The name to associate with the address
      */
-    protected function addAddress(&$list, $email, $name=false)
+    protected function addAddress(&$list, $email, $name = false)
     {
-        $address = $email;
-        if($name !== false)
-        {
-            $address = $name.' <'.$email.'>';
-        }
-        array_push($list, $address);
+        array_push($list, $this->constructEmailAddressString($email, $name));
     }
 
     /**
@@ -217,16 +222,9 @@ class Email extends \SerializableObject
      * @param string $email The email address to reply to
      * @param string $name  The name to associate with the from address
      */
-    public function setReplyTo($email, $name=false)
+    public function setReplyTo($email, $name = false)
     {
-        if($name !== false)
-        {
-            $this->replyTo = $name.' <'.$email.'>';
-        }
-        else
-        {
-            $this->replyTo = $email;
-        }
+        $this->replyTo = $this->constructEmailAddressString($email, $name);
     }
 
     /**
@@ -266,7 +264,7 @@ class Email extends \SerializableObject
      */
     public function appendToHTMLBody($body)
     {
-        $this->htmlBody.= $body;
+        $this->htmlBody .= $body;
     }
 
     /**
@@ -276,7 +274,7 @@ class Email extends \SerializableObject
      */
     public function appendToTextBody($body)
     {
-        $this->textBody.= $body;
+        $this->textBody .= $body;
     }
 
     /**
@@ -307,12 +305,9 @@ class Email extends \SerializableObject
         $mimeType = finfo_file($finfo, $filename);
         if($mimeType === false)
         {
-            if(file_exists($filename) && is_file($filename) && is_readable($filename))
-            {
-                $this->addAttachmentFromBuffer($name, file_get_contents($filename));
-            }
+            $mimeType = 'application/octet-stream';
         }
-        else
+        if(file_exists($filename) && is_file($filename) && is_readable($filename))
         {
             $this->addAttachmentFromBuffer($name, file_get_contents($filename), $mimeType);
         }
@@ -328,6 +323,18 @@ class Email extends \SerializableObject
         return empty($this->attachments) !== true;
     }
 
+    protected function addBodyIfPresent($body, $encoding, $boundary)
+    {
+        $rawMessage = '';
+        if($body !== false && strlen($body) > 0)
+        {
+            $rawMessage .= "\n--alt-{$boundary}\n";
+            $rawMessage .= "Content-Type: $encoding\n\n";
+            $rawMessage .= $body."\n";
+        }
+        return $rawMessage;
+    }
+
     /**
      * Serialize the message to a raw MIME encoded format suitable for sending over SMTP
      *
@@ -336,53 +343,45 @@ class Email extends \SerializableObject
     public function getRawMessage()
     {
         $boundary = uniqid(rand(), true);
-        $raw_message = 'To: '.$this->encodeRecipients($this->getToAddresses())."\n";
-        $raw_message.= 'From: '.$this->encodeRecipients($this->getFromAddress())."\n";
+        $rawMessage = 'To: '.$this->encodeRecipients($this->getToAddresses())."\n";
+        $from = $this->getFromAddress();
+        if($from === false)
+        {
+            throw new \Exception('Message must have a from address');
+        }
+        $rawMessage .= 'From: '.$this->encodeRecipients($from)."\n";
         if(!empty($this->cc))
         {
-            $raw_message.= 'CC: '. $this->encodeRecipients($this->getCCAddresses())."\n";
+            $rawMessage .= 'CC: '.$this->encodeRecipients($this->getCCAddresses())."\n";
         }
         if(!empty($this->bcc))
         {
-            $raw_message.= 'BCC: '. $this->encodeRecipients($this->getBCCAddresses())."\n";
+            $rawMessage .= 'BCC: '.$this->encodeRecipients($this->getBCCAddresses())."\n";
         }
-        $raw_message .= 'Subject: '.$this->getSubject()."\n";
-        $raw_message .= 'MIME-Version: 1.0'."\n";
-        $raw_message .= 'Content-type: Multipart/Mixed; boundary="'.$boundary.'"'."\n";
-        $raw_message .= "\n--{$boundary}\n";
-        $raw_message .= 'Content-type: Multipart/Alternative; boundary="alt-'.$boundary.'"'."\n";
-        $text_body    = $this->getTextBody();
-        if($text_body !== false && strlen($text_body) > 0)
-        {
-            $raw_message.= "\n--alt-{$boundary}\n";
-            $raw_message.= "Content-Type: text/plain\n\n";
-            $raw_message.= $text_body."\n";
-        }
-        $html_body    = $this->getHTMLBody();
-        if($html_body !== false && strlen($html_body) > 0)
-        {
-            $charset = empty($this->messageHtmlCharset) ? '' : "; charset=\"{$this->messageHtmlCharset}\"";
-            $raw_message .= "\n--alt-{$boundary}\n";
-            $raw_message .= 'Content-Type: text/html; charset="UTF-8"'."\n\n";
-            $raw_message .= $html_body."\n";
-        }
-        $raw_message.= "\n--alt-{$boundary}--\n";
+        $rawMessage .= 'Subject: '.$this->getSubject()."\n";
+        $rawMessage .= 'MIME-Version: 1.0'."\n";
+        $rawMessage .= 'Content-type: Multipart/Mixed; boundary="'.$boundary.'"'."\n";
+        $rawMessage .= "\n--{$boundary}\n";
+        $rawMessage .= 'Content-type: Multipart/Alternative; boundary="alt-'.$boundary.'"'."\n";
+        $rawMessage .= $this->addBodyIfPresent($this->getTextBody(), 'text/plain', $boundary);
+        $rawMessage .= $this->addBodyIfPresent($this->getHTMLBody(), 'text/html; charset="UTF-8"', $boundary);
+        $rawMessage .= "\n--alt-{$boundary}--\n";
         foreach($this->attachments as $attachment)
         {
-            $raw_message.= "\n--{$boundary}\n";
-            $raw_message.= 'Content-Type: '. $attachment['mimeType'].'; name="'.$attachment['name']."\"\n";
-            $raw_message.= 'Content-Disposition: attachment'."\n";
-            $raw_message.= 'Content-Transfer-Encoding: base64'."\n\n";
-            $raw_message.= chunk_split(base64_encode($attachment['data']), 76, "\n")."\n";
+            $rawMessage .= "\n--{$boundary}\n";
+            $rawMessage .= 'Content-Type: '.$attachment['mimeType'].'; name="'.$attachment['name']."\"\n";
+            $rawMessage .= 'Content-Disposition: attachment'."\n";
+            $rawMessage .= 'Content-Transfer-Encoding: base64'."\n\n";
+            $rawMessage .= chunk_split(base64_encode($attachment['data']), 76, "\n")."\n";
         }
-        $raw_message .= "\n--{$boundary}--\n";
-        return $raw_message;
+        $rawMessage .= "\n--{$boundary}--\n";
+        return $rawMessage;
     }
 
     /**
      * Serialize a recipient so that it can be sent over SMTP
      *
-     * @param string $recipient The recipient in the format 'name <email@address>'
+     * @param string|array $recipient The recipient in the format 'name <email@address>'
      *
      * @return string A text version of the recipient name and address suitable for sending over SMTP
      */
@@ -400,4 +399,3 @@ class Email extends \SerializableObject
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
-?>

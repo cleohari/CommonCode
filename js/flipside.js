@@ -40,7 +40,10 @@ function browser_supports_font_face_css2(rule)
         sheet.insertRule(rule, 0);
         result = !(/unknown/i).test(sheet.cssRules[0].cssText);
         sheet.deleteRule(sheet.cssRules.length - 1);
-    } catch(ignore) {}
+    } catch(ignore)
+    {
+        console.log(ignore);
+    }
     return result;
 }
 
@@ -122,6 +125,31 @@ function add_notification(container, message, severity, dismissible)
     container.prepend(alert_div);
 }
 
+function addButtonToFooter(footer, buttonData)
+{
+    var btn_class = 'btn-default';
+    var options = {'type': 'button'};
+    if(buttonData.style !== undefined)
+    {
+        btn_class = buttonData.style;
+    }
+    options['class'] = 'btn '+btn_class;
+    if(buttonData.close !== undefined && buttonData.close === true)
+    {
+        options['data-dismiss'] = 'modal';
+    }
+    var button = $('<button/>', options).html(buttonData.text);
+    if(buttonData.method !== undefined)
+    {
+        button.on('click', buttonData.method);
+    }
+    if(buttonData.data !== undefined)
+    {
+        button.data('data', buttonData.data);
+    }
+    button.appendTo(footer);
+}
+
 function create_modal(title, body, buttons)
 {
     var modal = $('<div/>', {'class': 'modal fade'});
@@ -142,31 +170,7 @@ function create_modal(title, body, buttons)
     var footer = $('<div/>', {'class': 'modal-footer'});
     for(var i = 0; i < buttons.length; i++)
     {
-        var btn_class = '';
-        var options = {'type': 'button'};
-        if(buttons[i].style === undefined)
-        {
-            btn_class = 'btn-default';
-        }
-        else
-        {
-            btn_class = buttons[i].style;
-        }
-        options['class'] = 'btn '+btn_class;
-        if(buttons[i].close !== undefined && buttons[i].close === true)
-        {
-            options['data-dismiss'] = 'modal';
-        }
-        button = $('<button/>', options).html(buttons[i].text);
-        if(buttons[i].method !== undefined)
-        {
-            button.on('click', buttons[i].method);
-        }
-        if(buttons[i].data !== undefined)
-        {
-            button.data('data', buttons[i].data);
-        }
-        button.appendTo(footer);
+        addButtonToFooter(footer, buttons[i]);
     }
     footer.appendTo(content);
     content.appendTo(dialog);
@@ -176,11 +180,12 @@ function create_modal(title, body, buttons)
 
 function string_startswith(str)
 {
-    return this.slice(0, str.length) == str;
+    return this.slice(0, str.length) === str;
 }
 
-if(typeof String.prototype.startsWith != 'function')
+if(typeof String.prototype.startsWith !== 'function')
 {
+    // eslint-disable-next-line no-extend-native
     String.prototype.startsWith = string_startswith;
 }
 

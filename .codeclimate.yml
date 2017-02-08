@@ -1,0 +1,44 @@
+engines:
+  csslint:
+    enabled: true
+  duplication:
+    enabled: true
+    config:
+      languages:
+        javascript:
+          mass_threshold: 40
+        php:
+          mass_threshold: 40
+  eslint:
+    enabled: true
+  fixme:
+    enabled: true
+  phpmd:
+    enabled: true
+    checks:
+      CleanCode/BooleanArgumentFlag:
+        enabled: false
+ratings:
+  paths:
+  - "**.css"
+  - "**.inc"
+  - "**.js"
+  - "**.php"
+exclude_paths:
+- tests/
+- libs/
+- vendor/
+- "static.words.php"
+- "css/bootstrap*"
+- "css/font-awesome*"
+- "css/jquery*"
+- "js/bootbox*"
+- "js/bootstrap*"
+- "js/Chart*"
+- "js/md5*"
+- "js/jquery*"
+- "js/metisMenu*"
+- "js/tinynav*"
+- "js/typeahead*"
+- "js/js-webshim/**/*"
+- "js/*.min.js"

@@ -1,6 +1,6 @@
 <?php
 namespace Auth;
-require_once('/var/www/common/libs/google/src/Google/autoload.php');
+require dirname(__FILE__).'/../libs/google/src/Google/autoload.php';
 
 class GoogleAuthenticator extends Authenticator
 {
@@ -25,6 +25,11 @@ class GoogleAuthenticator extends Authenticator
         $this->client->setRedirectUri($params['redirect_url']);
     }
 
+    /**
+     * Get the link to login using this method
+     *
+     * @return string The link to login using this method
+     */
     public function getSupplementLink()
     {
         $authUrl = $this->client->createAuthUrl();
@@ -34,13 +39,16 @@ class GoogleAuthenticator extends Authenticator
     public function authenticate($code, &$currentUser = false)
     {
         $googleUser = false;
-        try{
+        try
+        {
             $this->client->authenticate($code);
             $this->token = $this->client->getAccessToken();
             \FlipSession::setVar('GoogleToken', $this->token);
             $oauth2Service = new \Google_Service_Oauth2($this->client);
             $googleUser = $oauth2Service->userinfo->get();
-        } catch(\Exception $ex) {
+        }
+        catch(\Exception $ex)
+        {
             return self::LOGIN_FAILED;
         }
 
@@ -59,14 +67,14 @@ class GoogleAuthenticator extends Authenticator
         else
         {
             $user = new PendingUser();
-            $user->setEmail($googleUser->email);
-            $user->setGivenName($googleUser->givenName);
-            $user->setLastName($googleUser->familyName);
+            $user->mail = $googleUser->email;
+            $user->givenName = $googleUser->givenName;
+            $user->sn = $googleUser->familyName;
             $user->addLoginProvider('google.com');
             $ret = $auth->activatePendingUser($user);
             if($ret === false)
             {
-                 throw new \Exception('Unable to create user! '.$res);
+                throw new \Exception('Unable to create user! '.$res);
             }
             return self::SUCCESS;
         }
@@ -78,22 +86,24 @@ class GoogleAuthenticator extends Authenticator
         {
             $data = $this->token;
         }
-        try {
+        try
+        {
             $this->client->setAccessToken($data);
             $oauth2Service = new \Google_Service_Oauth2($this->client);
             $googleUser = $oauth2Service->userinfo->get();
-            $profileUser = array();
-            $profileUser['mail'] = $googleUser->email;
-            $profileUser['sn'] = $googleUser->familyName;
-            $profileUser['givenName'] = $googleUser->givenName;
-            $profileUser['displayName'] = $googleUser->name;
-            $profileUser['jpegPhoto'] = base64_encode(file_get_contents($googleUser->picture));
+            $profileUser = new \Auth\PendingUser();
+            $profileUser->addLoginProvider('google.com');
+            $profileUser->mail = $googleUser->email;
+            $profileUser->sn = $googleUser->familyName;
+            $profileUser->givenName = $googleUser->givenName;
+            $profileUser->displayName = $googleUser->name;
+            $profileUser->jpegPhoto = base64_encode(file_get_contents($googleUser->picture));
             return $profileUser;
-        } catch(\Exception $e)
+        }
+        catch(\Exception $e)
         {
-            return false;
+            return null;
         }
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
-?>
