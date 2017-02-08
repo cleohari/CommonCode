@@ -67,6 +67,12 @@ class LDAPUser extends User
     public function isInGroupNamed($name)
     {
         $filter = new \Data\Filter('cn eq '.$name);
+        $auth = \AuthProvider::getInstance();
+        $ldap = $auth->getMethodByName('Auth\LDAPAuthenticator');
+        if($ldap !== false)
+        {
+            $ldap->getAndBindServer(false);
+        }
         $group = $this->server->read($this->server->group_base, $filter);
         if(!empty($group))
         {
