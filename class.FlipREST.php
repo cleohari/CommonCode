@@ -72,7 +72,7 @@ class OAuth2Auth extends \Slim\Middleware
     public function call()
     {
         // no auth header
-        if(!isset($this->headers['authorization']))
+        if(!isset($this->headers['Authorization']))
         {
             $this->app->user = $this->getUserFromSession();
         }
