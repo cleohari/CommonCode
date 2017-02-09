@@ -24,15 +24,10 @@ trait LDAPCachableObject
 
     private function initializeFromDN($dn)
     {
-        $filter = new \Data\Filter("dn eq $dn");
-        $data = $this->server->read($this->server->user_base, $filter);
+        $data = $this->server->read($dn, false, true);
         if($data === false || !isset($data[0]))
         {
-            $data = $this->server->read($this->server->group_base, $filter);
-            if($data === false || !isset($data[0]))
-            {
-                return false;
-            }
+            return false;
         }
         return $data[0];
     }

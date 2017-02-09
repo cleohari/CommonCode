@@ -125,19 +125,21 @@ class LDAPGroup extends Group
     {
         $members = array();
         $rawMembers = $this->getMembersField();
-        for($i = 0; $i < $rawMembers['count']; $i++)
+        $count = $rawMembers['count'];
+        for($i = 0; $i < $count; $i++)
         {
-            if($recursive && strncmp($rawMembers[$i], 'cn=', 3) === 0)
+            $rawMember = array_pop($rawMembers);
+            if($recursive && strncmp($rawMember, 'cn=', 3) === 0)
             {
-                $child = new LDAPGroup($rawMembers[$i]);
+                $child = new LDAPGroup($rawMember);
                 if($child !== false)
                 {
-                    $members = array_merge($members, $child->members());
+                    $members = array_merge($members, $child->members(false, $recursive, $includeGroups));
                 }
             }
-            else if($includeGroups !== false || strncmp($rawMembers[$i], 'cn=', 3) !== 0)
+            else if($includeGroups !== false || strncmp($rawMember, 'cn=', 3) !== 0)
             {
-                array_push($members, $rawMembers[$i]);
+                array_push($members, $rawMember);
             }
         }
         if($details === true)
