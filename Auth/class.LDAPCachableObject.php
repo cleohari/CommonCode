@@ -22,6 +22,13 @@ trait LDAPCachableObject
         $this->ldapObj = $this->initializeFromArray($data);
     }
 
+    /**
+     * Get the data from the server based on the DN
+     *
+     * @param string $dn The DN of the LDAP object
+     *
+     * @return array The raw LDAP data
+     */
     private function initializeFromDN($dn)
     {
         $data = $this->server->read($dn, false, true);
