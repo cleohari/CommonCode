@@ -179,7 +179,7 @@ class FlipRESTFormat extends \Slim\Middleware
 
     private function create_excel(&$array)
     {
-        require_once dirname(__FILE__) . '/libs/PHPExcel/Classes/PHPExcel.php';
+        require_once dirname(__FILE__).'/libs/PHPExcel/Classes/PHPExcel.php';
         $ssheat = new PHPExcel();
         $sheat = $ssheat->setActiveSheetIndex(0);
         if(is_array($array))
@@ -228,7 +228,7 @@ class FlipRESTFormat extends \Slim\Middleware
                         {
                             $value = implode(',', $value);
                         }
-                        $sheat->setCellValueByColumnAndRow($j, 2+$i, $value);
+                        $sheat->setCellValueByColumnAndRow($j, 2 + $i, $value);
                     }
                 }
             }

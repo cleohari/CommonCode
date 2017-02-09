@@ -32,7 +32,7 @@ class SMTPServer extends \Singleton
     {
     }
 
-    public function connect($hostName, $port=25, $useTLS=true)
+    public function connect($hostName, $port = 25, $useTLS = true)
     {
         $ret = $this->smtp->connect($hostName, $port);
         if($ret === false)
