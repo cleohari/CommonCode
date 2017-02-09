@@ -1,6 +1,9 @@
 {
     "name": "BurningFlipside/CommonCode",
     "version": "1.0.0",
+    "require": {
+        "nategood/httpful": "*"
+    },
     "require-dev": {
         "Plancake/EmailParser": "dev-master"
     },
