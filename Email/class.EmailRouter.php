@@ -41,7 +41,10 @@ class EmailRouter extends \Singleton
         {
             $tmp = $this->routeSingle($dest, $rawMessage);
             $ret[] = $tmp;
-            if($tmp === false) $error = true;
+            if($tmp === false)
+            {
+                $error = true;
+            }
         }
         if($error === true)
         {
