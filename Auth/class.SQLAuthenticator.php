@@ -189,6 +189,15 @@ class SQLAuthenticator extends Authenticator
         return new SQLUser($data, $this);
     }
 
+    /**
+     * Get the specified entity from the specified database table
+     *
+     * @param string $tableName The name of the table to obtain data from
+     * @param string $filterStr The filter string to use to obtain the data
+     * @param string $className The class name to pass the data to
+     *
+     * @return stdClass The data as an object or null if not found
+     */
     private function getEntityByFilter($tableName, $filterStr, $className)
     {
         $dataTable = $this->getDataTable($tableName);
@@ -211,6 +220,18 @@ class SQLAuthenticator extends Authenticator
         return $this->getEntityByFilter('user', "uid eq '$name'", '\Auth\SQLUser');
     }
 
+    /**
+     * Get the specified entities from the specified database table
+     *
+     * @param string $dataTableName The name of the table to obtain data from
+     * @param boolean|\Data\Filter $filter The filter to use while searching the table
+     * @param boolean|array $select The array of properties to read
+     * @param boolean|integer $top The number of records to read
+     * @param boolean|integer $skip The number of records to skip
+     * @param boolean|array $orderby The properties to sort on
+     *
+     * @return array The SQL data returned by the filter
+     */
     private function getDataByFilter($dataTableName, $filter, $select, $top, $skip, $orderby)
     {
         $dataTable = $this->getDataTable($dataTableName);
@@ -276,6 +297,17 @@ class SQLAuthenticator extends Authenticator
         return $dataTable->count();
     }
 
+    /**
+     * Search all the pending users
+     *
+     * @param boolean|\Data\Filter $filter The filter to use while searching the table
+     * @param boolean|array $select The array of properties to read
+     * @param boolean|integer $top The number of records to read
+     * @param boolean|integer $skip The number of records to skip
+     * @param boolean|array $orderby The properties to sort on
+     *
+     * @return array The SQL data returned by the filter
+     */
     private function searchPendingUsers($filter, $select, $top, $skip, $orderby)
     {
         $userDataTable = $this->getPendingUserDataTable();
