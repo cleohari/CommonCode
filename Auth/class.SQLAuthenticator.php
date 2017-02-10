@@ -338,7 +338,7 @@ class SQLAuthenticator extends Authenticator
         return $users;
     }
 
-    public function activatePendingUser($user)
+    public function createPendingUser($user)
     {
         if($this->pending === false)
         {
