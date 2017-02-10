@@ -1,7 +1,6 @@
 <?php
 namespace Serialize;
-
-require_once dirname(__FILE__).'/../libs/PHPExcel/Classes/PHPExcel.php';
+require_once dirname(__FILE__).'/../vendor/autoload.php';
 
 class ExcelSerializer extends SpreadSheetSerializer
 {

@@ -14,7 +14,7 @@
 /**
  * We use the Browscap abstraction to determine browser versions 
  */
-require('libs/browscap-php/src/phpbrowscap/Browscap.php');
+require(dirname(__FILE__).'/vendor/autoload.php');
 use phpbrowscap\Browscap;
 
 /**

@@ -135,7 +135,7 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase
         $auth = new \Auth\GoogleAuthenticator($params);
         $this->assertNotNull($auth);
         $this->assertInstanceOf('Auth\GoogleAuthenticator', $auth);
-        $this->assertEquals('<a href="https://accounts.google.com/o/oauth2/auth?response_type=code&redirect_uri=https%3A%2F%2Fexample.com%2Foauth2callback.php%3Fsrc%3Dgoogle&client_id=test&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&access_type=online&approval_prompt=auto"><img src="/img/common/google_sign_in.png" style="width: 2em;"/></a>', $auth->getSupplementLink());
+        $this->assertEquals('<a href="https://accounts.google.com/o/oauth2/auth?response_type=code&access_type=online&client_id=test&redirect_uri=https%3A%2F%2Fexample.com%2Foauth2callback.php%3Fsrc%3Dgoogle&state&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&approval_prompt=auto"><img src="/img/common/google_sign_in.png" style="width: 2em;"/></a>', $auth->getSupplementLink());
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
