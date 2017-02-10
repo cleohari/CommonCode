@@ -23,7 +23,7 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0, $auth->getActiveUserCount(false));
         $this->assertEquals(0, $auth->getPendingUserCount(false));
         $this->assertEquals(0, $auth->getGroupCount(false));
-        $this->assertFalse($auth->getSupplementLink());
+        $this->assertEmpty($auth->getSupplementLink());
         $this->assertFalse($auth->createPendingUser(false));
         $this->assertFalse($auth->activatePendingUser(false));
         $this->assertFalse($auth->getUserByResetHash(false));
@@ -50,7 +50,7 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($auth->pending);
         $this->assertTrue($auth->supplement);
 
-        $this->assertFalse($auth->getSupplementLink());
+        $this->assertEmpty($auth->getSupplementLink());
         $this->assertFalse($auth->getHostName(false));
     }
 
@@ -65,35 +65,6 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($auth->isLoggedIn(false));
         $this->assertTrue($auth->isLoggedIn($res));
         $this->assertNull($auth->getUser(false));
-    }
-
-    public function testLDAPAuthenticator()
-    {
-        $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
-        $params = array('current'=>true, 'pending'=>false, 'supplement'=>false, 'host'=>'ldap://ldap.forumsys.com', 'user_base'=>'dc=example,dc=com', 'group_base'=>'dc=example,dc=com', 
-                        'bind_dn'=>'cn=read-only-admin,dc=example,dc=com', 'bind_pass'=>'password');
-        $auth = new \Auth\LDAPAuthenticator($params);
-        $this->assertNotNull($auth);
-        $this->assertInstanceOf('Auth\LDAPAuthenticator', $auth);
-
-        $users = $auth->getUsersByFilter(false);
-        $this->assertNotNull($users);
-
-        $users = $auth->getUsersByFilter(false, array('cn', 'mail'));
-        $this->assertNotNull($users);
-        $count = count($users);
-        for($i = 0; $i < $count; $i++)
-        {
-            $this->assertCount(2, $users[$i]);
-        }
-
-        $users = $auth->getUsersByFilter(false, false, 1, 1);
-        $this->assertNotNull($users);
-        $this->assertCount(1, $users);
-
-        $users = $auth->getUsersByFilter(false, false, false, false, array('mail'));
-        $this->assertNotNull($users);
-
     }
 
     public function testFlipsideAuthenticator()
@@ -164,7 +135,7 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase
         $auth = new \Auth\GoogleAuthenticator($params);
         $this->assertNotNull($auth);
         $this->assertInstanceOf('Auth\GoogleAuthenticator', $auth);
-        $this->assertEquals('<a href="https://accounts.google.com/o/oauth2/auth?response_type=code&redirect_uri=https%3A%2F%2Fexample.com%2Foauth2callback.php%3Fsrc%3Dgoogle&client_id=test&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&access_type=online&approval_prompt=auto"><img src="/img/common/google_sign_in.png" style="width: 2em;"/></a>', $auth->getSupplementLink());
+        $this->assertEquals('<a href="https://accounts.google.com/o/oauth2/auth?response_type=code&access_type=online&client_id=test&redirect_uri=https%3A%2F%2Fexample.com%2Foauth2callback.php%3Fsrc%3Dgoogle&state&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&approval_prompt=auto"><img src="/img/common/google_sign_in.png" style="width: 2em;"/></a>', $auth->getSupplementLink());
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */

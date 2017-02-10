@@ -3,11 +3,21 @@ namespace Auth;
 
 class Group extends \SerializableObject
 {
+    /**
+     * Get the Group's Name
+     *
+     * @return boolean|string The name of the group or false on error
+     */
     public function getGroupName()
     {
         return false;
     }
 
+    /**
+     * Get the Group's Description
+     *
+     * @return boolean|string The description of the group or false on error
+     */
     public function getDescription()
     {
         return false;
@@ -138,6 +148,14 @@ class Group extends \SerializableObject
         return true;
     }
 
+    /**
+     * Get the Group's By it's name
+     *
+     * @param string $name The name of the group to get
+     * @param mixed $data The data used to help get the Group
+     *
+     * @return boolean|\Auth\Group The group with the specified name or false otherwise
+     */
     public static function from_name($name, $data = false)
     {
         return false;

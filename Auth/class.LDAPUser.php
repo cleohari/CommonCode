@@ -4,12 +4,16 @@ namespace Auth;
 class LDAPUser extends User
 {
     use LDAPCachableObject;
+    use LDAPGettableObject;
+    use LDAPSettableObject;
 
     private $ldapObj;
     private $server;
 
     /**
      * Initialize a LDAPUser object
+     *
+     * @param boolean|array|object $data The data to initialize the LDAPUser with or false for an empty User
      *
      * @SuppressWarnings("StaticAccess")
      */
@@ -55,9 +59,20 @@ class LDAPUser extends User
         return $this->checkChildGroup($group[$listName]);
     }
 
+    private function uidInMemberUid($group, $uid)
+    {
+        return (isset($group['memberUid']) && in_array($uid, $group['memberUid']));
+    }
+
     public function isInGroupNamed($name)
     {
         $filter = new \Data\Filter('cn eq '.$name);
+        $auth = \AuthProvider::getInstance();
+        $ldap = $auth->getMethodByName('Auth\LDAPAuthenticator');
+        if($ldap !== false)
+        {
+            $ldap->getAndBindServer(false);
+        }
         $group = $this->server->read($this->server->group_base, $filter);
         if(!empty($group))
         {
@@ -69,7 +84,7 @@ class LDAPUser extends User
             {
                 $ret = $this->isInListOrChild('uniquemember', $group, $dn);
             }
-            if($ret === false && isset($group['memberUid']) && in_array($uid, $group['memberUid']))
+            if($ret === false && $this->uidInMemberUid($group, $uid))
             {
                 return true;
             }
@@ -91,86 +106,6 @@ class LDAPUser extends User
     protected $cachedOnlyProps = array(
         'uid'
     );
-
-    protected function getValueWithDefault($propName)
-    {
-        if(isset($this->valueDefaults[$propName]))
-        {
-            $tmp = $this->getFieldSingleValue($propName);
-            if($tmp === false)
-            {
-                return $this->valueDefaults[$propName];
-            }
-            return $tmp;
-        }
-        return false;
-    }
-
-    protected function getMultiValueProp($propName)
-    {
-        if(in_array($propName, $this->multiValueProps))
-        {
-            $tmp = $this->getField($propName);
-            if(isset($tmp['count']))
-            {
-                unset($tmp['count']);
-            }
-            return $tmp;
-        }
-        return false;
-    }
-
-    public function __get($propName)
-    {
-        $tmp = $this->getValueWithDefault($propName);
-        if($tmp !== false)
-        {
-            return $tmp;
-        }
-        $tmp = $this->getMultiValueProp($propName);
-        if($tmp !== false)
-        {
-            return $tmp;
-        }
-        return $this->getFieldSingleValue($propName);
-    }
-
-    protected function setCachedOnlyProp($propName, $value)
-    {
-        if(in_array($propName, $this->cachedOnlyProps))
-        {
-            if(!is_object($this->ldapObj))
-            {
-                $this->setFieldLocal($propName, $value);
-                return true;
-            }
-            throw new \Exception('Unsupported!');
-        }
-        return false;
-    }
-
-    protected function setMultiValueProp($propName, $value)
-    {
-        if(in_array($propName, $this->multiValueProps) && !is_array($value))
-        {
-             $this->setField($propName, array($value));
-             return true;
-        }
-        return false;
-    }
-
-    public function __set($propName, $value)
-    {
-        if($this->setCachedOnlyProp($propName, $value) === true)
-        {
-            return;
-        }
-        if($this->setMultiValueProp($propName, $value) === true)
-        {
-            return;
-        }
-        $this->setField($propName, $value);
-    }
 
     /**
      * Allow write for the user
@@ -222,12 +157,13 @@ class LDAPUser extends User
 
     public function setPass($password)
     {
+        $password = $this->generateLDAPPass($password);
         if(!is_object($this->ldapObj))
         {
-            return $this->setFieldLocal('userPassword', $this->generateLDAPPass($password));
+            return $this->setFieldLocal('userPassword', $password);
         }
         $obj = array('dn'=>$this->ldapObj->dn);
-        $obj['userPassword'] = $this->generateLDAPPass($password);
+        $obj['userPassword'] = $password;
         if(isset($this->ldapObj->uniqueidentifier))
         {
             $obj['uniqueIdentifier'] = null;
@@ -251,7 +187,7 @@ class LDAPUser extends User
         return false;
     }
 
-    public static function from_name($name, $data = false)
+    public static function from_name($name, $data)
     {
         if($data === false)
         {
@@ -259,7 +195,7 @@ class LDAPUser extends User
         }
         $filter = new \Data\Filter("uid eq $name");
         $user = $data->read($data->user_base, $filter);
-        if($user === false || !isset($user[0]))
+        if(empty($user))
         {
             return false;
         }
@@ -288,21 +224,22 @@ class LDAPUser extends User
         return $ret;
     }
 
+    private function getHashFromUser($ldapObj)
+    {
+        if(isset($ldapObj->userpassword))
+        {
+            return hash('sha512', $ldapObj->dn.';'.$ldapObj->userpassword[0].';'.$ldapObj->mail[0]);
+        }
+        return hash('sha512', $ldapObj->dn.';'.openssl_random_pseudo_bytes(10).';'.$ldapObj->mail[0]);
+    }
+
     public function getPasswordResetHash()
     {
         //Make sure we are bound in write mode
         $this->enableReadWrite();
         $ldapObj = $this->server->read($this->server->user_base, new \Data\Filter('uid eq '.$this->uid));
         $ldapObj = $ldapObj[0];
-        $hash = false;
-        if(isset($ldapObj->userpassword))
-        {
-            $hash = hash('sha512', $ldapObj->dn.';'.$ldapObj->userpassword[0].';'.$ldapObj->mail[0]);
-        }
-        else
-        {
-            $hash = hash('sha512', $ldapObj->dn.';'.openssl_random_pseudo_bytes(10).';'.$ldapObj->mail[0]);
-        }
+        $hash = $this->getHashFromUser($ldapObj);
         $obj = array('dn'=>$this->ldapObj->dn);
         $obj['uniqueIdentifier'] = $hash;
         if($this->server->update($obj) === false)

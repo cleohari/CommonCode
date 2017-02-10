@@ -6,6 +6,12 @@ class SQLUser extends User
     private $data;
     private $auth;
 
+    /**
+     * Initialize a SQLUser object
+     *
+     * @param boolean|array $data The data to initialize the SQLUser with or false for an empty User
+     * @param boolean|\Auth\SQLAuthenticator The SQLAuthenticator instance that produced this user
+     */
     public function __construct($data = false, $auth = false)
     {
         $this->data = array();

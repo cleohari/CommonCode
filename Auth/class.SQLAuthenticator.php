@@ -189,28 +189,26 @@ class SQLAuthenticator extends Authenticator
         return new SQLUser($data, $this);
     }
 
+    private function getEntityByFilter($tableName, $filterStr, $className)
+    {
+        $dataTable = $this->getDataTable($tableName);
+        $filter = new \Data\Filter($filterStr);
+        $entities = $dataTable->read($filter);
+        if(empty($entities))
+        {
+            return null;
+        }
+        return new $className($entities[0], $this);
+    }
+
     public function getGroupByName($name)
     {
-        $groupDataTable = $this->getDataTable('group');
-        $filter = new \Data\Filter("gid eq '$name'");
-        $groups = $groupDataTable->read($filter);
-        if($groups === false || !isset($groups[0]))
-        {
-            return false;
-        }
-        return new SQLGroup($groups[0]);
+        return $this->getEntityByFilter('group', "gid eq '$name'", '\Auth\SQLGroup');
     }
 
     public function getUserByName($name)
     {
-        $userDataTable = $this->getDataTable('user');
-        $filter = new \Data\Filter("uid eq '$name'");
-        $users = $userDataTable->read($filter);
-        if($users === false || !isset($users[0]))
-        {
-            return false;
-        }
-        return new SQLUser($users[0], $this);
+        return $this->getEntityByFilter('user', "uid eq '$name'", '\Auth\SQLUser');
     }
 
     private function getDataByFilter($dataTableName, $filter, $select, $top, $skip, $orderby)
@@ -237,7 +235,7 @@ class SQLAuthenticator extends Authenticator
         $count = count($data);
         for($i = 0; $i < $count; $i++)
         {
-            $data[$i] = new $className($groups[$i], $this);
+            $data[$i] = new $className($data[$i], $this);
         }
         return $data;
     }
@@ -340,7 +338,7 @@ class SQLAuthenticator extends Authenticator
         return $users;
     }
 
-    public function createPendingUser($user)
+    public function activatePendingUser($user)
     {
         if($this->pending === false)
         {

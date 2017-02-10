@@ -140,7 +140,7 @@ class LDAPAuthenticator extends Authenticator
     /**
      * Return an instance to the \LDAP\LDAPServer object instance
      *
-     * @param boolean $bind_write Should we be able to write to the server?
+     * @param boolean $bindWrite Should we be able to write to the server?
      *
      * @return \LDAP\LDAPServer|false The server instance if the binding was successful, otherwise false
      *
@@ -219,19 +219,26 @@ class LDAPAuthenticator extends Authenticator
      *
      * @param \stdClass	$data The AuthData from the session
      *
-     * @return \Auth\LDAPUser The LDAPUser represented by this data
+     * @return null|\Auth\LDAPUser The LDAPUser represented by this data
      */
     public function getUser($data)
     {
         return new LDAPUser($data);
     }
 
+    /**
+     * Obtain the group based on the group name
+     *
+     * @param string $name The Group's name
+     *
+     * @return null|\Auth\LDAPGroup The LDAPGroup represented by the name or null if not found
+     */
     public function getGroupByName($name)
     {
         $server = $this->getAndBindServer();
         if($server === false)
         {
-            return false;
+            return null;
         }
         return LDAPGroup::from_name($name, $server);
     }
@@ -271,7 +278,7 @@ class LDAPAuthenticator extends Authenticator
         $server = $this->getAndBindServer();
         if($server === false)
         {
-            return false;
+            return 0;
         }
         return $server->count($this->user_base);
     }
@@ -314,6 +321,8 @@ class LDAPAuthenticator extends Authenticator
      * @param boolean|integer $top The number of records to return
      * @param boolean|integer $skip The number of records to skip
      * @param boolean|array   $orderby The fields to sort by
+     *
+     * @return array|boolean False if no users found, an array of user objects otherwise
      */
     public function getUsersByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false)
     {
@@ -352,24 +361,19 @@ class LDAPAuthenticator extends Authenticator
         $newUser = new LDAPUser();
         $newUser->uid = $user->uid;
         $newUser->mail = $user->mail;
+        $newUser->sn = $user->sn;
+        if(isset($user->givenName))
+        {
+            $newUser->givenName = $user->givenName;
+        }
+        if(isset($user->host))
+        {
+            $newUser->host = $user->host;
+        }
         $pass = $user->getPassword();
         if($pass !== false)
         {
             $newUser->setPass($pass);
-        }
-        if($user->sn !== false)
-        {
-            $newUser->sn = $user->sn;
-        }
-        $givenName = $user->givenName;
-        if($givenName !== false)
-        {
-            $newUser->givenName = $givenName;
-        }
-        $hosts = $user->host;
-        if($hosts !== false)
-        {
-            $newUser->host = $user->host;
         }
         $ret = $newUser->flushUser();
         if($ret)
@@ -377,7 +381,7 @@ class LDAPAuthenticator extends Authenticator
             $user->delete();
         }
         $users = $this->getUsersByFilter(new \Data\Filter('mail eq '.$user->mail));
-        if($users === false || !isset($users[0]))
+        if(empty($users))
         {
             throw new \Exception('Error creating user!');
         }

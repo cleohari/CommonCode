@@ -3,7 +3,22 @@
     "version": "1.0.0",
     "license": "Apache",
     "require": {
-        "php": ">=5.5.0",
-        "slim/slim": "^3.0"
-    }
+        "nategood/httpful": "*",
+        "google/apiclient": "^2.0",
+        "browscap/browscap-php": "^2.0",
+        "slim/slim" : "^3.0",
+        "Plancake/EmailParser": "dev-master",
+        "PHPOffice/PhpExcel": "dev-master",
+        "mongofill/mongofill": "dev-master"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/plancake/official-library-php-email-parser.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/PHPOffice/PHPExcel.git"
+        }
+    ]
 }

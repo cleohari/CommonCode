@@ -1,11 +1,22 @@
 <?php
 namespace Serialize;
-
-require_once dirname(__FILE__).'/../libs/PHPExcel/Classes/PHPExcel.php';
+require_once dirname(__FILE__).'/../vendor/autoload.php';
 
 class ExcelSerializer extends SpreadSheetSerializer
 {
     protected $types = array('xlsx', 'xls', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel');
+
+    protected function setRowFromArray(&$sheat, $row, $array, $count = 0)
+    {
+        if($count === 0)
+        {
+            $count = count($array);
+        }
+        for($i = 0; $i < $count; $i++)
+        {
+            $sheat->setCellValueByColumnAndRow($i, $row, $array[$i]);
+        }
+    }
 
     public function serializeData($type, $array)
     {
@@ -23,16 +34,10 @@ class ExcelSerializer extends SpreadSheetSerializer
         $keys = array_shift($data);
         $rowCount = count($data);
         $colCount = count($keys);
-        for($i = 0; $i < $colCount; $i++)
-        {
-            $sheat->setCellValueByColumnAndRow($i, 1, $keys[$i]);
-        }
+        $this->setRowFromArray($sheat, 1, $keys, $colCount);
         for($i = 0; $i < $rowCount; $i++)
         {
-            for($j = 0; $j < $colCount; $j++)
-            {
-                $sheat->setCellValueByColumnAndRow($j, (2 + $i), $data[$i][$j]);
-            }
+            $this->setRowFromArray($sheat, (2 + $i), $data[$i], $colCount);
         }
         $writerType = 'Excel5';
         if(strcasecmp($type, 'xlsx') === 0 || strcasecmp($type, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') === 0)

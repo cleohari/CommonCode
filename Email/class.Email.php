@@ -144,6 +144,23 @@ class Email extends \SerializableObject
     }
 
     /**
+     * Create the address string given an email address and if specified a name
+     *
+     * @param string $email The email address
+     * @param string $name  The name to associate with the address
+     *
+     * @return string The email address and name format
+     */
+    protected function constructEmailAddressString($email, $name = false)
+    {
+        if($name === false)
+        {
+            return $email;
+        }
+        return $name.' <'.$email.'>';
+    }
+
+    /**
      * Set the address the email should be sent from
      *
      * @param string $email The email address to send from
@@ -151,12 +168,7 @@ class Email extends \SerializableObject
      */
     public function setFromAddress($email, $name = false)
     {
-        $address = $email;
-        if($name !== false)
-        {
-            $address = $name.' <'.$email.'>';
-        }
-        $this->sender = $address;
+        $this->sender = $this->constructEmailAddressString($email, $name);
     }
 
     /**
@@ -201,12 +213,7 @@ class Email extends \SerializableObject
      */
     protected function addAddress(&$list, $email, $name = false)
     {
-        $address = $email;
-        if($name !== false)
-        {
-            $address = $name.' <'.$email.'>';
-        }
-        array_push($list, $address);
+        array_push($list, $this->constructEmailAddressString($email, $name));
     }
 
     /**
@@ -217,12 +224,7 @@ class Email extends \SerializableObject
      */
     public function setReplyTo($email, $name = false)
     {
-        $address = $email;
-        if($name !== false)
-        {
-            $address = $name.' <'.$email.'>';
-        }
-        $this->replyTo = $address;
+        $this->replyTo = $this->constructEmailAddressString($email, $name);
     }
 
     /**
@@ -321,6 +323,18 @@ class Email extends \SerializableObject
         return empty($this->attachments) !== true;
     }
 
+    protected function addBodyIfPresent($body, $encoding, $boundary)
+    {
+        $rawMessage = '';
+        if($body !== false && strlen($body) > 0)
+        {
+            $rawMessage .= "\n--alt-{$boundary}\n";
+            $rawMessage .= "Content-Type: $encoding\n\n";
+            $rawMessage .= $body."\n";
+        }
+        return $rawMessage;
+    }
+
     /**
      * Serialize the message to a raw MIME encoded format suitable for sending over SMTP
      *
@@ -349,20 +363,8 @@ class Email extends \SerializableObject
         $rawMessage .= 'Content-type: Multipart/Mixed; boundary="'.$boundary.'"'."\n";
         $rawMessage .= "\n--{$boundary}\n";
         $rawMessage .= 'Content-type: Multipart/Alternative; boundary="alt-'.$boundary.'"'."\n";
-        $textBody    = $this->getTextBody();
-        if($textBody !== false && strlen($textBody) > 0)
-        {
-            $rawMessage .= "\n--alt-{$boundary}\n";
-            $rawMessage .= "Content-Type: text/plain\n\n";
-            $rawMessage .= $textBody."\n";
-        }
-        $htmlBody = $this->getHTMLBody();
-        if($htmlBody !== false && strlen($htmlBody) > 0)
-        {
-            $rawMessage .= "\n--alt-{$boundary}\n";
-            $rawMessage .= 'Content-Type: text/html; charset="UTF-8"'."\n\n";
-            $rawMessage .= $htmlBody."\n";
-        }
+        $rawMessage .= $this->addBodyIfPresent($this->getTextBody(), 'text/plain', $boundary);
+        $rawMessage .= $this->addBodyIfPresent($this->getHTMLBody(), 'text/html; charset="UTF-8"', $boundary);
         $rawMessage .= "\n--alt-{$boundary}--\n";
         foreach($this->attachments as $attachment)
         {
@@ -379,7 +381,7 @@ class Email extends \SerializableObject
     /**
      * Serialize a recipient so that it can be sent over SMTP
      *
-     * @param string $recipient The recipient in the format 'name <email@address>'
+     * @param string|array $recipient The recipient in the format 'name <email@address>'
      *
      * @return string A text version of the recipient name and address suitable for sending over SMTP
      */

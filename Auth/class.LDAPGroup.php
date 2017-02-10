@@ -125,19 +125,21 @@ class LDAPGroup extends Group
     {
         $members = array();
         $rawMembers = $this->getMembersField();
-        for($i = 0; $i < $rawMembers['count']; $i++)
+        $count = $rawMembers['count'];
+        for($i = 0; $i < $count; $i++)
         {
-            if($recursive && strncmp($rawMembers[$i], 'cn=', 3) === 0)
+            $rawMember = array_pop($rawMembers);
+            if($recursive && strncmp($rawMember, 'cn=', 3) === 0)
             {
-                $child = new LDAPGroup($rawMembers[$i]);
+                $child = new LDAPGroup($rawMember);
                 if($child !== false)
                 {
-                    $members = array_merge($members, $child->members());
+                    $members = array_merge($members, $child->members(false, $recursive, $includeGroups));
                 }
             }
-            else if($includeGroups !== false || strncmp($rawMembers[$i], 'cn=', 3) !== 0)
+            else if($includeGroups !== false || strncmp($rawMember, 'cn=', 3) !== 0)
             {
-                array_push($members, $rawMembers[$i]);
+                array_push($members, $rawMember);
             }
         }
         if($details === true)
@@ -147,7 +149,7 @@ class LDAPGroup extends Group
         return $members;
     }
 
-    public function getNonMemebers($select = false)
+    public function getNonMembers($select = false)
     {
         $data = array();
         $groupFilter = '(&(cn=*)(!(cn='.$this->getGroupName().'))';
@@ -205,14 +207,10 @@ class LDAPGroup extends Group
 
     public function addMember($name, $isGroup = false, $flush = true)
     {
-        $distinguishedName = false;
+        $distinguishedName = 'uid='.$name.','.$this->server->user_base;
         if($isGroup)
         {
             $distinguishedName = 'cn='.$name.','.$this->server->group_base;
-        }
-        else
-        {
-            $distinguishedName = 'uid='.$name.','.$this->server->user_base;
         }
         $propName   = false;
         $rawMembers = $this->getMembersField($propName);
@@ -250,6 +248,10 @@ class LDAPGroup extends Group
         }
     }
 
+    /**
+     * @param string $name The Group Name
+     * @param boolean|\LDAP\LDAPServer $data The server to read from
+     */
     public static function from_name($name, $data = false)
     {
         if($data === false)
@@ -260,7 +262,7 @@ class LDAPGroup extends Group
         $group = $data->read($data->group_base, $filter);
         if($group === false || !isset($group[0]))
         {
-            return false;
+            return null;
         }
         return new static($group[0]);
     }

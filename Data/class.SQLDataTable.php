@@ -16,7 +16,7 @@ class SQLDataTable extends DataTable
         $this->tablename = $tablename;
     }
 
-    function get_primary_key()
+    public function get_primary_key()
     {
         $res = $this->dataset->raw_query("SHOW INDEX FROM $this->tablename WHERE Key_name='PRIMARY'");
         if($res === false)
@@ -26,7 +26,7 @@ class SQLDataTable extends DataTable
         return $res[0]['Column_name'];
     }
 
-    function count($filter = false)
+    public function count($filter = false)
     {
         $where = false;
         if($filter !== false)
@@ -44,7 +44,7 @@ class SQLDataTable extends DataTable
         }
     }
   
-    function search($filter = false, $select = false, $count = false, $skip = false, $sort = false, $params = false)
+    public function search($filter = false, $select = false, $count = false, $skip = false, $sort = false, $params = false)
     {
         $where = false;
         if($filter !== false)
@@ -58,18 +58,18 @@ class SQLDataTable extends DataTable
         return $this->dataset->read($this->tablename, $where, $select, $count, $skip, $sort);
     }
 
-    function update($filter, $data)
+    public function update($filter, $data)
     {
         $where = $filter->to_sql_string();
         return $this->dataset->update($this->tablename, $where, $data);
     }
 
-    function create($data)
+    public function create($data)
     {
         return $this->dataset->create($this->tablename, $data);
     }
 
-    function delete($filter)
+    public function delete($filter)
     {
         $where = false;
         if($filter !== false)
@@ -79,7 +79,7 @@ class SQLDataTable extends DataTable
         return $this->dataset->delete($this->tablename, $where);
     }
 
-    function raw_query($sql)
+    public function raw_query($sql)
     {
         return $this->dataset->raw_query($sql);
     }

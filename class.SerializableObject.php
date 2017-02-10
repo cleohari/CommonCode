@@ -21,7 +21,7 @@ class SerializableObject implements ArrayAccess, JsonSerializable
     /**
      * Create the object from an array
      *
-     * @param array $array The array of object properties
+     * @param boolean|array $array The array of object properties
      */
     public function __construct($array = false)
     {

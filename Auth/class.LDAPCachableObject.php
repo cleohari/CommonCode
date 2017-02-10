@@ -24,15 +24,10 @@ trait LDAPCachableObject
 
     private function initializeFromDN($dn)
     {
-        $filter = new \Data\Filter("dn eq $dn");
-        $data = $this->server->read($this->server->user_base, $filter);
+        $data = $this->server->read($dn, false, true);
         if($data === false || !isset($data[0]))
         {
-            $data = $this->server->read($this->server->group_base, $filter);
-            if($data === false || !isset($data[0]))
-            {
-                return false;
-            }
+            return false;
         }
         return $data[0];
     }
@@ -232,7 +227,23 @@ trait LDAPCachableObject
     private function setFieldServer($fieldName, $fieldValue)
     {
         $obj = array('dn'=>$this->ldapObj->dn);
-        if($fieldValue !== null && strlen($fieldValue) > 0)
+        if($fieldValue !== null && is_array($fieldValue))
+        {
+            $found = false;
+            foreach($fieldValue as $value)
+            {
+                if($value !== null && strlen($value) > 0)
+                {
+                    $found = true;
+                    break;
+                }
+            }
+            if($found)
+            {
+                $obj[$fieldName] = $fieldValue;
+            }
+        }
+        else if($fieldValue !== null && strlen($fieldValue) > 0)
         {
             $obj[$fieldName] = $fieldValue;
         }
@@ -241,7 +252,14 @@ trait LDAPCachableObject
             $obj[$fieldName] = null;
         }
         $lowerName = strtolower($fieldName);
-        $this->ldapObj->{$lowerName} = array($fieldValue);
+        if(!is_array($fieldValue))
+        {
+            $this->ldapObj->{$lowerName} = array($fieldValue);
+        }
+        else
+        {
+            $this->ldapObj->{$lowerName} = $fieldValue;
+        }
         return $this->update($obj);
     }
 

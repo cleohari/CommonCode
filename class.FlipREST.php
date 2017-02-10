@@ -1,6 +1,6 @@
 <?php
 require_once('class.FlipSession.php');
-require_once('libs/Slim/Slim/Slim.php');
+require_once('vendor/autoload.php');
 require_once('Autoload.php');
 \Slim\Slim::registerAutoloader();
 
@@ -20,7 +20,7 @@ class OAuth2Auth extends \Slim\Middleware
 
     public function __construct($headers)
     {
-        $this->headers = $headers;
+        $this->headers = array_change_key_case($headers);
     }
 
     private function getUserFromSession()
@@ -177,6 +177,68 @@ class FlipRESTFormat extends \Slim\Middleware
         return ob_get_clean();
     }
 
+    private function create_excel(&$array)
+    {
+        require_once dirname(__FILE__) . '/libs/PHPExcel/Classes/PHPExcel.php';
+        $ssheat = new PHPExcel();
+        $sheat = $ssheat->setActiveSheetIndex(0);
+        if(is_array($array))
+        {
+            $first = reset($array);
+            $keys = false;
+            if(is_array($first))
+            {
+                $keys = array_keys($first);
+            }
+            else if(is_object($first))
+            {
+                $keys = array_keys(get_object_vars($first));
+            }
+            $col_count = count($keys);
+            for($i = 0; $i < $col_count; $i++)
+            {
+                $sheat->setCellValueByColumnAndRow($i, 1, $keys[$i]);
+            }
+            $row_count = count($array);
+            for($i = 0; $i < $row_count; $i++)
+            {
+                $row = $array[$i];
+                if(is_object($row))
+                {
+                    $row = get_object_vars($row);
+                }
+                for($j = 0; $j < $col_count; $j++)
+                {
+                    $colName = $keys[$j];
+                    if(isset($row[$colName]))
+                    {
+                        $value = $row[$colName];
+                        if(is_object($value))
+                        {
+                            switch($colName)
+                            {
+                                case '_id':
+                                    $value = $value->{'$id'};
+                                default:
+                                    $value = json_encode($value);
+                                    break;
+                            }
+                        }
+                        else if(is_array($value))
+                        {
+                            $value = implode(',', $value);
+                        }
+                        $sheat->setCellValueByColumnAndRow($j, 2+$i, $value);
+                    }
+                }
+            }
+        }
+        $writer = PHPExcel_IOFactory::createWriter($ssheat, 'Excel2007');
+        ob_start();
+        $writer->save('php://output');
+        return ob_get_clean();
+    }
+
     private function createXML(&$array)
     {
         $obj = new SerializableObject($array);
@@ -227,13 +289,8 @@ class FlipRESTFormat extends \Slim\Middleware
         }
     }
 
-    public function call()
+    private function getFormat($params)
     {
-        if($this->app->request->isOptions())
-        {
-            return;
-        }
-        $params = $this->app->request->params();
         $fmt = null;
         if(isset($params['fmt']))
         {
@@ -245,12 +302,27 @@ class FlipRESTFormat extends \Slim\Middleware
             if(strstr($fmt, 'odata.streaming=true'))
             {
                 $this->app->response->setStatus(406);
-                return;
+                return false;
             }
         }
         if($fmt === null)
         {
             $fmt = $this->getFormatFromHeader();
+        }
+        return $fmt;
+    }
+
+    public function call()
+    {
+        if($this->app->request->isOptions())
+        {
+            return;
+        }
+        $params = $this->app->request->params();
+        $fmt = $this->getFormat($params);
+        if($fmt === false)
+        {
+            return;
         }
 
         $this->app->fmt     = $fmt;
@@ -315,6 +387,25 @@ class FlipREST extends \Slim\Slim
         $this->response->headers->set('Content-Type', 'application/json');
         error_log(print_r($error, true));
         echo json_encode($error);
+    }
+
+    function not_found_handler()
+    {
+        $accept = $this->request->headers->get('Accept');
+        if(strcmp($accept, 'application/json') == 0)
+        {
+            $error = array(
+                'code' => 404,
+                'message' => 'Not Found'
+            );
+            $this->response->headers->set('Content-Type', 'application/json');
+            $this->response->setStatus(404);
+            echo json_encode($error);
+        }
+        else
+        {
+            $this->defaultNotFound();
+        }
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */

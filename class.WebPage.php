@@ -14,7 +14,7 @@
 /**
  * We use the Browscap abstraction to determine browser versions 
  */
-require('libs/browscap-php/src/phpbrowscap/Browscap.php');
+require(dirname(__FILE__).'/vendor/autoload.php');
 use phpbrowscap\Browscap;
 
 /**
@@ -138,7 +138,7 @@ class WebPage
      */
     protected function printOpenHtml()
     {
-        echo '<HTML>';
+        echo '<HTML lang="en">';
     }
 
     /**
@@ -176,7 +176,7 @@ class WebPage
      *
      * @param string $tag The tag to add to the page header
      */
-    protected function addHeadTag($tag)
+    public function addHeadTag($tag)
     {
         array_push($this->headTags, $tag);
     }

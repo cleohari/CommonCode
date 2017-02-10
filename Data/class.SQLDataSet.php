@@ -40,7 +40,7 @@ class SQLDataSet extends DataSet
         return $count;
     }
 
-    function _tableExistsNoPrefix($name)
+    private function _tableExistsNoPrefix($name)
     {
         if($this->_get_row_count_for_query('SHOW TABLES LIKE '.$this->pdo->quote($name)) > 0)
         {
@@ -53,33 +53,17 @@ class SQLDataSet extends DataSet
         return false;
     }
 
-    function _tableExists($name)
+    private function _tableExists($name)
     {
-        if($this->_get_row_count_for_query('SHOW TABLES LIKE '.$this->pdo->quote('tbl'.$name)) > 0)
-        {
-            return true;
-        }
-        else if($this->_get_row_count_for_query('SELECT * FROM sqlite_master WHERE name LIKE '.$this->pdo->quote('tbl'.$name)) > 0)
-        {
-            return true;
-        }
-        return false;
+        return $this->_tableExistsNoPrefix('tbl'.$name);
     }
 
-    function _viewExists($name)
+    private function _viewExists($name)
     {
-        if($this->_get_row_count_for_query('SHOW TABLES LIKE '.$this->pdo->quote('v'.$name)) > 0)
-        {
-            return true;
-        }
-        else if($this->_get_row_count_for_query('SELECT * FROM sqlite_master WHERE name LIKE '.$this->pdo->quote('v'.$name)) > 0)
-        {
-            return true;
-        }
-        return false;
+        return $this->_tableExistsNoPrefix('v'.$name);
     }
 
-    function tableExists($name)
+    public function tableExists($name)
     {
         if($this->_tableExists($name))
         {
@@ -96,7 +80,7 @@ class SQLDataSet extends DataSet
         return false;
     }
 
-    function getTable($name)
+    public function getTable($name)
     {
         if($this->_tableExists($name))
         {
@@ -113,7 +97,53 @@ class SQLDataSet extends DataSet
         throw new \Exception('No such table '.$name);
     }
 
-    function read($tablename, $where = false, $select = '*', $count = false, $skip = false, $sort = false)
+    /**
+     * @param boolean|array $sort The array to sort by or false to not sort
+     */
+    private function getOrderByClause($sort)
+    {
+        if(empty($sort))
+        {
+            return false;
+        }
+        $sql = ' ORDER BY ';
+        $tmp = array();
+        foreach($sort as $sort_col=>$dir)
+        {
+            array_push($tmp, $sort_col.' '.($dir === 1 ? 'ASC' : 'DESC'));
+        }
+        $sql .= implode($tmp, ',');
+        return $sql;
+    }
+
+    private function getLimitClause($count, $skip)
+    {
+        if($count === false)
+        {
+            return false;
+        }
+        $count = intval($count);
+        if($skip !== false)
+        {
+            $skip = intval($count);
+            return " LIMIT $skip, $count";
+        }
+        return ' LIMIT '.$count;
+    }
+
+    /**
+     * Read data from the specified SQL table
+     *
+     * @param string $tablename The name of the table to read from
+     * @param boolean|string $where The where caluse of the SQL statement
+     * @param string $select The colums to read
+     * @param boolean|string $count The number of rows to read
+     * @param boolean|string $skip The number of rows to skip over
+     * @param boolean|array $sort The array to sort by or false to not sort
+     *
+     * @return false|array An array of all the returned records
+     */
+    public function read($tablename, $where = false, $select = '*', $count = false, $skip = false, $sort = false)
     {
         if($select === false)
         {
@@ -124,26 +154,15 @@ class SQLDataSet extends DataSet
         {
             $sql .= ' WHERE '.$where;
         }
-        if($count !== false)
+        $tmp = $this->getLimitClause($count, $skip);
+        if($tmp !== false)
         {
-            if($skip === false)
-            {
-                $sql .= ' LIMIT '.(int)$count;
-            }
-            else
-            {
-                $sql .= " LIMIT $skip, $count";
-            }
+            $sql .= $tmp;
         }
-        if($sort !== false)
+        $tmp = $this->getOrderByClause($sort);
+        if($tmp !== false)
         {
-            $sql .= ' ORDER BY ';
-            $tmp = array();
-            foreach($sort as $sort_col=>$dir)
-            {
-                array_push($tmp, $sort_col.' '.($dir === 1 ? 'ASC' : 'DESC'));
-            }
-            $sql .= implode($tmp, ',');
+            $sql .= $tmp;
         }
         $stmt = $this->pdo->query($sql, \PDO::FETCH_ASSOC);
         if($stmt === false)
@@ -151,14 +170,14 @@ class SQLDataSet extends DataSet
             return false;
         }
         $ret = $stmt->fetchAll();
-        if($ret === false || empty($ret))
+        if(empty($ret))
         {
             return false;
         }
         return $ret;
     }
 
-    function update($tablename, $where, $data)
+    public function update($tablename, $where, $data)
     {
         $set = array();
         if(is_object($data))
@@ -180,7 +199,7 @@ class SQLDataSet extends DataSet
         return true;
     }
 
-    function create($tablename, $data)
+    public function create($tablename, $data)
     {
         $set = array();
         if(is_object($data))
@@ -203,7 +222,7 @@ class SQLDataSet extends DataSet
         return true;
     }
 
-    function delete($tablename, $where)
+    public function delete($tablename, $where)
     {
         $sql = "DELETE FROM $tablename WHERE $where";
         if($this->pdo->exec($sql) === false)
@@ -213,7 +232,7 @@ class SQLDataSet extends DataSet
         return true;
     }
 
-    function raw_query($sql)
+    public function raw_query($sql)
     {
         $stmt = $this->pdo->query($sql, \PDO::FETCH_ASSOC);
         if($stmt === false)

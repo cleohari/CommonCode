@@ -1,22 +1,10 @@
 <?php
 namespace Serialize;
 
-class JSONSerializer implements ISerializer
+class JSONSerializer extends Serializer
 {
-    private $types = array('json', 'application/json', 'application/x-javascript', 'text/javascript', 'text/x-javascript', 'text/x-json');
+    protected $types = array('json', 'application/json', 'application/x-javascript', 'text/javascript', 'text/x-javascript', 'text/x-json');
 
-    public function supportsType($type)
-    {
-        foreach($this->types as $t)
-        {
-            if(strcasecmp($t, $type) === 0)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
- 
     public function serializeData($type, $array)
     {
         if($this->supportsType($type) === false)

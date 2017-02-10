@@ -126,29 +126,29 @@ class LDAPServer extends \Singleton
     /**
      * Bind (login0 to the LDAP Server
      *
-     * @param string $cn The common name to bind with, null to bind anonymously
+     * @param string $commonName The common name to bind with, null to bind anonymously
      * @param string $password The password to bind with, null to bind anonymously
      */
-    public function bind($cn = null, $password = null)
+    public function bind($commonName = null, $password = null)
     {
         $res = false;
         if($this->ldapLink === null)
         {
             throw new \Exception('Not connected');
         }
-        $this->binder = $cn;
-        if($cn === null || $password === null)
+        $this->binder = $commonName;
+        if($commonName === null || $password === null)
         {
             return @ldap_bind($this->ldapLink);
         }
         try
         {
-            $res = ldap_bind($this->ldapLink, $cn, $password);
+            $res = ldap_bind($this->ldapLink, $commonName, $password);
         }
         catch(\Exception $ex)
         {
             $this->ldapLink = ldap_connect($this->connect);
-            $res = @ldap_bind($this->ldapLink, $cn, $password);
+            $res = @ldap_bind($this->ldapLink, $commonName, $password);
         }
         return $res;
     }
@@ -160,6 +160,18 @@ class LDAPServer extends \Singleton
             return true;
         }
         return @ldap_unbind($this->ldapLink);
+    }
+
+    private function fixChildArray(&$array, $key, &$entity)
+    {
+        $count = count($array);
+        for($i = 0; $i < $count; $i++)
+        {
+            if(isset($array[$i]))
+            {
+                $entity[$key][$i] = $array[$i];
+            }
+        }
     }
 
     private function fixObject($object, &$delete = false)
@@ -176,16 +188,8 @@ class LDAPServer extends \Singleton
         {
             if(is_array($entity[$keys[$i]]))
             {
-                $array = $entity[$keys[$i]];
-                unset($entity[$keys[$i]]);
-                $count1 = count($array);
-                for($j = 0; $j < $count1; $j++)
-                {
-                    if(isset($array[$j]))
-                    {
-                        $entity[$keys[$i]][$j] = $array[$j];
-                    }
-                }
+                $this->fixChildArray($entity[$keys[$i]], $keys[$i], $entity);
+                //unset($entity[$keys[$i]]);
             }
             else if($delete !== false && $entity[$keys[$i]] === null)
             {
@@ -198,12 +202,12 @@ class LDAPServer extends \Singleton
 
     public function create($object)
     {
-        $dn = ldap_escape($object['dn'], true);
+        $distinguishedName = ldap_escape($object['dn'], true);
         $entity = $this->fixObject($object);
-        $ret = ldap_add($this->ldapLink, $dn, $entity);
+        $ret = ldap_add($this->ldapLink, $distinguishedName, $entity);
         if($ret === false)
         {
-            throw new \Exception('Failed to create object with dn='.$dn);
+            throw new \Exception('Failed to create object with dn='.$distinguishedName);
         }
         return $ret;
     }
@@ -247,6 +251,16 @@ class LDAPServer extends \Singleton
         return $res;
     }
 
+    /**
+     * Get data from the LDAP Server
+     *
+     * @param string $baseDN The distinguished name to start the search from
+     * @param boolean|string|\Data\Filter $filter The fiter to use
+     * @param boolean $single Read only the base DN
+     * @param boolean|array $attributes The list of attributes to read
+     *
+     * @return boolean|array The results from the LDAP Server
+     */
     public function read($baseDN, $filter = false, $single = false, $attributes = false)
     {
         $filterStr = $this->filterToString($filter);
@@ -292,7 +306,7 @@ class LDAPServer extends \Singleton
         }
         if($searchResult === false)
         {
-            return false;
+            return 0;
         }
         return ldap_count_entries($this->ldapLink, $searchResult);
     }
@@ -308,7 +322,8 @@ class LDAPServer extends \Singleton
             $ret = @ldap_mod_replace($this->ldapLink, $distinguishedName, $entity);
             if($ret === false)
             {
-                throw new \Exception('Failed to update object with dn='.$distinguishedName.'('.ldap_errno($this->ldapLink).':'.ldap_error($this->ldapLink).') '.print_r($entity, true));
+                $string = 'Failed to update object with dn='.$distinguishedName.' ('.ldap_errno($this->ldapLink).':'.ldap_error($this->ldapLink).') '.print_r($entity, true);
+                throw new \Exception($string);
             }
         }
         if(!empty($delete))
@@ -323,4 +338,4 @@ class LDAPServer extends \Singleton
         return ldap_delete($this->ldapLink, $distinguishedName);
     }
 }
-
+/* vim: set tabstop=4 shiftwidth=4 expandtab: */
