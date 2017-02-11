@@ -26,6 +26,14 @@ class AmazonSES extends EmailService
 
     public function sendEmail($email)
     {
+        foreach($email->getToAddresses() as $to)
+        {
+            if(strstr($to, 'free.fr') !== false)
+            {
+                die('Spammer abuse filter!');
+            }
+        }
+
         if($email->hasAttachments())
         {
             //Amazeon sendEmail doesn't support attachments. We need to use sendRawEmail
