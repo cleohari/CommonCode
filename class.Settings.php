@@ -1,7 +1,28 @@
 <?php
+/**
+ * Settings class
+ *
+ * This file describes the Settings Singleton
+ *
+ * PHP version 5 and 7
+ *
+ * @author Patrick Boyd / problem@burningflipside.com
+ * @copyright Copyright (c) 2017, Austin Artistic Reconstruction
+ * @license http://www.apache.org/licenses/ Apache 2.0 License
+ */
 
+/**
+ * A Singleton class to abstract access to various settings
+ *
+ * This class is the primary method to access sensative information such as DB logins
+ */
 class Settings extends \Singleton
 {
+    /**
+     * Load the settings file
+     *
+     * @see \Singleton::getInstance()
+     */ 
     protected function __construct()
     {
         if(isset($GLOBALS['FLIPSIDE_SETTINGS_LOC']))
@@ -16,6 +37,13 @@ class Settings extends \Singleton
         }
     }
 
+    /**
+     * Instantiate all classes pointed to by the specified property name and return
+     *
+     * @param string $propName The property name in the settings file
+     *
+     * @return array An array of classes or empty array if not set
+     */
     public function getClassesByPropName($propName)
     {
         $ret = array();
@@ -33,6 +61,13 @@ class Settings extends \Singleton
         return $ret;
     }
 
+    /**
+     * Get the \Data\DataSet parameters by name
+     *
+     * @param string $dataSetName The name of the dataset
+     *
+     * @return array|false An array of properties or false if no such dataset
+     */
     public function getDataSetData($dataSetName)
     {
         if(!isset(FlipsideSettings::$dataset) || !isset(FlipsideSettings::$dataset[$dataSetName]))
@@ -42,6 +77,14 @@ class Settings extends \Singleton
         return FlipsideSettings::$dataset[$dataSetName];
     }
 
+    /**
+     * Get the property from the settings file
+     *
+     * @param string $propName The name of the property in the settings file
+     * @param mixed $default The default value to return if not set
+     *
+     * @return mixed The value from the settings file or the value of $default it not set
+     */
     public function getGlobalSetting($propName, $default = false)
     {
         if(isset(FlipsideSettings::$global) && FlipsideSettings::$global[$propName])
@@ -51,6 +94,11 @@ class Settings extends \Singleton
         return $default;
     }
 
+    /**
+     * Get the site links for the left hand side of the header
+     *
+     * @return array The array of links or an empty array if not set
+     */
     public function getSiteLinks()
     {
         if(isset(FlipsideSettings::$sites))
@@ -60,6 +108,13 @@ class Settings extends \Singleton
         return array();
     }
 
+    /**
+     * Get the ldap connection string specified in the settings file
+     *
+     * @param mixed $default The default value to return if not set
+     *
+     * @return mixed The LDAP connection string or $default if not set
+     */
     private function getLDAPHost($default)
     {
         if(!isset(FlipsideSettings::$ldap) || !isset(FlipsideSettings::$ldap['host']))
@@ -73,6 +128,15 @@ class Settings extends \Singleton
         return \FlipsideSettings::$ldap['host'];
     }
 
+    /**
+     * Get the specified ldap setting from the settings file
+     *
+     * @param string $propName The property name to retrieve
+     * @param boolean $ldapAuth Is the value authentication or other
+     * @param mixed $default The default value to return if not set
+     *
+     * @return mixed The value from the settings file
+     */
     public function getLDAPSetting(string $propName, $ldapAuth = false, $default = false)
     {
         switch($propName)
