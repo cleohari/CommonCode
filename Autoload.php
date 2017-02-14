@@ -37,14 +37,7 @@ function FlipsideAutoload($classname)
 
 function autoLoadHandler($functionName)
 {
-    if(version_compare(PHP_VERSION, '5.3.0', '>='))
-    {
-        spl_autoload_register($functionName, true, true);
-    }
-    else
-    {
-        spl_autoload_register($functionName);
-    }
+    spl_autoload_register($functionName, true, true);
 }
 
 autoLoadHandler('FlipsideAutoload');
