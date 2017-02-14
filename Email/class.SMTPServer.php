@@ -18,66 +18,94 @@ require '/var/www/common/libs/PHPMailer/PHPMailerAutoload.php';
 /**
  * An class to represent an SMTPSErver
  */
-class SMTPServer extends \Singleton
+class SMTPServer extends EmailService
 {
     protected $smtp;
 
-    protected function __construct()
+    public function __construct($params)
     {
-        $this->smtp = new \SMTP();
-        $this->smtp->do_debug = \SMTP::DEBUG_LOWLEVEL;
+        $this->smtp = new \PHPMailer();
+        $this->smtp->SMTPDebug = 3;
+        $this->smtp->isSMTP();
+ 
+        $this->smtp->Host = $params['host'];
+        if(isset($params['port']))
+        {
+            $this->smtp->Port = $params['port'];
+        }
+        if(isset($params['encryption']))
+        {
+            $this->smtp->SMTPSecure = $params['encryption'];
+        }
+
+        if(isset($params['username']))
+        {
+            $this->smtp->SMTPAuth = true;
+            $this->smtp->Username = $params['username'];
+            $this->smtp->Password = $params['password'];
+        }
     }
 
-    public function __destruct()
+    public function canSend()
     {
+        return true;
     }
 
-    public function connect($hostName, $port = 25, $useTLS = true)
+    public function decodeAddress($address)
     {
-        $ret = $this->smtp->connect($hostName, $port);
-        if($ret === false)
+        $pos = strpos($address, '<');
+        if($pos === false)
         {
-            return $ret;
+            return array($address);
         }
-        $ret = $this->smtp->hello('profiles.burningflipside.com');
-        if($ret === false)
-        {
-            return $ret;
-        }
-        if($useTLS)
-        {
-            $ret = $this->smtp->startTLS();
-            if($ret === false)
-            {
-                return $ret;
-            }
-        }
+        $ret = array();
+        $ret[0] = trim(substr($address, $pos+1), '>');
+        $ret[1] = substr($address, 0, $pos-1);
         return $ret;
     }
 
-    public function authenticate($username, $password)
+    public function sendEmail($email)
     {
-        return $this->smtp->authenticate($username, $password);
-    }
-
-    public function sendOne($from, $to, $msgData)
-    {
-        $ret = $this->smtp->mail($from);
-        if($ret === false)
+        foreach($email->getToAddresses() as $to)
         {
-            return $ret;
+            if(strstr($to, 'free.fr') !== false)
+            {
+                die('Spammer abuse filter!');
+            }
         }
-        $ret = $this->smtp->recipient($to);
-        if($ret === false)
-        {
-            return $ret;
-        }
-        return $this->smtp->data($msgData);
-    }
 
-    public function disconnect()
-    {
-        return $this->smtp->quit();
+        $this->smtp->isHTML(true); 
+        $from = $this->decodeAddress($email->getFromAddress());
+        call_user_func_array(array($this->smtp, 'setFrom'), $from);
+        $to = $email->getToAddresses();
+        foreach($to as $recip)
+        {
+            $this->smtp->addAddress($recip);
+        }
+        $cc = $email->getCCAddresses();
+        foreach($cc as $recip)
+        {
+            $this->smtp->addCC($recip);
+        }
+        $bcc = $email->getBCCAddresses();
+        foreach($bcc as $recip)
+        {
+            $this->smtp->addBCC($recip);
+        }
+        $rep = $this->decodeAddress($email->getReplyTo());
+        call_user_func_array(array($this->smtp, 'addReplyTo'), $rep);
+        $this->smtp->Subject = $email->getSubject();
+        $this->smtp->Body    = $email->getHTMLBody();
+        $this->smtp->AltBody = $email->getTextBody();
+        if($email->hasAttachments())
+        {
+            $attachs = $email->getAttachments();
+            foreach($attachs as $attach)
+            {
+                $this->smtp->addStringAttachment($attach['data'], $attach['name'], 'base64', $attach['mimeType']);
+            }
+        }
+        return $this->smtp->send();
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
