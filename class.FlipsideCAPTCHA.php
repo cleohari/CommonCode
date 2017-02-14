@@ -1,14 +1,55 @@
 <?php
+/**
+ * FlipsideCAPTCHA class
+ *
+ * This file describes the FlipsideCAPTCHA class
+ *
+ * PHP version 5 and 7
+ *
+ * @author Patrick Boyd / problem@burningflipside.com
+ * @copyright Copyright (c) 2015, Austin Artistic Reconstruction
+ * @license http://www.apache.org/licenses/ Apache 2.0 License
+ */
+
+/**
+ * Allow other classes to be loaded as needed
+ */
 require_once('Autoload.php');
+
+/**
+ * A class to represent a Completely Automated Public Turing test to tell Computers and Humans Apart
+ */
 class FlipsideCAPTCHA implements JsonSerializable
 {
+    /**
+     * The ID of the CAPTCHA in the DB
+     */
     public  $random_id;
+    /**
+     * An array of all valid IDs in the DB
+     */
     private $validIDs;
 
+    /**
+     * Get all valid CAPTCH IDs
+     *
+     * @return array An array of captch IDs
+     *
+     * @deprecated 2.1 Will be removed in favor of self::getValidCaptchaIDs()
+     */
     public static function get_valid_captcha_ids()
     {
-        $dataset = DataSetFactory::getDataSetByName('profiles');
-        $datatable = $dataset['captcha'];
+        return self::getValidCaptchaIDs();
+    }
+
+    /**
+     * Get all valid CAPTCH IDs
+     *
+     * @return array An array of captch IDs
+     */
+    public static function getValidCaptchaIDs()
+    {
+        $datatable = DataSetFactory::getDataTableByNames('profiles', 'captcha');
         $data = $datatable->read(false, array('id'));
         $count = count($data);
         for($i = 0; $i < $count; $i++)
@@ -18,15 +59,32 @@ class FlipsideCAPTCHA implements JsonSerializable
         return $data;
     }
 
+    /**
+     * Get an array of all CAPTCHAs
+     *
+     * @return array An array of captchas
+     *
+     * @deprecated 2.1 Will be removed in favor of self::getAll()
+     */
     public static function get_all()
     {
+        return self::getAll();
+    }
+
+    /**
+     * Get an array of all CAPTCHAs
+     *
+     * @return array An array of captchas
+     */
+    public static function getAll()
+    {
         $res = array();
-        $ids = FlipsideCAPTCHA::get_valid_captcha_ids();
+        $ids = self::getValidCaptchaIDs();
         $count = count($ids);
         for($i = 0; $i < $count; $i++)
         {
             $captcha = new FlipsideCAPTCHA();
-            $captcha->random_id = $ids[$i]; 
+            $captcha->random_id = $ids[$i];
             array_push($res, $captcha);
         }
         return $res;
