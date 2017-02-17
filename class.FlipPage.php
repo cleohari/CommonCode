@@ -189,11 +189,11 @@ $jsArray = array(
         ),
         JS_JCROP => array(
             'no' => array(
-                'no'  => '/js/common/jquery.Jcrop.min.js',
+                'no'  => '/js/common/jquery.Jcrop.js',
                 'min' => '/js/common/jquery.Jcrop.min.js'
             ),
             'cdn' => array(
-                'no'  => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/0.9.12/js/jquery.Jcrop.min.js',
+                'no'  => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/0.9.12/js/jquery.Jcrop.js',
                 'min' => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/0.9.12/js/jquery.Jcrop.min.js'
             )
         ),
@@ -209,7 +209,7 @@ $jsArray = array(
         ),
         JS_CHEET => array(
             'no' => array(
-                'no'  => '/js/common/cheet.min.js',
+                'no'  => '/js/common/cheet.js',
                 'min' => '/js/common/cheer.min.js'
             ),
             'cdn' => array(
@@ -293,21 +293,21 @@ $cssArray = array(
     ),
     CSS_JCROP => array(
         'no'  => array(
-            'no'  => '/css/common/jquery.Jcrop.min.css',
+            'no'  => '/css/common/jquery.Jcrop.css',
             'min' => '/css/common/jquery.Jcrop.min.css'
         ),
         'cdn' => array(
-            'no'  => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/0.9.12/css/jquery.Jcrop.min.css',
+            'no'  => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/0.9.12/css/jquery.Jcrop.css',
             'min' => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/0.9.12/css/jquery.Jcrop.min.css'
-        ) 
+        )
     ),
     CSS_FONTAWESOME => array(
         'no'  => array(
-            'no'  => '/css/common/font-awesome.min.css',
+            'no'  => '/css/common/font-awesome.css',
             'min' => '/css/common/font-awesome.min.css'
         ),
         'cdn' => array(
-            'no'  => '//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css',
+            'no'  => '//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.css',
             'min' => '//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css'
         )
     )
