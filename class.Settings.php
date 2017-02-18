@@ -44,7 +44,7 @@ class Settings extends \Singleton
 
     public function getGlobalSetting($propName, $default = false)
     {
-        if(isset(FlipsideSettings::$global) && FlipsideSettings::$global[$propName])
+        if(isset(FlipsideSettings::$global) && isset(FlipsideSettings::$global[$propName]))
         {
             return FlipsideSettings::$global[$propName];
         }
