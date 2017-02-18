@@ -73,6 +73,13 @@ class SerializableObject implements ArrayAccess, JsonSerializable
         return $xml->outputMemory(true);
     }
 
+    /**
+     * Convert the object into an XML string for PHP 7 or greater
+     *
+     * @param XmlWriter $xml The XmlWriter Instancce to use in serializing
+     *
+     * @return string The XML format of the object
+     */
     private function php7XmlSerialize(XMLWriter $xml)
     {
         if(isset($this[0]))
@@ -87,6 +94,13 @@ class SerializableObject implements ArrayAccess, JsonSerializable
         }
     }
 
+    /**
+     * Convert the object into an XML string for PHP 5
+     *
+     * @param XmlWriter $xml The XmlWriter Instancce to use in serializing
+     *
+     * @return string The XML format of the object
+     */
     private function oldPhpSerialize(XMLWriter $xml)
     {
         $tmp = json_decode(json_encode($this), false);
