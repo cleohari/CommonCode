@@ -189,11 +189,11 @@ $jsArray = array(
         ),
         JS_JCROP => array(
             'no' => array(
-                'no'  => '/js/common/jquery.Jcrop.min.js',
+                'no'  => '/js/common/jquery.Jcrop.js',
                 'min' => '/js/common/jquery.Jcrop.min.js'
             ),
             'cdn' => array(
-                'no'  => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/0.9.12/js/jquery.Jcrop.min.js',
+                'no'  => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/0.9.12/js/jquery.Jcrop.js',
                 'min' => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/0.9.12/js/jquery.Jcrop.min.js'
             )
         ),
@@ -209,7 +209,7 @@ $jsArray = array(
         ),
         JS_CHEET => array(
             'no' => array(
-                'no'  => '/js/common/cheet.min.js',
+                'no'  => '/js/common/cheet.js',
                 'min' => '/js/common/cheer.min.js'
             ),
             'cdn' => array(
@@ -293,21 +293,21 @@ $cssArray = array(
     ),
     CSS_JCROP => array(
         'no'  => array(
-            'no'  => '/css/common/jquery.Jcrop.min.css',
+            'no'  => '/css/common/jquery.Jcrop.css',
             'min' => '/css/common/jquery.Jcrop.min.css'
         ),
         'cdn' => array(
-            'no'  => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/0.9.12/css/jquery.Jcrop.min.css',
+            'no'  => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/0.9.12/css/jquery.Jcrop.css',
             'min' => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/0.9.12/css/jquery.Jcrop.min.css'
-        ) 
+        )
     ),
     CSS_FONTAWESOME => array(
         'no'  => array(
-            'no'  => '/css/common/font-awesome.min.css',
+            'no'  => '/css/common/font-awesome.css',
             'min' => '/css/common/font-awesome.min.css'
         ),
         'cdn' => array(
-            'no'  => '//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css',
+            'no'  => '//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.css',
             'min' => '//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css'
         )
     )
@@ -360,14 +360,25 @@ class FlipPage extends WebPage
         $this->header = $header;
         $this->links = array();
         $this->notifications = array();
-        $this->loginUrl = $this->settings->getGlobalSetting('login_url', 'login.php');
-        $this->logoutUrl = $this->settings->getGlobalSetting('logout_url', 'logout.php');
+        $this->aboutUrl = $this->settings->getGlobalSetting('about_url', 'https://www.burningflipside.com/about');
+        $this->aboutMenu = $this->settings->getGlobalSetting('about_menu', array(
+            'Burning Flipside'=>'https://www.burningflipside.com/about/event',
+            'AAR, LLC'=>'https://www.burningflipside.com/organization/aar',
+            'Privacy Policy'=>'https://www.burningflipside.com/about/privacy'
+        ));
+        $this->loginUrl = $this->settings->getGlobalSetting('login_url', 'https://profiles.burningflipside.com/login.php');
+        $this->logoutUrl = $this->settings->getGlobalSetting('logout_url', 'https://profiles.burningflipside.com/logout.php');
+
+        $this->profilesUrl = $this->settings->getGlobalSetting('profiles_url', 'https://profiles.burningflipside.com/');
+        $this->registerUrl = $this->settings->getGlobalSetting('register_url', 'https://profiles.burningflipside.com/register.php');
+        $this->resetUrl = $this->settings->getGlobalSetting('reset_url', 'https://profiles.burningflipside.com/reset.php');
+
         $this->user = FlipSession::getUser();
         $this->addAllLinks();
     }
 
     /**
-     * Get the external site links for this page 
+     * Get the external site links for this page
      *
      */
     protected function getSites()
@@ -396,12 +407,17 @@ class FlipPage extends WebPage
             $this->add_links();
             $this->addLink('Logout', $this->logoutUrl);
         }
-        $aboutMenu = array(
-            'Burning Flipside'=>'https://www.burningflipside.com/about/event',
-            'AAR, LLC'=>'https://www.burningflipside.com/organization/aar',
-            'Privacy Policy'=>'https://www.burningflipside.com/about/privacy'
-        );
-        $this->addLink('About', 'http://www.burningflipside.com/about', $aboutMenu);
+        if($this->aboutUrl !== false)
+        {
+            if(!empty($this->aboutMenu))
+            {
+                $this->addLink('About', $this->aboutUrl, $this->aboutMenu);
+            }
+            else
+            {
+                $this->addLink('About', $this->aboutUrl);
+            }
+        }
     }
 
     /**
@@ -623,7 +639,7 @@ class FlipPage extends WebPage
      */
     public function addNotification($message, $severity = self::NOTIFICATION_INFO, $dismissible = true)
     {
-        array_push($this->notifications, array('msg'=>$message, 'sev'=>$severity, 'dismissible'=>$dismissible)); 
+        array_push($this->notifications, array('msg'=>$message, 'sev'=>$severity, 'dismissible'=>$dismissible));
     }
 
     /**
@@ -649,7 +665,7 @@ class FlipPage extends WebPage
             switch($this->notifications[$i]['sev'])
             {
                 case self::NOTIFICATION_INFO:
-                    $prefix = '<strong>Notice:</strong> '; 
+                    $prefix = '<strong>Notice:</strong> ';
                     break;
                 case self::NOTIFICATION_WARNING:
                     $prefix = '<strong>Warning!</strong> ';
@@ -707,6 +723,18 @@ class FlipPage extends WebPage
     }
 
     /**
+     * Add some global js vars
+     */
+    private function addJSGlobals()
+    {
+      $this->body = $this->body.'<script>
+var profilesUrl = \''.$this->profilesUrl.'\'
+var loginUrl = \''.$this->loginUrl.'\'
+var logoutUrl = \''.$this->logoutUrl.'\'
+</script>';
+    }
+
+    /**
      * Draw the page
      *
      * @param boolean $header Draw the header
@@ -716,6 +744,7 @@ class FlipPage extends WebPage
         $this->renderNotifications();
         $this->addNoScript();
         $this->addAnalyticsBlock();
+        $this->addJSGlobals();
         if($this->header || $header)
         {
             $this->addHeader();

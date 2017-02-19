@@ -11,12 +11,12 @@ class PageContentTest extends PHPUnit_Framework_TestCase
         $page->printPage();
         $html = ob_get_contents();
         ob_end_clean();
-        
+
         $doc = new DOMDocument();
         libxml_use_internal_errors(true);
         $doc->loadHTML($html);
         $elements = $doc->getElementsByTagName('title');
-        $this->assertEquals(1, $elements->length); 
+        $this->assertEquals(1, $elements->length);
         $node = $elements->item(0);
         $this->assertEquals('Test', $node->nodeValue);
 
@@ -48,7 +48,7 @@ class PageContentTest extends PHPUnit_Framework_TestCase
         libxml_use_internal_errors(true);
         $doc->loadHTML($html);
         $elements = $doc->getElementsByTagName('script');
-        $this->assertEquals(4, $elements->length);
+        $this->assertEquals(5, $elements->length);
         $default = array('jquery', 'flipside', 'bootstrap');
         $defaultCount = count($default);
         for($i = 0; $i < $elements->length; $i++)
@@ -111,7 +111,7 @@ class PageContentTest extends PHPUnit_Framework_TestCase
         libxml_use_internal_errors(true);
         $doc->loadHTML($html);
         $elements = $doc->getElementsByTagName('script');
-        $this->assertEquals(5, $elements->length);
+        $this->assertEquals(6, $elements->length);
         $found = false;
         for($i = 0; $i < $elements->length; $i++)
         {
