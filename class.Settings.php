@@ -137,7 +137,7 @@ class Settings extends \Singleton
      *
      * @return mixed The value from the settings file
      */
-    public function getLDAPSetting(string $propName, $ldapAuth = false, $default = false)
+    public function getLDAPSetting($propName, $ldapAuth = false, $default = false)
     {
         switch($propName)
         {
@@ -146,9 +146,17 @@ class Settings extends \Singleton
             default:
                 if($ldapAuth === false)
                 {
-                    return FlipsideSettings::$ldap[$propName];
+                    if(isset(FlipsideSettings::$ldap) && isset(FlipsideSettings::$ldap[$propName]))
+                    {
+                        return FlipsideSettings::$ldap[$propName];
+                    }
+                    return $default;
                 }
-                return FlipsideSettings::$ldap_auth[$propName];
+                if(isset(FlipsideSettings::$ldap_auth) && isset(FlipsideSettings::$ldap_auth[$propName]))
+                {
+                    return FlipsideSettings::$ldap_auth[$propName];
+                }
+                return $default;
         }
     }
 }
