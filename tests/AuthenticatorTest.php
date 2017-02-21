@@ -143,15 +143,15 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase
         //HTML element, skip
         $doc = $dom->documentElement;
         //Body element, skip
-        $body = $doc->childNodes[0];
+        $body = $doc->childNodes->item(0);
 
         $this->assertEquals($body->childNodes->length, 1);
-        $link = $body->childNodes[0];
+        $link = $body->childNodes->item(0);
         $this->assertEquals($link->tagName, 'a');
 
         $attributes = $link->attributes;
         $this->assertEquals($attributes->length, 1); 
-        $url = parse_url($attributes[0]->value);
+        $url = parse_url($attributes->item(0)->value);
         $this->assertEquals($url['scheme'], 'https');
         $this->assertEquals($url['host'], 'accounts.google.com');
         $this->assertEquals($url['path'], '/o/oauth2/auth');
@@ -167,7 +167,7 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase
         
         $children = $link->childNodes;
         $this->assertEquals($children->length, 1);
-        $this->assertEquals($children[0]->tagName, 'img');
+        $this->assertEquals($children->item(0)->tagName, 'img');
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
