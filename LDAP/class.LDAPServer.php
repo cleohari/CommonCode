@@ -27,7 +27,7 @@ function ldap_escape($subject, $distinguishedName = false, $ignore = NULL)
     }
 
     // Flip $search back to values and build $replace array
-    $search = array_keys($search); 
+    $search = array_keys($search);
     $replace = array();
     foreach($search as $char)
     {
@@ -80,6 +80,7 @@ class LDAPServer extends \Singleton
     public function __wakeup()
     {
         $this->ldapLink = ldap_connect($this->connect);
+        ldap_set_option($this->ldapLink, LDAP_OPT_PROTOCOL_VERSION, 3);
     }
 
     private function getConnectString($name, $proto = false)
@@ -148,6 +149,7 @@ class LDAPServer extends \Singleton
         catch(\Exception $ex)
         {
             $this->ldapLink = ldap_connect($this->connect);
+            ldap_set_option($this->ldapLink, LDAP_OPT_PROTOCOL_VERSION, 3);
             $res = @ldap_bind($this->ldapLink, $commonName, $password);
         }
         return $res;
