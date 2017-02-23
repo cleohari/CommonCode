@@ -35,6 +35,11 @@ function FlipsideAutoload($classname)
     }
 }
 
+/**
+* Wrapper function to register an autoload function
+*
+* @param string $functionName The autoload function to register with PHP
+*/
 function autoLoadHandler($functionName)
 {
     spl_autoload_register($functionName, true, true);
