@@ -37,6 +37,15 @@ class Email extends \SerializableObject
     /** An array of attachements for the email */
     protected $attachments;
 
+    /** An instance of the Settings class */
+    protected $settings;
+    /** The sites URLs */
+    protected $wwwUrl;
+    protected $wikiUrl;
+    protected $profilesUrl;
+    protected $secureUrl;
+
+
     /**
      * Initialize a new email
      */
@@ -51,6 +60,12 @@ class Email extends \SerializableObject
         $this->htmlBody = '';
         $this->textBody = '';
         $this->attachments = array();
+
+        $this->settings = \Settings::getInstance();
+        $this->wwwUrl = $this->settings->getGlobalSetting('www_url', 'https://www.burningflipside.com/');
+        $this->wikiUrl = $this->settings->getGlobalSetting('wiki_url', 'https://wiki.burningflipside.com/');
+        $this->profilesUrl = $this->settings->getGlobalSetting('profiles_url', 'https://profiles.burningflipside.com/');
+        $this->secureUrl = $this->settings->getGlobalSetting('secure_url', 'https://secure.burningflipside.com/');
     }
 
     /**
