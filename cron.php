@@ -14,6 +14,9 @@
 /**
  * This cron script recompiles the Browscap cache
  */
+ini_set('memory_limit','-1');      // turn off memory limit for this script
+set_time_limit(120);               // change to 2 minutes for this script
+
 require('libs/browscap-php/src/phpbrowscap/Browscap.php');
 
 use phpbrowscap\Browscap;
@@ -22,4 +25,3 @@ date_default_timezone_set('America/Chicago');
 
 $browscap = new Browscap('/var/php_cache/browser');
 $browscap->updateCache();
-

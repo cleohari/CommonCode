@@ -1,5 +1,22 @@
 <?php
+/**
+ * Provider class
+ *
+ * This file describes the Provider Singleton
+ *
+ * PHP version 5 and 7
+ *
+ * @author Patrick Boyd / problem@burningflipside.com
+ * @copyright Copyright (c) 2015, Austin Artistic Reconstruction
+ * @license http://www.apache.org/licenses/ Apache 2.0 License
+ */
 
+/**
+ * A Singleton class to abstract access to many different methods. 
+ *
+ * This class is an abstraction to different methods of doing something. For example,
+ * the \EmailProvider abstracts access to Amazon SES or SMTP methods of sending email.
+ */
 class Provider extends Singleton
 {
     /** The methods loaded by the provider */
