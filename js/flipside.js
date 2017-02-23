@@ -89,7 +89,7 @@ function add_notification(container, message, severity, dismissible)
 {
     if(severity === undefined)
     {
-        severity = NOTIFICATION_INFO; 
+        severity = NOTIFICATION_INFO;
     }
     if(dismissible === undefined)
     {
@@ -212,7 +212,14 @@ function flipside_init()
 {
     browser_supported();
     var host = window.location.hostname.split('.')[0];
-    var link = $('#site_nav a[href^="https://'+host+'"]');
+    var port = window.location.port;
+    var link;
+    if(host=='localhost'){
+      link = $('#site_nav a[href^="https://'+host+':'+port+'"]');
+    }
+    else {
+      link = $('#site_nav a[href^="https://'+host+'"]');
+    }
     link.parent().addClass('active');
 }
 
