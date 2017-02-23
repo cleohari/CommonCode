@@ -483,7 +483,7 @@ class FlipPage extends WebPage
      * @param string $jsFileID the ID of the JS file
      * @param boolean $async Can the JS file be loaded asynchronously?
      */
-    public function addWellKnownJS($jsFileID, $async = true)
+    public function addWellKnownJS($jsFileID, $async = false)
     {
         global $jsArray;
         $this->setupVars();
@@ -497,7 +497,7 @@ class FlipPage extends WebPage
      * @param string $cssFileID the ID of the CSS file
      * @param boolean $async Can the CSS file be loaded asynchronously?
      */
-    public function addWellKnownCSS($cssFileID, $async = true)
+    public function addWellKnownCSS($cssFileID, $async = false)
     {
         global $cssArray;
         $this->setupVars();
@@ -510,9 +510,10 @@ class FlipPage extends WebPage
      */
     private function addBootstrap()
     {
-        $this->addWellKnownJS(JS_BOOTSTRAP, false);
+        $this->addWellKnownJS(JS_BOOTSTRAP);
         $this->addWellKnownCSS(CSS_BOOTSTRAP);
         $this->addWellKnownCSS(CSS_FONTAWESOME);
+
     }
 
     protected function getSiteLinksForHeader()
