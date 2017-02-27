@@ -267,7 +267,7 @@ class LDAPAuthenticator extends Authenticator
             if($select !== false)
             {
                 $groups[$i] = json_decode(json_encode($groups[$i]), true);
-                $groups[$i] = array_intersect_key($groups[$i], array_flip($select));
+                $groups[$i] = array_intersect_key($groups[$i], $select);
             }
         }
         return $groups;
