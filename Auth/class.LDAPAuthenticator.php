@@ -13,8 +13,8 @@
 
 namespace Auth;
 
-/** 
- * Sort the provided array by the keys in $orderby 
+/**
+ * Sort the provided array by the keys in $orderby
  *
  * @param array $array The array to sort
  * @param array $orderby An array of keys to sort the array by
@@ -72,10 +72,14 @@ class LDAPAuthenticator extends Authenticator
     public  $user_base;
     /** The base DN for all groups in the LDAP server */
     public  $group_base;
-    /** The DN to use to bind if not binding as the user */
+    /** The DN to use to bind if binding as the read/write user */
     private $bindDistinguishedName;
-    /** The password to use to bind if not binding as the user */
+    /** The password to use to bind if binding as the read/write user */
     private $bindPassword;
+    /** The DN to use to bind if binding as the read only user */
+    private $bindRODistinguishedName;
+    /** The password to use to bind if binding as the read only user */
+    private $bindROPassword;
 
     /**
      * Create an LDAP Authenticator
@@ -90,6 +94,8 @@ class LDAPAuthenticator extends Authenticator
         $this->group_base = $this->getParam($params, 'group_base');
         $this->bindDistinguishedName = $this->getParam($params, 'bind_dn', '$ldap_auth', 'read_write_pass');
         $this->bindPassword = $this->getParam($params, 'bind_pass', '$ldap_auth', 'read_write_user');
+        $this->bindRODistinguishedName = $this->getParam($params, 'ro_bind_dn', '$ldap_auth', 'read_only_pass');
+        $this->bindROPassword = $this->getParam($params, 'ro_bind_pass', '$ldap_auth', 'read_only_user');
     }
 
     /**
@@ -154,7 +160,14 @@ class LDAPAuthenticator extends Authenticator
         $server->connect($this->host);
         if($bindWrite === false)
         {
-            $ret = $server->bind();
+            if($this->bindRODistinguishedName && $this->bindROPassword)
+            {
+                $ret = $server->bind($this->bindRODistinguishedName, $this->bindROPassword);
+            }
+            else
+            {
+                $ret = $server->bind();
+            }
         }
         else
         {
@@ -190,10 +203,11 @@ class LDAPAuthenticator extends Authenticator
         }
         $user = $user[0];
         $server->unbind();
+
         $ret = $server->bind($user->dn, $password);
         if($ret !== false)
         {
-            return array('res'=>true, 'extended'=>$user); 
+            return array('res'=>true, 'extended'=>$user);
         }
         return false;
     }
@@ -314,7 +328,6 @@ class LDAPAuthenticator extends Authenticator
         }
     }
 
-    
     /**
      * @param boolean|\Data\Filter $filter The filter to user when reading users
      * @param boolean|array   $select The fields to return

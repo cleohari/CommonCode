@@ -46,7 +46,7 @@ class LDAPTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($res);
         $res = $server->bind('cn=admin,dc=example,dc=com','test');
         $this->assertTrue($res);
-      
+
         $data = $server->read('dc=example,dc=com');
         $this->assertNotFalse($data);
         $this->assertContainsOnlyInstancesOf('LDAP\LDAPObject', $data);
@@ -91,6 +91,8 @@ class LDAPTest extends PHPUnit_Framework_TestCase
         $params['group_base'] = 'dc=example,dc=com';
         $params['bind_dn'] = 'cn=admin,dc=example,dc=com';
         $params['bind_pass'] = 'test';
+        //$params['ro_bind_dn'] = 'cn=readonly,dc=example,dc=com';
+        //$params['ro_bind_pass'] = 'test';
         $auth = new \Auth\LDAPAuthenticator($params);
         $this->assertNotFalse($auth->getAndBindServer());
         $this->assertNotFalse($auth->getAndBindServer(true));
