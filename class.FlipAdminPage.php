@@ -1,7 +1,7 @@
 <?php
-require_once('class.FlipPage.php');
+require_once('class.LoginRequiredPage.php');
 
-class FlipAdminPage extends FlipPage
+class FlipAdminPage extends LoginRequiredPage
 {
     public $user;
     public $is_admin = false;
@@ -137,16 +137,7 @@ class FlipAdminPage extends FlipPage
 
     public function printPage($header = true)
     {
-        if($this->user === false || $this->user === null)
-        {
-            $this->body = '
-        <div class="row">
-            <div class="col-lg-12">
-                <h1 class="page-header">You must <a href="'.$this->loginUrl.'?return='.$this->currentUrl().'">log in <span class="glyphicon glyphicon-log-in"></span></a> to access the '.$this->title.' Admin system!</h1>
-            </div>
-        </div>';
-        }
-        else if($this->is_admin === false)
+        if($this->is_admin === false)
         {
             $this->body = '
         <div class="row">
@@ -155,7 +146,7 @@ class FlipAdminPage extends FlipPage
             </div>
         </div>';
         }
-        parent::printPage();
+        parent::printPage($header);
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
