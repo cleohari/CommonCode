@@ -135,9 +135,14 @@ class FlipAdminPage extends LoginRequiredPage
         $this->body .= $card;
     }
 
+    public function isAdmin()
+    {
+        return $this->is_admin;
+    }
+
     public function printPage($header = true)
     {
-        if($this->is_admin === false)
+        if($this->isAdmin() === false)
         {
             $this->body = '
         <div class="row">
