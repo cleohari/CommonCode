@@ -1,4 +1,22 @@
 <?php
+/**
+ * ODataParams class
+ *
+ * This file describes the ODataParams class
+ *
+ * PHP version 5 and 7
+ *
+ * @author Patrick Boyd / problem@burningflipside.com
+ * @copyright Copyright (c) 2017, Austin Artistic Reconstruction
+ * @license http://www.apache.org/licenses/ Apache 2.0 License
+ */
+
+/**
+ * A class representing OData style URI query string parameters.
+ *
+ * The REST APIs use OData style URI query string parameters. 
+ * This class abstracts parsing of those into a more PHP friendly format.
+ */
 class ODataParams
 {
     /**
@@ -36,8 +54,16 @@ class ODataParams
      * @var boolean
      */
     public $count = false;
+    /**
+     * Not yet implemented
+     */
     public $search = false;
 
+    /**
+     * Parse the parameter array into an ODataParams instance
+     *
+     * @param string[] $params An key=>value array of strings representing the query string.
+     */
     public function __construct($params)
     {
         $this->processFilter($params);
@@ -50,6 +76,11 @@ class ODataParams
         $this->processSearch($params);
     }
 
+    /**
+     * Take the parameter array and find the Filter parameter and convert that to a \Data\Filter if present
+     *
+     * @param string[] $params An key=>value array of strings representing the query string.
+     */
     protected function processFilter($params)
     {
         if(isset($params['filter']))
@@ -62,6 +93,11 @@ class ODataParams
         }
     }
 
+    /**
+     * Take the parameter array and find the Expand parameter and convert it to a PHP array
+     *
+     * @param string[] $params An key=>value array of strings representing the query string.
+     */
     protected function processExpand($params)
     {
         if(isset($params['$expand']))
@@ -70,6 +106,11 @@ class ODataParams
         }
     }
 
+    /**
+     * Take the parameter array and find the Select parameter and convert it to a PHP array
+     *
+     * @param string[] $params An key=>value array of strings representing the query string.
+     */
     protected function processSelect($params)
     {
         if(isset($params['select']))
@@ -82,6 +123,11 @@ class ODataParams
         }
     }
 
+    /**
+     * Take the parameter array and find the OrderBy parameter and convert it to a PHP array
+     *
+     * @param string[] $params An key=>value array of strings representing the query string.
+     */
     protected function processOrderBy($params)
     {
         if(isset($params['$orderby']))
@@ -115,6 +161,11 @@ class ODataParams
         }
     }
 
+    /**
+     * Take the parameter array and find the Top parameter and convert it to an int
+     *
+     * @param string[] $params An key=>value array of strings representing the query string.
+     */
     protected function processTop($params)
     {
         if(isset($params['$top']) && is_numeric($params['$top']))
@@ -123,6 +174,11 @@ class ODataParams
         }
     }
 
+    /**
+     * Take the parameter array and find the Skip parameter and convert it to an int
+     *
+     * @param string[] $params An key=>value array of strings representing the query string.
+     */
     protected function processSkip($params)
     {
         if(isset($params['$skip']) && is_numeric($params['$skip']))
@@ -131,6 +187,11 @@ class ODataParams
         }
     }
 
+    /**
+     * Take the parameter array and find the Count parameter and convert it to a boolean
+     *
+     * @param string[] $params An key=>value array of strings representing the query string.
+     */
     protected function processCount($params)
     {
         if(isset($params['$count']) && strcasecmp($params['$count'], 'true') === 0)
@@ -139,6 +200,11 @@ class ODataParams
         }
     }
 
+    /**
+     * Take the parameter array and find the Search parameter and process it
+     *
+     * @param string[] $params An key=>value array of strings representing the query string.
+     */
     protected function processSearch($params)
     {
         if(isset($params['$search']))
@@ -147,6 +213,13 @@ class ODataParams
         }
     }
 
+    /**
+     * Take an input array and filter the array based on the select parameter
+     *
+     * @param array $array The array to be filtered
+     *
+     * @return array The filtered array
+     */
     public function filterArrayPerSelect($array)
     {
         $flip = array_flip($this->select);

@@ -1,14 +1,14 @@
 <?php
 namespace Email;
 
-require('/var/www/common/libs/aws/aws-autoloader.php');
+require dirname(__FILE__).'/../vendor/autoload.php';
 class AmazonSES extends EmailService
 {
     protected $ses;
 
     public function __construct($params)
     {
-        $credentials = \Aws\Common\Credentials\Credentials::fromIni('default', $params['ini']);
+        $credentials = \Aws\Credentials\CredentialProvider::ini('default', $params['ini']);
 
         $this->ses = \Aws\Ses\SesClient::factory([
                 'version' => 'latest',
@@ -26,6 +26,14 @@ class AmazonSES extends EmailService
 
     public function sendEmail($email)
     {
+        foreach($email->getToAddresses() as $to)
+        {
+            if(strstr($to, 'free.fr') !== false)
+            {
+                die('Spammer abuse filter!');
+            }
+        }
+
         if($email->hasAttachments())
         {
             //Amazeon sendEmail doesn't support attachments. We need to use sendRawEmail

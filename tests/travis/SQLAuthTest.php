@@ -109,7 +109,7 @@ class SQLAuthTest extends PHPUnit_Framework_TestCase
         $pendingUser->givenName = 'Test';
         $pendingUser->host = 'test.com';
 
-        $user = $auth->activatePendingUser($pendingUser);
+        $user = $auth->createPendingUser($pendingUser);
         $this->assertNotFalse($user);
         $this->assertGreaterThan(0, $auth->getPendingUserCount());
 

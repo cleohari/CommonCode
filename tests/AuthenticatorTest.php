@@ -135,7 +135,40 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase
         $auth = new \Auth\GoogleAuthenticator($params);
         $this->assertNotNull($auth);
         $this->assertInstanceOf('Auth\GoogleAuthenticator', $auth);
-        $this->assertEquals('<a href="https://accounts.google.com/o/oauth2/auth?response_type=code&access_type=online&client_id=test&redirect_uri=https%3A%2F%2Fexample.com%2Foauth2callback.php%3Fsrc%3Dgoogle&state&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&approval_prompt=auto"><img src="/img/common/google_sign_in.png" style="width: 2em;"/></a>', $auth->getSupplementLink());
+        
+        $linkTxt = $auth->getSupplementLink();
+        $dom = new DOMDocument;
+        $internalErrors = libxml_use_internal_errors(true);
+        $dom->loadHTML($linkTxt);
+        libxml_use_internal_errors($internalErrors);
+        //HTML element, skip
+        $doc = $dom->documentElement;
+        //Body element, skip
+        $body = $doc->childNodes->item(0);
+
+        $this->assertEquals($body->childNodes->length, 1);
+        $link = $body->childNodes->item(0);
+        $this->assertEquals($link->tagName, 'a');
+
+        $attributes = $link->attributes;
+        $this->assertEquals($attributes->length, 1); 
+        $url = parse_url($attributes->item(0)->value);
+        $this->assertEquals($url['scheme'], 'https');
+        $this->assertEquals($url['host'], 'accounts.google.com');
+        $this->assertEquals($url['path'], '/o/oauth2/auth');
+        parse_str($url['query'], $queryStr);
+        $this->assertArrayHasKey('response_type', $queryStr);
+        $this->assertEquals($queryStr['response_type'], 'code');
+        $this->assertArrayHasKey('access_type', $queryStr);
+        $this->assertEquals($queryStr['access_type'], 'online');
+        $this->assertArrayHasKey('client_id', $queryStr);
+        $this->assertEquals($queryStr['client_id'], 'test');
+        $this->assertArrayHasKey('redirect_uri', $queryStr);
+        $this->assertEquals($queryStr['redirect_uri'], 'https://example.com/oauth2callback.php?src=google');
+        
+        $children = $link->childNodes;
+        $this->assertEquals($children->length, 1);
+        $this->assertEquals($children->item(0)->tagName, 'img');
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
