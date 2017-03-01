@@ -4,18 +4,18 @@ namespace Auth\OAuth2;
 class FlipsideAuthenticator extends OAuth2Authenticator
 {
     private $apiUrl = 'https://profiles.burningflipside.com/api/v1';
-    private $oathUrl = 'https://profiles.burningflipside.com/OAUTH2';
+    private $oauthUrl = 'https://profiles.burningflipside.com/OAUTH2';
 
     public function __construct($params)
     {
         parent::__construct($params);
-        if(isset($params['api_url'])
+        if(isset($params['api_url']))
         {
             $this->apiUrl = $params['api_url'];
         }
-        if(isset($params['oauth_url'])
+        if(isset($params['oauth_url']))
         {
-            $this->oathUrl = $params['oauth_url'];
+            $this->oauthUrl = $params['oauth_url'];
         }
     }
 
