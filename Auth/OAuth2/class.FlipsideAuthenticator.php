@@ -38,7 +38,7 @@ class FlipsideAuthenticator extends OAuth2Authenticator
 
     public function login($username, $password)
     {
-        $resp = \Httpful\Request::post('https://profiles.test.burningflipside.com/api/v1/login?username='.urlencode($username).'&password='.urlencode($password))->send();
+        $resp = \Httpful\Request::post('https://profiles.burningflipside.com/api/v1/login?username='.urlencode($username).'&password='.urlencode($password))->send();
         if($resp->hasErrors())
         {
             return false;
