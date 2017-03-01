@@ -9,7 +9,7 @@ class PDF
 
     function __construct()
     {
-        $this->mpdf = new \mPDF();
+        $this->mpdf = new \mPDF('', 'Letter', '', '', 5, 5);
     }
 
     public function setPDFFromHTML($html)
