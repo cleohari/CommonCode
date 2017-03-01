@@ -367,7 +367,7 @@ class FlipPage extends WebPage
         $this->notifications = array();
 
         $this->wwwUrl = $this->settings->getGlobalSetting('www_url', 'https://www.burningflipside.com');
-        
+
         $this->wikiUrl = $this->settings->getGlobalSetting('wiki_url', 'https://wiki.burningflipside.com');
 
         $this->aboutUrl = $this->settings->getGlobalSetting('about_url', $this->wwwUrl.'/about');
@@ -383,7 +383,7 @@ class FlipPage extends WebPage
         $this->registerUrl = $this->settings->getGlobalSetting('register_url', $this->profilesUrl.'/register.php');
         $this->resetUrl = $this->settings->getGlobalSetting('reset_url', $this->profilesUrl.'/reset.php');
 
-        $this->secureUrl = $this->settings->getGlobalSetting('secure_url', 'https://secure.burningflipside.com/reset.php');
+        $this->secureUrl = $this->settings->getGlobalSetting('secure_url', 'https://secure.burningflipside.com/');
 
         $this->user = FlipSession::getUser();
         $this->addAllLinks();
