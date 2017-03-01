@@ -3,16 +3,9 @@ namespace Auth\OAuth2;
 
 class FlipsideAuthenticator extends OAuth2Authenticator
 {
-    /** An instance of the Settings class */
-    protected $settings;
-    /** The prfiles app URL */
-    var $profilesUrl;
-
     public function __construct($params)
     {
         parent::__construct($params);
-        $this->settings = \Settings::getInstance();
-        $this->profilesUrl = $this->settings->getGlobalSetting('profiles_url', 'https://profiles.burningflipside.com/');
     }
 
     public function getHostName()
@@ -22,12 +15,12 @@ class FlipsideAuthenticator extends OAuth2Authenticator
 
     public function getAuthorizationUrl()
     {
-        return $this->profilesUrl.'/OAUTH2/authorize.php?client_id=test&redirect_uri='.urlencode($this->redirect_uri).'&scope=user';
+        return 'https://profiles.burningflipside.com/OAUTH2/authorize.php?client_id=test&redirect_uri='.urlencode($this->redirect_uri).'&scope=user';
     }
 
     public function getAccessTokenUrl()
     {
-        return $this->profilesUrl.'/OAUTH2/token.php?client_id=test&redirect_uri='.urlencode($this->redirect_uri);
+        return 'https://profiles.burningflipside.com/OAUTH2/token.php?client_id=test&redirect_uri='.urlencode($this->redirect_uri);
     }
 
     public function getUserFromToken($token)
@@ -36,7 +29,7 @@ class FlipsideAuthenticator extends OAuth2Authenticator
         {
             $token = \FlipSession::getVar('OAuthToken');
         }
-        $resp = \Httpful\Request::get($this->profilesUrl.'/api/v1/users/me')->addHeader('Authorization', 'token '.$token['access_token'])->send();
+        $resp = \Httpful\Request::get('https://profiles.burningflipside.com/api/v1/users/me')->addHeader('Authorization', 'token '.$token['access_token'])->send();
         $data = array('extended'=>$resp->body);
         $user = new \Auth\FlipsideAPIUser($data);
         $user->addLoginProvider($this->getHostName());
@@ -45,7 +38,7 @@ class FlipsideAuthenticator extends OAuth2Authenticator
 
     public function login($username, $password)
     {
-        $resp = \Httpful\Request::post($this->profilesUrl.'/api/v1/login?username='.urlencode($username).'&password='.urlencode($password))->send();
+        $resp = \Httpful\Request::post('https://profiles.test.burningflipside.com/api/v1/login?username='.urlencode($username).'&password='.urlencode($password))->send();
         if($resp->hasErrors())
         {
             return false;
