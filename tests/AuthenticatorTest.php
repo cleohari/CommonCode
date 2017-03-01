@@ -164,7 +164,7 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($queryStr['client_id'], 'test');
         $this->assertArrayHasKey('redirect_uri', $queryStr);
         $this->assertEquals($queryStr['redirect_uri'], 'https://example.com/oauth2callback.php?src=google');
- 
+
         $children = $link->childNodes;
         $this->assertEquals($children->length, 1);
         $this->assertEquals($children->item(0)->tagName, 'img');
