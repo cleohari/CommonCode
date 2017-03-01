@@ -3,9 +3,20 @@ namespace Auth\OAuth2;
 
 class FlipsideAuthenticator extends OAuth2Authenticator
 {
+    private $apiUrl = 'https://profiles.burningflipside.com/api/v1';
+    private $oathUrl = 'https://profiles.burningflipside.com/OAUTH2';
+
     public function __construct($params)
     {
         parent::__construct($params);
+        if(isset($params['api_url'])
+        {
+            $this->apiUrl = $params['api_url'];
+        }
+        if(isset($params['oauth_url'])
+        {
+            $this->oathUrl = $params['oauth_url'];
+        }
     }
 
     public function getHostName()
@@ -15,12 +26,12 @@ class FlipsideAuthenticator extends OAuth2Authenticator
 
     public function getAuthorizationUrl()
     {
-        return 'https://profiles.burningflipside.com/OAUTH2/authorize.php?client_id=test&redirect_uri='.urlencode($this->redirect_uri).'&scope=user';
+        return $this->oauthUrl.'/authorize.php?client_id=test&redirect_uri='.urlencode($this->redirect_uri).'&scope=user';
     }
 
     public function getAccessTokenUrl()
     {
-        return 'https://profiles.burningflipside.com/OAUTH2/token.php?client_id=test&redirect_uri='.urlencode($this->redirect_uri);
+        return $this->oauthUrl.'/token.php?client_id=test&redirect_uri='.urlencode($this->redirect_uri);
     }
 
     public function getUserFromToken($token)
@@ -29,7 +40,7 @@ class FlipsideAuthenticator extends OAuth2Authenticator
         {
             $token = \FlipSession::getVar('OAuthToken');
         }
-        $resp = \Httpful\Request::get('https://profiles.burningflipside.com/api/v1/users/me')->addHeader('Authorization', 'token '.$token['access_token'])->send();
+        $resp = \Httpful\Request::get($this->apiUrl.'/users/me')->addHeader('Authorization', 'token '.$token['access_token'])->send();
         $data = array('extended'=>$resp->body);
         $user = new \Auth\FlipsideAPIUser($data);
         $user->addLoginProvider($this->getHostName());
@@ -38,7 +49,7 @@ class FlipsideAuthenticator extends OAuth2Authenticator
 
     public function login($username, $password)
     {
-        $resp = \Httpful\Request::post('https://profiles.burningflipside.com/api/v1/login?username='.urlencode($username).'&password='.urlencode($password))->send();
+        $resp = \Httpful\Request::post($this->apiUrl.'/login?username='.urlencode($username).'&password='.urlencode($password))->send();
         if($resp->hasErrors())
         {
             return false;
@@ -63,6 +74,6 @@ class FlipsideAuthenticator extends OAuth2Authenticator
 
     public function getUser($data)
     {
-        return new \Auth\FlipsideAPIUser($data);
+        return new \Auth\FlipsideAPIUser($data, $this->apiUrl);
     }
 }
