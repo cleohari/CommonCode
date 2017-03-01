@@ -61,10 +61,10 @@ class FlipAdminPage extends LoginRequiredPage
     {
         $sites   = $this->getSiteLinksForHeader();
         $sideNav = $this->getLinksMenus();
-        $log     = '<a href="https://profiles.burningflipside.com/logout.php"><i class="fa fa-sign-out"></i></a>';
+        $log     = '<a href="'.$this->logoutUrl.'"><i class="fa fa-sign-out"></i></a>';
         if($this->user === false || $this->user === null)
         {
-            $log = '<a href="https://profiles.burningflipside.com/login.php?return='.$this->currentUrl().'"><i class="fa fa-sign-in"></i></a>';
+            $log = '<a href="'.$this->loginUrl.'?return='.$this->currentUrl().'"><i class="fa fa-sign-in"></i></a>';
         }
         $this->body = '<div id="wrapper">
                   <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
