@@ -67,13 +67,15 @@ class LDAPUser extends User
     public function isInGroupNamed($name)
     {
         $filter = new \Data\Filter('cn eq '.$name);
+
         $auth = \AuthProvider::getInstance();
         $ldap = $auth->getMethodByName('Auth\LDAPAuthenticator');
         if($ldap !== false)
         {
-            $ldap->getAndBindServer(false);
+            $this->server = $ldap->getAndBindServer(false);
         }
         $group = $this->server->read($this->server->group_base, $filter);
+
         if(!empty($group))
         {
             $group = $group[0];
@@ -108,6 +110,22 @@ class LDAPUser extends User
     );
 
     /**
+     * LDAP does not allow anonymous read
+     *
+     * @SuppressWarnings("StaticAccess")
+     */
+    protected function enableRead()
+    {
+        //Make sure we are bound in read mode
+        $auth = \AuthProvider::getInstance();
+        $ldap = $auth->getMethodByName('Auth\LDAPAuthenticator');
+        if($ldap !== false)
+        {
+            $this->server = $ldap->getAndBindServer(false);
+        }
+    }
+
+    /**
      * Allow write for the user
      *
      * @SuppressWarnings("StaticAccess")
@@ -119,12 +137,13 @@ class LDAPUser extends User
         $ldap = $auth->getMethodByName('Auth\LDAPAuthenticator');
         if($ldap !== false)
         {
-            $ldap->getAndBindServer(true);
+            $this->server = $ldap->getAndBindServer(true);
         }
     }
 
     public function getGroups()
     {
+        $this->enableRead();
         $res = array();
         $groups = $this->server->read($this->server->group_base);
         if(!empty($groups))
@@ -220,6 +239,8 @@ class LDAPUser extends User
         {
             $obj['cn'] = $obj['uid'];
         }
+        //Make sure we are bound in write mode
+        $this->enableReadWrite();
         $ret = $this->server->create($obj);
         return $ret;
     }
@@ -235,13 +256,13 @@ class LDAPUser extends User
 
     public function getPasswordResetHash()
     {
-        //Make sure we are bound in write mode
-        $this->enableReadWrite();
         $ldapObj = $this->server->read($this->server->user_base, new \Data\Filter('uid eq '.$this->uid));
         $ldapObj = $ldapObj[0];
         $hash = $this->getHashFromUser($ldapObj);
         $obj = array('dn'=>$this->ldapObj->dn);
         $obj['uniqueIdentifier'] = $hash;
+        //Make sure we are bound in write mode
+        $this->enableReadWrite();
         if($this->server->update($obj) === false)
         {
             throw new \Exception('Unable to create hash in LDAP object!');
