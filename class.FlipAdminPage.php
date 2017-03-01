@@ -135,6 +135,11 @@ class FlipAdminPage extends FlipPage
         $this->body .= $card;
     }
 
+    public function isAdmin()
+    {
+        return $this->is_admin;
+    }
+
     public function printPage($header = true)
     {
         if($this->user === false || $this->user === null)
@@ -146,7 +151,7 @@ class FlipAdminPage extends FlipPage
             </div>
         </div>';
         }
-        else if($this->is_admin === false)
+        else if($this->isAdmin() === false)
         {
             $this->body = '
         <div class="row">
