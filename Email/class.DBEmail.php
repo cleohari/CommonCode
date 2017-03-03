@@ -65,19 +65,19 @@ abstract class DBEmail extends \Email\Email
         $rawText = $this->getRawBodyText($html);
         if($html === true)
         {
-            $text = strtr($raw_text, $vars);
+            $text = strtr($rawText, $vars);
             return $text;
         }
-        $index = strpos($raw_text, "<script");
+        $index = strpos($rawText, "<script");
         if($index !== false)
         {
-            $end = strpos($raw_text, "</script>");
+            $end = strpos($rawText, "</script>");
             if($index === 0)
             {
-                $raw_text = substr($raw_text, $end+9);
+                $rawText = substr($rawText, $end+9);
             }
         }
-        return strtr(strip_tags($raw_text), $vars);
+        return strtr(strip_tags($rawText), $vars);
     }
 
     public function getHTMLBody()
