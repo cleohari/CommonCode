@@ -341,6 +341,11 @@ class FlipPage extends WebPage
     /** An instance of the Settings class */
     protected $settings;
 
+    public $wwwUrl;
+    public $wikiUrl;
+    public $profilesUrl;
+    public $secureUrl;
+
     /**
      * Create a webpage with JQuery, Bootstrap, etc
      *
@@ -360,18 +365,25 @@ class FlipPage extends WebPage
         $this->header = $header;
         $this->links = array();
         $this->notifications = array();
-        $this->aboutUrl = $this->settings->getGlobalSetting('about_url', 'https://www.burningflipside.com/about');
+
+        $this->wwwUrl = $this->settings->getGlobalSetting('www_url', 'https://www.burningflipside.com');
+
+        $this->wikiUrl = $this->settings->getGlobalSetting('wiki_url', 'https://wiki.burningflipside.com');
+
+        $this->aboutUrl = $this->settings->getGlobalSetting('about_url', $this->wwwUrl.'/about');
         $this->aboutMenu = $this->settings->getGlobalSetting('about_menu', array(
-            'Burning Flipside'=>'https://www.burningflipside.com/about/event',
-            'AAR, LLC'=>'https://www.burningflipside.com/organization/aar',
-            'Privacy Policy'=>'https://www.burningflipside.com/about/privacy'
+            'Burning Flipside' => $this->wwwUrl.'/about/event',
+            'AAR, LLC' => $this->wwwUrl.'/organization/aar',
+            'Privacy Policy' => $this->wwwUrl.'/about/privacy'
         ));
-        $this->loginUrl = $this->settings->getGlobalSetting('login_url', 'https://profiles.burningflipside.com/login.php');
-        $this->logoutUrl = $this->settings->getGlobalSetting('logout_url', 'https://profiles.burningflipside.com/logout.php');
 
         $this->profilesUrl = $this->settings->getGlobalSetting('profiles_url', 'https://profiles.burningflipside.com/');
-        $this->registerUrl = $this->settings->getGlobalSetting('register_url', 'https://profiles.burningflipside.com/register.php');
-        $this->resetUrl = $this->settings->getGlobalSetting('reset_url', 'https://profiles.burningflipside.com/reset.php');
+        $this->loginUrl = $this->settings->getGlobalSetting('login_url', $this->profilesUrl.'/login.php');
+        $this->logoutUrl = $this->settings->getGlobalSetting('logout_url', $this->profilesUrl.'/logout.php');
+        $this->registerUrl = $this->settings->getGlobalSetting('register_url', $this->profilesUrl.'/register.php');
+        $this->resetUrl = $this->settings->getGlobalSetting('reset_url', $this->profilesUrl.'/reset.php');
+
+        $this->secureUrl = $this->settings->getGlobalSetting('secure_url', 'https://secure.burningflipside.com/');
 
         $this->user = FlipSession::getUser();
         $this->addAllLinks();

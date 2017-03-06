@@ -1,7 +1,7 @@
 <?php
-require_once('class.FlipPage.php');
+require_once('class.LoginRequiredPage.php');
 
-class FlipAdminPage extends FlipPage
+class FlipAdminPage extends LoginRequiredPage
 {
     public $user;
     public $is_admin = false;
@@ -61,10 +61,10 @@ class FlipAdminPage extends FlipPage
     {
         $sites   = $this->getSiteLinksForHeader();
         $sideNav = $this->getLinksMenus();
-        $log     = '<a href="https://profiles.burningflipside.com/logout.php"><i class="fa fa-sign-out"></i></a>';
+        $log     = '<a href="'.$this->logoutUrl.'"><i class="fa fa-sign-out"></i></a>';
         if($this->user === false || $this->user === null)
         {
-            $log = '<a href="https://profiles.burningflipside.com/login.php?return='.$this->currentUrl().'"><i class="fa fa-sign-in"></i></a>';
+            $log = '<a href="'.$this->loginUrl.'?return='.$this->currentUrl().'"><i class="fa fa-sign-in"></i></a>';
         }
         $this->body = '<div id="wrapper">
                   <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
@@ -135,18 +135,14 @@ class FlipAdminPage extends FlipPage
         $this->body .= $card;
     }
 
+    public function isAdmin()
+    {
+        return $this->is_admin;
+    }
+
     public function printPage($header = true)
     {
-        if($this->user === false || $this->user === null)
-        {
-            $this->body = '
-        <div class="row">
-            <div class="col-lg-12">
-                <h1 class="page-header">You must <a href="'.$this->loginUrl.'?return='.$this->currentUrl().'">log in <span class="glyphicon glyphicon-log-in"></span></a> to access the '.$this->title.' Admin system!</h1>
-            </div>
-        </div>';
-        }
-        else if($this->is_admin === false)
+        if($this->isAdmin() === false)
         {
             $this->body = '
         <div class="row">
@@ -155,7 +151,7 @@ class FlipAdminPage extends FlipPage
             </div>
         </div>';
         }
-        parent::printPage();
+        parent::printPage($header);
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
