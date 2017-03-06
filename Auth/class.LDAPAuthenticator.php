@@ -374,7 +374,14 @@ class LDAPAuthenticator extends Authenticator
         $newUser = new LDAPUser();
         $newUser->uid = $user->uid;
         $newUser->mail = $user->mail;
-        $newUser->sn = $user->sn;
+        if(isset($user->sn))
+        {
+            $newUser->sn = $user->sn;
+        }
+        else
+        {
+            $newUser->sn = $newUser->uid;
+        }
         if(isset($user->givenName))
         {
             $newUser->givenName = $user->givenName;
