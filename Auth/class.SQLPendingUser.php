@@ -31,7 +31,7 @@ class SQLPendingUser extends PendingUser
 
     public function __isset($propName)
     {
-        return isset($this->block->{$propName});
+        return isset($this->blob->{$propName});
     }
 
     public function getHash()

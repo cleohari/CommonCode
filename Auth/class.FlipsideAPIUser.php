@@ -9,8 +9,9 @@ class FlipsideAPIUser extends User
 {
     private $userData;
     private $groupData = null;
+    private $apiUrl = 'https://profiles.burningflipside.com/api/v1';
 
-    public function __construct($data = false)
+    public function __construct($data = false, $apiUrl = false)
     {
         if(($data !== false) && !isset($data['extended']))
         {
@@ -24,13 +25,17 @@ class FlipsideAPIUser extends User
                 $this->userData = $data['extended'];
             }
         }
+        if($apiUrl !== false)
+        {
+            $this->apiUrl = $apiUrl;
+        }
     }
 
     public function isInGroupNamed($name)
     {
         if($this->groupData === null)
         {
-            $resp = \Httpful\Request::get('https://profiles.test.burningflipside.com/api/v1/users/me/groups')->authenticateWith($this->userData->uid, $this->userData->userPassword)->send();
+            $resp = \Httpful\Request::get($this->apiUrl.'/users/me/groups')->authenticateWith($this->userData->uid, $this->userData->userPassword)->send();
             if($resp->hasErrors())
             {
                 return false;

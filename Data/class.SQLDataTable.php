@@ -44,7 +44,7 @@ class SQLDataTable extends DataTable
         }
     }
   
-    public function search($filter = false, $select = false, $count = false, $skip = false, $sort = false, $params = false)
+    public function read($filter = false, $select = false, $count = false, $skip = false, $sort = false, $params = false)
     {
         $where = false;
         if($filter !== false)
