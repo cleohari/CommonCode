@@ -153,6 +153,14 @@ class FilterClause
 
     public function toMongoFilter()
     {
+        if($this->var2 === 'true')
+        {
+            $this->var2 = true;
+        }
+        else if($this->var2 === 'false')
+        {
+            $this->var2 = false;
+        }
         $this->var2 = trim($this->var2, "'");
         if($this->var1 === '_id')
         {
