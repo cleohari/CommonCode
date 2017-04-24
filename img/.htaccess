@@ -1,3 +1,5 @@
-ExpiresActive On
-ExpiresDefault "access plus 1 year"
-Header set Cache-Control "public"
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault "access plus 1 year"
+  Header set Cache-Control "public"
+</IfModule>
