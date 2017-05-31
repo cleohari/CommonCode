@@ -7,6 +7,11 @@ class FilterClause
     public $var2;
     public $op;
 
+    /**
+     * Create a filter clause from the string
+     *
+     * @param string $string The filter clause string
+     */
     public function __construct($string = false)
     {
         if(is_string($string))
@@ -28,12 +33,26 @@ class FilterClause
         return substr($haystack, 0, strlen($needle)) === $needle;
     }
 
+    /**
+     * Is the specified filter a function?
+     *
+     * @param string $string The filter clause
+     *
+     * @return boolean True if the filter is an operation, false otherwise
+     */
     protected function filterIsFunction($string)
     {
         return (self::str_startswith($string, 'substringof') || self::str_startswith($string, 'contains') ||
                 self::str_startswith($string, 'indexof'));
     }
 
+    /**
+     * Convert the OData simple op to standard operations
+     *
+     * @param string $op The OData op
+     *
+     * @return string The standard programatic notation
+     */
     protected function odataOpToStd($op)
     {
         switch($op)
@@ -127,6 +146,13 @@ class FilterClause
         return array($field=>$this->var2);       
     }
 
+    /**
+     * Convert the standard operations to Mongo operations
+     *
+     * @param string $op The standard op
+     *
+     * @return string The mongo operator
+     */
     private function opToMongo($op)
     {
         switch($op)
@@ -146,6 +172,14 @@ class FilterClause
         }
     }
 
+    /**
+     * Convert the right hand side of the filter clause into an Mongo array
+     *
+     * @param string $op The standard operator
+     * @param string $var The second variable in the operator
+     *
+     * @return array An array of mongo operations
+     */
     private function getMongoClauseArray($op, $var2)
     {
         return array($this->opToMongo($op)=>$var2);
@@ -153,7 +187,18 @@ class FilterClause
 
     public function toMongoFilter()
     {
-        $this->var2 = trim($this->var2, "'");
+        if($this->var2 === 'true')
+        {
+            $this->var2 = true;
+        }
+        else if($this->var2 === 'false')
+        {
+            $this->var2 = false;
+        }
+        else
+        {
+            $this->var2 = trim($this->var2, "'");
+        }
         if($this->var1 === '_id')
         {
             $this->var2 = new \MongoId($this->var2);

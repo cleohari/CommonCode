@@ -5,6 +5,11 @@ class SQLDataSet extends DataSet
 {
     protected $pdo;
 
+    /**
+     * Create a new SQLDataSet
+     *
+     * @param array $params An array containing atleast 'dsn' and possibly 'user' and 'pass'
+     */
     public function __construct($params)
     {
         if(isset($params['user']))
@@ -116,6 +121,12 @@ class SQLDataSet extends DataSet
         return $sql;
     }
 
+    /**
+     * Convert OData style $count and $skip into SQL LIMIT
+     *
+     * @param boolean|string $count The number of items to return
+     * @param boolean|string $skip The number of items to skip
+     */
     private function getLimitClause($count, $skip)
     {
         if($count === false)
@@ -177,6 +188,15 @@ class SQLDataSet extends DataSet
         return $ret;
     }
 
+    /**
+     * Perform an SQL update on the specified table
+     *
+     * @param string $tablename The name of the table to insert to
+     * @param string $where The where clause in SQL format
+     * @param mixed $data The data to write to the table
+     *
+     * @return boolean true if successful, false otherwise
+     */
     public function update($tablename, $where, $data)
     {
         $set = array();
@@ -199,6 +219,14 @@ class SQLDataSet extends DataSet
         return true;
     }
 
+    /**
+     * Perform an SQL insert on the specified table
+     *
+     * @param string $tablename The name of the table to insert to
+     * @param mixed $data The data to write to the table
+     *
+     * @return boolean true if successful, false otherwise
+     */
     public function create($tablename, $data)
     {
         $set = array();
@@ -210,18 +238,34 @@ class SQLDataSet extends DataSet
         $count = count($cols);
         for($i = 0; $i < $count; $i++)
         {
-            array_push($set, $this->pdo->quote($data[$cols[$i]]));
+            if($data[$cols[$i]] === null)
+            {
+                array_push($set, 'NULL');
+            }
+            else
+            {
+                array_push($set, $this->pdo->quote($data[$cols[$i]]));
+            }
         }
         $cols = implode(',', $cols);
         $set = implode(',', $set);
         $sql = "INSERT INTO $tablename ($cols) VALUES ($set);";
         if($this->pdo->exec($sql) === false)
         {
+            //error_log($sql);
             return false;
         }
         return true;
     }
 
+    /**
+     * Perform an SQL delete on the specified table
+     *
+     * @param string $tablename The name of the table to insert to
+     * @param string $where The where clause in SQL format
+     *
+     * @return boolean true if successful, false otherwise
+     */
     public function delete($tablename, $where)
     {
         $sql = "DELETE FROM $tablename WHERE $where";
@@ -232,6 +276,13 @@ class SQLDataSet extends DataSet
         return true;
     }
 
+    /**
+     * Perform an SQL query
+     *
+     * @param string $sql The raw SQL
+     *
+     * @return mixed false on a failure, an array of data otherwise
+     */
     public function raw_query($sql)
     {
         $stmt = $this->pdo->query($sql, \PDO::FETCH_ASSOC);

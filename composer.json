@@ -11,6 +11,7 @@
         "PHPOffice/PhpExcel": "dev-master",
         "mongofill/mongofill": "dev-master",
         "aws/aws-sdk-php": "dev-master"
+        "psr/log": "~1.0"
     },
     "repositories": [
         {

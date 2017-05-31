@@ -40,7 +40,11 @@ class AmazonSES extends EmailService
             $args = array();
             $args['RawMessage'] = array();
             $args['RawMessage']['Data'] = base64_encode($email->getRawMessage());
-            return $this->ses->sendRawEmail($args);
+            try {
+                return $this->ses->sendRawEmail($args);
+            } catch(\Exception $e) {
+                return false;
+            }
         }
         else
         {
@@ -59,7 +63,11 @@ class AmazonSES extends EmailService
             $args['Message']['Body']['Text']['Data'] = $email->getTextBody();
             $args['Message']['Body']['Html']['Data'] = $email->getHtmlBody();
             $args['ReplyToAddresses'] = array($email->getReplyTo());
-            return $this->ses->sendEmail($args);
+            try {
+                return $this->ses->sendEmail($args);
+            } catch(\Exception $e) {
+                return false;
+            }
         }
     }
 }

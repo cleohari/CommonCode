@@ -80,6 +80,17 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('https://profiles.burningflipside.com/OAUTH2/token.php?client_id=test&redirect_uri=https%3A%2F%2Fexample.com%2Foauth%2Fcallbacks%2Fburningflipside.com', $auth->getAccessTokenUrl());
         $this->assertEquals('<a href="https://profiles.burningflipside.com/OAUTH2/authorize.php?client_id=test&redirect_uri=https%3A%2F%2Fexample.com%2Foauth%2Fcallbacks%2Fburningflipside.com&scope=user"><img src="/img/common/burningflipside.com_sign_in.png" style="width: 2em;"/></a>', $auth->getSupplementLink());
         $this->assertEquals('/img/common/burningflipside.com_sign_in.png', $auth->getSignInImg());
+
+        $params['api_url'] = 'https://api.example.org';
+        $params['oauth_url'] = 'https://login.example.org/oauth';
+        $auth = new \Auth\OAuth2\FlipsideAuthenticator($params);
+        $this->assertNotNull($auth);
+        $this->assertInstanceOf('Auth\OAuth2\FlipsideAuthenticator', $auth);
+        $this->assertEquals('burningflipside.com', $auth->getHostName());
+        $this->assertEquals('https://login.example.org/oauth/authorize.php?client_id=test&redirect_uri=https%3A%2F%2Fexample.com%2Foauth%2Fcallbacks%2Fburningflipside.com&scope=user', $auth->getAuthorizationUrl());
+        $this->assertEquals('https://login.example.org/oauth/token.php?client_id=test&redirect_uri=https%3A%2F%2Fexample.com%2Foauth%2Fcallbacks%2Fburningflipside.com', $auth->getAccessTokenUrl());
+        $this->assertEquals('<a href="https://login.example.org/oauth/authorize.php?client_id=test&redirect_uri=https%3A%2F%2Fexample.com%2Foauth%2Fcallbacks%2Fburningflipside.com&scope=user"><img src="/img/common/burningflipside.com_sign_in.png" style="width: 2em;"/></a>', $auth->getSupplementLink());
+        $this->assertEquals('/img/common/burningflipside.com_sign_in.png', $auth->getSignInImg());
     }
 
     public function testGithubAuthenticator()
@@ -151,7 +162,7 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($link->tagName, 'a');
 
         $attributes = $link->attributes;
-        $this->assertEquals($attributes->length, 1); 
+        $this->assertEquals($attributes->length, 1);
         $url = parse_url($attributes->item(0)->value);
         $this->assertEquals($url['scheme'], 'https');
         $this->assertEquals($url['host'], 'accounts.google.com');
@@ -165,7 +176,7 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($queryStr['client_id'], 'test');
         $this->assertArrayHasKey('redirect_uri', $queryStr);
         $this->assertEquals($queryStr['redirect_uri'], 'https://example.com/oauth2callback.php?src=google');
-        
+
         $children = $link->childNodes;
         $this->assertEquals($children->length, 1);
         $this->assertEquals($children->item(0)->tagName, 'img');

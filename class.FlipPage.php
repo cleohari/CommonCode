@@ -53,8 +53,8 @@ $jsArray = array(
                 'min' => '/js/common/jquery.min.js'
             ),
             'cdn' => array(
-                'no'  => '//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.js',
-                'min' => '//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js'
+                'no'  => '//ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.js',
+                'min' => '//ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js'
             )
         ),
         JS_JQUERY_UI => array(
@@ -73,8 +73,8 @@ $jsArray = array(
                 'min' => '/js/common/bootstrap.min.js'
             ),
             'cdn' => array(
-                'no'  => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.js',
-                'min' => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js'
+                'no'  => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.js',
+                'min' => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js'
             )
         ),
         JQUERY_VALIDATE => array(
@@ -257,8 +257,8 @@ $cssArray = array(
                 'min' => '/css/common/bootstrap.min.css'
             ),
             'cdn' => array(
-                'no'  => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css',
-                'min' => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'
+                'no'  => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css',
+                'min' => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'
             )
     ),
     CSS_BOOTSTRAP_FH => array(
@@ -307,8 +307,8 @@ $cssArray = array(
             'min' => '/css/common/font-awesome.min.css'
         ),
         'cdn' => array(
-            'no'  => '//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.css',
-            'min' => '//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css'
+            'no'  => '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css',
+            'min' => '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'
         )
     )
 );
@@ -341,6 +341,11 @@ class FlipPage extends WebPage
     /** An instance of the Settings class */
     protected $settings;
 
+    public $wwwUrl;
+    public $wikiUrl;
+    public $profilesUrl;
+    public $secureUrl;
+
     /**
      * Create a webpage with JQuery, Bootstrap, etc
      *
@@ -360,18 +365,25 @@ class FlipPage extends WebPage
         $this->header = $header;
         $this->links = array();
         $this->notifications = array();
-        $this->aboutUrl = $this->settings->getGlobalSetting('about_url', 'https://www.burningflipside.com/about');
+
+        $this->wwwUrl = $this->settings->getGlobalSetting('www_url', 'https://www.burningflipside.com');
+
+        $this->wikiUrl = $this->settings->getGlobalSetting('wiki_url', 'https://wiki.burningflipside.com');
+
+        $this->aboutUrl = $this->settings->getGlobalSetting('about_url', $this->wwwUrl.'/about');
         $this->aboutMenu = $this->settings->getGlobalSetting('about_menu', array(
-            'Burning Flipside'=>'https://www.burningflipside.com/about/event',
-            'AAR, LLC'=>'https://www.burningflipside.com/organization/aar',
-            'Privacy Policy'=>'https://www.burningflipside.com/about/privacy'
+            'Burning Flipside' => $this->wwwUrl.'/about/event',
+            'AAR, LLC' => $this->wwwUrl.'/organization/aar',
+            'Privacy Policy' => $this->wwwUrl.'/about/privacy'
         ));
-        $this->loginUrl = $this->settings->getGlobalSetting('login_url', 'https://profiles.burningflipside.com/login.php');
-        $this->logoutUrl = $this->settings->getGlobalSetting('logout_url', 'https://profiles.burningflipside.com/logout.php');
 
         $this->profilesUrl = $this->settings->getGlobalSetting('profiles_url', 'https://profiles.burningflipside.com/');
-        $this->registerUrl = $this->settings->getGlobalSetting('register_url', 'https://profiles.burningflipside.com/register.php');
-        $this->resetUrl = $this->settings->getGlobalSetting('reset_url', 'https://profiles.burningflipside.com/reset.php');
+        $this->loginUrl = $this->settings->getGlobalSetting('login_url', $this->profilesUrl.'/login.php');
+        $this->logoutUrl = $this->settings->getGlobalSetting('logout_url', $this->profilesUrl.'/logout.php');
+        $this->registerUrl = $this->settings->getGlobalSetting('register_url', $this->profilesUrl.'/register.php');
+        $this->resetUrl = $this->settings->getGlobalSetting('reset_url', $this->profilesUrl.'/reset.php');
+
+        $this->secureUrl = $this->settings->getGlobalSetting('secure_url', 'https://secure.burningflipside.com/');
 
         $this->user = FlipSession::getUser();
         $this->addAllLinks();

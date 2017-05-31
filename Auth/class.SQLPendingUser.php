@@ -10,6 +10,7 @@ class SQLPendingUser extends PendingUser
 
     public function __construct($data, $table = false)
     {
+        parent::__construct();
         $this->hash = $data['hash'];
         $this->time = new \DateTime($data['time']);
         $this->blob = json_decode($data['data']);
@@ -31,7 +32,7 @@ class SQLPendingUser extends PendingUser
 
     public function __isset($propName)
     {
-       return isset($this->block->{$propName});
+        return isset($this->blob->{$propName});
     }
 
     public function getHash()

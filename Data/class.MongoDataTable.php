@@ -48,7 +48,7 @@ class MongoDataTable extends DataTable
         return $filter->to_mongo_filter();
     }
 
-    public function search($filter = false, $select = false, $count = false, $skip = false, $sort = false, $params = false)
+    public function read($filter = false, $select = false, $count = false, $skip = false, $sort = false, $params = false)
     {
         $fields   = array();
         $criteria = $this->getCriteriaFromFilter($filter);
