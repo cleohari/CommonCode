@@ -238,13 +238,21 @@ class SQLDataSet extends DataSet
         $count = count($cols);
         for($i = 0; $i < $count; $i++)
         {
-            array_push($set, $this->pdo->quote($data[$cols[$i]]));
+            if($data[$cols[$i]] === null)
+            {
+                array_push($set, 'NULL');
+            }
+            else
+            {
+                array_push($set, $this->pdo->quote($data[$cols[$i]]));
+            }
         }
         $cols = implode(',', $cols);
         $set = implode(',', $set);
         $sql = "INSERT INTO $tablename ($cols) VALUES ($set);";
         if($this->pdo->exec($sql) === false)
         {
+            //error_log($sql);
             return false;
         }
         return true;

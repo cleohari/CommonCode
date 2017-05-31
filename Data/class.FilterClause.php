@@ -187,7 +187,18 @@ class FilterClause
 
     public function toMongoFilter()
     {
-        $this->var2 = trim($this->var2, "'");
+        if($this->var2 === 'true')
+        {
+            $this->var2 = true;
+        }
+        else if($this->var2 === 'false')
+        {
+            $this->var2 = false;
+        }
+        else
+        {
+            $this->var2 = trim($this->var2, "'");
+        }
         if($this->var1 === '_id')
         {
             $this->var2 = new \MongoId($this->var2);

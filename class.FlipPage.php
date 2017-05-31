@@ -53,8 +53,8 @@ $jsArray = array(
                 'min' => '/js/common/jquery.min.js'
             ),
             'cdn' => array(
-                'no'  => '//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.js',
-                'min' => '//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js'
+                'no'  => '//ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.js',
+                'min' => '//ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js'
             )
         ),
         JS_JQUERY_UI => array(
@@ -73,8 +73,8 @@ $jsArray = array(
                 'min' => '/js/common/bootstrap.min.js'
             ),
             'cdn' => array(
-                'no'  => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.js',
-                'min' => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js'
+                'no'  => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.js',
+                'min' => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js'
             )
         ),
         JQUERY_VALIDATE => array(
@@ -257,8 +257,8 @@ $cssArray = array(
                 'min' => '/css/common/bootstrap.min.css'
             ),
             'cdn' => array(
-                'no'  => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css',
-                'min' => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'
+                'no'  => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css',
+                'min' => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'
             )
     ),
     CSS_BOOTSTRAP_FH => array(
