@@ -307,8 +307,8 @@ $cssArray = array(
             'min' => '/css/common/font-awesome.min.css'
         ),
         'cdn' => array(
-            'no'  => '//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.css',
-            'min' => '//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css'
+            'no'  => '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css',
+            'min' => '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'
         )
     )
 );
