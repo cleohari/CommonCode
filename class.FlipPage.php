@@ -173,8 +173,8 @@ $jsArray = array(
                 'min' => '/js/common/md5.js',
             ),
             'cdn' => array(
-                'no'  => '//cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/md5.js',
-                'min' => '//cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/md5.min.js',
+                'no'  => '//cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js',
+                'min' => '//cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js',
             )
         ),
         JS_JCROP => array(
@@ -183,8 +183,8 @@ $jsArray = array(
                 'min' => '/js/common/jquery.Jcrop.min.js'
             ),
             'cdn' => array(
-                'no'  => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/2.0.4/js/jquery.Jcrop.js',
-                'min' => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/2.0.4/js/jquery.Jcrop.min.js'
+                'no'  => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/2.0.4/js/Jcrop.js',
+                'min' => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/2.0.4/js/Jcrop.min.js'
             )
         ),
         JS_TYPEAHEAD => array(
@@ -287,8 +287,8 @@ $cssArray = array(
             'min' => '/css/common/jquery.Jcrop.min.css'
         ),
         'cdn' => array(
-            'no'  => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/2.0.4/css/jquery.Jcrop.css',
-            'min' => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/2.0.4/css/jquery.Jcrop.min.css'
+            'no'  => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/2.0.4/css/Jcrop.css',
+            'min' => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/2.0.4/css/Jcrop.min.css'
         )
     ),
     CSS_FONTAWESOME => array(
