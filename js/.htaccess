@@ -1,8 +1,10 @@
-<FilesMatch "^flipside">
+<IfModule mod_expires.c>
+  <FilesMatch "^flipside">
     ExpiresActive On
     ExpiresDefault "access plus 1 hour"
-</FilesMatch>
-<FilesMatch "\.min.js">
+  </FilesMatch>
+  <FilesMatch "\.min.js">
     ExpiresActive On
     ExpiresDefault "access plus 1 week"
-</FilesMatch>
+  </FilesMatch>
+</IfModule>
