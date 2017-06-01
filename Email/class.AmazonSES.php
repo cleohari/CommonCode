@@ -1,19 +1,20 @@
 <?php
 namespace Email;
 
-require('/var/www/common/libs/aws/aws-autoloader.php');
+require(dirname(__FILE__).'/../vendor/autoload.php');
 class AmazonSES extends EmailService
 {
     protected $ses;
 
     public function __construct($params)
     {
-        $credentials = \Aws\Common\Credentials\Credentials::fromIni('default', $params['ini']);
+        $provider = \Aws\Credentials\CredentialProvider::ini('default', $params['ini']);
+        //$credentials = \Aws\Common\Credentials\Credentials::fromIni('default', $params['ini']);
 
         $this->ses = \Aws\Ses\SesClient::factory([
                 'version' => 'latest',
                 'region'  => 'us-west-2',
-                'credentials' => $credentials]);
+                'credentials' => $provider]);
     }
 
     public function canSend()
