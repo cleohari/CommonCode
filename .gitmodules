@@ -1,24 +1,9 @@
-[submodule "libs/google"]
-	path = libs/google
-	url = https://github.com/google/google-api-php-client.git
-[submodule "libs/browscap-php"]
-	path = libs/browscap-php
-	url = https://github.com/browscap/browscap-php.git
 [submodule "libs/Slim"]
 	path = libs/Slim
 	url = https://github.com/slimphp/Slim.git
-[submodule "libs/twitter"]
-	path = libs/twitter
-	url = https://github.com/abraham/twitteroauth.git
-[submodule "libs/httpful"]
-	path = libs/httpful
-	url = https://github.com/nategood/httpful.git
 [submodule "libs/mongofill"]
 	path = libs/mongofill
 	url = https://github.com/mongofill/mongofill.git
-[submodule "libs/PHPMailer"]
-	path = libs/PHPMailer
-	url = https://github.com/PHPMailer/PHPMailer.git
 [submodule "libs/PHPExcel"]
 	path = libs/PHPExcel
 	url = https://github.com/PHPOffice/PHPExcel.git
