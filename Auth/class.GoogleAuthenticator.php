@@ -1,6 +1,6 @@
 <?php
 namespace Auth;
-require dirname(__FILE__).'/../libs/google/src/Google/autoload.php';
+require dirname(__FILE__).'/../vendor/autoload.php';
 
 class GoogleAuthenticator extends Authenticator
 {

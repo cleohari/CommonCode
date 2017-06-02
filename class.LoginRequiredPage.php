@@ -31,7 +31,7 @@ class LoginRequiredPage extends FlipPage
             $this->body = '
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">You must <a href="'.$this->loginUrl.'?return='.$this->currentUrl().'">log in <span class="glyphicon glyphicon-log-in"></span></a> to access the '.$this->title.' system!</h1>
+                <h1 class="page-header">You must <a href="'.$this->loginUrl.'?return='.$this->currentUrl().'">log in <span class="fa fa-sign-in"></span></a> to access the '.$this->title.' system!</h1>
             </div>
         </div>';
         }

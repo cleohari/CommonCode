@@ -11,3 +11,6 @@ if [ ! -d /var/php_cache/browser ]; then
 fi	
 
 sudo -u $USERNAME php -d memory_limit=-1 cron.php
+if [ -f '/etc/redhat-release' ]; then
+  sudo chcon -Rv --type=httpd_sys_content_t /var/php_cache/browser
+fi

@@ -13,7 +13,7 @@
 
 namespace Email;
 
-require '/var/www/common/libs/PHPMailer/PHPMailerAutoload.php';
+require 'vendor/autoload.php';
 
 /**
  * An class to represent an SMTPSErver
