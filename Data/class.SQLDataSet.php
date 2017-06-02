@@ -160,7 +160,7 @@ class SQLDataSet extends DataSet
         {
             $select = '*';
         }
-        $sql = "SELECT $select FROM $tablename";
+        $sql = "SELECT $select FROM `$tablename`";
         if($where !== false)
         {
             $sql .= ' WHERE '.$where;
