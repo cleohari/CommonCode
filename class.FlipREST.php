@@ -177,9 +177,132 @@ class FlipRESTFormat extends \Slim\Middleware
         return ob_get_clean();
     }
 
+    private function collapseEntityToArray($entity, &$array, $keyPrefix='')
+    {
+        if(array_keys($entity) === range(0, count($entity) - 1))
+        {
+            $tmpCount = count($entity);
+            for($i = 0; $i < $tmpCount; $i++)
+            {
+                $tmpKey = $keyPrefix.'['.$i.']';
+                if(is_object($entity[$i]) || is_array($entity[$i]))
+                {
+                    $this->collapseEntityToArray($entity[$i], $array, $tmpKey);
+                }
+                else
+                {
+                    $array[$tmpKey] = $entity[$i];
+                }
+            }
+            return;
+        }
+
+        foreach($entity as $key=>$data)
+        {
+            if(is_object($data))
+            {
+               $data = get_object_vars($data);
+            }
+
+            if(is_array($data))
+            {
+                if(array_keys($data) !== range(0, count($data) - 1))
+                {
+                    //Key array
+                    foreach($data as $childKey=>$childData)
+                    {
+                        $tmpKey = $keyPrefix.$key.'.'.$childKey;
+                        if(is_object($childData) || is_array($childData))
+                        {
+                            $this->collapseEntityToArray($childData, $array, $tmpKey);
+                        }
+                        else
+                        {
+                            $array[$tmpKey] = $childData;
+                        }
+                    }
+                }
+                else
+                {
+                    //Numeric array
+                    $tmpCount = count($data);
+                    for($j = 0; $j < $tmpCount; $j++)
+                    {
+                        $tmpKey = $keyPrefix.$key.'['.$j.']';
+                        if(is_object($data[$j]) || is_array($data[$j]))
+                        {
+                            $this->collapseEntityToArray($data[$j], $array, $tmpKey);
+                        }
+                        else
+                        {
+                            $array[$tmpKey] = $data[$j];
+                        }
+                    }
+                }
+            }
+            else
+            {
+                $array[$keyPrefix.$key] = $data;
+            }
+        }
+    }
+
+    private function createCSV2(&$array)
+    {
+        if(count($array) == 0)
+        {
+            return null;
+        }
+        if(is_object($array))
+        {
+            $array = get_object_vars($array);
+        }
+        $rowCount = count($array);
+        $keys = array();
+        for($i = 0; $i < $rowCount; $i++)
+        {
+            $row = $array[$i];
+            if(is_object($row))
+            {
+                $row = get_object_vars($row);
+                $array[$i] = $row;
+            }
+            if(isset($row['_empty_']))
+            {
+                unset($row['_empty_']);
+                $array[$i] = $row;
+            }
+            if(isset($row['_id']))
+            {
+                $row['_id'] = $row['_id']->{'$id'};
+                $array[$i] = $row;
+            }
+            $newRow = array();
+            $this->collapseEntityToArray($row, $newRow);
+            $row = $newRow;
+            $array[$i] = $row;
+            $keys = array_merge($keys, $row);
+        }
+        $keys = array_keys($keys);
+        asort($keys);
+        ob_start();
+        $df = fopen("php://output", 'w');
+        fputcsv($df, $keys);
+        for($i = 0; $i < $rowCount; $i++)
+        {
+            $tmp = array_fill_keys($keys, '');
+            $row = $array[$i];
+            $tmp = array_merge($tmp, $row);
+            ksort($tmp);
+            fputcsv($df, $tmp);
+        }
+        fclose($df);
+        return ob_get_clean();
+    }
+
     private function create_excel(&$array)
     {
-        require_once dirname(__FILE__) . '/libs/PHPExcel/Classes/PHPExcel.php';
+        require_once dirname(__FILE__).'/libs/PHPExcel/Classes/PHPExcel.php';
         $ssheat = new PHPExcel();
         $sheat = $ssheat->setActiveSheetIndex(0);
         if(is_array($array))
@@ -228,7 +351,7 @@ class FlipRESTFormat extends \Slim\Middleware
                         {
                             $value = implode(',', $value);
                         }
-                        $sheat->setCellValueByColumnAndRow($j, 2+$i, $value);
+                        $sheat->setCellValueByColumnAndRow($j, 2 + $i, $value);
                     }
                 }
             }
@@ -260,6 +383,13 @@ class FlipRESTFormat extends \Slim\Middleware
                 $path = substr($path, 1);
                 $this->app->response->headers->set('Content-Disposition', 'attachment; filename='.$path.'.csv');
                 return $this->createCSV($data);
+            case 'csv2':
+                $this->app->response->headers->set('Content-Type', 'text/csv');
+                $path = $this->app->request->getPathInfo();
+                $path = strrchr($path, '/');
+                $path = substr($path, 1);
+                $this->app->response->headers->set('Content-Disposition', 'attachment; filename='.$path.'.csv');
+                return $this->createCSV2($data);
             case 'xml':
                 $this->app->response->headers->set('Content-Type', 'application/xml');
                 return $this->createXML($data);

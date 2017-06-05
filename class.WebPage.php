@@ -15,7 +15,8 @@
  * We use the Browscap abstraction to determine browser versions 
  */
 require(dirname(__FILE__).'/vendor/autoload.php');
-use phpbrowscap\Browscap;
+require('vendor/autoload.php');
+use BrowscapPHP\Browscap;
 
 /**
  * A generic abstraction layer for creating a webpage.
@@ -77,11 +78,14 @@ class WebPage
      */
     protected function getBrowscap()
     {
+        $bc = new Browscap();
+        $adapter = new \WurflCache\Adapter\File([\WurflCache\Adapter\File::DIR => '/var/php_cache/browser']);
         if(isset($GLOBALS['BROWSCAP_CACHE']))
         {
-            return new Browscap($GLOBALS['BROWSCAP_CACHE']);
+            $adapter = new \WurflCache\Adapter\File([\WurflCache\Adapter\File::DIR => $GLOBALS['BROWSCAP_CACHE']]);
         }
-        return new Browscap('/var/php_cache/browser');
+        $bc->setCache($adapter);
+        return $bc;
     }
 
     /**

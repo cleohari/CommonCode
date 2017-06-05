@@ -17,11 +17,15 @@
 ini_set('memory_limit','-1');      // turn off memory limit for this script
 set_time_limit(120);               // change to 2 minutes for this script
 
-require('libs/browscap-php/src/phpbrowscap/Browscap.php');
+require('vendor/autoload.php');
 
-use phpbrowscap\Browscap;
+use BrowscapPHP\Browscap;
 
 date_default_timezone_set('America/Chicago');
 
-$browscap = new Browscap('/var/php_cache/browser');
-$browscap->updateCache();
+$bc = new \BrowscapPHP\BrowscapUpdater('/var/php_cache/browser');
+$adapter = new \WurflCache\Adapter\File([\WurflCache\Adapter\File::DIR => '/var/php_cache/browser']);
+$bc->setCache($adapter);
+//$browscap = new Browscap('/var/php_cache/browser');
+//$browscap->updateCache();
+$bc->update();
