@@ -83,5 +83,10 @@ class SQLDataTable extends DataTable
     {
         return $this->dataset->raw_query($sql);
     }
+
+    public function getLastError()
+    {
+        return $this->dataset->getLastError();
+    }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */

@@ -22,7 +22,7 @@ define('JS_JQUERY_UI', 1);
 define('JS_BOOTSTRAP', 2);
 define('JQUERY_VALIDATE', 3);
 define('JQUERY_TOUCH', 4);
-define('JS_TINYNAV', 5);
+//define('JS_TINYNAV', 5);
 define('JS_BOOTSTRAP_FH', 6);
 define('JS_BOOTSTRAP_SW', 7);
 define('JS_DATATABLE', 8);
@@ -53,8 +53,8 @@ $jsArray = array(
                 'min' => '/js/common/jquery.min.js'
             ),
             'cdn' => array(
-                'no'  => '//ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.js',
-                'min' => '//ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js'
+                'no'  => '//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.js',
+                'min' => '//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'
             )
         ),
         JS_JQUERY_UI => array(
@@ -63,8 +63,8 @@ $jsArray = array(
                 'min' => '/js/common/jquery-ui.min.js'
             ),
             'cdn' => array(
-                'no'  => '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.js',
-                'min' => '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js'
+                'no'  => '//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.js',
+                'min' => '//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'
             )
         ),
         JS_BOOTSTRAP => array(
@@ -83,8 +83,8 @@ $jsArray = array(
                 'min' => '/js/common/jquery.validate.min.js'
             ),
             'cdn' => array(
-                'no'  => '//ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.js',
-                'min' => '//ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.min.js'
+                'no'  => '//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.js',
+                'min' => '//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js'
             )
         ),
         JQUERY_TOUCH => array(
@@ -95,16 +95,6 @@ $jsArray = array(
             'cdn' => array(
                 'no'  => '//cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js',
                 'min' => '//cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js'
-            )
-        ),
-        JS_TINYNAV => array(
-            'no' => array(
-                'no'  => '/js/common/tinynav.js',
-                'min' => '/js/common/tinynav.min.js'
-            ),
-            'cdn' => array(
-                'no'  => '//cdnjs.cloudflare.com/ajax/libs/TinyNav.js/1.2.0/tinynav.js',
-                'min' => '//cdnjs.cloudflare.com/ajax/libs/TinyNav.js/1.2.0/tinynav.min.js'
             )
         ),
         JS_BOOTSTRAP_FH => array(
@@ -123,8 +113,8 @@ $jsArray = array(
                 'min' => '/js/common/bootstrap-switch.min.js'
             ),
             'cdn' => array(
-                'no'  => '//cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.2/js/bootstrap-switch.js',
-                'min' => '//cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.2/js/bootstrap-switch.min.js'
+                'no'  => '//cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.4/js/bootstrap-switch.js',
+                'min' => '//cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.4/js/bootstrap-switch.min.js'
             )
         ),
         JS_DATATABLE => array(
@@ -133,8 +123,8 @@ $jsArray = array(
                 'min' => '/js/common/jquery.dataTables.min.js'
             ),
             'cdn' => array(
-                'no'  => '//cdn.datatables.net/1.10.7/js/jquery.dataTables.js',
-                'min' => '//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js'
+                'no'  => '//cdn.datatables.net/1.10.15/js/jquery.dataTables.js',
+                'min' => '//cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js'
             )
         ),
         JS_CHART => array(
@@ -143,8 +133,8 @@ $jsArray = array(
                 'min' => '/js/common/Chart.min.js'
             ),
             'cdn' => array(
-                'no'  => '//cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js',
-                'min' => '//cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'
+                'no'  => '//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.js',
+                'min' => '//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js'
             )
         ),
         JS_METISMENU => array(
@@ -153,8 +143,8 @@ $jsArray = array(
                 'min' => '/js/common/metisMenu.min.js'
             ),
             'cdn' => array(
-                'no'  => '//cdnjs.cloudflare.com/ajax/libs/metisMenu/2.0.2/metisMenu.js',
-                'min' => '//cdnjs.cloudflare.com/ajax/libs/metisMenu/2.0.2/metisMenu.min.js'
+                'no'  => '//cdnjs.cloudflare.com/ajax/libs/metisMenu/2.7.0/metisMenu.js',
+                'min' => '//cdnjs.cloudflare.com/ajax/libs/metisMenu/2.7.0/metisMenu.min.js'
             )
         ),
         JS_BOOTBOX => array(
@@ -163,8 +153,8 @@ $jsArray = array(
                 'min' => '/js/common/bootbox.min.js'
             ),
             'cdn' => array(
-                'no'  => '//cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.3.0/bootbox.js',
-                'min' => '//cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.3.0/bootbox.min.js'
+                'no'  => '//cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.js',
+                'min' => '//cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js'
             )
         ),
         JS_DATATABLE_ODATA => array(
@@ -183,8 +173,8 @@ $jsArray = array(
                 'min' => '/js/common/md5.js',
             ),
             'cdn' => array(
-                'no'  => '//cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/md5.js',
-                'min' => '//cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/md5.js',
+                'no'  => '//cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js',
+                'min' => '//cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js',
             )
         ),
         JS_JCROP => array(
@@ -193,8 +183,8 @@ $jsArray = array(
                 'min' => '/js/common/jquery.Jcrop.min.js'
             ),
             'cdn' => array(
-                'no'  => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/0.9.12/js/jquery.Jcrop.js',
-                'min' => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/0.9.12/js/jquery.Jcrop.min.js'
+                'no'  => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/2.0.4/js/Jcrop.js',
+                'min' => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/2.0.4/js/Jcrop.min.js'
             )
         ),
         JS_TYPEAHEAD => array(
@@ -247,8 +237,8 @@ $cssArray = array(
                 'min' => '/css/common/jquery-ui.min.css'
             ),
             'cdn' => array(
-                'no'  => '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css',
-                'min' => '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.min.css'
+                'no'  => '//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css',
+                'min' => '//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.min.css'
             )
     ),
     CSS_BOOTSTRAP => array(
@@ -277,8 +267,8 @@ $cssArray = array(
                 'min' => '/css/common/bootstrap-switch.min.css'
             ),
             'cdn' => array(
-                'no'  => '//cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.2/css/bootstrap3/bootstrap-switch.css',
-                'min' => '//cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.2/css/bootstrap3/bootstrap-switch.min.css'
+                'no'  => '//cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.4/css/bootstrap3/bootstrap-switch.css',
+                'min' => '//cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.4/css/bootstrap3/bootstrap-switch.min.css'
             )
     ),
     CSS_DATATABLE => array(
@@ -287,8 +277,8 @@ $cssArray = array(
                 'min' => '/css/common/jquery.dataTables.min.css'
             ),
             'cdn' => array(
-                'no'  => '//cdn.datatables.net/1.10.7/css/jquery.dataTables.css',
-                'min' => '//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css'
+                'no'  => '//cdn.datatables.net/1.10.15/css/jquery.dataTables.css',
+                'min' => '//cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css'
             )
     ),
     CSS_JCROP => array(
@@ -297,8 +287,8 @@ $cssArray = array(
             'min' => '/css/common/jquery.Jcrop.min.css'
         ),
         'cdn' => array(
-            'no'  => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/0.9.12/css/jquery.Jcrop.css',
-            'min' => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/0.9.12/css/jquery.Jcrop.min.css'
+            'no'  => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/2.0.4/css/Jcrop.css',
+            'min' => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/2.0.4/css/Jcrop.min.css'
         )
     ),
     CSS_FONTAWESOME => array(

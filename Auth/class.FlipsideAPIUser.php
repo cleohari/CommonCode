@@ -2,7 +2,7 @@
 namespace Auth;
 if(!class_exists('Httpful\Request'))
 {
-    require(realpath(dirname(__FILE__)).'/../libs/httpful/bootstrap.php');
+    require(realpath(dirname(__FILE__)).'/../vendor/autoload.php');
 }
 
 class FlipsideAPIUser extends User

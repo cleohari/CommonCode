@@ -160,7 +160,7 @@ class SQLDataSet extends DataSet
         {
             $select = '*';
         }
-        $sql = "SELECT $select FROM $tablename";
+        $sql = "SELECT $select FROM `$tablename`";
         if($where !== false)
         {
             $sql .= ' WHERE '.$where;
@@ -292,6 +292,11 @@ class SQLDataSet extends DataSet
         }
         $ret = $stmt->fetchAll();
         return $ret;
+    }
+
+    public function getLastError()
+    {
+        return $this->pdo->errorInfo();
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
