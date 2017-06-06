@@ -27,11 +27,15 @@ class AmazonSES extends EmailService
 
     public function sendEmail($email)
     {
-        foreach($email->getToAddresses() as $to)
+        $tos = $email->getToAddresses();
+        if(is_array($tos))
         {
-            if(strstr($to, 'free.fr') !== false)
+            foreach($tos as $to)
             {
-                die('Spammer abuse filter!');
+                if(strstr($to, 'free.fr') !== false)
+                {
+                    die('Spammer abuse filter!');
+                }
             }
         }
 

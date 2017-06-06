@@ -209,7 +209,7 @@ class ODataParams
     {
         if(isset($params['$search']))
         {
-            throw new Exception('Search not yet implemented');
+            //throw new Exception('Search not yet implemented');
         }
     }
 

@@ -179,6 +179,10 @@ class FlipRESTFormat extends \Slim\Middleware
 
     private function collapseEntityToArray($entity, &$array, $keyPrefix='')
     {
+        if(is_object($entity))
+        {
+            $entity = (array)$entity;
+        }
         if(array_keys($entity) === range(0, count($entity) - 1))
         {
             $tmpCount = count($entity);
