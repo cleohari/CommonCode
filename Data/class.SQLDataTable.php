@@ -44,7 +44,7 @@ class SQLDataTable extends DataTable
         }
     }
   
-    public function search($filter = false, $select = false, $count = false, $skip = false, $sort = false, $params = false)
+    public function read($filter = false, $select = false, $count = false, $skip = false, $sort = false, $params = false)
     {
         $where = false;
         if($filter !== false)
@@ -82,6 +82,11 @@ class SQLDataTable extends DataTable
     public function raw_query($sql)
     {
         return $this->dataset->raw_query($sql);
+    }
+
+    public function getLastError()
+    {
+        return $this->dataset->getLastError();
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */

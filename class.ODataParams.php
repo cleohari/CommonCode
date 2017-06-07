@@ -209,7 +209,7 @@ class ODataParams
     {
         if(isset($params['$search']))
         {
-            throw new Exception('Search not yet implemented');
+            //throw new Exception('Search not yet implemented');
         }
     }
 
@@ -222,6 +222,10 @@ class ODataParams
      */
     public function filterArrayPerSelect($array)
     {
+        if($this->select === false)
+        {
+            return $array;
+        }
         $flip = array_flip($this->select);
         $count = count($array);
         for($i = 0; $i < $count; $i++)
@@ -231,7 +235,7 @@ class ODataParams
                 $array[$i] = array_intersect_key($array[$i]->jsonSerialize(), $flip);
                 continue;
             }
-            $array[$i] = array_intersect_key($array[$i], $this->select);
+            $array[$i] = array_intersect_key($array[$i], $flip);
         }
         return $array;
     }

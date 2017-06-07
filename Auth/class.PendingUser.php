@@ -22,6 +22,18 @@ class PendingUser extends User
 {
     protected $intData = array();
 
+    /** An instance of the Settings class */
+    protected $settings;
+    /** The prfiles app URL */
+    protected $profilesUrl;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->settings = \Settings::getInstance();
+        $this->profilesUrl = $this->settings->getGlobalSetting('profiles_url', 'https://profiles.burningflipside.com/');
+    }
+
     public function getHash()
     {
         return false;
@@ -101,11 +113,11 @@ class PendingUser extends User
         $email_msg = new \Email\Email();
         $email_msg->addToAddress($this->mail);
         $email_msg->setTextBody('Thank you for signing up with Burning Flipside. Your registration is not complete until you goto the address below.
-                https://profiles.burningflipside.com/finish.php?hash='.$this->getHash().'
+                '.$this->profilesUrl.'/finish.php?hash='.$this->getHash().'
                 Thank you,
                 Burning Flipside Technology Team');
         $email_msg->setHTMLBody('Thank you for signing up with Burning Flipside. Your registration is not complete until you follow the link below.<br/>
-                <a href="https://profiles.burningflipside.com/finish.php?hash='.$this->getHash().'">Complete Registration</a><br/>
+                <a href="'.$this->profilesUrl.'/finish.php?hash='.$this->getHash().'">Complete Registration</a><br/>
                 Thank you,<br/>
                 Burning Flipside Technology Team');
         $email_msg->setSubject('Burning Flipside Registration');

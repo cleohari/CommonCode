@@ -207,6 +207,12 @@ class LDAPGroup extends Group
 
     public function addMember($name, $isGroup = false, $flush = true)
     {
+        $auth = \AuthProvider::getInstance();
+        $ldap = $auth->getMethodByName('Auth\LDAPAuthenticator');
+        if($ldap !== false)
+        {
+            $this->server = $ldap->getAndBindServer(true);
+        }
         $distinguishedName = 'uid='.$name.','.$this->server->user_base;
         if($isGroup)
         {
