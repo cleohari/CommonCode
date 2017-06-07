@@ -9,8 +9,6 @@ class AmazonSES extends EmailService
     public function __construct($params)
     {
         $provider = \Aws\Credentials\CredentialProvider::ini('default', $params['ini']);
-        //$credentials = \Aws\Common\Credentials\Credentials::fromIni('default', $params['ini']);
-
         $this->ses = \Aws\Ses\SesClient::factory([
                 'version' => 'latest',
                 'region'  => 'us-west-2',
