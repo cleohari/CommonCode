@@ -66,6 +66,21 @@ class DataTableAPI extends RestAPI
         return new \Data\Filter($this->primaryKeyName." eq '$value'");
     }
 
+    protected function manipulateParameters($request, &$odata)
+    {
+        return false;
+    }
+
+    protected function validateCreate(&$obj, $request)
+    {
+        return true;
+    }
+
+    protected function validateUpdate(&$newObj, $request, $oldObj)
+    {
+        return true;
+    }
+
     public function readEntries($request, $response, $args)
     {
         if($this->canRead($request) === false)
@@ -74,14 +89,15 @@ class DataTableAPI extends RestAPI
         }
         $dataTable = $this->getDataTable();
         $odata = $request->getAttribute('odata', new \ODataParams(array()));
+        $params = $this->manipulateParameters($request, $odata);
         $areas = $dataTable->read($odata->filter, $odata->select, $odata->top,
-                                  $odata->skip, $odata->orderby);
+                                  $odata->skip, $odata->orderby, $params);
         if(method_exists($this, 'processEntry'))
         {
             $count = count($areas);
             for($i = 0; $i < $count; $i++)
             {
-                $areas[$i] = $this->processEntry($areas[$i]);
+                $areas[$i] = $this->processEntry($areas[$i], $request);
             }
         }
         return $response->withJson($areas);
@@ -95,6 +111,10 @@ class DataTableAPI extends RestAPI
         }
         $dataTable = $this->getDataTable();
         $obj = $request->getParsedBody();
+        if($this->validateCreate($obj, $request) === false)
+        {
+            return $response->withStatus(400);
+        }
         $ret = $dataTable->create($obj);
         return $response->withJson($ret);
     }
@@ -116,7 +136,7 @@ class DataTableAPI extends RestAPI
         }
         if(method_exists($this, 'processEntry'))
         {
-            $areas[0] = $this->processEntry($areas[0]);
+            $areas[0] = $this->processEntry($areas[0], $request);
         }
         return $response->withJson($areas[0]);
     }
@@ -139,6 +159,10 @@ class DataTableAPI extends RestAPI
             return $response->withStatus(401);
         }
         $obj = $request->getParsedBody();
+        if($this->validateUpdate($obj, $request, $entry) === false)
+        {
+            return $response->withStatus(400);
+        }
         $ret = $dataTable->update($filter, $obj);
         return $response->withJson($ret);
     }
