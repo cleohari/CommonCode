@@ -76,6 +76,14 @@ class DataTableAPI extends RestAPI
         $odata = $request->getAttribute('odata', new \ODataParams(array()));
         $areas = $dataTable->read($odata->filter, $odata->select, $odata->top,
                                   $odata->skip, $odata->orderby);
+        if(method_exists($this, 'processEntry'))
+        {
+            $count = count($areas);
+            for($i = 0; $i < $count; $i++)
+            {
+                $areas[$i] = $this->processEntry($areas[$i]);
+            }
+        }
         return $response->withJson($areas);
     }
 
@@ -105,6 +113,10 @@ class DataTableAPI extends RestAPI
         if(empty($areas))
         {
             return $response->withStatus(404);
+        }
+        if(method_exists($this, 'processEntry'))
+        {
+            $areas[0] = $this->processEntry($areas[0]);
         }
         return $response->withJson($areas[0]);
     }
