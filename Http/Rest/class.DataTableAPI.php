@@ -92,6 +92,10 @@ class DataTableAPI extends RestAPI
         $params = $this->manipulateParameters($request, $odata);
         $areas = $dataTable->read($odata->filter, $odata->select, $odata->top,
                                   $odata->skip, $odata->orderby, $params);
+        if($areas === false)
+        {
+            $areas = array();
+        }
         if(method_exists($this, 'processEntry'))
         {
             $count = count($areas);
