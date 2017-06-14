@@ -1,3 +1,4 @@
 libs/mpdf60/ttfontdata
 vendor
+docs
 composer.lock

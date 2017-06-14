@@ -1,0 +1,102 @@
+<?php
+namespace Http\Rest;
+
+use \Psr\Http\Message\ServerRequestInterface as Request;
+use \Psr\Http\Message\ResponseInterface as Response;
+
+require 'vendor/autoload.php';
+
+class SerializationMiddleware
+{
+    protected $format = null;
+
+    private function getFormatFromHeader($request)
+    {
+        $mimeType = $request->getHeader('Accept');
+        switch($mimeType)
+        {
+            case 'text/csv':
+                return 'csv';
+            case 'text/x-vCard':
+                return 'vcard';
+            default:
+                return 'json';
+        }
+    }
+
+    private function getParamFromArrayIfSet($array, $param, $default = null)
+    {
+        if(isset($array[$param]))
+        {
+            return $array[$param];
+        }
+        return $default;
+    }
+
+    private function getFormat($request, $response)
+    {
+        $params = $request->getQueryParams();
+        $this->format = $this->getParamFromArrayIfSet($params, 'fmt');
+        if($this->format === null)
+        {
+            $this->format = $this->getParamFromArrayIfSet($params, '$format');
+            if($this->format === null)
+            {
+                $this->format = $this->getFormatFromHeader($request);
+            }
+        }
+        if(strstr($this->format, 'odata.streaming=true'))
+        {
+            return $response->withStatus(406);
+        }
+        return $response;
+    }
+
+    protected function reserializeBody($response, $serializer)
+    {
+        $body = $response->getBody();
+        $body->rewind();
+        $data = json_decode($body->getContents());
+        $serializer = new $serializer();
+        $res = $serializer->serializeData($this->format, $data);
+        $response = $response->withBody(new \Slim\Http\Body(fopen('php://temp', 'r+')));
+        $response->getBody()->write($res);
+        return $response->withHeader('Content-Type', $this->format);
+    }
+
+    public function __invoke($request, $response, $next)
+    {
+        $response = $this->getFormat($request, $response);
+        if($response->getStatusCode() !== 200)
+        {
+            return $response;
+        }
+        $response = $next($request, $response);
+        switch($this->format)
+        {
+            case 'application/json':
+            case 'application/x-javascript':
+            case 'text/javascript':
+            case 'text/x-javascript':
+            case 'text/x-json':
+            case 'json':
+                return $response;
+            case 'xml':
+            case 'application/xml':
+            case 'text/xml':
+                return $this->reserializeBody($response, '\Serialize\XMLSerializer');
+            case 'csv':
+            case 'text/csv':
+                return $this->reserializeBody($response, '\Serialize\CSVSerializer');
+            case 'xlsx':
+            case 'xls':
+            case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+            case 'application/vnd.ms-excel':
+                return $this->reserializeBody($response, '\Serialize\ExcelSerializer');
+            default:
+                print_r($this->format); die();
+                break;
+        }
+        return $response;
+    }
+}
