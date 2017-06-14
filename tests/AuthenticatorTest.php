@@ -146,6 +146,7 @@ class AuthenticatorTest extends PHPUnit_Framework_TestCase
         $auth = new \Auth\GoogleAuthenticator($params);
         $this->assertNotNull($auth);
         $this->assertInstanceOf('Auth\GoogleAuthenticator', $auth);
+        
         $linkTxt = $auth->getSupplementLink();
         $dom = new DOMDocument;
         $internalErrors = libxml_use_internal_errors(true);
