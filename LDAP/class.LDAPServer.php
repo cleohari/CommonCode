@@ -144,6 +144,8 @@ class LDAPServer extends \Singleton
         }
         try
         {
+            $this->ldapLink = ldap_connect($this->connect);
+            ldap_set_option($this->ldapLink, LDAP_OPT_PROTOCOL_VERSION, 3);
             $res = ldap_bind($this->ldapLink, $commonName, $password);
         }
         catch(\Exception $ex)
