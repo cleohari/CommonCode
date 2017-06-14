@@ -10,7 +10,8 @@ class WebSite extends \Slim\App
 {
     public function __construct()
     {
-        parent::__construct();
+        $settings = array("settings"=>["determineRouteBeforeAppMiddleware"=>true]);
+        parent::__construct($settings);
         $c = $this->getContainer();
         $c['errorHandler'] = function($c) { return new WebErrorHandler();};
         $this->add(new AuthMiddleware());
@@ -24,6 +25,8 @@ class WebSite extends \Slim\App
 
     public function registerAPI($uri, $api)
     {
-        $this->group($uri, function() use($api) {$api->setup($this);})->add(new \Http\Rest\SerializationMiddleware());
+        $group = $this->group($uri, function() use($api){$api->setup($this);});
+        $group->add(new \Http\Rest\SerializationMiddleware());
+        $group->add(new \Http\Rest\CORSMiddleware($this->getContainer()));
     }
 }
