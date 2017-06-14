@@ -71,7 +71,13 @@ class SerializationMiddleware
         {
             return $response;
         }
+        $request = $request->withAttribute('format', $this->format);
         $response = $next($request, $response);
+        if($response->getHeaderLine('Content-Type') !== 'application/json;charset=utf-8')
+        {
+            //The underlying API call gave us back a different content type. Just pass that on...
+            return $response;
+        }
         switch($this->format)
         {
             case 'application/json':
