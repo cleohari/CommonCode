@@ -5,7 +5,7 @@ class CSVSerializer extends SpreadSheetSerializer
 {
     protected $types = array('csv', 'text/csv');
 
-    public function serializeData($type, $array)
+    public function serializeData(&$type, $array)
     {
         if($this->supportsType($type) === false)
         {
@@ -15,6 +15,7 @@ class CSVSerializer extends SpreadSheetSerializer
         {
             return null;
         }
+        $type = 'text/csv';
         $data = $this->getArray($array);
         ob_start();
         $df = fopen('php://output', 'w');

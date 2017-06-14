@@ -18,7 +18,7 @@ class ExcelSerializer extends SpreadSheetSerializer
         }
     }
 
-    public function serializeData($type, $array)
+    public function serializeData(&$type, $array)
     {
         if($this->supportsType($type) === false)
         {
@@ -40,9 +40,11 @@ class ExcelSerializer extends SpreadSheetSerializer
             $this->setRowFromArray($sheat, (2 + $i), $data[$i], $colCount);
         }
         $writerType = 'Excel5';
+        $type = 'application/vnd.ms-excel';
         if(strcasecmp($type, 'xlsx') === 0 || strcasecmp($type, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') === 0)
         {
             $writerType = 'Excel2007';
+            $type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
         }
         $writer = \PHPExcel_IOFactory::createWriter($ssheat, $writerType);
         ob_start();

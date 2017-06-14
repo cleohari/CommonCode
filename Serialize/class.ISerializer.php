@@ -20,5 +20,5 @@ interface ISerializer
      * 
      * @return null|string
      */
-    public function serializeData($type, $array);
+    public function serializeData(&$type, $array);
 }

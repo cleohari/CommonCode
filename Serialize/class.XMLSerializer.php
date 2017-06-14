@@ -5,7 +5,7 @@ class XMLSerializer implements ISerializer
 {
     private $types = array('xml', 'application/xml', 'text/xml');
 
-    public function supportsType($type)
+    public function supportsType(&$type)
     {
         foreach($this->types as $t)
         {
@@ -24,6 +24,7 @@ class XMLSerializer implements ISerializer
             return null;
         }
         $obj = new \SerializableObject($array);
+        $type = 'text/xml';
         return $obj->xmlSerialize();
     }
 }

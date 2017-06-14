@@ -87,6 +87,12 @@ class SerializationMiddleware
             case 'text/x-json':
             case 'json':
                 return $response;
+            case 'data-table':
+                //This is a special case for json...
+                $body = $response->getBody();
+                $body->rewind();
+                $data = json_decode($body->getContents());
+                return $response->withJson(array('data'=>$data));
             case 'xml':
             case 'application/xml':
             case 'text/xml':
