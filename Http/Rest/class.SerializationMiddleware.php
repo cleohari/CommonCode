@@ -105,6 +105,10 @@ class SerializationMiddleware
             case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
             case 'application/vnd.ms-excel':
                 return $this->reserializeBody($response, '\Serialize\ExcelSerializer');
+            case 'yaml':
+            case 'application/x-yaml':
+            case 'text/x-yaml':
+                return $this->reserializeBody($response, '\Serialize\YAMLSerializer');
             default:
                 print_r($this->format); die();
                 break;
