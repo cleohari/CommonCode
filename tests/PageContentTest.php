@@ -5,7 +5,7 @@ class PageContentTest extends PHPUnit_Framework_TestCase
     public function testPageTitle()
     {
         $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
-        $GLOBALS['BROWSCAP_CACHE']        = './tests/helpers';
+        $GLOBALS['BROWSCAP_CACHE']        = './tests/helpers/browscap';
         $page = new FlipPage('Test');
         ob_start();
         $page->printPage();
@@ -37,7 +37,7 @@ class PageContentTest extends PHPUnit_Framework_TestCase
     public function testDefaultScripts()
     {
         $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
-        $GLOBALS['BROWSCAP_CACHE']        = './tests/helpers';
+        $GLOBALS['BROWSCAP_CACHE']        = './tests/helpers/browscap';
         $page = new FlipPage('Test');
         ob_start();
         $page->printPage();
@@ -75,7 +75,7 @@ class PageContentTest extends PHPUnit_Framework_TestCase
     public function testIERendering()
     {
         $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
-        $GLOBALS['BROWSCAP_CACHE']        = './tests/helpers';
+        $GLOBALS['BROWSCAP_CACHE']        = './tests/helpers/browscap';
         $page = new FlipPage('Test');
         $page->browser = new stdClass();
         $page->browser->Browser = 'IE';
@@ -134,7 +134,7 @@ class PageContentTest extends PHPUnit_Framework_TestCase
         $userParams = array('uid'=>'test');
         \FlipSession::setUser(new \Auth\SQLUser($userParams));
         $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
-        $GLOBALS['BROWSCAP_CACHE']        = './tests/helpers';
+        $GLOBALS['BROWSCAP_CACHE']        = './tests/helpers/browscap';
         $page = new FlipPage('Test');
         $page->browser = new stdClass();
         $page->browser->Browser = 'IE';
@@ -167,7 +167,7 @@ class PageContentTest extends PHPUnit_Framework_TestCase
     public function testAdminRendering()
     {
         $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
-        $GLOBALS['BROWSCAP_CACHE']        = './tests/helpers';
+        $GLOBALS['BROWSCAP_CACHE']        = './tests/helpers/browscap';
         $page = new FlipAdminPage('Test');
         ob_start();
         $page->printPage();

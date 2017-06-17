@@ -5,7 +5,7 @@ class XMLSerializer implements ISerializer
 {
     private $types = array('xml', 'application/xml', 'text/xml');
 
-    public function supportsType(&$type)
+    public function supportsType($type)
     {
         foreach($this->types as $t)
         {
@@ -17,7 +17,7 @@ class XMLSerializer implements ISerializer
         return false;
     }
 
-    public function serializeData($type, $array)
+    public function serializeData(&$type, $array)
     {
         if($this->supportsType($type) === false)
         {

@@ -16,7 +16,8 @@ class ExcelTest extends PHPUnit_Framework_TestCase
     {
         $serializer = new \Serialize\ExcelSerializer();
         $array = array(array('Test1'=>1,'Test2'=>'a','ABC'=>'1'));
-        $data = $serializer->serializeData('xls', $array);
+        $type = 'xls';
+        $data = $serializer->serializeData($type, $array);
         $excel = $this->stringToExcel($data);
         $this->assertNotNull($excel);
         $sheet = $excel->getSheet();
@@ -43,7 +44,8 @@ class ExcelTest extends PHPUnit_Framework_TestCase
 
         $serializer = new \Serialize\ExcelSerializer();
         $array = array(array('Test1'=>1,'Test2'=>'a','ABC'=>'1'));
-        $data = $serializer->serializeData('xlsx', $array);
+        $type = 'xlsx';
+        $data = $serializer->serializeData($type, $array);
         $excel = $this->stringToExcel($data);
         $this->assertNotNull($excel);
         $sheet = $excel->getSheet();
@@ -77,7 +79,8 @@ class ExcelTest extends PHPUnit_Framework_TestCase
         $obj->Test2 = 'a';
         $obj->ABC = '1';
         $array = array($obj);
-        $data = $serializer->serializeData('xls', $array);
+        $type = 'xls';
+        $data = $serializer->serializeData($type, $array);
         $excel = $this->stringToExcel($data);
         $this->assertNotNull($excel);
         $sheet = $excel->getSheet();
@@ -107,7 +110,8 @@ class ExcelTest extends PHPUnit_Framework_TestCase
         $obj->Test2 = 'a';
         $obj->ABC = '1';
         $array = array($obj);
-        $data = $serializer->serializeData('xlsx', $array);
+        $type = 'xlsx';
+        $data = $serializer->serializeData($type, $array);
         $excel = $this->stringToExcel($data);
         $this->assertNotNull($excel);
         $sheet = $excel->getSheet();
@@ -136,7 +140,8 @@ class ExcelTest extends PHPUnit_Framework_TestCase
         $obj->Test1 = 1;
         $obj->Test2 = 'a';
         $obj->ABC = '1';
-        $data = $serializer->serializeData('xls', $obj);
+        $type = 'xls';
+        $data = $serializer->serializeData($type, $obj);
         $excel = $this->stringToExcel($data);
         $this->assertNotNull($excel);
         $sheet = $excel->getSheet();
@@ -165,7 +170,8 @@ class ExcelTest extends PHPUnit_Framework_TestCase
         $obj->Test1 = 1;
         $obj->Test2 = 'a';
         $obj->ABC = '1';
-        $data = $serializer->serializeData('xlsx', $obj);
+        $type = 'xlsx';
+        $data = $serializer->serializeData($type, $obj);
         $excel = $this->stringToExcel($data);
         $this->assertNotNull($excel);
         $sheet = $excel->getSheet();
@@ -194,7 +200,8 @@ class ExcelTest extends PHPUnit_Framework_TestCase
     {
         $serializer = new \Serialize\ExcelSerializer();
         $array = array(array('Test1'=>1,'Test2,3'=>'a','ABC'=>'1,0'));
-        $data = $serializer->serializeData('xls', $array);
+        $type = 'xls';
+        $data = $serializer->serializeData($type, $array);
         $excel = $this->stringToExcel($data);
         $this->assertNotNull($excel);
         $sheet = $excel->getSheet();
@@ -220,7 +227,8 @@ class ExcelTest extends PHPUnit_Framework_TestCase
 
         $serializer = new \Serialize\ExcelSerializer();
         $array = array(array('Test1'=>1,'Test2,3'=>'a','ABC'=>'1,0'));
-        $data = $serializer->serializeData('xlsx', $array);
+        $type = 'xlsx';
+        $data = $serializer->serializeData($type, $array);
         $excel = $this->stringToExcel($data);
         $this->assertNotNull($excel);
         $sheet = $excel->getSheet();
@@ -251,7 +259,8 @@ class ExcelTest extends PHPUnit_Framework_TestCase
         $row1 = array('A'=>1,'B'=>'2','C'=>'3');
         $row2 = array('A'=>1,'C'=>2);
         $array = array($row1, $row2);
-        $data = $serializer->serializeData('xls', $array);
+        $type = 'xls';
+        $data = $serializer->serializeData($type, $array);
         $excel = $this->stringToExcel($data);
         $this->assertNotNull($excel);
         $sheet = $excel->getSheet();
@@ -288,7 +297,8 @@ class ExcelTest extends PHPUnit_Framework_TestCase
         $row1 = array('A'=>1,'B'=>'2','C'=>'3');
         $row2 = array('A'=>1,'C'=>2);
         $array = array($row1, $row2);
-        $data = $serializer->serializeData('xlsx', $array);
+        $type = 'xlsx';
+        $data = $serializer->serializeData($type, $array);
         $excel = $this->stringToExcel($data);
         $this->assertNotNull($excel);
         $sheet = $excel->getSheet();
@@ -335,7 +345,8 @@ class ExcelTest extends PHPUnit_Framework_TestCase
         $obj->ABC = '1';
         $row1 = array('A'=>$obj,'B'=>'2','C'=>'3','_id'=>$id);
         $array = array($row1);
-        $data = $serializer->serializeData('xls', $array);
+        $type = 'xls';
+        $data = $serializer->serializeData($type, $array);
         $excel = $this->stringToExcel($data);
         $this->assertNotNull($excel);
         $sheet = $excel->getSheet();
@@ -373,7 +384,8 @@ class ExcelTest extends PHPUnit_Framework_TestCase
         $obj->ABC = '1';
         $row1 = array('A'=>$obj,'B'=>'2','C'=>'3','_id'=>$id);
         $array = array($row1);
-        $data = $serializer->serializeData('xlsx', $array);
+        $type = 'xlsx';
+        $data = $serializer->serializeData($type, $array);
         $excel = $this->stringToExcel($data);
         $this->assertNotNull($excel);
         $sheet = $excel->getSheet();
@@ -408,7 +420,8 @@ class ExcelTest extends PHPUnit_Framework_TestCase
     {
         $serializer = new \Serialize\ExcelSerializer();
         $array = array(array('Test1'=>1,'Test2,3'=>'a','ABC'=>'1,0'));
-        $data = $serializer->serializeData('text/json', $array);
+        $type = 'text/json';
+        $data = $serializer->serializeData($type, $array);
         $this->assertNull($data);
     }
 
@@ -416,7 +429,8 @@ class ExcelTest extends PHPUnit_Framework_TestCase
     {
         $serializer = new \Serialize\ExcelSerializer();
         $array = array();
-        $data = $serializer->serializeData('xls', $array);
+        $type = 'xls';
+        $data = $serializer->serializeData($type, $array);
         $this->assertNull($data);
     }
 }

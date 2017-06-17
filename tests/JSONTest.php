@@ -6,7 +6,8 @@ class JSONTest extends PHPUnit_Framework_TestCase
     {
         $serializer = new \Serialize\JSONSerializer();
         $array = array(array('Test1'=>1,'Test2'=>'a','ABC'=>'1'));
-        $data = $serializer->serializeData('application/json', $array);
+        $type = 'application/json';
+        $data = $serializer->serializeData($type, $array);
         $this->assertEquals('[{"Test1":1,"Test2":"a","ABC":"1"}]', $data);
     }
 
@@ -14,7 +15,8 @@ class JSONTest extends PHPUnit_Framework_TestCase
     {
         $serializer = new \Serialize\JSONSerializer();
         $array = array(array('Test1'=>1,'Test2,3'=>'a','ABC'=>'1,0'));
-        $data = $serializer->serializeData('text/csv', $array);
+        $type = 'text/csv';
+        $data = $serializer->serializeData($type, $array);
         $this->assertNull($data);
     }
 
@@ -22,7 +24,8 @@ class JSONTest extends PHPUnit_Framework_TestCase
     {
         $serializer = new \Serialize\JSONSerializer();
         $array = array();
-        $data = $serializer->serializeData('application/json', $array);
+        $type = 'application/json';
+        $data = $serializer->serializeData($type, $array);
         $this->assertEquals('[]', $data);
     }
 }
