@@ -6,7 +6,7 @@ class PageValidTest extends PHPUnit_Framework_TestCase
     public function testEmptyPage()
     {
         $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
-        $GLOBALS['BROWSCAP_CACHE']        = './tests/helpers';
+        $GLOBALS['BROWSCAP_CACHE']        = './tests/helpers/browscap';
         $page = new FlipPage('Test', false);
         ob_start();
         $page->printPage();
@@ -22,7 +22,7 @@ class PageValidTest extends PHPUnit_Framework_TestCase
     public function testEmptyPageWHeader()
     {
         $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
-        $GLOBALS['BROWSCAP_CACHE']        = './tests/helpers';
+        $GLOBALS['BROWSCAP_CACHE']        = './tests/helpers/browscap';
         $page = new FlipPage('Test');
         ob_start();
         $page->printPage();

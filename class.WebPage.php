@@ -78,10 +78,14 @@ class WebPage
     protected function getBrowscap()
     {
         $bc = new Browscap();
-        $adapter = new \WurflCache\Adapter\File([\WurflCache\Adapter\File::DIR => '/var/php_cache/browser']);
+        $adapter = false;
         if(isset($GLOBALS['BROWSCAP_CACHE']))
         {
             $adapter = new \WurflCache\Adapter\File([\WurflCache\Adapter\File::DIR => $GLOBALS['BROWSCAP_CACHE']]);
+        }
+        else
+        {
+            $adapter = new \WurflCache\Adapter\File([\WurflCache\Adapter\File::DIR => '/var/php_cache/browser']);
         }
         $bc->setCache($adapter);
         return $bc;
