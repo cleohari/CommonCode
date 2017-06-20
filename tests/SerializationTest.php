@@ -55,6 +55,54 @@ class SerializationTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('application/json;charset=utf-8', $response->getHeaderLine('Content-Type'));
     }
 
+    public function testDataTable()
+    {
+        $middleware = new \Http\Rest\SerializationMiddleware();
+        $uri = \Slim\Http\Uri::createFromString('http://example.org?$format=data-table');
+        $headers = new \Slim\Http\Headers();
+        $body = new \Slim\Http\Body(fopen('php://temp', 'r+'));
+        $request = new \Slim\Http\Request('GET', $uri, $headers, array(), array(), $body);
+        $response = new \Slim\Http\Response();
+        $response = $middleware($request, $response, $this);
+        $this->assertNotNull($response);
+        $this->assertEquals('application/json;charset=utf-8', $response->getHeaderLine('Content-Type'));
+        $body = $response->getBody();
+        $body->rewind();
+        $this->assertEquals('{"data":{"test":"a"}}', $body->getContents());
+    }
+
+    public function testXML()
+    {
+        $middleware = new \Http\Rest\SerializationMiddleware();
+        $uri = \Slim\Http\Uri::createFromString('http://example.org?$format=xml');
+        $headers = new \Slim\Http\Headers();
+        $body = new \Slim\Http\Body(fopen('php://temp', 'r+'));
+        $request = new \Slim\Http\Request('GET', $uri, $headers, array(), array(), $body);
+        $response = new \Slim\Http\Response();
+        $response = $middleware($request, $response, $this);
+        $this->assertNotNull($response);
+        $this->assertEquals('text/xml', $response->getHeaderLine('Content-Type'));
+        $body = $response->getBody();
+        $body->rewind();
+        $this->assertEquals("<?xml version=\"1.0\"?>\n<test>a</test>", $body->getContents());
+    }
+
+    public function testYAML()
+    {
+        $middleware = new \Http\Rest\SerializationMiddleware();
+        $uri = \Slim\Http\Uri::createFromString('http://example.org?$format=yaml');
+        $headers = new \Slim\Http\Headers();
+        $body = new \Slim\Http\Body(fopen('php://temp', 'r+'));
+        $request = new \Slim\Http\Request('GET', $uri, $headers, array(), array(), $body);
+        $response = new \Slim\Http\Response();
+        $response = $middleware($request, $response, $this);
+        $this->assertNotNull($response);
+        $this->assertEquals('text/x-yaml', $response->getHeaderLine('Content-Type'));
+        $body = $response->getBody();
+        $body->rewind();
+        $this->assertEquals('{ test: a }', $body->getContents());
+    }
+
     public function __invoke($request, $response)
     {
         if($request->getAttribute('format') === 'vcard')
