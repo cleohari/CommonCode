@@ -244,9 +244,14 @@ class SQLAuthenticator extends Authenticator
     private function searchPendingUsers($filter, $select, $top, $skip, $orderby)
     {
         $userDataTable = $this->getPendingUserDataTable();
-        $fieldData = $filter->to_mongo_filter();
-        $firstFilter = new \Data\Filter('substringof(data,"'.implode($fieldData, ' ').'")');
-        $users = $userDataTable->read($firstFilter, $select, $top, $skip, $orderby);
+        $clause = $filter->getClause('time');
+        $fieldData = false;
+        if($clause === false)
+        {
+            $fieldData = $filter->to_mongo_filter();
+            $filter = new \Data\Filter('substringof(data,"'.implode($fieldData, ' ').'")');
+        }
+        $users = $userDataTable->read($filter, $select, $top, $skip, $orderby);
         if($users === false)
         {
             return false;
@@ -257,11 +262,14 @@ class SQLAuthenticator extends Authenticator
         {
             $user = new SQLPendingUser($users[$i], $userDataTable);
             $err = false;
-            foreach($fieldData as $field=>$data)
+            if($fieldData !== false)
             {
-                if(strcasecmp($user[$field], $data) !== 0)
+                foreach($fieldData as $field=>$data)
                 {
-                    $err = true; break;
+                    if(strcasecmp($user[$field], $data) !== 0)
+                    {
+                        $err = true; break;
+                    }
                 }
             }
             if(!$err)
