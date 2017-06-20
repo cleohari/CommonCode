@@ -82,9 +82,6 @@ class SerializationTest extends PHPUnit_Framework_TestCase
         $response = $middleware($request, $response, $this);
         $this->assertNotNull($response);
         $this->assertEquals('text/xml', $response->getHeaderLine('Content-Type'));
-        $body = $response->getBody();
-        $body->rewind();
-        $this->assertEquals("<?xml version=\"1.0\"?>\n<test>a</test>", $body->getContents());
     }
 
     public function testYAML()
@@ -98,9 +95,26 @@ class SerializationTest extends PHPUnit_Framework_TestCase
         $response = $middleware($request, $response, $this);
         $this->assertNotNull($response);
         $this->assertEquals('text/x-yaml', $response->getHeaderLine('Content-Type'));
-        $body = $response->getBody();
-        $body->rewind();
-        $this->assertEquals('{ test: a }', $body->getContents());
+    }
+
+    public function testExcel()
+    {
+        $middleware = new \Http\Rest\SerializationMiddleware();
+        $uri = \Slim\Http\Uri::createFromString('http://example.org?$format=xls');
+        $headers = new \Slim\Http\Headers();
+        $body = new \Slim\Http\Body(fopen('php://temp', 'r+'));
+        $request = new \Slim\Http\Request('GET', $uri, $headers, array(), array(), $body);
+        $response = new \Slim\Http\Response();
+        $response = $middleware($request, $response, $this);
+        $this->assertNotNull($response);
+        $this->assertEquals('application/vnd.ms-excel', $response->getHeaderLine('Content-Type'));
+
+        $uri = \Slim\Http\Uri::createFromString('http://example.org?$format=xlsx');
+        $request = new \Slim\Http\Request('GET', $uri, $headers, array(), array(), $body);
+        $response = new \Slim\Http\Response();
+        $response = $middleware($request, $response, $this);
+        $this->assertNotNull($response);
+        $this->assertEquals('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', $response->getHeaderLine('Content-Type'));
     }
 
     public function __invoke($request, $response)
