@@ -41,8 +41,27 @@ class AuthMiddleware
     private function getUserFromToken($header)
     {
         $auth = \AuthProvider::getInstance();
-        $key = substr($header, 7);
+        $key = substr($header, 6);
         return $auth->getUserByAccessCode($key);
+    }
+
+    private function getUserByApiKey($header)
+    {
+        $key = substr($header, 7);
+        $dataTable = \DataSetFactory::getDataTableByNames('profiles', 'apikeys');
+        $filter = new \Data\Filter('apikey eq "'.$key.'"');
+        $keys = $dataTable->read($filter);
+        if(empty($keys))
+        {
+            return false;
+        }
+        $auth = \AuthProvider::getInstance();
+        $users = $auth->getUsersByFilter(new \Data\Filter('uid eq '.$keys[0]['actas']));
+        if(empty($users))
+        {
+            return false;
+        }
+        return $users[0];
     }
 
     private function getUserFromHeader($header)
@@ -51,12 +70,16 @@ class AuthMiddleware
         {
             return $this->getUserFromBasicAuth($header);
         }
+        else if(strncasecmp($header, 'ApiKey', 6) === 0)
+        {
+            return $this->getUserByApiKey($header);
+        }
         return $this->getUserFromToken($header);
     }
 
     public function __invoke($request, $response, $next)
     {
-        $auth = $request->getHeader('Authorization');
+        $auth = $request->getHeaderLine('Authorization');
         if(empty($auth))
         {
             $request = $request->withAttribute('user', $this->getUserFromSession());
