@@ -4,6 +4,7 @@
 [![Code Climate](https://codeclimate.com/github/BurningFlipside/CommonCode/badges/gpa.svg)](https://codeclimate.com/github/BurningFlipside/CommonCode)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/BurningFlipside/CommonCode/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/BurningFlipside/CommonCode/?branch=develop)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/9928/badge.svg)](https://scan.coverity.com/projects/flipside-common-code)
+[![Dependency Status](https://www.versioneye.com/user/projects/594ae2c56725bd005dd072f4/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/594ae2c56725bd005dd072f4)
 [![Apache 2 licensed](https://img.shields.io/badge/license-apache-blue.svg)](https://github.com/BurningFlipside/CommonCode/blob/master/LICENSE)
 
 # Burning Flipside Dev Enviornment Setup
