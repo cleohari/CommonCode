@@ -40,11 +40,14 @@ class ExcelSerializer extends SpreadSheetSerializer
             $this->setRowFromArray($sheat, (2 + $i), $data[$i], $colCount);
         }
         $writerType = 'Excel5';
-        $type = 'application/vnd.ms-excel';
         if(strcasecmp($type, 'xlsx') === 0 || strcasecmp($type, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') === 0)
         {
             $writerType = 'Excel2007';
             $type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+        }
+        else
+        {
+            $type = 'application/vnd.ms-excel';
         }
         $writer = \PHPExcel_IOFactory::createWriter($ssheat, $writerType);
         ob_start();

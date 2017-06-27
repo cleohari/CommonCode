@@ -12,7 +12,7 @@ class SerializationMiddleware
 
     private function getFormatFromHeader($request)
     {
-        $mimeType = $request->getHeader('Accept');
+        $mimeType = $request->getHeaderLine('Accept');
         switch($mimeType)
         {
             case 'text/csv':
