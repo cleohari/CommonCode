@@ -69,7 +69,7 @@ class MongoDataSet extends DataSet
         }
         else
         {
-            return new MongoDataTable($this->db_name, $name);
+            return new MongoDataTable($this, $name);
         }
     }
 
@@ -105,6 +105,19 @@ class MongoDataSet extends DataSet
             $this->manager = new \MongoDB\Driver\Manager('mongodb://'.$params['host'].'/'.$params['db']);
         }
         $this->db_name = $params['db'];
+    }
+
+    public function find($query = array(), $fields = array(), $collectionName)
+    {
+        $namespace = $this->db_name.'.'.$collectionName;
+        $dbQuery = new \MongoDB\Driver\Query($query, $fields);
+        return $this->manager->executeQuery($namespace, $dbQuery);
+    }
+
+    public function count($query = array(), $options = array(), $collectionName)
+    {
+        $cmd = new \MongoDB\Driver\Command(['count'=>$collectionName, 'query'=>$query]);
+        return $this->manager->executeCommand($this->db_name, $cmd);
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
