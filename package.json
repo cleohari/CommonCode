@@ -1,0 +1,28 @@
+{
+  "name": "CommonCode",
+  "version": "1.0.0",
+  "description": "Burning Flipside Common PHP Code",
+  "main": "index.js",
+  "repository": "https://github.com/BurningFlipside/CommonCode.git",
+  "author": "Patrick Boyd <pboyd04@gmail.com>",
+  "license": "Apache",
+  "dependencies": {
+    "bootbox": "^4.4.0",
+    "bootstrap": "^3.3.7",
+    "bootstrap-switch": "^3.3.4",
+    "chart.js": "^2.6.0",
+    "crypto-js": "^3.1.9-1",
+    "es-jcrop": "^2.0.5",
+    "font-awesome": "^4.7.0",
+    "jquery": "^3.2.1",
+    "jquery-ui": "^1.12.1",
+    "metismenu": "^2.7.0",
+    "typeahead.js": "^0.11.1"
+  },
+  "scripts": {
+    "update-cdns": "node js/updateCDN.js"
+  },
+  "devDependencies": {
+    "parse-yarn-lock": "^1.0.2"
+  }
+}
