@@ -1,7 +1,7 @@
 <?php
 namespace PDF;
 
-require_once('libs/mpdf/mpdf.php');
+require(dirname(__FILE__).'/../vendor/autoload.php');
 
 class PDF
 {
