@@ -4,18 +4,12 @@ namespace Data;
 class MongoDataTable extends DataTable
 {
     protected $collection;
-    protected $namespace;
+    protected $name;
 
     public function __construct($collection, $collection_name = false)
     {
-        if($collection_name !== false)
-        {
-            $this->namespace = $collection.'.'.$collection_name;
-        }
-        else
-        {
-            $this->collection = $collection;
-        }
+        $this->collection = $collection;
+        $this->name = $collection_name;
     }
 
     public function count($filter = false)
@@ -32,7 +26,7 @@ class MongoDataTable extends DataTable
                 $criteria = $filter;
             }
         }
-        return $this->collection->count($criteria);
+        return $this->collection->count($criteria, array(), $this->name);
     }
 
     private function getCriteriaFromFilter($filter)
@@ -56,7 +50,7 @@ class MongoDataTable extends DataTable
         {
             $fields = array_fill_keys($select, 1);
         }
-        $cursor = $this->collection->find($criteria, $fields);
+        $cursor = $this->collection->find($criteria, $fields, $this->name);
         if($params !== false && isset($params['fields']))
         {
             $cursor->fields($params['fields']);
@@ -72,6 +66,11 @@ class MongoDataTable extends DataTable
         if($count !== false)
         {
             $cursor->limit($count);
+        }
+        if(method_exists($cursor, 'setTypeMap'))
+        {
+            $cursor->setTypeMap(['root' => 'array', 'document' => 'array', 'array' => 'array']);
+            return $cursor->toArray();
         }
         $ret = array();
         foreach($cursor as $doc)
