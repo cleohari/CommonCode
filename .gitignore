@@ -1,4 +1,5 @@
-libs/mpdf60/ttfontdata
 vendor
 docs
+node_modules
 composer.lock
+yarn.lock
