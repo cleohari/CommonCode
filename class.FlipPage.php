@@ -16,7 +16,7 @@
  * We need the parent class
  */
 require_once('class.WebPage.php');
-require_once('stats.js_css.php');
+require_once('static.js_css.php');
 
 /**
  * A framework specific webpage abstraction layer
