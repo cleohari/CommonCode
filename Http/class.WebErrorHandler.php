@@ -12,6 +12,6 @@ class WebErrorHandler
         return $response
             ->withStatus(500)
             ->withHeader('Content-Type', 'text/html')
-            ->write(print_r($exception, true));
+            ->write($exception->__toString());
    }
 }
