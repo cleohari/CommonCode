@@ -36,15 +36,15 @@ class AmazonSES extends EmailService
                 }
             }
         }
-
         if($email->hasAttachments())
         {
             //Amazeon sendEmail doesn't support attachments. We need to use sendRawEmail
             $args = array();
             $args['RawMessage'] = array();
-            $args['RawMessage']['Data'] = base64_encode($email->getRawMessage());
+            $args['RawMessage']['Data'] = $email->getRawMessage();
             try {
-                return $this->ses->sendRawEmail($args);
+                $res = $this->ses->sendRawEmail($args);
+                return $res;
             } catch(\Exception $e) {
                 return false;
             }
