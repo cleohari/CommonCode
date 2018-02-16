@@ -319,7 +319,10 @@ class User extends \SerializableObject
         }
 
         /* These are generic elements */
-        $data = get_object_vars($data);
+        if(!is_array($data))
+        {
+            $data = get_object_vars($data);
+        }
         foreach($data as $key=>$value)
         {
             $this->{$key} = $value;

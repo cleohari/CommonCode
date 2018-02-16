@@ -115,6 +115,10 @@ class DataTableAPI extends RestAPI
         }
         $dataTable = $this->getDataTable();
         $obj = $request->getParsedBody();
+        if($obj == NULL)
+        {
+            $obj = json_decode($request->getBody()->getContents(), true);
+        }
         if($this->validateCreate($obj, $request) === false)
         {
             return $response->withStatus(400);
