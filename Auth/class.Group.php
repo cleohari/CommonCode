@@ -114,6 +114,10 @@ class Group extends \SerializableObject
         $auth = \AuthProvider::getInstance();
         $ldap = $auth->getMethodByName('Auth\LDAPAuthenticator');
         $ldap->getAndBindServer(true);
+        if(is_array($group))
+        {
+            $group = json_decode(json_encode($group), false);
+        }
         if(isset($group->description))
         {
             $this->setDescription($group->description);
