@@ -21,6 +21,10 @@ before_install:
 
 install:
   - composer require satooshi/php-coveralls:~1.0
+  - nvm install stable
+  - npm install -g yarn
+  - yarn install
+  - yarn run update-cdns
 
 before_script:
   - mkdir -p build/logs
