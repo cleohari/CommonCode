@@ -14,7 +14,10 @@ class ExcelSerializer extends SpreadSheetSerializer
         }
         for($i = 0; $i < $count; $i++)
         {
-            $sheat->setCellValueByColumnAndRow($i, $row, $array[$i]);
+            if(isset($array[$i]))
+            {
+                $sheat->setCellValueByColumnAndRow($i, $row, $array[$i]);
+            }
         }
     }
 

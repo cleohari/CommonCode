@@ -30,6 +30,49 @@ abstract class SpreadSheetSerializer extends Serializer
         return $row;
     }
 
+    private function prependAndMergeKeys(&$keys, $prefix, $newKeys)
+    {
+        foreach($newKeys as &$key)
+        {
+            $key = $prefix.$key;
+        }
+        $keys = array_unique(array_merge($keys, $newKeys));
+    }
+
+    protected function addValueByColName(&$cols, &$row, $colName, $value)
+    {
+        if(is_object($value))
+        {
+            switch($colName)
+            {
+                case '_id':
+                    $this->addValueByColName($cols, $row, $colName, $value->{'$id'});
+                    break;
+                default:
+                    $props = get_object_vars($value);
+                    foreach($props as $key=>$newValue)
+                    {
+                        $this->addValueByColName($cols, $row, $colName.'.'.$key, $newValue);
+                    }
+            }
+            return;
+        }
+        $index = array_search($colName, $cols);
+        if($index === false)
+        {
+            $index = count($cols);
+            $cols[$index] = $colName;
+        }
+        if(is_array($value))
+        {
+            $row[$index] = implode(',', $value);
+        }
+        else
+        {
+            $row[$index] = $value;
+        }
+    }
+
     protected function getArray(&$array)
     {
         $res = array();
@@ -37,46 +80,17 @@ abstract class SpreadSheetSerializer extends Serializer
         {
             $array = array(get_object_vars($array));
         }
-        $keys = $this->getKeysFromData($array);
-        if($keys === false)
-        {
-            return $array;
-        }
-        $colCount = count($keys);
-        $res[] = $keys;
+        $res[] = array();
         foreach($array as $row)
         {
             $tmp = array();
             $row = $this->getRowArray($row);
-            for($j = 0; $j < $colCount; $j++)
+            foreach($row as $colName=>$value)
             {
-                $colName = $keys[$j];
-                if(isset($row[$colName]))
-                {
-                    $value = $row[$colName];
-                    if(is_object($value))
-                    {
-                        switch($colName)
-                        {
-                            case '_id':
-                                $value = $value->{'$id'};
-                                break;
-                            default:
-                                $value = json_encode($value);
-                                break;
-                        }
-                    }
-                    else if(is_array($value))
-                    {
-                        $value = implode(',', $value);
-                    }
-                    $tmp[] = $value;
-                }
-                else
-                {
-                    $tmp[] = false;
-                }
+                $this->addValueByColName($res[0], $tmp, $colName, $row[$colName]);
             }
+            $tmp = $tmp+array_fill_keys(range(0,max(array_keys($tmp))),false);
+            ksort($tmp);
             $res[] = $tmp;
         }
         return $res;
