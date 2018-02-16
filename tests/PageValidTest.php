@@ -1,6 +1,8 @@
 <?php
 require_once('Autoload.php');
-require_once('./tests/helpers/HTML5Validate.php');
+
+use KubaWerlos\HtmlValidator\Validator;
+
 class PageValidTest extends PHPUnit_Framework_TestCase
 {
     public function testEmptyPage()
@@ -13,10 +15,8 @@ class PageValidTest extends PHPUnit_Framework_TestCase
         $html = ob_get_contents();
         ob_end_clean();
 
-
-        $validator = new HTML5Validate();
-        $result = $validator->Assert($html);
-        $this->assertTrue($result, $validator->message);
+        $errors = Validator::validate($html);
+        $this->assertEmpty($errors);
     }
 
     public function testEmptyPageWHeader()
@@ -29,9 +29,7 @@ class PageValidTest extends PHPUnit_Framework_TestCase
         $html = ob_get_contents();
         ob_end_clean();
 
-
-        $validator = new HTML5Validate();
-        $result = $validator->Assert($html);
-        $this->assertTrue($result, $validator->message);
+        $errors = Validator::validate($html);
+        $this->assertEmpty($errors);
     }
 }
