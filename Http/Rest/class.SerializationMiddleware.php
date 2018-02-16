@@ -44,6 +44,11 @@ class SerializationMiddleware
             {
                 $this->format = $this->getFormatFromHeader($request);
             }
+            else if($this->format === 'json')
+            {
+                //OData json is different from notmal json
+                $this->format = 'odata-json';
+            }
         }
         if(strstr($this->format, 'odata.streaming=true'))
         {
@@ -93,6 +98,12 @@ class SerializationMiddleware
                 $body->rewind();
                 $data = json_decode($body->getContents());
                 return $response->withJson(array('data'=>$data));
+            case 'odata-json':
+                //This is a special case for json...
+                $body = $response->getBody();
+                $body->rewind();
+                $data = json_decode($body->getContents());
+                return $response->withJson(array('value'=>$data));
             case 'xml':
             case 'application/xml':
             case 'text/xml':
