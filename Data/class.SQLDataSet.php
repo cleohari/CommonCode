@@ -208,7 +208,14 @@ class SQLDataSet extends DataSet
         $count = count($cols);
         for($i = 0; $i < $count; $i++)
         {
-            array_push($set, $cols[$i].'='.$this->pdo->quote($data[$cols[$i]]));
+            if($data[$cols[$i]] === null)
+            {
+                array_push($set, $cols[$i].'=NULL');
+            }
+            else
+            {
+                array_push($set, $cols[$i].'='.$this->pdo->quote($data[$cols[$i]]));
+            }
         }
         $set = implode(',', $set);
         $sql = "UPDATE $tablename SET $set WHERE $where";
