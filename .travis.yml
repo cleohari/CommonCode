@@ -13,7 +13,6 @@ addons:
     packages:
     - ldap-utils
     - slapd
-    - yarn
 
 before_install:
   - echo "extension=ldap.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
@@ -23,8 +22,6 @@ before_install:
 install:
   - composer require satooshi/php-coveralls:~1.0
   - nvm install stable
-  - yarn install
-  - yarn run update-cdns
 
 before_script:
   - mkdir -p build/logs
