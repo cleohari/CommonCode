@@ -28,6 +28,7 @@ exclude_paths:
 - tests/
 - libs/
 - vendor/
+- fonts/
 - "static.words.php"
 - "css/bootstrap*"
 - "css/font-awesome*"
