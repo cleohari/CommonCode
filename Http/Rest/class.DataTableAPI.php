@@ -162,6 +162,10 @@ class DataTableAPI extends RestAPI
         {
             return $response->withStatus(404);
         }
+        if(count($entry) === 1 && isset($entry[0]))
+        {
+            $entry = $entry[0];
+        }
         if($this->canUpdate($request, $entry) === false)
         {
             return $response->withStatus(401);
