@@ -27,7 +27,7 @@ class RestAPI
         $this->user = $request->getAttribute('user');
         if($this->user === false)
         {
-            throw new Exception('Must be logged in', \Http\Rest\ACCESS_DENIED);
+            throw new \Exception('Must be logged in', \Http\Rest\ACCESS_DENIED);
         }
     }
 }

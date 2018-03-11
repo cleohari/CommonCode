@@ -25,7 +25,7 @@ class AuthMiddleware
     {
         $auth = \AuthProvider::getInstance();
         $auth->login($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']);
-        $user = FlipSession::getUser();
+        $user = \FlipSession::getUser();
         if($user === false)
         {
             $data = substr($header, 6);
