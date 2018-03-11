@@ -221,6 +221,7 @@ class SQLDataSet extends DataSet
         $sql = "UPDATE $tablename SET $set WHERE $where";
         if($this->pdo->exec($sql) === false)
         {
+            error_log('DB query failed. '.print_r($this->pdo->errorInfo(), true));
             return false;
         }
         return true;
@@ -259,7 +260,7 @@ class SQLDataSet extends DataSet
         $sql = "INSERT INTO $tablename ($cols) VALUES ($set);";
         if($this->pdo->exec($sql) === false)
         {
-            //error_log($sql);
+            error_log('DB query failed. '.print_r($this->pdo->errorInfo(), true));
             return false;
         }
         return true;
