@@ -46,8 +46,11 @@ abstract class SpreadSheetSerializer extends Serializer
             switch($colName)
             {
                 case '_id':
-                    $this->addValueByColName($cols, $row, $colName, $value->{'$id'});
-                    break;
+                    if(isset($value->{'$id'}))
+                    {
+                        $this->addValueByColName($cols, $row, $colName, $value->{'$id'});
+                        break;
+                    }
                 default:
                     $props = get_object_vars($value);
                     foreach($props as $key=>$newValue)
@@ -65,7 +68,18 @@ abstract class SpreadSheetSerializer extends Serializer
         }
         if(is_array($value))
         {
-            $row[$index] = implode(',', $value);
+            if(isset($value[0]) && is_object($value[0]))
+            {
+                $count = count($value);
+                for($i = 0; $i < $count; $i++)
+                {
+                    $this->addValueByColName($cols, $row, $colName.'['.$i.']', $value[$i]);
+                }
+            }
+            else
+            {
+                $row[$index] = implode(',', $value);
+            }
         }
         else
         {
