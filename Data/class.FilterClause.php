@@ -195,6 +195,10 @@ class FilterClause
         {
             $this->var2 = false;
         }
+        else if(is_numeric($this->var2))
+        {
+            $this->var2 = intval($this->var2);
+        }
         else
         {
             $this->var2 = trim($this->var2, "'");
