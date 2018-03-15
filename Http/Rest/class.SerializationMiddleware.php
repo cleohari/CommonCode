@@ -92,6 +92,9 @@ class SerializationMiddleware
             case 'text/x-json':
             case 'json':
                 return $response;
+            case 'json-ss':
+            case 'json-ss-dt':
+                return $this->reserializeBody($response, '\Serialize\JsonSpreadSheet');
             case 'data-table':
                 //This is a special case for json...
                 $body = $response->getBody();
