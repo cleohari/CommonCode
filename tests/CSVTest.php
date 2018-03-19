@@ -73,15 +73,7 @@ class CSVTest extends PHPUnit_Framework_TestCase
         $array = array($row1);
         $type = 'text/csv';
         $data = $serializer->serializeData($type, $array);
-        $this->assertEquals("A,B,C,_id\n\"{\"\"Test1\"\":1,\"\"Test2\"\":\"\"a\"\",\"\"ABC\"\":\"\"1\"\"}\",2,3,4af9f23d8ead0e1d32000000\n", $data);
-    }
-
-    public function testSimpleType()
-    {
-        $serializer = new \Serialize\CSVSerializer();
-        $type = 'text/csv';
-        $data = $serializer->serializeData($type, array('Test', 'Test1'));
-        $this->assertEquals("Test\nTest1\n", $data);
+        $this->assertEquals("A.Test1,A.Test2,A.ABC,B,C,_id\n1,a,1,2,3,4af9f23d8ead0e1d32000000\n", $data);
     }
 
     public function testBadType()
