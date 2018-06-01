@@ -240,7 +240,7 @@ class FlipPage extends WebPage
         $ret = '';
         foreach($names as $name)
         {
-            $ret .= '<li>'.$this->createLink($name, $sites[$name]).'</li>';
+            $ret .= '<li class="nav-item">'.$this->createLink($name, $sites[$name], 'nav-link').'</li>';
         }
         return $ret;
     }
@@ -263,10 +263,10 @@ class FlipPage extends WebPage
 
     protected function getDropdown($link, $name)
     {
-        $ret = '<li class="dropdown">';
+        $ret = '<li class="nav-item dropdown">';
         $href = $this->getHrefForDropdown($link);
-        $ret .= '<a href="'.$href.'" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">'.$name.' <span class="caret"></span></a>';
-        $ret .= '<ul class="dropdown-menu">';
+        $ret .= '<a href="'.$href.'" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">'.$name.' <span class="caret"></span></a>';
+        $ret .= '<ul class="dropdown-menu dropdown-menu-right">';
         $subNames = array_keys($link);
         foreach($subNames as $subName)
         {
@@ -284,9 +284,9 @@ class FlipPage extends WebPage
         }
         if($links[$name] === false)
         {
-            return '<li>'.$name.'</li>';
+            return '<li class="nav-item">'.$name.'</li>';
         }
-        return '<li>'.$this->createLink($name, $links[$name]).'</li>';
+        return '<li class="nav-item">'.$this->createLink($name, $links[$name], 'nav-link').'</li>';
     }
 
     protected function getLinksMenus()
@@ -307,36 +307,27 @@ class FlipPage extends WebPage
     {
         $sites = $this->getSiteLinksForHeader();
         $links = $this->getLinksMenus();
-        $header = '<nav class="navbar navbar-default navbar-fixed-top">
-                      <div class="container-fluid">
-                          <!-- Brand and toggle get grouped for better mobile display -->
-                          <div class="navbar-header">
-                          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
-                              <span class="sr-only">Toggle navigation</span>
-                              <span class="icon-bar"></span>
-                              <span class="icon-bar"></span>
-                              <span class="icon-bar"></span>
-                          </button>
-                          <a class="navbar-brand" href="#">
-                              <picture>
-                                  <source srcset="/img/common/logo.svg" style="width: 30px; height:30px"/>
-                                  <img alt="Burning Flipside" src="/img/common/logo.png" style="width: 30px; height:30px"/>
-                              </picture>
-                          </a>
-                          </div>
-                          <!-- Collect the nav links, forms, and other content for toggling -->
-                          <div class="collapse navbar-collapse" id="navbar-collapse">
-                              <ul id="site_nav" class="nav navbar-nav">
-                              '.$sites.'
-                              </ul>
-                              <ul class="nav navbar-nav navbar-right">
-                              '.$links.'
-                              </ul>
-                          </div>
+        $header = '<nav class="navbar navbar-expand-lg navbar-light bg-light">
+                      <a class="navbar-brand" href="#">
+                          <picture>
+                              <source srcset="/img/common/logo.svg" style="width: 30px; height:30px"/>
+                              <img alt="Burning Flipside" src="/img/common/logo.png" style="width: 30px; height:30px"/>
+                          </picture>
+                      </a>
+                      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                          <span class="navbar-toggler-icon"></span>
+                      </button>
+                      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                          <ul class="navbar-nav mr-auto">
+                          '.$sites.'
+                          </ul>
+                          <ul class="navbar-nav navbar-right">
+                          '.$links.'
+                          </ul>
                       </div>
                   </nav>';
         $this->body = $header.$this->body;
-        $this->body_tags .= 'style="padding-top: 60px;"';
+        #$this->body_tags .= 'style="padding-top: 60px;"';
     }
 
     /** Notification that is green for success */
@@ -508,14 +499,14 @@ var logoutUrl = \''.$this->logoutUrl.'\'
             $authLinksStr = 'Sign in with '.$authLinksStr;
         }
         $this->body .= '<div class="modal fade" role="dialog" id="login-dialog" title="Login" aria-hidden="true">
-                            <div class="modal-dialog">
+                            <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
+                                        <h4 class="modal-title">Login</h4>
                                         <button type="button" class="close" data-dismiss="modal">
                                             <span aria-hidden="true">&times;</span>
                                             <span class="sr-only">Close</span>
                                         </button>
-                                        <h4 class="modal-title">Login</h4>
                                     </div>
                                     <div class="modal-body">
                                         <form id="login_dialog_form" role="form">
