@@ -67,16 +67,8 @@ class FlipAdminPage extends LoginRequiredPage
             $log = '<a href="'.$this->loginUrl.'?return='.$this->currentUrl().'"><i class="fa fa-sign-in"></i></a>';
         }
         $this->body = '<div id="wrapper">
-                  <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
-                      <div class="navbar-header">
-                          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
-                              <span class="sr-only">Toggle Navigation</span>
-                              <span class="icon-bar"></span>
-                              <span class="icon-bar"></span>
-                              <span class="icon-bar"></span>
-                          </button>
-                          <a class="navbar-brand" href="index.php">'.$this->title.'</a>
-                      </div>
+                  <nav class="navbar navbar-expand-lg navbar-light bg-light" role="navigation" style="margin-bottom: 0">
+                      <a class="navbar-brand" href="index.php">'.$this->title.'</a>
                       <ul class="nav navbar-top-links navbar-right">
                           <a href="..">
                               <i class="fa fa-home"></i>
@@ -103,16 +95,16 @@ class FlipAdminPage extends LoginRequiredPage
                   <div id="page-wrapper" style="min-height: 538px;">'.$this->body.'</div></div>';
     }
 
-    const CARD_GREEN  = 'panel-green';
-    const CARD_BLUE   = 'panel-primary';
-    const CARD_YELLOW = 'panel-yellow';
-    const CARD_RED    = 'panel-red';
+    const CARD_GREEN  = 'bg-success';
+    const CARD_BLUE   = 'bg-primary';
+    const CARD_YELLOW = 'bg-warning';
+    const CARD_RED    = 'bg-danger';
 
     public function add_card($iconName, $bigText, $littleText, $link = '#', $color = self::CARD_BLUE)
     {
-        $card = '<div class="col-lg-3 col-md-6">
-                     <div class="panel '.$color.'">
-                         <div class="panel-heading">
+        $card = '<div class="col-lg-3 col-md-6 text-white">
+                     <div class="card '.$color.'">
+                         <div class="card-header">
                              <div class="row">
                                  <div class="col-xs-3">
                                      <i class="fa '.$iconName.'" style="font-size: 5em;"></i>
@@ -123,8 +115,8 @@ class FlipAdminPage extends LoginRequiredPage
                                  </div>
                              </div>
                          </div>
-                         <a href="'.$link.'">
-                         <div class="panel-footer">
+                         <a class="text-white card-link" href="'.$link.'">
+                         <div class="card-footer">
                              <span class="pull-left">View Details</span>
                              <span class="pull-right fa fa-arrow-circle-right"></span>
                              <div class="clearfix"></div>

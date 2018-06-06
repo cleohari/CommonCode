@@ -55,8 +55,8 @@ $jsArray = array(
                 'min' => '/js/common/bootstrap.min.js'
             ),
             'cdn' => array(
-                'no'  => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.js',
-                'min' => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js'
+                'no'  => '//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.js',
+                'min' => '//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js'
             )
         ),
         JQUERY_VALIDATE => array(
@@ -229,8 +229,8 @@ $cssArray = array(
                 'min' => '/css/common/bootstrap.min.css'
             ),
             'cdn' => array(
-                'no'  => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css',
-                'min' => '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'
+                'no'  => '//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.css',
+                'min' => '//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css'
             )
     ),
     CSS_BOOTSTRAP_FH => array(

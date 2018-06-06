@@ -236,9 +236,14 @@ class WebPage
      *
      * @return string The link
      */
-    public function createLink($linkName, $linkTarget = '#')
+    public function createLink($linkName, $linkTarget = '#', $class=false)
     {
-        $startTag = $this->createOpenTag('a', array('href'=>$linkTarget));
+        $data =  array('href'=>$linkTarget);
+        if($class !== false)
+        {
+            $data['class'] = $class;
+        }
+        $startTag = $this->createOpenTag('a', $data);
         $endTag = $this->createCloseTag('a');
         return $startTag.$linkName.$endTag;
     }
