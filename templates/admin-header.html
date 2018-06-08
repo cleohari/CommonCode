@@ -1,0 +1,44 @@
+{% extends "header.html" %}
+
+{% block brand %}
+  <a class="navbar-brand" href="index.php">{{ pageTitle }}</a>
+{% endblock %}
+
+{% block leftLinks %}
+{% endblock %}
+
+{% block sidebar %}
+  <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
+    {% for name,data in header.sidebar %}
+        {% if data.menu is iterable %}
+          <li class="nav-item">
+            <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapse{{ name }}" data-parent="#exampleAccordion">
+              {% if data.icon %}
+                <i class="fa fa-fw {{ data.icon }}"></i>
+              {% endif %}
+              {{ name }}
+            </a>
+            <ul class="sidenav-second-level collapse" id="collapse{{ name }}">
+              {% for name,uri in data.menu %}
+                <li><a href="{{ uri }}">{{ name }}</a></li>
+              {% endfor %}
+            </ul>
+          </li>
+        {% else %}
+          <li class="nav-item"><a href="{{ data.url|default('#') }}" class="nav-link">
+            {% if data.icon %}
+              <i class="fa fa-fw {{ data.icon }}"></i>
+            {% endif %}
+            {{ name }}
+          </a></li>
+        {% endif %}
+      {% endfor %}
+  </ul>
+  <ul class="navbar-nav sidenav-toggler">
+    <li class="nav-item">
+      <a class="nav-link text-center" id="sidenavToggler">
+        <i class="fa fa-fw fa-angle-left"></i>
+      </a>
+    </li>
+  </ul>
+{% endblock %}

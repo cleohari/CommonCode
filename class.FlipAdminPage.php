@@ -44,7 +44,7 @@ class FlipAdminPage extends LoginRequiredPage
 
     protected function getDropdown($link, $name)
     {
-        $ret  = '<li>';
+        $ret  = '<li class="nav-item">';
         $href = $this->getHrefForDropdown($link);
         $ret .= $this->createLink($name.' <i class="fa fa-arrow-right"></i>', $href);
         $ret .= '<ul>';
@@ -61,38 +61,49 @@ class FlipAdminPage extends LoginRequiredPage
     {
         $sites   = $this->getSiteLinksForHeader();
         $sideNav = $this->getLinksMenus();
-        $log     = '<a href="'.$this->logoutUrl.'"><i class="fa fa-sign-out"></i></a>';
+        $log     = '<a href="'.$this->logoutUrl.'" class="nav-link"><i class="fa fa-sign-out"></i></a>';
         if($this->user === false || $this->user === null)
         {
-            $log = '<a href="'.$this->loginUrl.'?return='.$this->currentUrl().'"><i class="fa fa-sign-in"></i></a>';
+            $log = '<a href="'.$this->loginUrl.'?return='.$this->currentUrl().'" class="nav-link"><i class="fa fa-sign-in"></i></a>';
         }
         $this->body = '<div id="wrapper">
                   <nav class="navbar navbar-expand-lg navbar-light bg-light" role="navigation" style="margin-bottom: 0">
                       <a class="navbar-brand" href="index.php">'.$this->title.'</a>
-                      <ul class="nav navbar-top-links navbar-right">
-                          <a href="..">
+                      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                          <span class="navbar-toggler-icon"></span>
+                      </button>
+                      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav mr-auto"></ul>
+                        <ul class="navbar-nav navbar-right">
+                          <li class="nav-item">
+                            <a href=".." class="nav-link">
                               <i class="fa fa-home"></i>
-                          </a>
-                          &nbsp;&nbsp;'.$log.'
-                          <li class="dropdown">
-                              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            '.$log.'
+                          </li>
+                          <li class="nav-item dropdown">
+                              <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
                                   <i class="fa fa-link"></i>
                                   <b class="caret"></b>
                               </a>
-                              <ul class="dropdown-menu dropdown-sites">
+                              <ul class="dropdown-menu dropdown-menu-right">
                                   '.$sites.'
                               </ul>
                           </li>
-                      </ul>
-                      <div class="navbar-default sidebar" role="navigation">
-                          <div class="sidebar-nav navbar-collapse" style="height: 1px;">
-                              <ul class="nav" id="side-menu">
-                                  '.$sideNav.'
-                              </ul>
-                          </div>
+                        </ul>
                       </div>
                   </nav>
-                  <div id="page-wrapper" style="min-height: 538px;">'.$this->body.'</div></div>';
+                  <div class="row flex-xl-nowrap">
+                    <div class="col-12 col-md-3 col-xl-2 bd-sidebar">
+                      <nav class="collapse bd-links" id="navSide">
+                        <ul class="nav flex-column" id="side-menu">
+                                  '.$sideNav.'
+                        </ul>
+                      </nav>
+                    </div>
+                  <main id="page-wrapper" class="col-12 col-md-9 col-xl-8 py-md-3 pl-md-5" role="main">'.$this->body.'</main></div>';
     }
 
     const CARD_GREEN  = 'bg-success';
