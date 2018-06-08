@@ -1,0 +1,199 @@
+<?php
+namespace Http;
+
+use \Psr\Http\Message\ServerRequestInterface as Request;
+use \Psr\Http\Message\ResponseInterface as Response;
+
+require 'vendor/autoload.php';
+require_once('static.js_css.php');
+
+class WebPage
+{
+    public $body = '';
+    protected $templateName = 'main.html';
+
+    public function __construct($title)
+    {
+        $this->settings = \Settings::getInstance();
+        $this->loader = new \Twig_Loader_Filesystem(dirname(__FILE__).'/../templates');
+        $twigSettings = array('cache' => '/var/php_cache/twig');
+        if(isset($GLOBALS['TWIG_CACHE']))
+        {
+            $twigSettings = $twigSettings = array('cache' => $GLOBALS['TWIG_CACHE']);
+        }
+        $this->twig = new \Twig_Environment($this->loader, $twigSettings);
+        $this->content = array('pageTitle' => $title);
+        $this->user = \FlipSession::getUser();
+        $this->content['header'] = array();
+        $this->content['header']['sites'] = array();
+        $wwwUri = $this->settings->getGlobalSetting('www_url', 'https://www.burningflipside.com');
+        $this->content['header']['sites']['Profiles'] = $this->settings->getGlobalSetting('profiles_url', 'https://profiles.burningflipside.com/');
+        $this->content['header']['sites']['WWW'] = $wwwUri;
+        $this->content['header']['sites']['Pyropedia'] = $this->settings->getGlobalSetting('wiki_url', 'https://wiki.burningflipside.com');
+        $this->content['header']['sites']['Secure'] = $this->settings->getGlobalSetting('secure_url', 'https://secure.burningflipside.com/');
+
+        $aboutUrl = $this->settings->getGlobalSetting('about_url', $wwwUri.'/about');
+        $this->content['header']['right']['About'] = array(
+          'url' => $aboutUrl,
+          'menu' => $this->settings->getGlobalSetting('about_menu', array(
+            'Burning Flipside' => $wwwUri.'/about/event',
+            'AAR, LLC' => $wwwUri.'/organization/aar',
+            'Privacy Policy' => $wwwUri.'/about/privacy'
+        )));
+
+        $this->profilesUrl = $this->settings->getGlobalSetting('profiles_url', 'https://profiles.burningflipside.com/');
+        $this->registerUrl = $this->settings->getGlobalSetting('register_url', $this->profilesUrl.'/register.php');
+        $this->resetUrl = $this->settings->getGlobalSetting('reset_url', $this->profilesUrl.'/reset.php');
+        $this->loginUrl = $this->settings->getGlobalSetting('login_url', $this->profilesUrl.'/login.php');
+
+	if($this->user === false || $this->user === null)
+        {
+            if(isset($_SERVER['REQUEST_URI']) && strstr($_SERVER['REQUEST_URI'], 'logout.php') === false)
+            {
+                $this->addLink('Login', $this->loginUrl);
+            }
+        }
+        else
+        {
+            $this->addLink('Logout', $this->settings->getGlobalSetting('logout_url', $this->profilesUrl.'/logout.php'));
+            $this->addLinks();
+        }
+        $this->content['js'] = array('js/'.basename($_SERVER['SCRIPT_NAME'], '.php').'.js');
+
+        $this->minified = 'min';
+        $this->cdn      = 'cdn';
+        if($this->settings->getGlobalSetting('use_minified', true) == false)
+        {
+            $this->minified = 'no';
+        }
+        if($this->settings->getGlobalSetting('use_cdn', true) == false)
+        {
+            $this->cdn = 'no';
+            $this->content['useCDN'] = false;
+        }
+    }
+
+    public function addTemplateDir($dir, $namespace)
+    {
+        $this->loader->addPath($dir, $namespace);
+    }
+
+    public function setTemplateName($name)
+    {
+        $this->templateName = $name;
+    }
+
+    public function addCSS($uri)
+    {
+        if(!isset($this->content['css']))
+        {
+            $this->content['css'] = array($uri);
+            return;
+        }
+        array_push($this->content['css'],$uri);
+    }
+
+    /**
+     * Add a JavaScript file from its src URI
+     *
+     * @param string $uri The webpath to the JavaScript file
+     */
+    public function addJS($uri)
+    {
+        if(!isset($this->content['js']))
+        {
+            $this->content['js'] = array($uri);
+            return;
+        }
+        array_push($this->content['js'],$uri);
+    }
+
+    /**
+     * Add a JavaScript file from a set of files known to the framework
+     *
+     * @param string $jsFileID the ID of the JS file
+     * @param boolean $async Can the JS file be loaded asynchronously?
+     */
+    public function addWellKnownJS($jsFileID)
+    {
+        global $jsArray;
+        $src = $jsArray[$jsFileID][$this->cdn][$this->minified];
+        $this->addJS($src);
+    }
+
+    /**
+     * Add a CSS file from a set of files known to the framework
+     *
+     * @param string $cssFileID the ID of the CSS file
+     */
+    public function addWellKnownCSS($cssFileID)
+    {
+        global $cssArray;
+        $src = $cssArray[$cssFileID][$this->cdn][$this->minified];
+        $this->addCSS($src);
+    }
+
+    /**
+     * Add a link to the header
+     *
+     * @param string $name The name of the link
+     * @param boolean|string $url The URL to link to
+     * @param boolean|array $submenu Any submenu items for the dropdown
+     */
+    public function addLink($name, $url = false, $submenu = false)
+    {
+        $data = array('url' => $url);
+        if(is_array($submenu))
+        {
+            $data['menu'] = $submenu;
+        }
+        $this->content['header']['right'] = array($name => $data)+$this->content['header']['right'];
+    }
+
+    protected function addLinks()
+    {
+    }
+
+    protected function getContent()
+    {
+        if(!isset($this->content['body']))
+        {
+          $this->content['body'] = $this->body;
+        }
+        return $this->twig->render($this->templateName, $this->content);
+    }
+
+    public function handleRequest($request, $response, $args)
+    {
+        $body = $response->getBody();
+        $body->write($this->getContent());
+        return $response;
+    }
+
+    public function printPage()
+    {
+        echo $this->getContent();
+    }
+
+    /**
+     * Get the currently requested URL
+     *
+     * @return string The full URL of the requested page
+     *
+     * @SuppressWarnings("Superglobals")
+     */
+    public function currentURL()
+    {
+        if(!isset($_SERVER['REQUEST_URI']))
+        {
+            return '';
+        }
+        $requestURI = $_SERVER['REQUEST_URI'];
+        if($requestURI[0] === '/')
+        {
+            $requestURI = substr($requestURI, 1);
+        }
+        return 'http'.(isset($_SERVER['HTTPS']) ? 's' : '').'://'.$_SERVER['HTTP_HOST'].'/'.$requestURI;
+    }
+}
+
