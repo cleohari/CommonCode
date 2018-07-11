@@ -58,7 +58,6 @@ class WebPage
             $this->addLink('Logout', $this->settings->getGlobalSetting('logout_url', $this->profilesUrl.'/logout.php'));
             $this->addLinks();
         }
-        $this->content['js'] = array('js/'.basename($_SERVER['SCRIPT_NAME'], '.php').'.js');
 
         $this->minified = 'min';
         $this->cdn      = 'cdn';
@@ -150,6 +149,31 @@ class WebPage
         $this->content['header']['right'] = array($name => $data)+$this->content['header']['right'];
     }
 
+    /** Notification that is green for success */
+    const NOTIFICATION_SUCCESS = 'alert-success';
+    /** Notification that is blue for infomrational messages */
+    const NOTIFICATION_INFO    = 'alert-info';
+    /** Notification that is yellow for warning */
+    const NOTIFICATION_WARNING = 'alert-warning';
+    /** Notification that is red for error */
+    const NOTIFICATION_FAILED  = 'alert-danger';
+
+    /**
+     * Add a notification to the page
+     *
+     * @param string $message The message to show in the notifcation
+     * @param string $severity The severity of the notifcation
+     * @param boolean $dismissible Can the user dismiss the notificaton?
+     */
+    public function addNotification($message, $severity = self::NOTIFICATION_INFO, $dismissible = true)
+    {
+        if(!isset($this->content['notifications']))
+        {
+          $this->content['notifications'] = array();
+        }
+        array_push($this->content['notifications'], array('msg'=>$message, 'sev'=>$severity, 'dismissible'=>$dismissible));
+    }
+
     protected function addLinks()
     {
     }
@@ -160,6 +184,8 @@ class WebPage
         {
           $this->content['body'] = $this->body;
         }
+	//Add page JS just before rednering so it is after any added by the page explicitly
+        $this->addJS('js/'.basename($_SERVER['SCRIPT_NAME'], '.php').'.js');
         return $this->twig->render($this->templateName, $this->content);
     }
 

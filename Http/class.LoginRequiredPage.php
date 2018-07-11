@@ -38,6 +38,8 @@ class LoginRequiredPage extends WebPage
         {
           $this->content['body'] = $this->body;
         }
+        //Add page JS just before rednering so it is after any added by the page explicitly
+        $this->addJS('js/'.basename($_SERVER['SCRIPT_NAME'], '.php').'.js');
         return $this->twig->render($this->templateName, $this->content);
     }
 }
