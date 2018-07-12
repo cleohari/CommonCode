@@ -20,7 +20,7 @@
       {% endif %}
         <div class="card-body">
           <div class="card-body-icon"><i class="fa fa-fw {{ card.icon }}"></i></div>
-          <div class="mr-5">{{ card.text }}</div>
+          <div class="mr-5">{{ card.text|raw }}</div>
         </div>
         <a class="card-footer text-white clearfix small z-1" href="{{ card.link|default('#') }}">
           <span class="float-left">View Details</span>

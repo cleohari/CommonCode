@@ -16,6 +16,8 @@
     {% for j in js %}
       <script src="{{ j }}" type="text/javascript"></script>
     {% endfor %}
+    {% block headBlock %}{% endblock %}
+    {{ otherHeadData|raw }}
   </head>
   <body data-login-url={{ loginUrl }}>
      {{ include('header.html') }}
@@ -27,6 +29,7 @@
      </noscript>
      {{ include('login-dialog.html') }}
      <div id="content">
+       {% block content %}{% endblock %}
        {{ body|raw }}
      </div>
      <script>

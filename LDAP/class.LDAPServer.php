@@ -81,6 +81,7 @@ class LDAPServer extends \Singleton
     {
         $this->ldapLink = ldap_connect($this->connect);
         ldap_set_option($this->ldapLink, LDAP_OPT_PROTOCOL_VERSION, 3);
+        ldap_set_option($this->ldapLink, LDAP_OPT_REFERRALS, false);
     }
 
     private function getConnectString($name, $proto = false)

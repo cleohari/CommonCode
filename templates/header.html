@@ -23,13 +23,17 @@
     <ul class="navbar-nav ml-auto">
       {% for name,data in header.right %}
         {% if data.menu is iterable %}
-          <li class="nav-item">
-            <a href="{{ data.url|default('#') }}" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ name }} <span class="caret"></span></a>
-            <ul class="dropdown-menu dropdown-menu-right">
+          <li class="nav-item dropdown">
+            <a href="{{ data.url|default('#') }}" class="nav-link dropdown-toggle" id="dropdown{{ name }}" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ name }} <span class="caret"></span></a>
+            {% if loop.last %}
+              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown{{ name }}">
+            {% else %}
+              <div class="dropdown-menu" aria-labelledby="dropdown{{ name }}">
+            {% endif %}
               {% for name,uri in data.menu %}
-                <li class="nav-item"><a href="{{ uri }}" class="nav-link">{{ name }}</a></li>
+                <a href="{{ uri }}" class="nav-link">{{ name }}</a>
               {% endfor %}
-            </ul>
+            </div>
           </li>
         {% else %}
           <li class="nav-item"><a href="{{ data.url|default('#') }}" class="nav-link">{{ name }}</a></li>

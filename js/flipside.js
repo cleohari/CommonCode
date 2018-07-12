@@ -161,9 +161,9 @@ function create_modal(title, body, buttons)
     span.appendTo(button);
     span = $('<span/>', {'class': 'sr-only'}).html('Close');
     span.appendTo(button);
-    button.appendTo(header);
     span = $('<h4/>', {'class': 'modal-title'}).html(title);
     span.appendTo(header);
+    button.appendTo(header);
     header.appendTo(content);
     var div = $('<div/>', {'class': 'modal-body'}).html(body);
     div.appendTo(content);

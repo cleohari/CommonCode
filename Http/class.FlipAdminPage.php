@@ -38,5 +38,24 @@ class FlipAdminPage extends LoginRequiredPage
         }
         return parent::getContent();
     }
+
+    const CARD_GREEN  = 'green';
+    const CARD_BLUE   = 'blue';
+    const CARD_YELLOW = 'yellow';
+    const CARD_RED    = 'red';
+
+    public function addCard($icon, $text, $link, $color = false)
+    {
+        if(!isset($this->content['cards']))
+        {
+            $this->content['cards'] = array();
+        }
+        $card = array('icon' => $icon, 'text' => $text, 'link' => $link);
+        if($color !== false)
+        {
+            $card['color'] = $color;
+        }
+        array_push($this->content['cards'], $card);
+    }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
