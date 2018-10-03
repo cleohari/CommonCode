@@ -13,6 +13,14 @@ class SyntaxTest extends PHPUnit\Framework\TestCase
                 $output = false;
                 $rc = 0;
                 $res = exec('php -l '.$file, $output, $rc);
+                if($rc !== 0)
+                {
+                    $output = print_r($output, false);
+                }
+                else
+                {
+                    $output = '';
+                }
                 $this->assertEquals(0, $rc, $output);
             }
         }
