@@ -21,30 +21,43 @@ class WebPage
         {
             $twigSettings = $twigSettings = array('cache' => $GLOBALS['TWIG_CACHE']);
         }
+        $this->wwwUrl = $this->settings->getGlobalSetting('www_url', 'https://www.burningflipside.com/');
+        $this->wikiUrl = $this->settings->getGlobalSetting('wiki_url', 'https://wiki.burningflipside.com/');
+        $this->secureUrl = $this->settings->getGlobalSetting('secure_url', 'https://secure.burningflipside.com/');
+        $this->profilesUrl = $this->settings->getGlobalSetting('profiles_url', 'https://profiles.burningflipside.com/');
+        $this->registerUrl = $this->settings->getGlobalSetting('register_url', $this->profilesUrl.'/register.php');
+        $this->resetUrl = $this->settings->getGlobalSetting('reset_url', $this->profilesUrl.'/reset.php');
+        $this->loginUrl = $this->settings->getGlobalSetting('login_url', $this->profilesUrl.'/login.php');
+        $this->logoutUrl = $this->settings->getGlobalSetting('logout_url', $this->profilesUrl.'/logout.php');
+
         $this->twig = new \Twig_Environment($this->loader, $twigSettings);
         $this->content = array('pageTitle' => $title);
         $this->user = \FlipSession::getUser();
         $this->content['header'] = array();
         $this->content['header']['sites'] = array();
-        $wwwUri = $this->settings->getGlobalSetting('www_url', 'https://www.burningflipside.com');
-        $this->content['header']['sites']['Profiles'] = $this->settings->getGlobalSetting('profiles_url', 'https://profiles.burningflipside.com/');
-        $this->content['header']['sites']['WWW'] = $wwwUri;
-        $this->content['header']['sites']['Pyropedia'] = $this->settings->getGlobalSetting('wiki_url', 'https://wiki.burningflipside.com');
-        $this->content['header']['sites']['Secure'] = $this->settings->getGlobalSetting('secure_url', 'https://secure.burningflipside.com/');
+        $this->content['header']['sites']['Profiles'] = $this->profilesUrl;
+        $this->content['header']['sites']['WWW'] = $this->wwwUrl;
+        $this->content['header']['sites']['Pyropedia'] = $this->wikiUrl;
+        $this->content['header']['sites']['Secure'] = $this->secureUrl;
 
-        $aboutUrl = $this->settings->getGlobalSetting('about_url', $wwwUri.'/about');
+        $this->aboutUrl = $this->settings->getGlobalSetting('about_url', $this->wwwUrl.'/about');
         $this->content['header']['right']['About'] = array(
-          'url' => $aboutUrl,
+          'url' => $this->aboutUrl,
           'menu' => $this->settings->getGlobalSetting('about_menu', array(
-            'Burning Flipside' => $wwwUri.'/about/event',
-            'AAR, LLC' => $wwwUri.'/organization/aar',
-            'Privacy Policy' => $wwwUri.'/about/privacy'
+            'Burning Flipside' => $this->wwwUrl.'/about/event',
+            'AAR, LLC' => $this->wwwUrl.'/organization/aar',
+            'Privacy Policy' => $this->wwwUrl.'/about/privacy'
         )));
 
-        $this->profilesUrl = $this->settings->getGlobalSetting('profiles_url', 'https://profiles.burningflipside.com/');
-        $this->registerUrl = $this->settings->getGlobalSetting('register_url', $this->profilesUrl.'/register.php');
-        $this->resetUrl = $this->settings->getGlobalSetting('reset_url', $this->profilesUrl.'/reset.php');
-        $this->loginUrl = $this->settings->getGlobalSetting('login_url', $this->profilesUrl.'/login.php');
+        $this->content['urls']['wwwUrl'] = $this->wwwUrl;
+        $this->content['urls']['wikiUrl'] = $this->wikiUrl;
+        $this->content['urls']['profilesUrl'] = $this->profilesUrl;
+        $this->content['urls']['secureUrl'] = $this->secureUrl;
+
+        $this->content['urls']['registerUrl'] = $this->registerUrl;
+        $this->content['urls']['resetUrl'] = $this->resetUrl;
+        $this->content['urls']['loginUrl'] = $this->loginUrl;
+        $this->content['urls']['logoutUrl'] = $this->logoutUrl;
 
 	if($this->user === false || $this->user === null)
         {
