@@ -14,8 +14,9 @@ class FlipsideAPIUser extends User
 
     public function __construct($data = false, $apiUrl = false)
     {
+        $this->settings = \Settings::getInstance();
         $this->profilesUrl = $this->settings->getGlobalSetting('profiles_url', 'https://profiles.burningflipside.com/');
-        $this->$apiUrl = $this->profilesUrl.'api/v1';
+        $this->apiUrl = $this->profilesUrl.'api/v1';
     
         if(($data !== false) && !isset($data['extended']))
         {

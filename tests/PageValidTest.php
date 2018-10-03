@@ -5,6 +5,10 @@ use KubaWerlos\HtmlValidator\Validator;
 
 class PageValidTest extends PHPUnit\Framework\TestCase
 {
+    public function testPlaceholder()
+    {
+        $this->assertNotFalse(true);
+    }
 /* Disable until I can find a good HTML 5 validator
     public function testEmptyPage()
     {
