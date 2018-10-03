@@ -16,11 +16,10 @@ class WebPage
     {
         $this->settings = \Settings::getInstance();
         $this->loader = new \Twig_Loader_Filesystem(dirname(__FILE__).'/../templates');
-        $twigSettings = array('cache' => '/var/php_cache/twig');
-        if(isset($GLOBALS['TWIG_CACHE']))
-        {
-            $twigSettings = $twigSettings = array('cache' => $GLOBALS['TWIG_CACHE']);
-        }
+        
+        $twigCache = $this->settings->getGlobalSetting('twig_cache', '/var/php_cache/twig');
+        $twigSettings = array('cache' => $twigCache);
+
         $this->wwwUrl = $this->settings->getGlobalSetting('www_url', 'https://www.burningflipside.com/');
         $this->wikiUrl = $this->settings->getGlobalSetting('wiki_url', 'https://wiki.burningflipside.com/');
         $this->secureUrl = $this->settings->getGlobalSetting('secure_url', 'https://secure.burningflipside.com/');
