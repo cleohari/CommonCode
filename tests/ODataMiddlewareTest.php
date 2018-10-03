@@ -1,6 +1,6 @@
 <?php
 require_once('Autoload.php');
-class ODataMiddlewareTest extends PHPUnit_Framework_TestCase
+class ODataMiddlewareTest extends PHPUnit\Framework\TestCase
 {
     public function testBasic()
     {

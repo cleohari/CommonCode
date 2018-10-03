@@ -1,6 +1,6 @@
 <?php
 require_once('Autoload.php');
-class PageContentTest extends PHPUnit_Framework_TestCase
+class PageContentTest extends PHPUnit\Framework\TestCase
 {
     public function testPageTitle()
     {

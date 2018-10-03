@@ -1,6 +1,6 @@
 <?php
 require_once('Autoload.php');
-class YAMLTest extends PHPUnit_Framework_TestCase
+class YAMLTest extends PHPUnit\Framework\TestCase
 {
     public function testBasic()
     {

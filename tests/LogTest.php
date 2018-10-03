@@ -1,7 +1,7 @@
 <?php
 namespace Log;
 require_once('Autoload.php');
-class LogTest extends \PHPUnit_Framework_TestCase
+class LogTest extends \PHPUnit\Framework\TestCase
 {
     use \phpmock\phpunit\PHPMock;
 

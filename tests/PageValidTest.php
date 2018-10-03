@@ -3,7 +3,7 @@ require_once('Autoload.php');
 
 use KubaWerlos\HtmlValidator\Validator;
 
-class PageValidTest extends PHPUnit_Framework_TestCase
+class PageValidTest extends PHPUnit\Framework\TestCase
 {
 /* Disable until I can find a good HTML 5 validator
     public function testEmptyPage()

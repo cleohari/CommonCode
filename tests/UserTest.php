@@ -1,6 +1,6 @@
 <?php
 require_once('Autoload.php');
-class UserTest extends PHPUnit_Framework_TestCase
+class UserTest extends PHPUnit\Framework\TestCase
 {
     public function testUser()
     {

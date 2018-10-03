@@ -1,6 +1,6 @@
 <?php
 require_once('Autoload.php');
-class WebErrorTest extends PHPUnit_Framework_TestCase
+class WebErrorTest extends PHPUnit\Framework\TestCase
 {
     public function testBasic()
     {

@@ -1,6 +1,6 @@
 <?php
 require_once('Autoload.php');
-class PDFTest extends PHPUnit_Framework_TestCase
+class PDFTest extends PHPUnit\Framework\TestCase
 {
     public function testPDF()
     {

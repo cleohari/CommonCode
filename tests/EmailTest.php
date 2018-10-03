@@ -1,7 +1,7 @@
 <?php
 require_once('Autoload.php');
 require_once('vendor/autoload.php');
-class EmailTest extends PHPUnit_Framework_TestCase
+class EmailTest extends PHPUnit\Framework\TestCase
 {
     public function testEmail()
     {
