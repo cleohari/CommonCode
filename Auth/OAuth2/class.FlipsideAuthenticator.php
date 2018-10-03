@@ -15,7 +15,7 @@ class FlipsideAuthenticator extends OAuth2Authenticator
         }
         else
         {
-            throw new Exception('Incorrectly configured! Missing api_url parameter.');
+            throw new \Exception('Incorrectly configured! Missing api_url parameter.');
         }
         if(isset($params['oauth_url']))
         {
@@ -23,7 +23,7 @@ class FlipsideAuthenticator extends OAuth2Authenticator
         }
         else
         {
-            throw new Exception('Incorrectly configured! Missing oauth_url parameter.');
+            throw new \Exception('Incorrectly configured! Missing oauth_url parameter.');
         }
     }
 
