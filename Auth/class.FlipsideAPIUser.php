@@ -9,6 +9,7 @@ class FlipsideAPIUser extends User
 {
     private $userData;
     private $groupData = null;
+    private $settings;
     private $profilesUrl;
     private $apiUrl;
 
