@@ -9,10 +9,14 @@ class FlipsideAPIUser extends User
 {
     private $userData;
     private $groupData = null;
-    private $apiUrl = 'https://profiles.burningflipside.com/api/v1';
+    private $profilesUrl;
+    private $apiUrl;
 
     public function __construct($data = false, $apiUrl = false)
     {
+        $this->profilesUrl = $this->settings->getGlobalSetting('profiles_url', 'https://profiles.burningflipside.com/');
+        $this->$apiUrl = $this->profilesUrl.'api/v1';
+    
         if(($data !== false) && !isset($data['extended']))
         {
             //Generic user object
