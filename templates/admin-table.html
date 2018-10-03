@@ -1,0 +1,36 @@
+{% extends "admin.html" %}
+
+{% block contentTop %}
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">{{ pageHeader }}</h1>
+    </div>       
+</div>
+<div class="row">
+  {{ selectors|raw }}
+</div>
+<div class="row">
+  <table class="table" id="{{ table.id }}">
+    <thead>
+      {% for header in table.headers %}
+        <th>{{ header }}</th>
+      {% endfor %}
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+</div>
+<script>
+$(function() { setTimeout(_checkDataTable, 100) });
+
+function _checkDataTable() {
+  var wrapper = $('#{{table.id}}_wrapper');
+  if(wrapper.length === 0) {
+    setTimeout(_checkDataTable, 100);
+    return;
+  }
+  wrapper.addClass('container-fluid');
+}
+</script>
+{% endblock %}
+
