@@ -1,7 +1,7 @@
 language: php
 php:
-  - 5.6
-  - 7.0
+  # - 5.6
+  # - 7.0
   - 7.1
 
 services:
@@ -15,7 +15,7 @@ addons:
     - slapd
 
 before_install:
-  - echo "extension=ldap.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
+  # - echo "extension=ldap.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
   - mysql -e 'create database auth;'
   - mysql -e 'create database p_auth;'
 
