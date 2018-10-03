@@ -1,6 +1,6 @@
 <?php
 require_once('Autoload.php');
-class XMLTest extends PHPUnit_Framework_TestCase
+class XMLTest extends PHPUnit\Framework\TestCase
 {
     public function testBasic()
     {

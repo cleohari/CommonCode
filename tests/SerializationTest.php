@@ -1,6 +1,6 @@
 <?php
 require_once('Autoload.php');
-class SerializationTest extends PHPUnit_Framework_TestCase
+class SerializationTest extends PHPUnit\Framework\TestCase
 {
     public function testBasic()
     {

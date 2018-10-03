@@ -1,6 +1,6 @@
 <?php
 require_once('Autoload.php');
-class ODataParamsTest extends PHPUnit_Framework_TestCase
+class ODataParamsTest extends PHPUnit\Framework\TestCase
 {
     public function testOldStyle()
     {

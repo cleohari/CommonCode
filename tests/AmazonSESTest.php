@@ -1,6 +1,6 @@
 <?php
 require_once('Autoload.php');
-class AmazonSESTest extends PHPUnit_Framework_TestCase
+class AmazonSESTest extends PHPUnit\Framework\TestCase
 {
     public function testBadInit()
     {
