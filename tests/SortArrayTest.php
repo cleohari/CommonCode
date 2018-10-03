@@ -1,7 +1,7 @@
 <?php
 require_once('Autoload.php');
 require_once('Auth/class.LDAPAuthenticator.php');
-class SortArrayTest extends PHPUnit_Framework_TestCase
+class SortArrayTest extends PHPUnit\Framework\TestCase
 {
     public function testEmpty()
     {

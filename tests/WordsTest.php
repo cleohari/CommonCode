@@ -1,5 +1,5 @@
 <?php
-class WordsTest extends PHPUnit_Framework_TestCase
+class WordsTest extends PHPUnit\Framework\TestCase
 {
     public function testWords()
     {

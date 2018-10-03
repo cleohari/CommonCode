@@ -1,6 +1,6 @@
 <?php
 require_once('Autoload.php');
-class JSONTest extends PHPUnit_Framework_TestCase
+class JSONTest extends PHPUnit\Framework\TestCase
 {
     public function testBasic()
     {

@@ -1,7 +1,7 @@
 <?php
 require_once('Autoload.php');
 require_once('./tests/helpers/TestProvider.php');
-class ProviderTest extends PHPUnit_Framework_TestCase
+class ProviderTest extends PHPUnit\Framework\TestCase
 {
     public $check = true;
     private $wasCalled = false;
