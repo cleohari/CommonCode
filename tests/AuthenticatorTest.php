@@ -71,7 +71,7 @@ class AuthenticatorTest extends PHPUnit\Framework\TestCase
     {
         $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
         $_SERVER['HTTP_HOST'] = 'example.com';
-        $params = array('current'=>true, 'pending'=>false, 'supplement'=>false);
+        $params = array('current'=>true, 'pending'=>false, 'supplement'=>false, 'api_url'=>'https://profiles.burningflipside.com/api/v1', 'oauth_url'=>'https://profiles.burningflipside.com/OAUTH2');
         $auth = new \Auth\OAuth2\FlipsideAuthenticator($params);
         $this->assertNotNull($auth);
         $this->assertInstanceOf('Auth\OAuth2\FlipsideAuthenticator', $auth);

@@ -3,8 +3,8 @@ namespace Auth\OAuth2;
 
 class FlipsideAuthenticator extends OAuth2Authenticator
 {
-    private $apiUrl = 'https://profiles.burningflipside.com/api/v1';
-    private $oauthUrl = 'https://profiles.burningflipside.com/OAUTH2';
+    private $apiUrl;
+    private $oauthUrl;
 
     public function __construct($params)
     {
@@ -13,9 +13,17 @@ class FlipsideAuthenticator extends OAuth2Authenticator
         {
             $this->apiUrl = $params['api_url'];
         }
+        else
+        {
+            throw new \Exception('Incorrectly configured! Missing api_url parameter.');
+        }
         if(isset($params['oauth_url']))
         {
             $this->oauthUrl = $params['oauth_url'];
+        }
+        else
+        {
+            throw new \Exception('Incorrectly configured! Missing oauth_url parameter.');
         }
     }
 

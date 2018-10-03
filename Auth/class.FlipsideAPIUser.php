@@ -9,7 +9,7 @@ class FlipsideAPIUser extends User
 {
     private $userData;
     private $groupData = null;
-    private $apiUrl = 'https://profiles.burningflipside.com/api/v1';
+    private $apiUrl;
 
     public function __construct($data = false, $apiUrl = false)
     {
