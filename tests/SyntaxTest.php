@@ -1,5 +1,5 @@
 <?php
-class SyntaxTest extends PHPUnit_Framework_TestCase
+class SyntaxTest extends PHPUnit\Framework\TestCase
 {
     public function testIsValidSyntax()
     {

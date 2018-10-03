@@ -1,6 +1,6 @@
 <?php
 require_once('Autoload.php');
-class DataSetTest extends PHPUnit_Framework_TestCase
+class DataSetTest extends PHPUnit\Framework\TestCase
 {
     public function testDataSet()
     {

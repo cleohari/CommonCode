@@ -1,6 +1,6 @@
 <?php
 require_once('Autoload.php');
-class AuthenticatorTest extends PHPUnit_Framework_TestCase
+class AuthenticatorTest extends PHPUnit\Framework\TestCase
 {
     public function testAuthenticator()
     {

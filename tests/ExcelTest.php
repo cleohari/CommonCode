@@ -1,7 +1,7 @@
 <?php
 require_once('Autoload.php');
 require_once dirname(__FILE__) . '/../vendor/autoload.php';
-class ExcelTest extends PHPUnit_Framework_TestCase
+class ExcelTest extends PHPUnit\Framework\TestCase
 {
     private function stringToExcel($data)
     {
