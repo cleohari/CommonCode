@@ -30,7 +30,7 @@ class LiveAuthenticator extends OAuth2Authenticator
 
     public function doAuthPost($params)
     {
-        return \Httpful\Request::post($this->getAccessTokenUrl())->sendisType(\Httpful\Mime::FORM)->addHeader('Content-Type', 'application/x-www-form-urlencoded')->body('client_id='.urlencode($this->app_id).'&client_secret='.urlencode($this->app_secret).'&redirect_uri='.urlencode($this->redirect_uri).'&code='.$params['code'].'&grant_type=authorization_code')->send();
+        return \Httpful\Request::post($this->getAccessTokenUrl())->sendsType(\Httpful\Mime::FORM)->addHeader('Content-Type', 'application/x-www-form-urlencoded')->body('client_id='.urlencode($this->app_id).'&client_secret='.urlencode($this->app_secret).'&redirect_uri='.urlencode($this->redirect_uri).'&code='.$params['code'].'&grant_type=authorization_code')->send();
     }
 
     public function getUserFromToken($token)
