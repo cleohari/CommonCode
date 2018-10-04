@@ -1,6 +1,6 @@
 <?php
 require_once('Autoload.php');
-class LDAPTest extends PHPUnit_Framework_TestCase
+class LDAPTest extends PHPUnit\Framework\TestCase
 {
     private $LDAPSERVER = 'ldap://localhost:3389';
 

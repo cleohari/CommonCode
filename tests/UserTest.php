@@ -149,6 +149,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 
     public function testLDAPUser()
     {
+        $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
         $user = new \Auth\LDAPUser();
         try{
             $this->assertFalse($user->isInGroupNamed('AAR'));
@@ -249,6 +250,8 @@ class UserTest extends PHPUnit\Framework\TestCase
 
     public function testFlipsideAPIUser()
     {
+        $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
+
         $user = new \Auth\FlipsideAPIUser();
         try{
             $this->assertFalse($user->isInGroupNamed('AAR'));
@@ -278,6 +281,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 
     public function testPendingUser()
     {
+        $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
         $user = new \Auth\PendingUser();
         $this->assertFalse($user->getHash());
         $this->assertFalse($user->getRegistrationTime());
@@ -311,6 +315,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 
     public function testSQLPendingUser()
     {
+        $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
         $user = new \Auth\SQLPendingUser(array('hash'=>false, 'time'=>'now', 'data'=>'{"mail":"test@example.com", "uid":"test", "password":"test"}'));
         $this->assertFalse($user->getHash());
         $this->assertNotFalse($user->getRegistrationTime());

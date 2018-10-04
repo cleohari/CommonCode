@@ -1,6 +1,6 @@
 <?php
 require_once('Autoload.php');
-class SQLAuthTest extends PHPUnit_Framework_TestCase
+class SQLAuthTest extends PHPUnit\Framework\TestCase
 {
     public function testSQLAuthenticator()
     {
@@ -133,6 +133,8 @@ class SQLAuthTest extends PHPUnit_Framework_TestCase
             $this->assertNotFalse($hash);
             $this->assertTrue(\Auth\password_verify('test', $hash));
         }
+        
+        $this->assertNotFalse(true);
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */

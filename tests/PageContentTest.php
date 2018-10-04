@@ -188,5 +188,7 @@ class PageContentTest extends PHPUnit\Framework\TestCase
         $page->printPage();
         $html = ob_get_contents();
         ob_end_clean();
+
+        $this->assertNotFalse(true);
     }
 }

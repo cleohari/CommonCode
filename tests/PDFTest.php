@@ -15,6 +15,8 @@ class PDFTest extends PHPUnit\Framework\TestCase
             $this->assertEquals($pdfStr, file_get_contents($name));
             unlink($name);
         }
+
+        $this->assertNotFalse(true);
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */

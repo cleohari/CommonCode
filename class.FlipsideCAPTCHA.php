@@ -30,6 +30,8 @@ class FlipsideCAPTCHA implements JsonSerializable
      */
     private $validIDs;
 
+    public  $wwwUrl;
+
     /**
      * Get all valid CAPTCH IDs
      *
@@ -102,6 +104,8 @@ class FlipsideCAPTCHA implements JsonSerializable
         $this->validIDs = FlipsideCAPTCHA::get_valid_captcha_ids();
         $this->random_id = mt_rand(0, count($this->validIDs) - 1);
         $this->random_id = $this->validIDs[$this->random_id];
+        $this->settings = \Settings::getInstance();
+        $this->wwwUrl = $this->settings->getGlobalSetting('www_url', 'https://www.burningflipside.com/');
     }
 
     protected function getCaptchField($fieldName)
@@ -152,7 +156,7 @@ class FlipsideCAPTCHA implements JsonSerializable
         }
         if($explination)
         {
-            $string .= '<div class="col-sm-10">The answer to this question may be found in the Burning Flipside Survival Guide. It may be found <a href="http://www.burningflipside.com/sg">here</a>.</div>';
+            $string .= '<div class="col-sm-10">The answer to this question may be found in the Burning Flipside Survival Guide. It may be found <a href="'.$this->wwwUrl.'/sg">here</a>.</div>';
         }
         
         if(!$return)
