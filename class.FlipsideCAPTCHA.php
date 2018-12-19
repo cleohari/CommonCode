@@ -104,8 +104,8 @@ class FlipsideCAPTCHA implements JsonSerializable
         $this->validIDs = FlipsideCAPTCHA::get_valid_captcha_ids();
         $this->random_id = mt_rand(0, count($this->validIDs) - 1);
         $this->random_id = $this->validIDs[$this->random_id];
-        $this->settings = \Settings::getInstance();
-        $this->wwwUrl = $this->settings->getGlobalSetting('www_url', 'https://www.burningflipside.com/');
+        $settings = \Settings::getInstance();
+        $this->wwwUrl = $settings->getGlobalSetting('www_url', 'https://www.burningflipside.com/');
     }
 
     protected function getCaptchField($fieldName)
