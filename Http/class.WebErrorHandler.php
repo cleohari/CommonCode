@@ -1,6 +1,8 @@
 <?php
 namespace Http;
 
+require_once('Rest/class.RestAPI.php');
+
 class WebErrorHandler
 {
     public function __invoke($request, $response, $exception)
