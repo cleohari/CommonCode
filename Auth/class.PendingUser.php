@@ -31,7 +31,7 @@ class PendingUser extends User
     {
         parent::__construct();
         $this->settings = \Settings::getInstance();
-        $this->profilesUrl = $this->settings->getGlobalSetting('profiles_url', 'https://profiles.burningflipside.com/');
+        $this->profilesUrl = $this->settings->getGlobalSetting('profiles_url', 'https://profiles.burningflipside.com');
     }
 
     public function getHash()

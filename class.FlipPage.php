@@ -82,13 +82,13 @@ class FlipPage extends WebPage
             'Privacy Policy' => $this->wwwUrl.'/about/privacy'
         ));
 
-        $this->profilesUrl = $this->settings->getGlobalSetting('profiles_url', 'https://profiles.burningflipside.com/');
+        $this->profilesUrl = $this->settings->getGlobalSetting('profiles_url', 'https://profiles.burningflipside.com');
         $this->loginUrl = $this->settings->getGlobalSetting('login_url', $this->profilesUrl.'/login.php');
         $this->logoutUrl = $this->settings->getGlobalSetting('logout_url', $this->profilesUrl.'/logout.php');
         $this->registerUrl = $this->settings->getGlobalSetting('register_url', $this->profilesUrl.'/register.php');
         $this->resetUrl = $this->settings->getGlobalSetting('reset_url', $this->profilesUrl.'/reset.php');
 
-        $this->secureUrl = $this->settings->getGlobalSetting('secure_url', 'https://secure.burningflipside.com/');
+        $this->secureUrl = $this->settings->getGlobalSetting('secure_url', 'https://secure.burningflipside.com');
 
         $this->user = FlipSession::getUser();
         $this->addAllLinks();
