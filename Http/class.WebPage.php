@@ -196,8 +196,9 @@ class WebPage
         {
           $this->content['body'] = $this->body;
         }
-	//Add page JS just before rednering so it is after any added by the page explicitly
-        $this->addJS('js/'.basename($_SERVER['SCRIPT_NAME'], '.php').'.js');
+        //Add page JS just before rednering so it is after any added by the page explicitly
+        // $this->addJS('js/'.basename($_SERVER['SCRIPT_NAME'], '.php').'.js');
+        // this code assumes *.php pages have a corresponding *.js file (many don't)
         return $this->twig->render($this->templateName, $this->content);
     }
 
