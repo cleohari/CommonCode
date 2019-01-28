@@ -165,8 +165,8 @@ $jsArray = array(
                 'min' => '/js/common/jquery.Jcrop.min.js'
             ),
             'cdn' => array(
-                'no'  => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/2.0.5/js/Jcrop.js',
-                'min' => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/2.0.5/js/Jcrop.min.js'
+                'no'  => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/2.0.4/js/Jcrop.js',
+                'min' => '//cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/2.0.4/js/Jcrop.min.js'
             )
         ),
         JS_TYPEAHEAD => array(

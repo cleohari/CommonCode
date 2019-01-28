@@ -20,10 +20,10 @@ class WebPage
         $twigCache = $this->settings->getGlobalSetting('twig_cache', '/var/php_cache/twig');
         $twigSettings = array('cache' => $twigCache);
 
-        $this->wwwUrl = $this->settings->getGlobalSetting('www_url', 'https://www.burningflipside.com/');
-        $this->wikiUrl = $this->settings->getGlobalSetting('wiki_url', 'https://wiki.burningflipside.com/');
-        $this->secureUrl = $this->settings->getGlobalSetting('secure_url', 'https://secure.burningflipside.com/');
-        $this->profilesUrl = $this->settings->getGlobalSetting('profiles_url', 'https://profiles.burningflipside.com/');
+        $this->wwwUrl = $this->settings->getGlobalSetting('www_url', 'https://www.burningflipside.com');
+        $this->wikiUrl = $this->settings->getGlobalSetting('wiki_url', 'https://wiki.burningflipside.com');
+        $this->secureUrl = $this->settings->getGlobalSetting('secure_url', 'https://secure.burningflipside.com');
+        $this->profilesUrl = $this->settings->getGlobalSetting('profiles_url', 'https://profiles.burningflipside.com');
         $this->registerUrl = $this->settings->getGlobalSetting('register_url', $this->profilesUrl.'/register.php');
         $this->resetUrl = $this->settings->getGlobalSetting('reset_url', $this->profilesUrl.'/reset.php');
         $this->loginUrl = $this->settings->getGlobalSetting('login_url', $this->profilesUrl.'/login.php');
@@ -196,8 +196,9 @@ class WebPage
         {
           $this->content['body'] = $this->body;
         }
-	//Add page JS just before rednering so it is after any added by the page explicitly
-        $this->addJS('js/'.basename($_SERVER['SCRIPT_NAME'], '.php').'.js');
+        //Add page JS just before rednering so it is after any added by the page explicitly
+        // $this->addJS('js/'.basename($_SERVER['SCRIPT_NAME'], '.php').'.js');
+        // this code assumes *.php pages have a corresponding *.js file (many don't)
         return $this->twig->render($this->templateName, $this->content);
     }
 
