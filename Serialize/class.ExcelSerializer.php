@@ -31,11 +31,11 @@ class ExcelSerializer extends SpreadSheetSerializer
         {
             return null;
         }
-        if(count($array) === 0)
+        $data = $this->getArray($array);
+        if(count($data) === 0)
         {
             return null;
         }
-        $data = $this->getArray($array);
         $ssheat = new Spreadsheet();
         $sheat = $ssheat->getActiveSheet();
         $keys = array_shift($data);
