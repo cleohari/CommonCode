@@ -2,6 +2,10 @@
 namespace Serialize;
 require_once dirname(__FILE__).'/../vendor/autoload.php';
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Writer\Xls;
+
 class ExcelSerializer extends SpreadSheetSerializer
 {
     protected $types = array('xlsx', 'xls', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel');
@@ -32,8 +36,8 @@ class ExcelSerializer extends SpreadSheetSerializer
             return null;
         }
         $data = $this->getArray($array);
-        $ssheat = new \PHPExcel();
-        $sheat = $ssheat->setActiveSheetIndex(0);
+        $ssheat = new Spreadsheet();
+        $sheat = $ssheat->getActiveSheet();
         $keys = array_shift($data);
         $rowCount = count($data);
         $colCount = count($keys);
@@ -45,14 +49,15 @@ class ExcelSerializer extends SpreadSheetSerializer
         $writerType = 'Excel5';
         if(strcasecmp($type, 'xlsx') === 0 || strcasecmp($type, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') === 0)
         {
+            $writer = new Xlsx($ssheat);
             $writerType = 'Excel2007';
             $type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
         }
         else
         {
+            $writer = new Xls($ssheat);
             $type = 'application/vnd.ms-excel';
         }
-        $writer = \PHPExcel_IOFactory::createWriter($ssheat, $writerType);
         ob_start();
         $writer->save('php://output');
         return ob_get_clean();
