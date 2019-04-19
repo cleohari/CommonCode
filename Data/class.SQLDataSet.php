@@ -4,6 +4,7 @@ namespace Data;
 class SQLDataSet extends DataSet
 {
     protected $pdo;
+    protected $params;
 
     /**
      * Create a new SQLDataSet
@@ -12,6 +13,7 @@ class SQLDataSet extends DataSet
      */
     public function __construct($params)
     {
+        $this->params = $params;
         if(isset($params['user']))
         {
             $this->pdo = new \PDO($params['dsn'], $params['user'], $params['pass']);
@@ -19,6 +21,29 @@ class SQLDataSet extends DataSet
         else
         {
             $this->pdo = new \PDO($params['dsn']);
+        }
+    }
+
+    public function __sleep()
+    {
+        $this->pdo = null;
+        return array('params');
+    }
+
+    public function __wakeup()
+    {
+        $this->connect();
+    }
+
+    protected function connect()
+    {
+        if(isset($this->params['user']))
+        {
+	     $this->pdo = new \PDO($this->params['dsn'], $this->params['user'], $this->params['pass']);
+	}
+	else
+	{
+	     $this->pdo = new \PDO($this->params['dsn']);
         }
     }
 
