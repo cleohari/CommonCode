@@ -102,8 +102,8 @@ $jsArray = array(
                 'min' => '/js/common/bootbox.min.js'
             ),
             'cdn' => array(
-                'no'  => '//cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.js',
-                'min' => '//cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js'
+                'no'  => array('src' => 'https://cdn.jsdelivr.net/npm/bootbox@5.1.2/dist/bootbox.all.min.js', 'hash'=> 'sha256-TAsMtZkOqoeEETR6UvBtN5v5RvhkPeS9nv7houPvyZ4='),
+                'min' => array('src' => 'https://cdn.jsdelivr.net/npm/bootbox@5.1.2/dist/bootbox.all.min.js', 'hash'=> 'sha256-TAsMtZkOqoeEETR6UvBtN5v5RvhkPeS9nv7houPvyZ4=')
             )
         ),
         JS_DATATABLE_ODATA => array(
