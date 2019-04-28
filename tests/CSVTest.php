@@ -91,6 +91,6 @@ class CSVTest extends PHPUnit\Framework\TestCase
         $array = array();
         $type = 'text/csv';
         $data = $serializer->serializeData($type, $array);
-        $this->assertNull($data);
+        $this->assertNotNull($data);
     }
 }

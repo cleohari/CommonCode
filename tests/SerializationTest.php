@@ -52,7 +52,7 @@ class SerializationTest extends PHPUnit\Framework\TestCase
         $response = new \Slim\Http\Response();
         $response = $middleware($request, $response, $this);
         $this->assertNotNull($response);
-        $this->assertEquals('application/json;charset=utf-8', $response->getHeaderLine('Content-Type'));
+        $this->assertEquals('application/json', $response->getHeaderLine('Content-Type'));
     }
 
     public function testDataTable()
@@ -63,9 +63,10 @@ class SerializationTest extends PHPUnit\Framework\TestCase
         $body = new \Slim\Http\Body(fopen('php://temp', 'r+'));
         $request = new \Slim\Http\Request('GET', $uri, $headers, array(), array(), $body);
         $response = new \Slim\Http\Response();
+        $response = $response->withHeader('content-type', 'application/json;charset=utf-8');
         $response = $middleware($request, $response, $this);
         $this->assertNotNull($response);
-        $this->assertEquals('application/json;charset=utf-8', $response->getHeaderLine('Content-Type'));
+        $this->assertEquals('application/json', $response->getHeaderLine('Content-Type'));
         $body = $response->getBody();
         $body->rewind();
         $this->assertEquals('{"data":{"test":"a"}}', $body->getContents());
@@ -79,6 +80,7 @@ class SerializationTest extends PHPUnit\Framework\TestCase
         $body = new \Slim\Http\Body(fopen('php://temp', 'r+'));
         $request = new \Slim\Http\Request('GET', $uri, $headers, array(), array(), $body);
         $response = new \Slim\Http\Response();
+        $response = $response->withHeader('content-type', 'application/json;charset=utf-8');
         $response = $middleware($request, $response, $this);
         $this->assertNotNull($response);
         $this->assertEquals('text/xml', $response->getHeaderLine('Content-Type'));
@@ -92,6 +94,7 @@ class SerializationTest extends PHPUnit\Framework\TestCase
         $body = new \Slim\Http\Body(fopen('php://temp', 'r+'));
         $request = new \Slim\Http\Request('GET', $uri, $headers, array(), array(), $body);
         $response = new \Slim\Http\Response();
+        $response = $response->withHeader('content-type', 'application/json;charset=utf-8');
         $response = $middleware($request, $response, $this);
         $this->assertNotNull($response);
         $this->assertEquals('text/x-yaml', $response->getHeaderLine('Content-Type'));

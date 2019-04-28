@@ -20,7 +20,7 @@ class ExcelSerializer extends SpreadSheetSerializer
         {
             if(isset($array[$i]))
             {
-                $sheat->setCellValueByColumnAndRow($i, $row, $array[$i]);
+                $sheat->setCellValueByColumnAndRow($i+1, $row, $array[$i]);
             }
         }
     }

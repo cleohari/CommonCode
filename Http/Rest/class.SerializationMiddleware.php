@@ -78,7 +78,7 @@ class SerializationMiddleware
         }
         $request = $request->withAttribute('format', $this->format)->withAttribute('serializeOverrides', new \Slim\Collection());
         $response = $next($request, $response);
-        if($response->getHeaderLine('Content-Type') !== 'application/json;charset=utf-8')
+        if($response->getHeaderLine('Content-Type') !== 'application/json;charset=utf-8' && $response->getHeaderLine('Content-Type') !== 'application/json')
         {
             //The underlying API call gave us back a different content type. Just pass that on...
             return $response;

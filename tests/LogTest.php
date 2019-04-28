@@ -5,7 +5,7 @@ class LogTest extends \PHPUnit\Framework\TestCase
 {
     use \phpmock\phpunit\PHPMock;
 
-    public function setUp()
+    public function setUp(): void
     {
         $error_log = $this->getFunctionMock(__NAMESPACE__, "error_log");
         $error_log->expects($this->exactly(1))->willReturnCallback(
