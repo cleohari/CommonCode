@@ -78,7 +78,7 @@ body {
 }
 
 .fa.arrow:before {
-    content: "\e079";
+    content: "\f054";
 }
 
 .active > a > .fa.arrow:before {

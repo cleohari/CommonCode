@@ -129,7 +129,18 @@ class WebPage
     {
         global $jsArray;
         $src = $jsArray[$jsFileID][$this->cdn][$this->minified];
-        $this->addJS($src);
+        if(is_array($src))
+        {
+            if(!isset($this->content['securejs']))
+            {
+                $this->content['securejs'] = array();
+            }
+            array_push($this->content['securejs'], $src);
+        }
+        else
+        {
+            $this->addJS($src);
+        }
     }
 
     /**

@@ -76,12 +76,13 @@ body.fixed-nav {
 
 #mainNav .navbar-collapse .navbar-sidenav .nav-link-collapse:after {
   float: right;
-  content: '\f107';
-  font-family: 'FontAwesome';
+  content: '\f078';
+  font-weight: 900;
+  font-family: "Font Awesome 5 Free";
 }
 
 #mainNav .navbar-collapse .navbar-sidenav .nav-link-collapse.collapsed:after {
-  content: '\f105';
+  content: '\f054';
 }
 
 #mainNav .navbar-collapse .navbar-sidenav .sidenav-second-level,
@@ -123,7 +124,8 @@ body.fixed-nav {
   width: auto;
   content: '\f105';
   border: none;
-  font-family: 'FontAwesome';
+  font-weight: 900;
+  font-family: 'Font Awesome 5 Free';
 }
 
 #mainNav .navbar-collapse .navbar-nav > .nav-item.dropdown > .nav-link .indicator {

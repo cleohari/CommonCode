@@ -17,7 +17,7 @@
         "symfony/yaml": "^4.1"
     },
     "require-dev": {
-        "phpunit/phpunit": "~7.2",
+        "phpunit/phpunit": "~8.0",
         "php-mock/php-mock-phpunit": "~2.1",
         "floriansemm/official-library-php-email-parser": "^1.0.0",
         "kubawerlos/html-validator": "^1.0.2"

@@ -1,7 +1,4 @@
 <?php
-define('JS_JQUERY', 0);
-define('JS_JQUERY_UI', 1);
-define('JS_BOOTSTRAP', 2);
 define('JQUERY_VALIDATE', 3);
 define('JQUERY_TOUCH', 4);
 //define('JS_TINYNAV', 5);
@@ -29,36 +26,6 @@ define('CSS_FONTAWESOME', 6);
 
 global $jsArray;
 $jsArray = array(
-        JS_JQUERY => array(
-            'no' => array(
-                'no'  => '/js/common/jquery.js',
-                'min' => '/js/common/jquery.min.js'
-            ),
-            'cdn' => array(
-                'no'  => '//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.js',
-                'min' => '//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'
-            )
-        ),
-        JS_JQUERY_UI => array(
-            'no' => array(
-                'no'  => '/js/common/jquery-ui.js',
-                'min' => '/js/common/jquery-ui.min.js'
-            ),
-            'cdn' => array(
-                'no'  => '//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.js',
-                'min' => '//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'
-            )
-        ),
-        JS_BOOTSTRAP => array(
-            'no' => array(
-                'no'  => '/js/common/bootstrap.js',
-                'min' => '/js/common/bootstrap.min.js'
-            ),
-            'cdn' => array(
-                'no'  => '//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.js',
-                'min' => '//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js'
-            )
-        ),
         JQUERY_VALIDATE => array(
             'no' => array(
                 'no'  => '/js/common/jquery.validate.js',
@@ -115,8 +82,8 @@ $jsArray = array(
                 'min' => '/js/common/Chart.min.js'
             ),
             'cdn' => array(
-                'no'  => '//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.js',
-                'min' => '//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js'
+                'no'  => '//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.js',
+                'min' => '//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js'
             )
         ),
         JS_METISMENU => array(
@@ -135,8 +102,8 @@ $jsArray = array(
                 'min' => '/js/common/bootbox.min.js'
             ),
             'cdn' => array(
-                'no'  => '//cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.js',
-                'min' => '//cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js'
+                'no'  => array('src' => 'https://cdn.jsdelivr.net/npm/bootbox@5.1.2/dist/bootbox.all.min.js', 'hash'=> 'sha256-TAsMtZkOqoeEETR6UvBtN5v5RvhkPeS9nv7houPvyZ4='),
+                'min' => array('src' => 'https://cdn.jsdelivr.net/npm/bootbox@5.1.2/dist/bootbox.all.min.js', 'hash'=> 'sha256-TAsMtZkOqoeEETR6UvBtN5v5RvhkPeS9nv7houPvyZ4=')
             )
         ),
         JS_DATATABLE_ODATA => array(
@@ -182,11 +149,11 @@ $jsArray = array(
         JS_CHEET => array(
             'no' => array(
                 'no'  => '/js/common/cheet.js',
-                'min' => '/js/common/cheer.min.js'
+                'min' => '/js/common/cheet.min.js'
             ),
             'cdn' => array(
-                'no'  => '//cdn.rawgit.com/namuol/cheet.js/master/cheet.min.js',
-                'min' => '//cdn.rawgit.com/namuol/cheet.js/master/cheet.min.js'
+                'no'  => array('src' => 'https://cdn.rawgit.com/namuol/cheet.js/0.3.3/cheet.min.js', 'hash'=> 'sha384-8sTXxKn53rkirkXu5gKBBpFxoK/zmAefVSPu6IvC29DIKRkU94ep9TNs6tgyxde4'),
+                'min' => array('src' => 'https://cdn.rawgit.com/namuol/cheet.js/0.3.3/cheet.min.js', 'hash'=> 'sha384-8sTXxKn53rkirkXu5gKBBpFxoK/zmAefVSPu6IvC29DIKRkU94ep9TNs6tgyxde4')
             )
         ),
         JS_FLIPSIDE => array(

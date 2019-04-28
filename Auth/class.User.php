@@ -278,14 +278,14 @@ class User extends \SerializableObject
             }
             unset($data->password);
         }
-        else if(isset($data['userPassword']))
+        else if(isset($data->userPassword))
         {
-            if(isset($data['oldpass']))
+            if(isset($data->oldpass))
             {
-                $this->change_pass($data['oldpass'], $data['userPassword']);
-                unset($data['oldpass']);
+                $this->change_pass($data->oldpass, $data->userPassword);
+                unset($data->oldpass);
             }
-            unset($data['userPassword']);
+            unset($data->userPassword);
         }
     }
 
