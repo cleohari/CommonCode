@@ -32,10 +32,6 @@ class ExcelSerializer extends SpreadSheetSerializer
             return null;
         }
         $data = $this->getArray($array);
-        if(count($data) === 0)
-        {
-            return null;
-        }
         $ssheat = new Spreadsheet();
         $sheat = $ssheat->getActiveSheet();
         $keys = array_shift($data);
