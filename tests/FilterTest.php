@@ -249,6 +249,10 @@ class FilterTest extends PHPUnit\Framework\TestCase
         $mongo = $filter->to_mongo_filter();
         $this->assertArrayHasKey('a', $mongo);
         $this->assertEquals(1, $mongo['a']);
+
+        $filter = new \Data\Filter();
+        $mongo = $filter->to_mongo_filter();
+        $this->assertEquals(array(), $mongo);
     }
 
     public function testPHP()
@@ -288,6 +292,17 @@ class FilterTest extends PHPUnit\Framework\TestCase
         $this->assertCount(2, $test);
         $this->assertEquals(array('a'=>1), $test[0]);
         $this->assertEquals(array('a'=>2), $test[1]);
+    }
+
+    public function testClause()
+    {
+        $filter = new \Data\Filter('year eq current and test eq a');
+        $clause = $filter->getClause('current');
+        $this->assertNotFalse($clause);
+
+        $filter = new \Data\Filter('year eq current and test eq a');
+        $clause = $filter->getClause('current1');
+        $this->assertNull($clause);
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
