@@ -11,13 +11,13 @@ class JsonSpreadSheet extends SpreadSheetSerializer
         {
             return null;
         }
-        if(count($array) === 0)
-        {
-            return null;
-        }
         $dataTable = ($type === 'json-ss-dt');
         $type = 'application/json';
         $data = $this->getArray($array);
+        if(count($data) === 0)
+        {
+            return null;
+        }
         $names = array_shift($data);
         $rowCount = count($data);
         for($i = 0; $i < $rowCount; $i++)

@@ -262,7 +262,7 @@ class User extends \SerializableObject
     /**
      * Update the user password if required
      */
-    private function editUserPassword($data)
+    private function editUserPassword(&$data)
     {
         if(isset($data->password))
         {
@@ -277,6 +277,15 @@ class User extends \SerializableObject
                 unset($data->hash);
             }
             unset($data->password);
+        }
+        else if(isset($data->userPassword))
+        {
+            if(isset($data->oldpass))
+            {
+                $this->change_pass($data->oldpass, $data->userPassword);
+                unset($data->oldpass);
+            }
+            unset($data->userPassword);
         }
     }
 

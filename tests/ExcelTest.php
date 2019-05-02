@@ -7,7 +7,8 @@ class ExcelTest extends PHPUnit\Framework\TestCase
     {
          $name = tempnam("/tmp", "Excel");
          file_put_contents($name, $data);
-         $excel = \PHPExcel_IOFactory::load($name);
+         $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($name);
+         $excel = $reader->load($name);
          unlink($name);
          return $excel;
     }
@@ -20,27 +21,10 @@ class ExcelTest extends PHPUnit\Framework\TestCase
         $data = $serializer->serializeData($type, $array);
         $excel = $this->stringToExcel($data);
         $this->assertNotNull($excel);
-        $sheet = $excel->getSheet();
+        $sheet = $excel->getSheet(0);
         $this->assertNotNull($sheet);
-        $cell = $sheet->getCellByColumnAndRow(0,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('Test1', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(1,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('Test2', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(2,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('ABC', $cell->getValue());
-
-        $cell = $sheet->getCellByColumnAndRow(0,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('1', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(1,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('a', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(2,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('1', $cell->getValue());
+        $test = $sheet->rangeToArray('A1:C2', NULL, true, true, false);
+        $this->assertEquals(array(array('Test1', 'Test2', 'ABC'), array('1', 'a', '1')), $test);
 
         $serializer = new \Serialize\ExcelSerializer();
         $array = array(array('Test1'=>1,'Test2'=>'a','ABC'=>'1'));
@@ -48,27 +32,10 @@ class ExcelTest extends PHPUnit\Framework\TestCase
         $data = $serializer->serializeData($type, $array);
         $excel = $this->stringToExcel($data);
         $this->assertNotNull($excel);
-        $sheet = $excel->getSheet();
+        $sheet = $excel->getSheet(0);
         $this->assertNotNull($sheet);
-        $cell = $sheet->getCellByColumnAndRow(0,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('Test1', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(1,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('Test2', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(2,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('ABC', $cell->getValue());
-
-        $cell = $sheet->getCellByColumnAndRow(0,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('1', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(1,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('a', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(2,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('1', $cell->getValue());
+        $test = $sheet->rangeToArray('A1:C2', NULL, true, true, false);
+        $this->assertEquals(array(array('Test1', 'Test2', 'ABC'), array('1', 'a', '1')), $test);
     }
 
     public function testObject()
@@ -83,26 +50,10 @@ class ExcelTest extends PHPUnit\Framework\TestCase
         $data = $serializer->serializeData($type, $array);
         $excel = $this->stringToExcel($data);
         $this->assertNotNull($excel);
-        $sheet = $excel->getSheet();
+        $sheet = $excel->getSheet(0);
         $this->assertNotNull($sheet);
-        $cell = $sheet->getCellByColumnAndRow(0,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('Test1', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(1,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('Test2', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(2,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('ABC', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(0,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('1', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(1,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('a', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(2,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('1', $cell->getValue());
+        $test = $sheet->rangeToArray('A1:C2', NULL, true, true, false);
+        $this->assertEquals(array(array('Test1', 'Test2', 'ABC'), array('1', 'a', '1')), $test);
 
         $serializer = new \Serialize\ExcelSerializer();
         $obj = new stdClass();
@@ -114,26 +65,10 @@ class ExcelTest extends PHPUnit\Framework\TestCase
         $data = $serializer->serializeData($type, $array);
         $excel = $this->stringToExcel($data);
         $this->assertNotNull($excel);
-        $sheet = $excel->getSheet();
+        $sheet = $excel->getSheet(0);
         $this->assertNotNull($sheet);
-        $cell = $sheet->getCellByColumnAndRow(0,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('Test1', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(1,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('Test2', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(2,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('ABC', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(0,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('1', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(1,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('a', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(2,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('1', $cell->getValue());
+        $test = $sheet->rangeToArray('A1:C2', NULL, true, true, false);
+        $this->assertEquals(array(array('Test1', 'Test2', 'ABC'), array('1', 'a', '1')), $test);
 
         $serializer = new \Serialize\ExcelSerializer();
         $obj = new stdClass();
@@ -144,26 +79,10 @@ class ExcelTest extends PHPUnit\Framework\TestCase
         $data = $serializer->serializeData($type, $obj);
         $excel = $this->stringToExcel($data);
         $this->assertNotNull($excel);
-        $sheet = $excel->getSheet();
+        $sheet = $excel->getSheet(0);
         $this->assertNotNull($sheet);
-        $cell = $sheet->getCellByColumnAndRow(0,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('Test1', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(1,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('Test2', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(2,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('ABC', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(0,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('1', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(1,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('a', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(2,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('1', $cell->getValue());
+        $test = $sheet->rangeToArray('A1:C2', NULL, true, true, false);
+        $this->assertEquals(array(array('Test1', 'Test2', 'ABC'), array('1', 'a', '1')), $test);
 
         $serializer = new \Serialize\ExcelSerializer();
         $obj = new stdClass();
@@ -174,26 +93,10 @@ class ExcelTest extends PHPUnit\Framework\TestCase
         $data = $serializer->serializeData($type, $obj);
         $excel = $this->stringToExcel($data);
         $this->assertNotNull($excel);
-        $sheet = $excel->getSheet();
+        $sheet = $excel->getSheet(0);
         $this->assertNotNull($sheet);
-        $cell = $sheet->getCellByColumnAndRow(0,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('Test1', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(1,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('Test2', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(2,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('ABC', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(0,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('1', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(1,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('a', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(2,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('1', $cell->getValue());
+        $test = $sheet->rangeToArray('A1:C2', NULL, true, true, false);
+        $this->assertEquals(array(array('Test1', 'Test2', 'ABC'), array('1', 'a', '1')), $test);
     }
 
     public function testComma()
@@ -204,26 +107,10 @@ class ExcelTest extends PHPUnit\Framework\TestCase
         $data = $serializer->serializeData($type, $array);
         $excel = $this->stringToExcel($data);
         $this->assertNotNull($excel);
-        $sheet = $excel->getSheet();
+        $sheet = $excel->getSheet(0);
         $this->assertNotNull($sheet);
-        $cell = $sheet->getCellByColumnAndRow(0,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('Test1', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(1,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('Test2,3', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(2,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('ABC', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(0,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('1', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(1,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('a', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(2,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('1,0', $cell->getValue());
+        $test = $sheet->rangeToArray('A1:C2', NULL, true, true, false);
+        $this->assertEquals(array(array('Test1', 'Test2,3', 'ABC'), array('1', 'a', '1,0')), $test);
 
         $serializer = new \Serialize\ExcelSerializer();
         $array = array(array('Test1'=>1,'Test2,3'=>'a','ABC'=>'1,0'));
@@ -231,26 +118,10 @@ class ExcelTest extends PHPUnit\Framework\TestCase
         $data = $serializer->serializeData($type, $array);
         $excel = $this->stringToExcel($data);
         $this->assertNotNull($excel);
-        $sheet = $excel->getSheet();
+        $sheet = $excel->getSheet(0);
         $this->assertNotNull($sheet);
-        $cell = $sheet->getCellByColumnAndRow(0,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('Test1', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(1,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('Test2,3', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(2,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('ABC', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(0,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('1', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(1,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('a', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(2,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('1,0', $cell->getValue());
+        $test = $sheet->rangeToArray('A1:C2', NULL, true, true, false);
+        $this->assertEquals(array(array('Test1', 'Test2,3', 'ABC'), array('1', 'a', '1,0')), $test);
     }
 
     public function testUnevenArrays()
@@ -263,35 +134,10 @@ class ExcelTest extends PHPUnit\Framework\TestCase
         $data = $serializer->serializeData($type, $array);
         $excel = $this->stringToExcel($data);
         $this->assertNotNull($excel);
-        $sheet = $excel->getSheet();
+        $sheet = $excel->getSheet(0);
         $this->assertNotNull($sheet);
-        $cell = $sheet->getCellByColumnAndRow(0,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('A', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(1,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('B', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(2,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('C', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(0,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('1', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(1,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('2', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(2,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('3', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(0,3);
-        $this->assertNotNull($cell);
-        $this->assertEquals('1', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(1,3);
-        $this->assertNotNull($cell);
-        $this->assertEmpty($cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(2,3);
-        $this->assertNotNull($cell);
-        $this->assertEquals('2', $cell->getValue());
+        $test = $sheet->rangeToArray('A1:C3', NULL, true, true, false);
+        $this->assertEquals(array(array('A', 'B', 'C'), array('1', '2', '3'), array('1', NULL, '2')), $test);
 
         $serializer = new \Serialize\ExcelSerializer();
         $row1 = array('A'=>1,'B'=>'2','C'=>'3');
@@ -301,35 +147,10 @@ class ExcelTest extends PHPUnit\Framework\TestCase
         $data = $serializer->serializeData($type, $array);
         $excel = $this->stringToExcel($data);
         $this->assertNotNull($excel);
-        $sheet = $excel->getSheet();
+        $sheet = $excel->getSheet(0);
         $this->assertNotNull($sheet);
-        $cell = $sheet->getCellByColumnAndRow(0,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('A', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(1,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('B', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(2,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('C', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(0,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('1', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(1,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('2', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(2,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('3', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(0,3);
-        $this->assertNotNull($cell);
-        $this->assertEquals('1', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(1,3);
-        $this->assertNotNull($cell);
-        $this->assertEmpty($cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(2,3);
-        $this->assertNotNull($cell);
-        $this->assertEquals('2', $cell->getValue());
+        $test = $sheet->rangeToArray('A1:C3', NULL, true, true, false);
+        $this->assertEquals(array(array('A', 'B', 'C'), array('1', '2', '3'), array('1', NULL, '2')), $test);
     }
 
     public function testObjectContents()
@@ -349,38 +170,10 @@ class ExcelTest extends PHPUnit\Framework\TestCase
         $data = $serializer->serializeData($type, $array);
         $excel = $this->stringToExcel($data);
         $this->assertNotNull($excel);
-        $sheet = $excel->getSheet();
+        $sheet = $excel->getSheet(0);
         $this->assertNotNull($sheet);
-        $cell = $sheet->getCellByColumnAndRow(0,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('A.Test1', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(1,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('A.Test2', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(2,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('A.ABC', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(3,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('B', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(4,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('C', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(5,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('_id', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(0,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals(1, $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(1,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('a', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(2,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('1', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(5,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('4af9f23d8ead0e1d32000000', $cell->getValue());
+        $test = $sheet->rangeToArray('A1:F2', NULL, true, true, false);
+        $this->assertEquals(array(array('A.Test1', 'A.Test2', 'A.ABC', 'B', 'C', '_id'), array('1', 'a', '1', '2', '3', '4af9f23d8ead0e1d32000000')), $test);
 
         $serializer = new \Serialize\ExcelSerializer();
         $id = new \MongoId('4af9f23d8ead0e1d32000000');
@@ -394,38 +187,10 @@ class ExcelTest extends PHPUnit\Framework\TestCase
         $data = $serializer->serializeData($type, $array);
         $excel = $this->stringToExcel($data);
         $this->assertNotNull($excel);
-        $sheet = $excel->getSheet();
+        $sheet = $excel->getSheet(0);
         $this->assertNotNull($sheet);
-        $cell = $sheet->getCellByColumnAndRow(0,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('A.Test1', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(1,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('A.Test2', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(2,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('A.ABC', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(3,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('B', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(4,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('C', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(5,1);
-        $this->assertNotNull($cell);
-        $this->assertEquals('_id', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(0,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals(1, $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(1,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('a', $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(2,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals(1, $cell->getValue());
-        $cell = $sheet->getCellByColumnAndRow(5,2);
-        $this->assertNotNull($cell);
-        $this->assertEquals('4af9f23d8ead0e1d32000000', $cell->getValue());
+        $test = $sheet->rangeToArray('A1:F2', NULL, true, true, false);
+        $this->assertEquals(array(array('A.Test1', 'A.Test2', 'A.ABC', 'B', 'C', '_id'), array('1', 'a', '1', '2', '3', '4af9f23d8ead0e1d32000000')), $test);
     }
 
     public function testBadType()
@@ -443,6 +208,6 @@ class ExcelTest extends PHPUnit\Framework\TestCase
         $array = array();
         $type = 'xls';
         $data = $serializer->serializeData($type, $array);
-        $this->assertNull($data);
+        $this->assertNotNull($data);
     }
 }

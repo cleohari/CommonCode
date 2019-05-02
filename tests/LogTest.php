@@ -5,7 +5,7 @@ class LogTest extends \PHPUnit\Framework\TestCase
 {
     use \phpmock\phpunit\PHPMock;
 
-    public function setUp()
+    public function setUp(): void
     {
         $error_log = $this->getFunctionMock(__NAMESPACE__, "error_log");
         $error_log->expects($this->exactly(1))->willReturnCallback(
@@ -63,6 +63,28 @@ class LogTest extends \PHPUnit\Framework\TestCase
         $log = new \Log\PHPLog();
         $this->expectOutputString('[notice] Test7 Test8');
         $log->log(\Psr\Log\LogLevel::NOTICE, '{str1} {str2}', array('str1'=>'Test7', 'str2'=>'Test8'));
+    }
+
+    public function testPHPLogConstruct()
+    {
+        $log = new \Log\PHPLog(array('defaultLogLevels'=>array(\Psr\Log\LogLevel::EMERGENCY)));
+        $this->expectOutputString('[emergency] Test9');
+        $log->log(\Psr\Log\LogLevel::EMERGENCY, 'Test9');
+        $log->log(\Psr\Log\LogLevel::ALERT, 'Test10');
+    }
+
+    public function testPHPLogInfo()
+    {
+        $log = new \Log\PHPLog(array('defaultLogLevels'=>array(\Psr\Log\LogLevel::INFO)));
+        $this->expectOutputString('[info] Test11');
+        $log->log(\Psr\Log\LogLevel::INFO, 'Test11');
+    }
+
+    public function testPHPLogDebug()
+    {
+        $log = new \Log\PHPLog(array('defaultLogLevels'=>array(\Psr\Log\LogLevel::DEBUG)));
+        $this->expectOutputString('[debug] Test12');
+        $log->log(\Psr\Log\LogLevel::DEBUG, 'Test12');
     }
 }
 

@@ -104,6 +104,10 @@ class DataTableAPI extends RestAPI
                 $areas[$i] = $this->processEntry($areas[$i], $request);
             }
         }
+        if($odata->count)
+        {
+            $areas = array('@odata.count'=>count($areas), 'value'=>$areas);
+        }
         return $response->withJson($areas);
     }
 
@@ -171,6 +175,16 @@ class DataTableAPI extends RestAPI
             return $response->withStatus(401);
         }
         $obj = $request->getParsedBody();
+        if($obj === null)
+        {
+            $request->getBody()->rewind();
+            $obj = $request->getBody()->getContents();
+            $tmp = json_decode($obj, true);
+            if($tmp !== null)
+            {
+                $obj = $tmp;
+            }
+        }
         if($this->validateUpdate($obj, $request, $entry) === false)
         {
             return $response->withStatus(400);

@@ -28,7 +28,7 @@ class LoginRequiredPage extends WebPage
             <div id="content">
               <div class="row">
                 <div class="col-lg-12">
-                  <h1 class="page-header">You must <a href="'.$this->loginUrl.'?return='.$this->currentUrl().'">log in <span class="fa fa-sign-in"></span></a> to access the '.$this->content['pageTitle'].' system!</h1>
+                  <h1 class="page-header">You must <a href="'.$this->loginUrl.'?return='.$this->currentUrl().'">log in <span class="fa fa-sign-in-alt"></span></a> to access the '.$this->content['pageTitle'].' system!</h1>
                 </div>
               </div>
             </div>

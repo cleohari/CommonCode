@@ -3,7 +3,7 @@
   <head>
     <title>{{ pageTitle }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% if useCDN == null or useCND %}
+    {% if (useCDN is same as(null)) or (useCDN == true) %}
       {{ include('head-cdn.html') }}
     {% else %}
       {{ include('head-local.html') }}
@@ -15,6 +15,9 @@
     <script src="/js/common/sb-admin.min.js" type="text/javascript"></script>
     <script src="/js/common/flipside.min.js" type="text/javascript"></script>
     <script src="/js/common/login.min.js" type="text/javascript"></script>
+    {% for j in securejs %}
+      <script async defer src="{{ j.src }}" type="text/javascript" integrity="{{ j.hash }}" crossorigin="anonymous"></script>
+    {% endfor %}
     {% for j in js %}
       <script src="{{ j }}" type="text/javascript"></script>
     {% endfor %}

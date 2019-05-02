@@ -12,6 +12,11 @@ class WebErrorHandler
             $response->getBody()->write('You are not authorized to view this page. The most common cause of this is that you are not logged in to the website. Please log in then try again');
             return $response->withStatus(401);
         }
+        else if($exception->getCode() === \Http\Rest\INVALID_PARAM)
+        {
+            return $response->withJson($exception, 400);
+        }
+        error_log($exception->__toString());
         return $response
             ->withStatus(500)
             ->withHeader('Content-Type', 'text/html')

@@ -11,20 +11,12 @@ class CSVSerializer extends SpreadSheetSerializer
         {
             return null;
         }
-        if(count($array) === 0)
-        {
-            return null;
-        }
         $type = 'text/csv';
         $data = $this->getArray($array);
         ob_start();
         $df = fopen('php://output', 'w');
         foreach($data as $row)
         {
-            if(!is_array($row))
-            {
-                $row = array($row);
-            }
             fputcsv($df, $row);
         }
         fclose($df);
