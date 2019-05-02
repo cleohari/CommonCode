@@ -37,6 +37,10 @@ class ODataParamsTest extends PHPUnit\Framework\TestCase
         $this->assertContains('a', $odata->select);
         $this->assertContains('1', $odata->select);
         $this->assertContains('Zz', $odata->select);
+
+        $array = array(array('test1'=>1, 'a'=>1, '1'=>1, 'Zz'=>1, 'T'=>1));
+        $filtered = $odata->filterArrayPerSelect($array);
+        $this->assertEquals(array(array('test1'=>1, 'a'=>1, '1'=>1, 'Zz'=>1)), $filtered);
     }
 
     public function testExpand()
@@ -48,6 +52,69 @@ class ODataParamsTest extends PHPUnit\Framework\TestCase
         $this->assertCount(2, $odata->expand);
         $this->assertContains('tickets', $odata->expand);
         $this->assertContains('donations', $odata->expand);
+    }
+
+    public function testTop()
+    {
+        $params = array();
+        $params['$top'] = 1;
+        $odata = new \ODataParams($params);
+        $this->assertNotFalse($odata->top);
+        $this->assertEquals(1, $odata->top);
+
+        $params = array();
+        $params['$top'] = '1';
+        $odata = new \ODataParams($params);
+        $this->assertNotFalse($odata->top);
+        $this->assertEquals(1, $odata->top);
+    }
+
+    public function testSkip()
+    {
+        $params = array();
+        $params['$skip'] = 1;
+        $odata = new \ODataParams($params);
+        $this->assertNotFalse($odata->skip);
+        $this->assertEquals(1, $odata->skip);
+
+        $params = array();
+        $params['$skip'] = '1';
+        $odata = new \ODataParams($params);
+        $this->assertNotFalse($odata->skip);
+        $this->assertEquals(1, $odata->skip);
+    }
+
+    public function testCount()
+    {
+        $params = array();
+        $params['$count'] = 'true';
+        $odata = new \ODataParams($params);
+        $this->assertNotFalse($odata->count);
+
+        $params = array();
+        $odata = new \ODataParams($params);
+        $this->assertFalse($odata->count);
+    }
+
+    public function testOrderBy()
+    {
+        $params = array();
+        $params['$orderby'] = 'test';
+        $odata = new \ODataParams($params);
+        $this->assertNotFalse($odata->orderby);
+        $this->assertEquals(array('test'=>1), $odata->orderby);
+
+        $params = array();
+        $params['$orderby'] = 'test asc';
+        $odata = new \ODataParams($params);
+        $this->assertNotFalse($odata->orderby);
+        $this->assertEquals(array('test'=>1), $odata->orderby);
+
+        $params = array();
+        $params['$orderby'] = 'test desc';
+        $odata = new \ODataParams($params);
+        $this->assertNotFalse($odata->orderby);
+        $this->assertEquals(array('test'=>-1), $odata->orderby);
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */

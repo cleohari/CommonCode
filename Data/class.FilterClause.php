@@ -117,7 +117,7 @@ class FilterClause
         {
             case 'substringof':
             case 'contains':
-                $str .= $this->var1.$this->op.'*'.trim($this->var2, "'").'*';
+                $str .= $this->var1.'=*'.trim($this->var2, "'").'*';
                 break;
             case '!=':
                 $str .= '!('.$this->var1.'='.$this->var2.')';

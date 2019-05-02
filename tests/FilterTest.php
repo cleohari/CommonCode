@@ -170,6 +170,8 @@ class FilterTest extends PHPUnit\Framework\TestCase
         $this->assertEquals('(|(a=b)(c=d))', $filter->to_ldap_string());
         $filter = new \Data\Filter('a ne b');
         $this->assertEquals('(!(a=b))', $filter->to_ldap_string());
+        $filter = new \Data\Filter('contains(a,b)');
+        $this->assertEquals('(a=*b*)', $filter->to_ldap_string());
     }
 
     public function testMongo()
@@ -232,6 +234,75 @@ class FilterTest extends PHPUnit\Framework\TestCase
         $regex = $array['$regex'];
         $this->assertEquals($regex->regex, 'b');
         $this->assertEquals($regex->flags, 'i');
+
+        $filter = new \Data\Filter('a eq true');
+        $mongo = $filter->to_mongo_filter();
+        $this->assertArrayHasKey('a', $mongo);
+        $this->assertTrue($mongo['a']);
+
+        $filter = new \Data\Filter('a eq false');
+        $mongo = $filter->to_mongo_filter();
+        $this->assertArrayHasKey('a', $mongo);
+        $this->assertFalse($mongo['a']);
+
+        $filter = new \Data\Filter('a eq 1');
+        $mongo = $filter->to_mongo_filter();
+        $this->assertArrayHasKey('a', $mongo);
+        $this->assertEquals(1, $mongo['a']);
+
+        $filter = new \Data\Filter();
+        $mongo = $filter->to_mongo_filter();
+        $this->assertEquals(array(), $mongo);
+    }
+
+    public function testPHP()
+    {
+        $filter = new \Data\Filter('a eq 1');
+        $array = array(array('a'=>1),array('a'=>2));
+        $test = $filter->filter_array($array);
+        $this->assertCount(1, $test);
+        $this->assertEquals(array('a'=>1), $test[0]);
+
+        $filter = new \Data\Filter('a ne 1');
+        $array = array(array('a'=>1),array('a'=>2));
+        $test = $filter->filter_array($array);
+        $this->assertCount(1, $test);
+        $this->assertEquals(array('a'=>2), $test[0]);
+
+        $filter = new \Data\Filter('a lt 1');
+        $array = array(array('a'=>1),array('a'=>2));
+        $test = $filter->filter_array($array);
+        $this->assertCount(0, $test);
+
+        $filter = new \Data\Filter('a le 1');
+        $array = array(array('a'=>1),array('a'=>2));
+        $test = $filter->filter_array($array);
+        $this->assertCount(1, $test);
+        $this->assertEquals(array('a'=>1), $test[0]);
+
+        $filter = new \Data\Filter('a gt 1');
+        $array = array(array('a'=>1),array('a'=>2));
+        $test = $filter->filter_array($array);
+        $this->assertCount(1, $test);
+        $this->assertEquals(array('a'=>2), $test[0]);
+
+        $filter = new \Data\Filter('a ge 1');
+        $array = array(array('a'=>1),array('a'=>2));
+        $test = $filter->filter_array($array);
+        $this->assertCount(2, $test);
+        $this->assertEquals(array('a'=>1), $test[0]);
+        $this->assertEquals(array('a'=>2), $test[1]);
+    }
+
+    public function testClause()
+    {
+        $filter = new \Data\Filter('year eq current and test eq a');
+        $clause = $filter->getClause('current');
+        $this->assertNotFalse($clause);
+
+        $filter = new \Data\Filter('year eq current and test eq a');
+        $clause = $filter->getClause('current1');
+        $this->assertNull($clause);
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */

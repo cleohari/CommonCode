@@ -3,20 +3,6 @@ namespace Serialize;
 
 abstract class SpreadSheetSerializer extends Serializer
 {
-    private function getKeysFromData($array)
-    {
-        $first = reset($array);
-        if(is_array($first))
-        {
-            return array_keys($first);
-        }
-        else if(is_object($first))
-        {
-            return array_keys(get_object_vars($first));
-        }
-        return false;
-    }
-
     private function getRowArray($row)
     {
         if(is_object($row))
@@ -28,15 +14,6 @@ abstract class SpreadSheetSerializer extends Serializer
             return array($row);
         }
         return $row;
-    }
-
-    private function prependAndMergeKeys(&$keys, $prefix, $newKeys)
-    {
-        foreach($newKeys as &$key)
-        {
-            $key = $prefix.$key;
-        }
-        $keys = array_unique(array_merge($keys, $newKeys));
     }
 
     protected function addValueByColName(&$cols, &$row, $colName, $value)
