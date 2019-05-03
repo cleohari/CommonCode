@@ -152,6 +152,15 @@ class DataSetTest extends PHPUnit\Framework\TestCase
         $this->assertCount(5, $res[0]);
         $this->assertEquals(3, $res[0]['PersonID']);
 
+        $count = $dataTable->count();
+        $this->assertEquals(3, $count);
+
+        $count = $dataTable->count(new \Data\Filter('PersonID eq 2'));
+        $this->assertEquals(1, $count);
+
+        $count = $dataTable->count(new \Data\Filter('PersonID eq 4'));
+        $this->assertEquals(0, $count);
+
         $res = $dataTable->update(new \Data\Filter('PersonID eq 1'), array('LastName'=>'Smith'));
         $this->assertTrue($res);
 
@@ -175,6 +184,16 @@ class DataSetTest extends PHPUnit\Framework\TestCase
 
         $res = $dataTable->delete(new \Data\Filter('Test eq 4'));
         $this->assertFalse($res);
+
+        $err = $dataTable->getLastError();
+        $this->assertIsArray($err);
+        $this->assertEquals('HY000', $err[0]);
+
+        $key = $dataTable->get_primary_key();
+        $this->assertFalse($key);
+
+        $data = $dataTable->raw_query('SELECT * from Persons');
+        $this->assertCount(2, $data);
     }
 
     public function testSerialization()
@@ -184,6 +203,51 @@ class DataSetTest extends PHPUnit\Framework\TestCase
         $data = serialize($dataSet);
         $dataSet2 = unserialize($data);
         $this->assertInstanceOf('Data\SQLDataSet', $dataSet2);
+    }
+
+    public function testObjectDataTable()
+    {
+        $dataTable = TestObjDataTable::getInstance();
+        $this->assertInstanceOf('Data\ObjectDataTable', $dataTable);
+
+        $res = $dataTable->read();
+        $this->assertFalse($res);
+
+        $obj = new stdClass();
+        $obj->PersonID = 3;
+        $obj->LastName = 'Boyd';
+        $obj->FirstName = 'Patrick';
+        $obj->Address ='321 Fake Street';
+        $obj->City = 'Temp';
+        $res = $dataTable->create($obj);
+        $this->assertTrue($res);
+
+        $res = $dataTable->create(array('PersonID'=>2, 'LastName'=>'Abc', 'FirstName'=>'123', 'Address'=>'123 Fake Street', 'City'=>'Fake Town'));
+        $this->assertTrue($res);
+
+        $res = $dataTable->read(false);
+        $this->assertCount(2, $res);
+        for($i = 0; $i < 2; $i++)
+        {
+            $this->assertInstanceOf('SerializableObject', $res[$i]);
+        }
+
+        $res = $dataTable->count();
+        $this->assertEquals(2, $res);
+
+        $res = $dataTable->update(new \Data\Filter('PersonID eq 2'), array('LastName'=>'Smith'));
+        $this->assertTrue($res);
+
+        $res = $dataTable->read(new \Data\Filter('PersonID eq 2 and LastName eq "Smith"'));
+        $this->assertNotFalse($res);
+        $this->assertCount(1, $res);
+        $this->assertEquals('Smith', $res[0]->LastName);
+
+        $res = $dataTable->delete(new \Data\Filter('PersonID eq 2'));
+        $this->assertTrue($res);
+
+        $res = $dataTable->delete(new \Data\Filter('Test eq 4'));
+        $this->assertFalse($res);
     }
 
     public function testUnknownDataSet()
@@ -197,6 +261,16 @@ class DataSetTest extends PHPUnit\Framework\TestCase
         {
             $this->assertEquals('Unknown dataset name Unknown', $ex->getMessage());
         }
+    }
+}
+
+class TestObjDataTable extends \Data\ObjectDataTable
+{
+    protected function __construct()
+    {
+        $dataSet = new \Data\SQLDataSet(array('dsn'=>'sqlite::memory:'));
+        $dataSet->raw_query('CREATE TABLE Persons (PersonID int, LastName varchar(255), FirstName varchar(255), Address varchar(255), City varchar(255));');
+        parent::__construct($dataSet['Persons']);
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */

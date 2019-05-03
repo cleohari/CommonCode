@@ -64,15 +64,11 @@ class ObjectDataTable extends \Data\DataTable
 
     public function delete($filter)
     {
-        if(method_exists($data, 'preDelete'))
-        {
-            $data = $data->preDelete();
-        }
-        return $dataTable->delete($filter);
+        return $this->dataTable->delete($filter);
     }
 
     public function count($filter=false)
     {
-        return parent::count($filter);
+        return $this->dataTable->count($filter);
     }
 }
