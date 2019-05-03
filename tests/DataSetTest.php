@@ -177,6 +177,15 @@ class DataSetTest extends PHPUnit\Framework\TestCase
         $this->assertFalse($res);
     }
 
+    public function testSerialization()
+    {
+        $dataSet = new \Data\SQLDataSet(array('dsn'=>'sqlite::memory:'));
+        $this->assertInstanceOf('Data\SQLDataSet', $dataSet);
+        $data = serialize($dataSet);
+        $dataSet2 = unserialize($data);
+        $this->assertInstanceOf('Data\SQLDataSet', $dataSet2);
+    }
+
     public function testUnknownDataSet()
     {
         try
