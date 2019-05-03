@@ -41,6 +41,17 @@ class ODataParamsTest extends PHPUnit\Framework\TestCase
         $array = array(array('test1'=>1, 'a'=>1, '1'=>1, 'Zz'=>1, 'T'=>1));
         $filtered = $odata->filterArrayPerSelect($array);
         $this->assertEquals(array(array('test1'=>1, 'a'=>1, '1'=>1, 'Zz'=>1)), $filtered);
+
+        $array = array(new SerializableObject(array('test1'=>1, 'a'=>1, '1'=>1, 'Zz'=>1, 'T'=>1)));
+        $filtered = $odata->filterArrayPerSelect($array);
+        $this->assertEquals(array(array('test1'=>1, 'a'=>1, '1'=>1, 'Zz'=>1)), $filtered);
+
+        $params = array();
+        $odata = new \ODataParams($params);
+        $this->assertFalse($odata->select);
+        $array = array(array('test1'=>1, 'a'=>1, '1'=>1, 'Zz'=>1, 'T'=>1));
+        $filtered = $odata->filterArrayPerSelect($array);
+        $this->assertEquals(array(array('test1'=>1, 'a'=>1, '1'=>1, 'Zz'=>1, 'T'=>1)), $filtered);
     }
 
     public function testExpand()

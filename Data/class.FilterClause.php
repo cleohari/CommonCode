@@ -222,11 +222,15 @@ class FilterClause
 
     public function php_compare($value)
     {
+	if(is_array($value))
+	{
+            return $this->php_compare($value[$this->var1]);
+	}
         switch($this->op)
         {
             case '!=':
                 return $value != $this->var2;
-            case '=':
+	    case '=':
                 return $value == $this->var2;
             case '<':
                 return $value < $this->var2;
