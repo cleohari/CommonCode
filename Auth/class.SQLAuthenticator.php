@@ -202,7 +202,7 @@ class SQLAuthenticator extends Authenticator
      */
     public function getGroupsByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false)
     {
-        return $this->convertDataToClass('group', 'SQLGroup', $filter, $select, $top, $skip, $orderby);
+        return $this->convertDataToClass('group', 'Auth\SQLGroup', $filter, $select, $top, $skip, $orderby);
     }
 
     /**
@@ -213,7 +213,7 @@ class SQLAuthenticator extends Authenticator
      */
     public function getUsersByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false)
     {
-        return $this->convertDataToClass('group', 'SQLUser', $filter, $select, $top, $skip, $orderby);
+        return $this->convertDataToClass('user', 'Auth\SQLUser', $filter, $select, $top, $skip, $orderby);
     }
 
     public function getPendingUserCount()

@@ -183,7 +183,8 @@ class Filter
     {
         if(is_array($array))
 	{
-            return array_filter($array, array($this, 'filterElement'));
+            $res = array_filter($array, array($this, 'filterElement'));
+            return array_values($res);
         }
         return array();
     }
