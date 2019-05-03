@@ -16,7 +16,9 @@ class WebErrorHandler
         {
             return $response->withJson($exception, 400);
         }
-        error_log($exception->__toString());
+        if (php_sapi_name() !== "cli") {
+          error_log($exception->__toString());
+        }
         return $response
             ->withStatus(500)
             ->withHeader('Content-Type', 'text/html')
