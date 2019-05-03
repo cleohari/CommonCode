@@ -138,39 +138,54 @@ class Filter
         return $ret;
     }
 
-    public function filter_array(&$array)
+    public function filterElement($element)
     {
         $res = array();
-        if(is_array($array))
-        {
-            $search = $array;
-            $count = count($this->children);
-            for($i = 0; $i < $count; $i++)
+        $count = count($this->children);
+	for($i = 0; $i < $count; $i++)
+	{
+            if($this->children[$i] === 'and' || $this->children[$i] === 'or')
+	    {
+                array_push($res, $this->children[$i]);
+	    }
+	    else
+	    {
+                $tmp = $this->children[$i]->php_compare($element);
+		array_push($res, $tmp);
+	    }
+	}
+	if($count === 1)
+	{
+            return $res[0];
+	}
+	while($count >= 3)
+	{
+	    if($res[1] === 'and')
             {
-                if($this->children[$i] === 'and')
-                {
-                    $search = $res;
-                }
-                else if($this->children[$i] === 'or')
-                {
-                    $search = $array;
-                }
-                else
-                {
-                    foreach($search as $subarray)
-                    {
-                        if(isset($subarray[$this->children[$i]->var1]))
-                        {
-                            if($this->children[$i]->php_compare($subarray[$this->children[$i]->var1]))
-                            {
-                                array_push($res, $subarray);
-                            }
-                        }
-                    }
-                }
+                $var1 = array_shift($res);
+                array_shift($res);
+                $var2 = array_shift($res);
+	        $res = array_merge(array($var1 && $var2), $res);
             }
+	    else if($res[1] === 'or')
+            {
+                $var1 = array_shift($res);
+                array_shift($res);
+                $var2 = array_shift($res);
+                $res = array_merge(array($var1 || $var2), $res);
+	    }
+	    $count = count($res);
+	}
+        return $res[0];
+    }
+
+    public function filter_array(&$array)
+    {
+        if(is_array($array))
+	{
+            return array_filter($array, array($this, 'filterElement'));
         }
-        return $res;
+        return array();
     }
 
     public function contains($substr)
