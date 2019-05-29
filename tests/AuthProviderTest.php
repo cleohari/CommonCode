@@ -142,7 +142,7 @@ class AuthProviderTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(2, $count);
     }
 
-    public function getGroupCount()
+    public function testGroupCount()
     {
         $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
         $auth = \AuthProvider::getInstance();
@@ -152,6 +152,16 @@ class AuthProviderTest extends PHPUnit\Framework\TestCase
 
         $count = $auth->getActiveUserCount('Auth\SQLAuthenticator');
         $this->assertEquals(2, $count);
+    }
+
+    public function testMergeResult()
+    {
+        $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
+        $auth = \AuthProvider::getInstance();
+
+        $full = array();
+        $auth->mergeResult($full, false);
+        $this->assertCount(0, $full);
     }
 
     public static function tearDownAfterClass(): void
