@@ -1,5 +1,9 @@
 <?php
 require_once('Autoload.php');
+
+$handler = new \Data\DataTableSessionHandler('profiles', 'sessions');
+session_set_save_handler($handler, true);
+
 if(!isset($_SESSION) && php_sapi_name() !== 'cli')
 {
     session_start();
