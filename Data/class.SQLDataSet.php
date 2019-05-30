@@ -39,11 +39,11 @@ class SQLDataSet extends DataSet
     {
         if(isset($this->params['user']))
         {
-	     $this->pdo = new \PDO($this->params['dsn'], $this->params['user'], $this->params['pass']);
-	}
-	else
-	{
-	     $this->pdo = new \PDO($this->params['dsn']);
+            $this->pdo = new \PDO($this->params['dsn'], $this->params['user'], $this->params['pass'], array(PDO::MYSQL_ATTR_FOUND_ROWS => true));
+        }
+        else
+        {
+            $this->pdo = new \PDO($this->params['dsn']);
         }
     }
 
@@ -244,12 +244,21 @@ class SQLDataSet extends DataSet
         }
         $set = implode(',', $set);
         $sql = "UPDATE $tablename SET $set WHERE $where";
-        if($this->pdo->exec($sql) === false)
+        $stmt = $this->pdo->query($sql);
+        if($stmt === false)
         {
             if (php_sapi_name() !== "cli") {
               error_log('DB query failed. '.print_r($this->pdo->errorInfo(), true));
             }
             return false;
+        }
+        else if($stmt->rowCount() === 0)
+        {
+            $data = $this->read($tablename, $where);
+            if(empty($data))
+            {
+                return false;
+            }
         }
         return true;
     }
