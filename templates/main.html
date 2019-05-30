@@ -33,6 +33,18 @@
        </div>
      </noscript>
      {{ include('login-dialog.html') }}
+     {% if notifications %}
+       {% for notification in notifications %}
+         <div class="alert {{ notification.sev }} {% if notification.dismissible %}alert-dismissible fade show{% endif %}" role="alert">
+           {{ notification.msg|raw }}
+           {% if notification.dismissible %}
+             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+               <span aria-hidden="true">&times;</span>
+             </button>
+           {% endif %}
+         </div>
+       {% endfor %}
+     {% endif %}
      <div id="content">
        {% block content %}{% endblock %}
        {{ body|raw }}
