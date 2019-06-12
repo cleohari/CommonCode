@@ -45,6 +45,28 @@ trait LDAPGettableObject
         }
         return $this->getFieldSingleValue($propName);
     }
+
+    public function __isset($propName)
+    {
+        if(isset($this->valueDefaults[$propName]))
+        {
+            return true;
+        }
+        if(in_array($propName, $this->multiValueProps))
+        {
+            return true;
+        }
+        if(!is_object($this->ldapObj) && isset($this->ldapObj[$propName]))
+        {
+            return true;
+        }
+        $lowerName = strtolower($propName);
+        if(is_object($this->ldapObj) && isset($this->ldapObj->{$lowerName}))
+        {
+            return true;
+        }
+        return false;
+    }
 }
 
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
