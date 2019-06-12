@@ -46,6 +46,7 @@ class FlipAdminPage extends LoginRequiredPage
 
     protected function getContent()
     {
+        $this->addLink('Home', '..');
         if($this->user === false || $this->user === null)
         {
           $this->content['body'] = '
