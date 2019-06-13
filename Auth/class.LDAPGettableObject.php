@@ -33,6 +33,23 @@ trait LDAPGettableObject
 
     public function __get($propName)
     {
+        if(isset($this->labeleduri))
+        {
+             //Have multiple emails
+             if($propName === 'mail')
+             {
+                 return $this->getFieldSingleValue('labeleduri');
+             }
+             if($propName === 'allMail')
+             {
+                 $tmp = $this->getField('mail');
+                 if(isset($tmp['count']))
+                 {
+                     unset($tmp['count']);
+                 }
+                 return $tmp;
+             }
+        }
         $tmp = $this->getValueWithDefault($propName);
         if($tmp !== false)
         {
@@ -56,14 +73,28 @@ trait LDAPGettableObject
         {
             return true;
         }
-        if(!is_object($this->ldapObj) && isset($this->ldapObj[$propName]))
+        if(!is_object($this->ldapObj))
         {
-            return true;
+            if(isset($this->ldapObj['labeleduri']))
+            {
+                if($propName === 'allMail')
+                {
+                    return true;
+                }
+            }
+            return isset($this->ldapObj[$propName]);
         }
-        $lowerName = strtolower($propName);
-        if(is_object($this->ldapObj) && isset($this->ldapObj->{$lowerName}))
+        if(is_object($this->ldapObj))
         {
-            return true;
+            $lowerName = strtolower($propName);
+            if(isset($this->ldapObj->labeleduri))
+            {
+                if($propName === 'allMail')
+                {
+                    return true;
+                }
+            }
+            return isset($this->ldapObj->{$lowerName});
         }
         return false;
     }

@@ -270,6 +270,39 @@ class LDAPUser extends User
         return $hash;
     }
 
+    public function removeEmail($email)
+    {
+        $mail = $this->ldapObj->mail;
+        if(($key = array_search($email, $mail)) !== false)
+        {
+            unset($mail[$key]);
+            if(isset($mail['count']))
+            {
+                $mail['count']--;
+            }
+        }
+        $count = count($mail);
+        if(isset($mail['count']))
+        {
+            $count = $mail['count'];
+            unset($mail['count']);
+        }
+        $obj = array('dn'=>$this->ldapObj->dn);
+        $obj['mail'] = $mail;
+        if($count === 1)
+        {
+            $obj['labeleduri'] = null;
+        }
+        //Make sure we are bound in write mode
+        $this->enableReadWrite();
+        if($this->server->update($obj) === false)
+        {
+            throw new \Exception('Unable to change mail properties in LDAP object!');
+        }
+        $this->ldapObj = $this->server->read($this->server->user_base, new \Data\Filter('uid eq '.$this->uid));
+        return true;
+    }
+
     public function delete()
     {
         //Make sure we are bound in write mode
