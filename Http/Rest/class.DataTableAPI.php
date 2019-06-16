@@ -104,6 +104,7 @@ class DataTableAPI extends RestAPI
                 $areas[$i] = $this->processEntry($areas[$i], $request);
             }
         }
+        $areas = array_values(array_filter($areas));
         if($odata->count)
         {
             $areas = array('@odata.count'=>count($areas), 'value'=>$areas);
