@@ -207,9 +207,13 @@ class DataTableAPI extends RestAPI
         {
             return $response->withStatus(404);
         }
-        if($this->canDelete($request, $entry) === false)
+        $count = count($entry);
+        for($i = 0; $i < $count; $i++)
         {
-            return $response->withStatus(401);
+            if($this->canDelete($request, $entry[$i]) === false)
+            {
+                return $response->withStatus(401);
+            }
         }
         $ret = $dataTable->delete($filter);
         return $response->withJson($ret);
