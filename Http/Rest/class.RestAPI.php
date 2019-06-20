@@ -17,6 +17,8 @@ const UNKNOWN_ERROR = 255;
 
 class RestAPI
 {
+    protected $user = null;
+
     public function setup($app)
     {
         return $app->any('[/]', $this);
