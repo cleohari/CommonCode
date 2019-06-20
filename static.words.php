@@ -3029,7 +3029,6 @@ $words = array(
     "surgeon",
     "acceptable",
     "physics",
-    "rape",
     "counsel",
     "jeans",
     "hunt",

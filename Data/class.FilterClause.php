@@ -205,7 +205,14 @@ class FilterClause
         }
         if($this->var1 === '_id')
         {
-            $this->var2 = new \MongoId($this->var2);
+            try
+            {
+                $this->var2 = new \MongoId($this->var2);
+            }
+            catch(\MongoException $e)
+            {
+                //Not a valid mongo ID. Just leave the variable alone and try the query...
+            }
         }
         switch($this->op)
         {

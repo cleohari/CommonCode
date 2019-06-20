@@ -19,6 +19,7 @@ class WebPage
         
         $twigCache = $this->settings->getGlobalSetting('twig_cache', '/var/php_cache/twig');
         $twigSettings = array('cache' => $twigCache);
+        //$twigSettings = array('cache' => $twigCache, 'debug' => true);
 
         $this->wwwUrl = $this->settings->getGlobalSetting('www_url', 'https://www.burningflipside.com');
         $this->wikiUrl = $this->settings->getGlobalSetting('wiki_url', 'https://wiki.burningflipside.com');
@@ -30,8 +31,10 @@ class WebPage
         $this->logoutUrl = $this->settings->getGlobalSetting('logout_url', $this->profilesUrl.'/logout.php');
 
         $this->twig = new \Twig_Environment($this->loader, $twigSettings);
+        //$this->twig->addExtension(new \Twig\Extension\DebugExtension());
         $this->content = array('pageTitle' => $title);
         $this->user = \FlipSession::getUser();
+        $this->content['user'] = $this->user;
         $this->content['header'] = array();
         $this->content['header']['sites'] = array();
         $this->content['header']['sites']['Profiles'] = $this->profilesUrl;

@@ -104,6 +104,7 @@ class DataTableAPI extends RestAPI
                 $areas[$i] = $this->processEntry($areas[$i], $request);
             }
         }
+        $areas = array_values(array_filter($areas));
         if($odata->count)
         {
             $areas = array('@odata.count'=>count($areas), 'value'=>$areas);
@@ -206,9 +207,13 @@ class DataTableAPI extends RestAPI
         {
             return $response->withStatus(404);
         }
-        if($this->canDelete($request, $entry) === false)
+        $count = count($entry);
+        for($i = 0; $i < $count; $i++)
         {
-            return $response->withStatus(401);
+            if($this->canDelete($request, $entry[$i]) === false)
+            {
+                return $response->withStatus(401);
+            }
         }
         $ret = $dataTable->delete($filter);
         return $response->withJson($ret);
