@@ -25,20 +25,6 @@ class FlipAdminPage extends LoginRequiredPage
         return $this->is_admin;
     }
 
-    protected function getContent()
-    {
-        if($this->isAdmin() === false)
-        {
-            $this->body = '
-        <div class="row">
-            <div class="col-lg-12">
-                <h1 class="page-header">The current user does not have access rights to the '.$this->content['pageTitle'].' Admin system!</h1>
-            </div>
-        </div>';
-        }
-        return parent::getContent();
-    }
-
     const CARD_GREEN  = 'green';
     const CARD_BLUE   = 'blue';
     const CARD_YELLOW = 'yellow';
@@ -56,6 +42,38 @@ class FlipAdminPage extends LoginRequiredPage
             $card['color'] = $color;
         }
         array_push($this->content['cards'], $card);
+    }
+
+    protected function getContent()
+    {
+        $this->addLink('Home', '..');
+        if($this->user === false || $this->user === null)
+        {
+          $this->content['body'] = '
+            <div id="content">
+              <div class="row">
+                <div class="col-lg-12">
+                  <h1 class="page-header">You must <a href="'.$this->loginUrl.'?return='.$this->currentUrl().'">log in <span class="fa fa-sign-in-alt"></span></a> to access the '.$this->content['pageTitle'].' system!</h1>
+                </div>
+              </div>
+            </div>
+          ';
+        }
+        else if($this->isAdmin() === false)
+        {
+          $this->content['body'] = '
+            <div id="content">
+              <div class="row">
+                <div class="col-lg-12">
+                  <h1 class="page-header">You must be an administrator to access the '.$this->content['pageTitle'].' system!</h1>
+                </div>
+              </div>
+            </div>
+          ';
+          $this->content['header'] = array();
+          $this->content['cards'] = array();
+        }
+        return parent::getContent();
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */

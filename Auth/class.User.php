@@ -349,6 +349,18 @@ class User extends \SerializableObject
     }
 
     /**
+     * Remove the email address from the user account
+     *
+     * @param string $email The email to remove
+     *
+     * @return boolean If the operation succeeded or not
+     */
+    public function removeEmail($email)
+    {
+        return false;
+    }
+
+    /**
      * Serialize the user data into a format usable by the json_encode method
      *
      * @return array A simple keyed array representing the user
@@ -375,6 +387,10 @@ class User extends \SerializableObject
         $user['ou'] = $this->ou;
         $user['host'] = $this->host;
         $user['class'] = get_class($this);
+        if(isset($this->allMail))
+        {
+            $user['allMail'] = $this->allMail;
+        }
         return $user;
     }
 
