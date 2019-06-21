@@ -12,6 +12,13 @@ class DataTableAPI extends RestAPI
     protected $dataTableName;
     protected $primaryKeyName;
 
+    /**
+     * Create the DataTableAPI for the given DataTable info
+     *
+     * @param string $datSetName The name of the DataSet used in the Settings
+     * @param string $dataTableName The name of the table in the DataSet
+     * @param string|false $primaryKeyName The table primary key. Must be specified for update/delete capable tables
+     */
     public function __construct($dataSetName, $dataTableName, $primaryKeyName = false)
     {
         $this->dataSetName    = $dataSetName;
