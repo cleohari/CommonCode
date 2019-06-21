@@ -82,7 +82,7 @@ class MongoDataTable extends DataTable
 
     public function create($data)
     {
-        $res = $this->collection->insert($data);
+        $res = $this->collection->insert($data, array(), $this->name);
         if($res === false || $res['err'] !== null)
         {
             return false;
@@ -97,7 +97,7 @@ class MongoDataTable extends DataTable
         {
             unset($data['_id']);
         }
-        $res = $this->collection->update($criteria, array('$set' => $data));
+        $res = $this->collection->update($criteria, array('$set' => $data), array(), $this->name);
         if($res === false || $res['err'] !== null)
         {
             return false;
@@ -108,7 +108,7 @@ class MongoDataTable extends DataTable
     public function delete($filter)
     {
         $criteria = $this->getCriteriaFromFilter($filter);
-        $res = $this->collection->remove($criteria);
+        $res = $this->collection->remove($criteria, array(), $this->name);
         if($res === false || $res['err'] !== null)
         {
             return false;

@@ -114,6 +114,38 @@ class MongoDataSet extends DataSet
         return $this->manager->executeQuery($namespace, $dbQuery);
     }
 
+    public function insert(&$document, $options = array(), $collectionName)
+    {
+        $namespace = $this->db_name.'.'.$collectionName;
+        $dbWrite = new \MongoDB\Driver\BulkWrite();
+        $id = $dbWrite->insert($document);
+        $res = $this->manager->executeBulkWrite($namespace, $dbWrite, $options);
+        if($res->getInsertedCount() === 1)
+        {
+            $document['_id'] = $id;
+            return true;
+        }
+        return false;
+    }
+
+    public function remove($criteria = array(), array $options = array(), $collectionName)
+    {
+        $namespace = $this->db_name.'.'.$collectionName;
+        $dbWrite = new \MongoDB\Driver\BulkWrite();
+        $dbWrite->delete($criteria);
+        $res = $this->manager->executeBulkWrite($namespace, $dbWrite, $options);
+        return $res->getDeletedCount() >= 1;
+    }
+
+    public function update($criteria, $new_object, $options = array(), $collectionName)
+    {
+        $namespace = $this->db_name.'.'.$collectionName;
+        $dbWrite = new \MongoDB\Driver\BulkWrite();
+        $dbWrite->update($criteria, $new_object, $options);
+        $res = $this->manager->executeBulkWrite($namespace, $dbWrite, $options);
+        return $res->getModifiedCount() === 1;
+    }
+
     public function count($query = array(), $options = array(), $collectionName)
     {
         $cmd = new \MongoDB\Driver\Command(['count'=>$collectionName, 'query'=>$query]);
