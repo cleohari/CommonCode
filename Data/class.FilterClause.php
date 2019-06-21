@@ -207,9 +207,20 @@ class FilterClause
         {
             try
             {
-                $this->var2 = new \MongoId($this->var2);
+                if(class_exists('MongoId'))
+                {
+                    $this->var2 = new \MongoId($this->var2);
+                }
+                else
+                {
+                    $this->var2 = new \MongoDB\BSON\ObjectId($this->var2);
+                }
             }
             catch(\MongoException $e)
+            {
+                //Not a valid mongo ID. Just leave the variable alone and try the query...
+            }
+            catch(\MongoDB\Driver\Exception\InvalidArgumentException $e)
             {
                 //Not a valid mongo ID. Just leave the variable alone and try the query...
             }
