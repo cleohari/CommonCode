@@ -11,6 +11,7 @@ class WebPage
 {
     public $body = '';
     protected $templateName = 'main.html';
+    public $content;
 
     public function __construct($title)
     {
