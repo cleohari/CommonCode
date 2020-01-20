@@ -9,6 +9,9 @@
     {% else %}
       {{ include('head-local.html') }}
     {% endif %}
+    {% for c in templateCSS %}
+        <link rel="stylesheet" href="{{ c }}" type="text/css">
+    {% endfor %}
     {% for c in css %}
         <link rel="stylesheet" href="{{ c }}" type="text/css">
     {% endfor %}

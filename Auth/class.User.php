@@ -315,6 +315,11 @@ class User extends \SerializableObject
      */
     public function editUser($data)
     {
+        if(is_array($data))
+        {
+            $data = new \SerializableObject($data);
+        }
+
         $this->checkForUnsettableElements($data);
 
         $this->enableReadWrite();

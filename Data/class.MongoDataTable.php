@@ -93,6 +93,10 @@ class MongoDataTable extends DataTable
     public function update($filter, $data)
     {
         $criteria = $this->getCriteriaFromFilter($filter);
+        if(!is_array($data))
+        {
+            $data = json_decode(json_encode($data), true);
+        }
         if(isset($data['_id']))
         {
             unset($data['_id']);
