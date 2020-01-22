@@ -27,7 +27,7 @@ class RestAPI
     public function validateLoggedIn($request)
     {
         $this->user = $request->getAttribute('user');
-        if($this->user === false)
+        if($this->user === false || $this->user === null)
         {
             throw new \Exception('Must be logged in', \Http\Rest\ACCESS_DENIED);
         }

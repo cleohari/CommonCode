@@ -88,6 +88,11 @@ class DataTableAPI extends RestAPI
         return true;
     }
 
+    protected function postDeleteAction($entry)
+    {
+        return true;
+    }
+
     public function readEntries($request, $response, $args)
     {
         if($this->canRead($request) === false)
@@ -223,6 +228,10 @@ class DataTableAPI extends RestAPI
             }
         }
         $ret = $dataTable->delete($filter);
+        if($ret)
+        {
+            $ret = $this->postDeleteAction($entry);
+        }
         return $response->withJson($ret);
     }
 }
