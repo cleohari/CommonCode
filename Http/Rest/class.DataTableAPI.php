@@ -88,6 +88,11 @@ class DataTableAPI extends RestAPI
         return true;
     }
 
+    protected function postUpdateAction($newObj, $request, $oldObj)
+    {
+        return true;
+    }
+
     protected function postDeleteAction($entry)
     {
         return true;
@@ -203,6 +208,10 @@ class DataTableAPI extends RestAPI
             return $response->withStatus(400);
         }
         $ret = $dataTable->update($filter, $obj);
+        if($ret)
+        {
+            $ret = $this->postUpdateAction($obj, $request, $entry);
+        }
         return $response->withJson($ret);
     }
 
