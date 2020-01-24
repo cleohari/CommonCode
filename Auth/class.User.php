@@ -285,6 +285,11 @@ class User extends \SerializableObject
                 $this->change_pass($data->oldpass, $data->userPassword);
                 unset($data->oldpass);
             }
+            else if(isset($data->hash))
+            {
+                $this->change_pass($data->hash, $data->userPassword, true);
+                unset($data->hash);
+            }
             unset($data->userPassword);
         }
     }
