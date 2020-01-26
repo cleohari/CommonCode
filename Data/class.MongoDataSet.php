@@ -149,7 +149,8 @@ class MongoDataSet extends DataSet
     public function count($query = array(), $options = array(), $collectionName)
     {
         $cmd = new \MongoDB\Driver\Command(['count'=>$collectionName, 'query'=>$query]);
-        return $this->manager->executeCommand($this->db_name, $cmd);
+        $cursor = $this->manager->executeCommand($this->db_name, $cmd);
+        return $cursor->toArray()[0]->n;
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
