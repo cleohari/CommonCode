@@ -23,7 +23,7 @@
     {% endfor %}
     {% block headBlock %}{% endblock %}
   </head>
-  <body data-login-url="{{ loginUrl }}" class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
+  <body data-login-url="{{ loginUrl }}" class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show" {{bodyTags|raw}}>
      {{ include('admin-header.html') }}
      {{ include('login-dialog.html') }}
      <div class="content-wrapper">
