@@ -107,10 +107,10 @@ class MongoDataSet extends DataSet
         $this->db_name = $params['db'];
     }
 
-    public function find($query = array(), $fields = array(), $collectionName)
+    public function find($query = array(), $options = array(), $collectionName)
     {
         $namespace = $this->db_name.'.'.$collectionName;
-        $dbQuery = new \MongoDB\Driver\Query($query, array('projection'=>$fields));
+        $dbQuery = new \MongoDB\Driver\Query($query, $options);
         return $this->manager->executeQuery($namespace, $dbQuery);
     }
 
