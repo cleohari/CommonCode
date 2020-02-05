@@ -48,4 +48,14 @@ class RestAPI
         }
         return $obj;
     }
+
+    protected function sendEmail($email)
+    {
+        $emailProvider = \EmailProvider::getInstance();
+        if($emailProvider->sendEmail($email) === false)
+        {
+            throw new \Exception('Unable to send email!');
+        }
+    }
 }
+/* vim: set tabstop=4 shiftwidth=4 expandtab: */
