@@ -32,4 +32,20 @@ class RestAPI
             throw new \Exception('Must be logged in', \Http\Rest\ACCESS_DENIED);
         }
     }
+
+    protected function getParsedBody($request)
+    {
+        $obj = $request->getParsedBody();
+        if($obj === null)
+        {
+            $request->getBody()->rewind();
+            $obj = $request->getBody()->getContents();
+            $tmp = json_decode($obj, true);
+            if($tmp !== null)
+            {
+                $obj = $tmp;
+            }
+        }
+        return $obj;
+    }
 }

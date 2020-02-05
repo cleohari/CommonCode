@@ -123,6 +123,7 @@ function add_notification(container, message, severity, dismissible)
     }
     alert_div.append(prefix+message);
     container.prepend(alert_div);
+    return alert_div;
 }
 
 function addButtonToFooter(footer, buttonData)

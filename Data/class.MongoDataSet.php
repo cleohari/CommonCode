@@ -141,7 +141,19 @@ class MongoDataSet extends DataSet
     {
         $namespace = $this->db_name.'.'.$collectionName;
         $dbWrite = new \MongoDB\Driver\BulkWrite();
-        $dbWrite->update($criteria, $new_object, $options);
+        try {
+            $dbWrite->update($criteria, $new_object, $options);
+        } catch(\MongoDB\Driver\Exception\InvalidArgumentException $e) {
+            if(isset($new_object['$set']['']))
+            {
+                unset($new_object['$set']['']);
+                $dbWrite->update($criteria, $new_object, $options);
+            }
+            else
+            {
+                throw $e;
+            }
+        }
         $res = $this->manager->executeBulkWrite($namespace, $dbWrite, $options);
         return $res->getModifiedCount() === 1;
     }
@@ -151,6 +163,14 @@ class MongoDataSet extends DataSet
         $cmd = new \MongoDB\Driver\Command(['count'=>$collectionName, 'query'=>$query]);
         $cursor = $this->manager->executeCommand($this->db_name, $cmd);
         return $cursor->toArray()[0]->n;
+    }
+
+    public function runCommand($cmd)
+    {
+        $cmd = new \MongoDB\Driver\Command($cmd);
+        $cursor = $this->manager->executeCommand($this->db_name, $cmd);
+        $ret = $cursor->toArray();
+        return $ret[0]['ok'];
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
