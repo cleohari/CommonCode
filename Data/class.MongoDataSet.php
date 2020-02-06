@@ -118,7 +118,18 @@ class MongoDataSet extends DataSet
     {
         $namespace = $this->db_name.'.'.$collectionName;
         $dbWrite = new \MongoDB\Driver\BulkWrite();
-        $id = $dbWrite->insert($document);
+        try
+        {
+            $id = $dbWrite->insert($document);
+        }
+        catch(\MongoDB\Driver\Exception\InvalidArgumentException $e)
+        {
+            if(isset($document['']))
+            {
+                unset($document['']);
+                $id = $dbWrite->insert($document);
+            }
+        }
         $res = $this->manager->executeBulkWrite($namespace, $dbWrite, $options);
         if($res->getInsertedCount() === 1)
         {
