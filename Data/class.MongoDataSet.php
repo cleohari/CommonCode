@@ -166,7 +166,15 @@ class MongoDataSet extends DataSet
             }
         }
         $res = $this->manager->executeBulkWrite($namespace, $dbWrite, $options);
-        return $res->getModifiedCount() === 1;
+        if($res->getModifiedCount() === 1)
+        {
+            return true;
+        }
+        if($res->getMatchedCount() === 1 && empty($res->getWriteErrors()))
+        {
+            return true;
+        }
+        return false;
     }
 
     public function count($query = array(), $options = array(), $collectionName)
