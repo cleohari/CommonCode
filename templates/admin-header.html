@@ -21,7 +21,7 @@
             </a>
             <ul class="sidenav-second-level collapse" id="collapse{{ name }}">
               {% for name,uri in data.menu %}
-                <li><a href="{{ uri }}">{{ name }}</a></li>
+                <li><a href="{{ uri }}">{{ name | raw }}</a></li>
               {% endfor %}
             </ul>
           </li>

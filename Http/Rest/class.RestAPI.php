@@ -21,6 +21,7 @@ class RestAPI
 
     public function setup($app)
     {
+        \Sentry\init(['dsn' => 'https://8d76f6c4cb3b409bbe7ed4300e054afd@sentry.io/4283882' ]);
         return $app->any('[/]', $this);
     }
 
