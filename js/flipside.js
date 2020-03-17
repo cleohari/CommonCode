@@ -217,8 +217,8 @@ function flipside_init()
 
 $(flipside_init);
 
-$.fn.serializeObject = function()
-{
+if (window.$ !== undefined) {
+  $.fn.serializeObject = function() {
     var o = {};
     var a = this.serializeArray();
     $.each(a, function() {
@@ -232,4 +232,5 @@ $.fn.serializeObject = function()
         }
     });
     return o;
-};
+  };
+}
