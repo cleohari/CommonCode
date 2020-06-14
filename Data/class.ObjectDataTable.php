@@ -34,7 +34,7 @@ class ObjectDataTable extends \Data\DataTable
         return $this->dataTable->create($data);
     }
 
-    public function read($filter=false, $select=false, $count=false, $skip=false, $sort=false, $params=false)
+    public function read($filter=false, $select=false, $count=false, $skip=false, $sort=false, $params=false, $returnObj=false)
     {
         $res = $this->dataTable->read($filter, $select, $count, $skip, $sort, $params);
         if($res === false)
@@ -48,7 +48,7 @@ class ObjectDataTable extends \Data\DataTable
         $objCount = count($res);
         for($i = 0; $i < $objCount; $i++)
         {
-            $res[$i] = new $this->className($res[$i]);
+           $res[$i] = new $this->className($res[$i]);
         }
         return $res;
     }

@@ -88,6 +88,16 @@ class DataTableAPI extends RestAPI
         return true;
     }
 
+    protected function postUpdateAction($newObj, $request, $oldObj)
+    {
+        return true;
+    }
+
+    protected function postDeleteAction($entry)
+    {
+        return true;
+    }
+
     public function readEntries($request, $response, $args)
     {
         if($this->canRead($request) === false)
@@ -198,6 +208,10 @@ class DataTableAPI extends RestAPI
             return $response->withStatus(400);
         }
         $ret = $dataTable->update($filter, $obj);
+        if($ret)
+        {
+            $ret = $this->postUpdateAction($obj, $request, $entry);
+        }
         return $response->withJson($ret);
     }
 
@@ -223,6 +237,10 @@ class DataTableAPI extends RestAPI
             }
         }
         $ret = $dataTable->delete($filter);
+        if($ret)
+        {
+            $ret = $this->postDeleteAction($entry);
+        }
         return $response->withJson($ret);
     }
 }

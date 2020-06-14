@@ -123,6 +123,7 @@ function add_notification(container, message, severity, dismissible)
     }
     alert_div.append(prefix+message);
     container.prepend(alert_div);
+    return alert_div;
 }
 
 function addButtonToFooter(footer, buttonData)
@@ -216,8 +217,8 @@ function flipside_init()
 
 $(flipside_init);
 
-$.fn.serializeObject = function()
-{
+if (window.$ !== undefined) {
+  $.fn.serializeObject = function() {
     var o = {};
     var a = this.serializeArray();
     $.each(a, function() {
@@ -231,4 +232,5 @@ $.fn.serializeObject = function()
         }
     });
     return o;
-};
+  };
+}

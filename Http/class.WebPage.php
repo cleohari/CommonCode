@@ -16,6 +16,7 @@ class WebPage
 
     public function __construct($title)
     {
+        \Sentry\init(['dsn' => 'https://8d76f6c4cb3b409bbe7ed4300e054afd@sentry.io/4283882' ]);
         $this->settings = \Settings::getInstance();
         $this->loader = new \Twig_Loader_Filesystem(dirname(__FILE__).'/../templates');
         

@@ -9,6 +9,9 @@
     {% else %}
       {{ include('head-local.html') }}
     {% endif %}
+    {% for c in templateCSS %}
+        <link rel="stylesheet" href="{{ c }}" type="text/css">
+    {% endfor %}
     {% for c in css %}
         <link rel="stylesheet" href="{{ c }}" type="text/css">
     {% endfor %}
@@ -23,6 +26,11 @@
     {% block headBlock %}{% endblock %}
     {{ otherHeadData|raw }}
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <script type="text/javascript">
+      if(window.Sentry !== undefined) {
+        Sentry.init({ dsn: 'https://8d76f6c4cb3b409bbe7ed4300e054afd@sentry.io/4283882' });
+      }
+    </script>
   </head>
   <body data-login-url={{ loginUrl }}>
      {{ include('header.html') }}

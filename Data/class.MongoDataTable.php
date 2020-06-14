@@ -50,23 +50,24 @@ class MongoDataTable extends DataTable
         {
             $fields = array_fill_keys($select, 1);
         }
-        $cursor = $this->collection->find($criteria, $fields, $this->name);
         if($params !== false && isset($params['fields']))
         {
-            $cursor->fields($params['fields']);
+            $fields = array_merge($fields, $params['fields']);
+        }
+        $options = array('projection'=>$fields);
+        if($count !== false)
+        {
+            $options['count'] = $count;
         }
         if($sort !== false)
         {
-            $cursor->sort($sort);
+            $options['sort'] = $sort;
         }
         if($skip !== false)
         {
-            $cursor->skip($skip);
+            $options['skip'] = $skip;
         }
-        if($count !== false)
-        {
-            $cursor->limit($count);
-        }
+        $cursor = $this->collection->find($criteria, $options, $this->name);
         if(method_exists($cursor, 'setTypeMap'))
         {
             $cursor->setTypeMap(['root' => 'array', 'document' => 'array', 'array' => 'array']);
@@ -93,6 +94,10 @@ class MongoDataTable extends DataTable
     public function update($filter, $data)
     {
         $criteria = $this->getCriteriaFromFilter($filter);
+        if(!is_array($data))
+        {
+            $data = json_decode(json_encode($data), true);
+        }
         if(isset($data['_id']))
         {
             unset($data['_id']);

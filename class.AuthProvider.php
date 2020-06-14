@@ -76,6 +76,10 @@ class AuthProvider extends Provider
             $res = $this->methods[$i]->login($username, $password);
             if($res !== false)
             {
+                if(isset($res['extended']) && isset($res['extended']['jpegphoto']))
+                {
+                    $res['extended']['jpegphoto']=true;
+                }
                 FlipSession::setVar('AuthMethod', get_class($this->methods[$i]));
                 FlipSession::setVar('AuthData', $res);
                 break;

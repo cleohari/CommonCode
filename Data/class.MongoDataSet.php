@@ -107,10 +107,10 @@ class MongoDataSet extends DataSet
         $this->db_name = $params['db'];
     }
 
-    public function find($query = array(), $fields = array(), $collectionName)
+    public function find($query = array(), $options = array(), $collectionName)
     {
         $namespace = $this->db_name.'.'.$collectionName;
-        $dbQuery = new \MongoDB\Driver\Query($query, $fields);
+        $dbQuery = new \MongoDB\Driver\Query($query, $options);
         return $this->manager->executeQuery($namespace, $dbQuery);
     }
 
@@ -118,7 +118,18 @@ class MongoDataSet extends DataSet
     {
         $namespace = $this->db_name.'.'.$collectionName;
         $dbWrite = new \MongoDB\Driver\BulkWrite();
-        $id = $dbWrite->insert($document);
+        try
+        {
+            $id = $dbWrite->insert($document);
+        }
+        catch(\MongoDB\Driver\Exception\InvalidArgumentException $e)
+        {
+            if(isset($document['']))
+            {
+                unset($document['']);
+                $id = $dbWrite->insert($document);
+            }
+        }
         $res = $this->manager->executeBulkWrite($namespace, $dbWrite, $options);
         if($res->getInsertedCount() === 1)
         {
@@ -141,15 +152,44 @@ class MongoDataSet extends DataSet
     {
         $namespace = $this->db_name.'.'.$collectionName;
         $dbWrite = new \MongoDB\Driver\BulkWrite();
-        $dbWrite->update($criteria, $new_object, $options);
+        try {
+            $dbWrite->update($criteria, $new_object, $options);
+        } catch(\MongoDB\Driver\Exception\InvalidArgumentException $e) {
+            if(isset($new_object['$set']['']))
+            {
+                unset($new_object['$set']['']);
+                $dbWrite->update($criteria, $new_object, $options);
+            }
+            else
+            {
+                throw $e;
+            }
+        }
         $res = $this->manager->executeBulkWrite($namespace, $dbWrite, $options);
-        return $res->getModifiedCount() === 1;
+        if($res->getModifiedCount() === 1)
+        {
+            return true;
+        }
+        if($res->getMatchedCount() === 1 && empty($res->getWriteErrors()))
+        {
+            return true;
+        }
+        return false;
     }
 
     public function count($query = array(), $options = array(), $collectionName)
     {
         $cmd = new \MongoDB\Driver\Command(['count'=>$collectionName, 'query'=>$query]);
-        return $this->manager->executeCommand($this->db_name, $cmd);
+        $cursor = $this->manager->executeCommand($this->db_name, $cmd);
+        return $cursor->toArray()[0]->n;
+    }
+
+    public function runCommand($cmd)
+    {
+        $cmd = new \MongoDB\Driver\Command($cmd);
+        $cursor = $this->manager->executeCommand($this->db_name, $cmd);
+        $ret = $cursor->toArray();
+        return $ret[0]['ok'];
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */

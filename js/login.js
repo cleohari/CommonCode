@@ -62,10 +62,19 @@ function login_dialog_shown()
     $('[name=username]').focus();
 }
 
+function retryBootstrap() {
+  if($('#login-dialog').modal === undefined) {
+    window.setTimeout(retryBootstrap, 100);
+    return;
+  }
+  $('#login-dialog').modal({show: false, backdrop: 'static'});
+  $('#login-dialog').on('shown.bs.modal', login_dialog_shown);
+}
+
 function do_login_init()
 {
     var login_link = $('ul a[href*=login]');
-    if(browser_supports_cors())
+    if(window.browser_supports_cors !== undefined && browser_supports_cors())
     {
         login_link.attr('data-toggle','modal');
         login_link.attr('data-target','#login-dialog');
@@ -91,8 +100,7 @@ function do_login_init()
     }
     if($('#login-dialog').length > 0)
     {
-        $('#login-dialog').modal({show: false, backdrop: 'static'});
-        $('#login-dialog').on('shown.bs.modal', login_dialog_shown);
+        retryBootstrap();
     }
 }
 
