@@ -1,7 +1,8 @@
 {
     "name": "burningflipside/commoncode",
+    "description": "The Burning Flipside Common Code framework",
     "version": "1.0.0",
-    "license": "Apache",
+    "license": "Apache-2.0",
     "require": {
         "psr/log": "~1.0",
         "browscap/browscap-php": "^4.2.0",
