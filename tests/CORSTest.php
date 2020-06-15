@@ -4,13 +4,13 @@ class CORSTest extends PHPUnit\Framework\TestCase
 {
     public function testConstruct()
     {
-        $middleware = new \Http\Rest\CORSMiddleware(null);
+        $middleware = new \Flipside\Http\Rest\CORSMiddleware(null);
         $this->assertNotNull($middleware);
     }
 
     public function testNoCORS()
     {
-        $middleware = new \Http\Rest\CORSMiddleware($this);
+        $middleware = new \Flipside\Http\Rest\CORSMiddleware($this);
         $this->assertNotNull($middleware);
 
         $uri = \Slim\Http\Uri::createFromString('https://www.burningflipside.com');
@@ -24,7 +24,7 @@ class CORSTest extends PHPUnit\Framework\TestCase
 
     public function testBasicWithBadOrigin()
     {
-        $middleware = new \Http\Rest\CORSMiddleware($this);
+        $middleware = new \Flipside\Http\Rest\CORSMiddleware($this);
         $this->assertNotNull($middleware);
 
         $uri = \Slim\Http\Uri::createFromString('https://www.burningflipside.com');
@@ -42,7 +42,7 @@ class CORSTest extends PHPUnit\Framework\TestCase
 
     public function testBasicWithGoodOrigin()
     {
-        $middleware = new \Http\Rest\CORSMiddleware($this);
+        $middleware = new \Flipside\Http\Rest\CORSMiddleware($this);
         $this->assertNotNull($middleware);
 
         $uri = \Slim\Http\Uri::createFromString('https://www.burningflipside.com');
@@ -61,7 +61,7 @@ class CORSTest extends PHPUnit\Framework\TestCase
 
     public function testBasicWithFullRoute()
     {
-        $middleware = new \Http\Rest\CORSMiddleware($this);
+        $middleware = new \Flipside\Http\Rest\CORSMiddleware($this);
         $this->assertNotNull($middleware);
         $this->router = $this;
 

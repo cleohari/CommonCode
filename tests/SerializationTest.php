@@ -4,7 +4,7 @@ class SerializationTest extends PHPUnit\Framework\TestCase
 {
     public function testBasic()
     {
-        $middleware = new \Http\Rest\SerializationMiddleware();
+        $middleware = new \Flipside\Http\Rest\SerializationMiddleware();
         $uri = \Slim\Http\Uri::createFromString('http://example.org');
         $headers = new \Slim\Http\Headers();
         $body = new \Slim\Http\Body(fopen('php://temp', 'r+'));
@@ -16,7 +16,7 @@ class SerializationTest extends PHPUnit\Framework\TestCase
 
     public function testODataStreaming()
     {
-        $middleware = new \Http\Rest\SerializationMiddleware();
+        $middleware = new \Flipside\Http\Rest\SerializationMiddleware();
         $uri = \Slim\Http\Uri::createFromString('http://example.org?$format=csv;odata.streaming=true');
         $headers = new \Slim\Http\Headers();
         $body = new \Slim\Http\Body(fopen('php://temp', 'r+'));
@@ -29,7 +29,7 @@ class SerializationTest extends PHPUnit\Framework\TestCase
 
     public function testODataJson()
     {
-        $middleware = new \Http\Rest\SerializationMiddleware();
+        $middleware = new \Flipside\Http\Rest\SerializationMiddleware();
         $uri = \Slim\Http\Uri::createFromString('http://example.org?$format=json');
         $headers = new \Slim\Http\Headers();
         $body = new \Slim\Http\Body(fopen('php://temp', 'r+'));
@@ -47,7 +47,7 @@ class SerializationTest extends PHPUnit\Framework\TestCase
 
     public function testJsonSS()
     {
-        $middleware = new \Http\Rest\SerializationMiddleware();
+        $middleware = new \Flipside\Http\Rest\SerializationMiddleware();
         $uri = \Slim\Http\Uri::createFromString('http://example.org?$format=json-ss');
         $headers = new \Slim\Http\Headers();
         $body = new \Slim\Http\Body(fopen('php://temp', 'r+'));
@@ -62,7 +62,7 @@ class SerializationTest extends PHPUnit\Framework\TestCase
         $array = json_decode($body->getContents(), true);
         $this->assertEquals(array(array('test'=>'a')), $array);
 
-        $middleware = new \Http\Rest\SerializationMiddleware();
+	$middleware = new \Flipside\Http\Rest\SerializationMiddleware();
         $uri = \Slim\Http\Uri::createFromString('http://example.org?$format=json-ss-dt');
         $headers = new \Slim\Http\Headers();
         $body = new \Slim\Http\Body(fopen('php://temp', 'r+'));
@@ -80,7 +80,7 @@ class SerializationTest extends PHPUnit\Framework\TestCase
 
     public function testAcceptHeader()
     {
-        $middleware = new \Http\Rest\SerializationMiddleware();
+        $middleware = new \Flipside\Http\Rest\SerializationMiddleware();
         $uri = \Slim\Http\Uri::createFromString('http://example.org');
         $headers = new \Slim\Http\Headers();
         $headers->set('Accept', 'text/csv');
@@ -108,7 +108,7 @@ class SerializationTest extends PHPUnit\Framework\TestCase
 
     public function testDataTable()
     {
-        $middleware = new \Http\Rest\SerializationMiddleware();
+        $middleware = new \Flipside\Http\Rest\SerializationMiddleware();
         $uri = \Slim\Http\Uri::createFromString('http://example.org?$format=data-table');
         $headers = new \Slim\Http\Headers();
         $body = new \Slim\Http\Body(fopen('php://temp', 'r+'));
@@ -125,7 +125,7 @@ class SerializationTest extends PHPUnit\Framework\TestCase
 
     public function testXML()
     {
-        $middleware = new \Http\Rest\SerializationMiddleware();
+        $middleware = new \Flipside\Http\Rest\SerializationMiddleware();
         $uri = \Slim\Http\Uri::createFromString('http://example.org?$format=xml');
         $headers = new \Slim\Http\Headers();
         $body = new \Slim\Http\Body(fopen('php://temp', 'r+'));
@@ -139,7 +139,7 @@ class SerializationTest extends PHPUnit\Framework\TestCase
 
     public function testYAML()
     {
-        $middleware = new \Http\Rest\SerializationMiddleware();
+        $middleware = new \Flipside\Http\Rest\SerializationMiddleware();
         $uri = \Slim\Http\Uri::createFromString('http://example.org?$format=yaml');
         $headers = new \Slim\Http\Headers();
         $body = new \Slim\Http\Body(fopen('php://temp', 'r+'));
@@ -150,7 +150,7 @@ class SerializationTest extends PHPUnit\Framework\TestCase
         $this->assertNotNull($response);
         $this->assertEquals('text/x-yaml', $response->getHeaderLine('Content-Type'));
 
-        $middleware = new \Http\Rest\SerializationMiddleware();
+        $middleware = new \Flipside\Http\Rest\SerializationMiddleware();
         $uri = \Slim\Http\Uri::createFromString('http://example.org?$format=application/x-yaml');
         $headers = new \Slim\Http\Headers();
         $body = new \Slim\Http\Body(fopen('php://temp', 'r+'));
@@ -161,7 +161,7 @@ class SerializationTest extends PHPUnit\Framework\TestCase
         $this->assertNotNull($response);
         $this->assertEquals('text/x-yaml', $response->getHeaderLine('Content-Type'));
 
-        $middleware = new \Http\Rest\SerializationMiddleware();
+        $middleware = new \Flipside\Http\Rest\SerializationMiddleware();
         $uri = \Slim\Http\Uri::createFromString('http://example.org?$format=text/x-yaml');
         $headers = new \Slim\Http\Headers();
         $body = new \Slim\Http\Body(fopen('php://temp', 'r+'));
@@ -175,7 +175,7 @@ class SerializationTest extends PHPUnit\Framework\TestCase
 
     public function testExcel()
     {
-        $middleware = new \Http\Rest\SerializationMiddleware();
+        $middleware = new \Flipside\Http\Rest\SerializationMiddleware();
         $uri = \Slim\Http\Uri::createFromString('http://example.org?$format=xls');
         $headers = new \Slim\Http\Headers();
         $body = new \Slim\Http\Body(fopen('php://temp', 'r+'));

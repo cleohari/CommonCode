@@ -23,5 +23,10 @@
         "php-mock/php-mock-phpunit": "~2.1",
         "floriansemm/official-library-php-email-parser": "^1.0.0",
         "kubawerlos/html-validator": "^1.0.2"
+    },
+    "autoload": {
+	"psr-4": {
+		"Flipside\\": ""
+	}
     }
 }

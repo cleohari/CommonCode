@@ -5,7 +5,7 @@ class EmailTest extends PHPUnit\Framework\TestCase
 {
     public function testEmail()
     {
-        $email = new \Email\Email();
+        $email = new \Flipside\Email\Email();
         $this->assertEquals('Burning Flipside <webmaster@burningflipside.com>', $email->getFromAddress());
         $email->setFromAddress('test@example.com');
         $this->assertEquals('test@example.com', $email->getFromAddress());
@@ -53,7 +53,7 @@ class EmailTest extends PHPUnit\Framework\TestCase
 
     public function testParsedEmail()
     {
-        $email = new \Email\Email();
+        $email = new \Flipside\Email\Email();
         $Parser = new PlancakeEmailParser($email->getRawMessage());
 
         $from = $Parser->getHeader('from');
@@ -98,7 +98,7 @@ class EmailTest extends PHPUnit\Framework\TestCase
 
     public function testEmailService()
     {
-        $service = new \Email\EmailService(false);
+        $service = new \Flipside\Email\EmailService(false);
         $this->assertFalse($service->canSend());
         $this->assertFalse($service->sendEmail(false));
     }

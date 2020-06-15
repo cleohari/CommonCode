@@ -15,7 +15,7 @@ class ExcelTest extends PHPUnit\Framework\TestCase
 
     public function testBasic()
     {
-        $serializer = new \Serialize\ExcelSerializer();
+        $serializer = new \Flipside\Serialize\ExcelSerializer();
         $array = array(array('Test1'=>1,'Test2'=>'a','ABC'=>'1'));
         $type = 'xls';
         $data = $serializer->serializeData($type, $array);
@@ -26,7 +26,7 @@ class ExcelTest extends PHPUnit\Framework\TestCase
         $test = $sheet->rangeToArray('A1:C2', NULL, true, true, false);
         $this->assertEquals(array(array('Test1', 'Test2', 'ABC'), array('1', 'a', '1')), $test);
 
-        $serializer = new \Serialize\ExcelSerializer();
+        $serializer = new \Flipside\Serialize\ExcelSerializer();
         $array = array(array('Test1'=>1,'Test2'=>'a','ABC'=>'1'));
         $type = 'xlsx';
         $data = $serializer->serializeData($type, $array);
@@ -40,7 +40,7 @@ class ExcelTest extends PHPUnit\Framework\TestCase
 
     public function testObject()
     {
-        $serializer = new \Serialize\ExcelSerializer();
+        $serializer = new \Flipside\Serialize\ExcelSerializer();
         $obj = new stdClass();
         $obj->Test1 = 1;
         $obj->Test2 = 'a';
@@ -55,7 +55,7 @@ class ExcelTest extends PHPUnit\Framework\TestCase
         $test = $sheet->rangeToArray('A1:C2', NULL, true, true, false);
         $this->assertEquals(array(array('Test1', 'Test2', 'ABC'), array('1', 'a', '1')), $test);
 
-        $serializer = new \Serialize\ExcelSerializer();
+        $serializer = new \Flipside\Serialize\ExcelSerializer();
         $obj = new stdClass();
         $obj->Test1 = 1;
         $obj->Test2 = 'a';
@@ -70,7 +70,7 @@ class ExcelTest extends PHPUnit\Framework\TestCase
         $test = $sheet->rangeToArray('A1:C2', NULL, true, true, false);
         $this->assertEquals(array(array('Test1', 'Test2', 'ABC'), array('1', 'a', '1')), $test);
 
-        $serializer = new \Serialize\ExcelSerializer();
+        $serializer = new \Flipside\Serialize\ExcelSerializer();
         $obj = new stdClass();
         $obj->Test1 = 1;
         $obj->Test2 = 'a';
@@ -84,7 +84,7 @@ class ExcelTest extends PHPUnit\Framework\TestCase
         $test = $sheet->rangeToArray('A1:C2', NULL, true, true, false);
         $this->assertEquals(array(array('Test1', 'Test2', 'ABC'), array('1', 'a', '1')), $test);
 
-        $serializer = new \Serialize\ExcelSerializer();
+        $serializer = new \Flipside\Serialize\ExcelSerializer();
         $obj = new stdClass();
         $obj->Test1 = 1;
         $obj->Test2 = 'a';
@@ -101,7 +101,7 @@ class ExcelTest extends PHPUnit\Framework\TestCase
 
     public function testComma()
     {
-        $serializer = new \Serialize\ExcelSerializer();
+        $serializer = new \Flipside\Serialize\ExcelSerializer();
         $array = array(array('Test1'=>1,'Test2,3'=>'a','ABC'=>'1,0'));
         $type = 'xls';
         $data = $serializer->serializeData($type, $array);
@@ -112,7 +112,7 @@ class ExcelTest extends PHPUnit\Framework\TestCase
         $test = $sheet->rangeToArray('A1:C2', NULL, true, true, false);
         $this->assertEquals(array(array('Test1', 'Test2,3', 'ABC'), array('1', 'a', '1,0')), $test);
 
-        $serializer = new \Serialize\ExcelSerializer();
+        $serializer = new \Flipside\Serialize\ExcelSerializer();
         $array = array(array('Test1'=>1,'Test2,3'=>'a','ABC'=>'1,0'));
         $type = 'xlsx';
         $data = $serializer->serializeData($type, $array);
@@ -126,7 +126,7 @@ class ExcelTest extends PHPUnit\Framework\TestCase
 
     public function testUnevenArrays()
     {
-        $serializer = new \Serialize\ExcelSerializer();
+        $serializer = new \Flipside\Serialize\ExcelSerializer();
         $row1 = array('A'=>1,'B'=>'2','C'=>'3');
         $row2 = array('A'=>1,'C'=>2);
         $array = array($row1, $row2);
@@ -139,7 +139,7 @@ class ExcelTest extends PHPUnit\Framework\TestCase
         $test = $sheet->rangeToArray('A1:C3', NULL, true, true, false);
         $this->assertEquals(array(array('A', 'B', 'C'), array('1', '2', '3'), array('1', NULL, '2')), $test);
 
-        $serializer = new \Serialize\ExcelSerializer();
+        $serializer = new \Flipside\Serialize\ExcelSerializer();
         $row1 = array('A'=>1,'B'=>'2','C'=>'3');
         $row2 = array('A'=>1,'C'=>2);
         $array = array($row1, $row2);
@@ -156,10 +156,18 @@ class ExcelTest extends PHPUnit\Framework\TestCase
     public function testObjectContents()
     {
         //May need the Mongo Polyfill
-        $tmp = new \Data\MongoDataSet(false);
+        $tmp = new \Flipside\Data\MongoDataSet(false);
 
-        $serializer = new \Serialize\ExcelSerializer();
-        $id = new \MongoId('4af9f23d8ead0e1d32000000');
+	$serializer = new \Flipside\Serialize\ExcelSerializer();
+	$id = null;
+	if(class_exists('MongoId'))
+        {
+           $id = new \MongoId('4af9f23d8ead0e1d32000000');
+        }
+        else
+        {
+           $id = new \MongoDB\BSON\ObjectId('4af9f23d8ead0e1d32000000');
+        }
         $obj = new stdClass();
         $obj->Test1 = 1;
         $obj->Test2 = 'a';
@@ -172,11 +180,18 @@ class ExcelTest extends PHPUnit\Framework\TestCase
         $this->assertNotNull($excel);
         $sheet = $excel->getSheet(0);
         $this->assertNotNull($sheet);
-        $test = $sheet->rangeToArray('A1:F2', NULL, true, true, false);
+	$test = $sheet->rangeToArray('A1:F2', NULL, true, true, false);
         $this->assertEquals(array(array('A.Test1', 'A.Test2', 'A.ABC', 'B', 'C', '_id'), array('1', 'a', '1', '2', '3', '4af9f23d8ead0e1d32000000')), $test);
 
-        $serializer = new \Serialize\ExcelSerializer();
-        $id = new \MongoId('4af9f23d8ead0e1d32000000');
+        $serializer = new \Flipside\Serialize\ExcelSerializer();
+	if(class_exists('MongoId'))
+        {
+           $id = new \MongoId('4af9f23d8ead0e1d32000000');
+        }
+        else
+        {
+           $id = new \MongoDB\BSON\ObjectId('4af9f23d8ead0e1d32000000');
+        }
         $obj = new stdClass();
         $obj->Test1 = 1;
         $obj->Test2 = 'a';
@@ -195,7 +210,7 @@ class ExcelTest extends PHPUnit\Framework\TestCase
 
     public function testBadType()
     {
-        $serializer = new \Serialize\ExcelSerializer();
+        $serializer = new \Flipside\Serialize\ExcelSerializer();
         $array = array(array('Test1'=>1,'Test2,3'=>'a','ABC'=>'1,0'));
         $type = 'text/json';
         $data = $serializer->serializeData($type, $array);
@@ -204,7 +219,7 @@ class ExcelTest extends PHPUnit\Framework\TestCase
 
     public function testEmpty()
     {
-        $serializer = new \Serialize\ExcelSerializer();
+        $serializer = new \Flipside\Serialize\ExcelSerializer();
         $array = array();
         $type = 'xls';
         $data = $serializer->serializeData($type, $array);

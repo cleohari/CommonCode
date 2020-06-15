@@ -4,8 +4,8 @@ class WebErrorTest extends PHPUnit\Framework\TestCase
 {
     public function testBasic()
     {
-        $app = new \Http\Rest\RestAPI();
-        $error = new \Http\WebErrorHandler();
+        $app = new \Flipside\Http\Rest\RestAPI();
+        $error = new \Flipside\Http\WebErrorHandler();
         $uri = \Slim\Http\Uri::createFromString('http://example.org');
         $headers = new \Slim\Http\Headers();
         $body = new \Slim\Http\Body(fopen('php://temp', 'r+'));
@@ -15,7 +15,7 @@ class WebErrorTest extends PHPUnit\Framework\TestCase
         $this->assertNotNull($response);
         $this->assertEquals(500, $response->getStatusCode());
 
-        $e = new \Exception('', \Http\Rest\ACCESS_DENIED);
+        $e = new \Exception('', \Flipside\Http\Rest\ACCESS_DENIED);
         $response = $error($request, $response, $e);
         $this->assertNotNull($response);
         $this->assertEquals(401, $response->getStatusCode());

@@ -4,7 +4,7 @@ class JSONTest extends PHPUnit\Framework\TestCase
 {
     public function testBasic()
     {
-        $serializer = new \Serialize\JSONSerializer();
+        $serializer = new \Flipside\Serialize\JSONSerializer();
         $array = array(array('Test1'=>1,'Test2'=>'a','ABC'=>'1'));
         $type = 'application/json';
         $data = $serializer->serializeData($type, $array);
@@ -13,7 +13,7 @@ class JSONTest extends PHPUnit\Framework\TestCase
 
     public function testBadType()
     {
-        $serializer = new \Serialize\JSONSerializer();
+        $serializer = new \Flipside\Serialize\JSONSerializer();
         $array = array(array('Test1'=>1,'Test2,3'=>'a','ABC'=>'1,0'));
         $type = 'text/csv';
         $data = $serializer->serializeData($type, $array);
@@ -22,7 +22,7 @@ class JSONTest extends PHPUnit\Framework\TestCase
 
     public function testEmpty()
     {
-        $serializer = new \Serialize\JSONSerializer();
+        $serializer = new \Flipside\Serialize\JSONSerializer();
         $array = array();
         $type = 'application/json';
         $data = $serializer->serializeData($type, $array);

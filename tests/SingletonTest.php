@@ -4,16 +4,16 @@ class SingletonTest extends PHPUnit\Framework\TestCase
 {
     public function testNew()
     {
-        $tmp = Singleton::getInstance();
+        $tmp = Flipside\Singleton::getInstance();
         $this->assertNotNull($tmp);
-        $this->assertInstanceOf('Singleton', $tmp);
+        $this->assertInstanceOf('Flipside\Singleton', $tmp);
     }
 
     public function testExisting()
     {
-        $orig = Singleton::getInstance();
+        $orig = Flipside\Singleton::getInstance();
         $this->assertNotNull($orig);
-        $new  = Singleton::getInstance();
+        $new  = Flipside\Singleton::getInstance();
         $this->assertNotNull($new);
         $this->assertEquals($orig, $new);
     }

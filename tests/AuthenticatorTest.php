@@ -5,9 +5,9 @@ class AuthenticatorTest extends PHPUnit\Framework\TestCase
     public function testAuthenticator()
     {
         $params = array('current'=>true, 'pending'=>false, 'supplement'=>false);
-        $auth = new \Auth\Authenticator($params);
+        $auth = new \Flipside\Auth\Authenticator($params);
         $this->assertNotNull($auth);
-        $this->assertInstanceOf('Auth\Authenticator', $auth);
+        $this->assertInstanceOf('Flipside\Auth\Authenticator', $auth);
         $this->assertTrue($auth->current);
         $this->assertFalse($auth->pending);
         $this->assertFalse($auth->supplement);
@@ -31,9 +31,9 @@ class AuthenticatorTest extends PHPUnit\Framework\TestCase
         $this->assertFalse($auth->getHostName(false));
 
         $params = array('current'=>false, 'pending'=>true, 'supplement'=>false);
-        $auth = new \Auth\Authenticator($params);
+        $auth = new \Flipside\Auth\Authenticator($params);
         $this->assertNotNull($auth);
-        $this->assertInstanceOf('Auth\Authenticator', $auth);
+        $this->assertInstanceOf('Flipside\Auth\Authenticator', $auth);
         $this->assertFalse($auth->current);
         $this->assertTrue($auth->pending);
         $this->assertFalse($auth->supplement);
@@ -43,9 +43,9 @@ class AuthenticatorTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(0, $auth->getPendingUserCount(false));
 
         $params = array('current'=>false, 'pending'=>false, 'supplement'=>true);
-        $auth = new \Auth\Authenticator($params);
+        $auth = new \Flipside\Auth\Authenticator($params);
         $this->assertNotNull($auth);
-        $this->assertInstanceOf('Auth\Authenticator', $auth);
+        $this->assertInstanceOf('Flipside\Auth\Authenticator', $auth);
         $this->assertFalse($auth->current);
         $this->assertFalse($auth->pending);
         $this->assertTrue($auth->supplement);
@@ -57,9 +57,9 @@ class AuthenticatorTest extends PHPUnit\Framework\TestCase
     public function testNullAuthenticator()
     {
         $params = array('current'=>true, 'pending'=>false, 'supplement'=>false);
-        $auth = new \Auth\NullAuthenticator($params);
+        $auth = new \Flipside\Auth\NullAuthenticator($params);
         $this->assertNotNull($auth);
-        $this->assertInstanceOf('Auth\NullAuthenticator', $auth);
+        $this->assertInstanceOf('Flipside\Auth\NullAuthenticator', $auth);
         $res = $auth->login('test', 'test');
         $this->assertNotFalse($res);
         $this->assertFalse($auth->isLoggedIn(false));
@@ -72,9 +72,9 @@ class AuthenticatorTest extends PHPUnit\Framework\TestCase
         $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
         $_SERVER['HTTP_HOST'] = 'example.com';
         $params = array('current'=>true, 'pending'=>false, 'supplement'=>false, 'api_url'=>'https://profiles.burningflipside.com/api/v1', 'oauth_url'=>'https://profiles.burningflipside.com/OAUTH2');
-        $auth = new \Auth\OAuth2\FlipsideAuthenticator($params);
+        $auth = new \Flipside\Auth\OAuth2\FlipsideAuthenticator($params);
         $this->assertNotNull($auth);
-        $this->assertInstanceOf('Auth\OAuth2\FlipsideAuthenticator', $auth);
+        $this->assertInstanceOf('Flipside\Auth\OAuth2\FlipsideAuthenticator', $auth);
         $this->assertEquals('burningflipside.com', $auth->getHostName());
         $this->assertEquals('https://profiles.burningflipside.com/OAUTH2/authorize.php?client_id=test&redirect_uri=https%3A%2F%2Fexample.com%2Foauth%2Fcallbacks%2Fburningflipside.com&scope=user', $auth->getAuthorizationUrl());
         $this->assertEquals('https://profiles.burningflipside.com/OAUTH2/token.php?client_id=test&redirect_uri=https%3A%2F%2Fexample.com%2Foauth%2Fcallbacks%2Fburningflipside.com', $auth->getAccessTokenUrl());
@@ -83,9 +83,9 @@ class AuthenticatorTest extends PHPUnit\Framework\TestCase
 
         $params['api_url'] = 'https://api.example.org';
         $params['oauth_url'] = 'https://login.example.org/oauth';
-        $auth = new \Auth\OAuth2\FlipsideAuthenticator($params);
+        $auth = new \Flipside\Auth\OAuth2\FlipsideAuthenticator($params);
         $this->assertNotNull($auth);
-        $this->assertInstanceOf('Auth\OAuth2\FlipsideAuthenticator', $auth);
+        $this->assertInstanceOf('Flipside\Auth\OAuth2\FlipsideAuthenticator', $auth);
         $this->assertEquals('burningflipside.com', $auth->getHostName());
         $this->assertEquals('https://login.example.org/oauth/authorize.php?client_id=test&redirect_uri=https%3A%2F%2Fexample.com%2Foauth%2Fcallbacks%2Fburningflipside.com&scope=user', $auth->getAuthorizationUrl());
         $this->assertEquals('https://login.example.org/oauth/token.php?client_id=test&redirect_uri=https%3A%2F%2Fexample.com%2Foauth%2Fcallbacks%2Fburningflipside.com', $auth->getAccessTokenUrl());
@@ -98,9 +98,9 @@ class AuthenticatorTest extends PHPUnit\Framework\TestCase
         $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
         $_SERVER['HTTP_HOST'] = 'example.com';
         $params = array('current'=>true, 'pending'=>false, 'supplement'=>false, 'app_id'=>'test', 'app_secret'=>'abc');
-        $auth = new \Auth\OAuth2\GitHubAuthenticator($params);
+        $auth = new \Flipside\Auth\OAuth2\GitHubAuthenticator($params);
         $this->assertNotNull($auth);
-        $this->assertInstanceOf('Auth\OAuth2\GitHubAuthenticator', $auth);
+        $this->assertInstanceOf('Flipside\Auth\OAuth2\GitHubAuthenticator', $auth);
         $this->assertEquals('github.com', $auth->getHostName());
         $this->assertEquals('https://github.com/login/oauth/authorize?client_id=test&redirect_uri=https%3A%2F%2Fexample.com%2Foauth%2Fcallbacks%2Fgithub.com&scope=user', $auth->getAuthorizationUrl());
         $this->assertEquals('https://github.com/login/oauth/access_token?client_id=test&client_secret=abc&redirect_uri=https%3A%2F%2Fexample.com%2Foauth%2Fcallbacks%2Fgithub.com', $auth->getAccessTokenUrl());
@@ -113,9 +113,9 @@ class AuthenticatorTest extends PHPUnit\Framework\TestCase
         $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
         $_SERVER['HTTP_HOST'] = 'example.com';
         $params = array('current'=>true, 'pending'=>false, 'supplement'=>false, 'app_id'=>'test', 'app_secret'=>'abc');
-        $auth = new \Auth\OAuth2\GitLabAuthenticator($params);
+        $auth = new \Flipside\Auth\OAuth2\GitLabAuthenticator($params);
         $this->assertNotNull($auth);
-        $this->assertInstanceOf('Auth\OAuth2\GitLabAuthenticator', $auth);
+        $this->assertInstanceOf('Flipside\Auth\OAuth2\GitLabAuthenticator', $auth);
         $this->assertEquals('gitlab.com', $auth->getHostName());
         $this->assertEquals('https://gitlab.com/oauth/authorize?client_id=test&redirect_uri=https%3A%2F%2Fexample.com%2Foauth%2Fcallbacks%2Fgitlab.com&response_type=code', $auth->getAuthorizationUrl());
         $this->assertEquals('https://gitlab.com/oauth/token?client_id=test&client_secret=abc&grant_type=authorization_code&redirect_uri=https%3A%2F%2Fexample.com%2Foauth%2Fcallbacks%2Fgitlab.com', $auth->getAccessTokenUrl());
@@ -128,9 +128,9 @@ class AuthenticatorTest extends PHPUnit\Framework\TestCase
         $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
         $_SERVER['HTTP_HOST'] = 'example.com';
         $params = array('current'=>true, 'pending'=>false, 'supplement'=>false, 'app_id'=>'test', 'app_secret'=>'abc');
-        $auth = new \Auth\OAuth2\LiveAuthenticator($params);
+        $auth = new \Flipside\Auth\OAuth2\LiveAuthenticator($params);
         $this->assertNotNull($auth);
-        $this->assertInstanceOf('Auth\OAuth2\LiveAuthenticator', $auth);
+        $this->assertInstanceOf('Flipside\Auth\OAuth2\LiveAuthenticator', $auth);
         $this->assertEquals('live.com', $auth->getHostName());
         $this->assertEquals('https://login.live.com/oauth20_authorize.srf?client_id=test&redirect_uri=https%3A%2F%2Fexample.com%2Foauth%2Fcallbacks%2Flive.com&response_type=code&scope=wl.basic,wl.emails', $auth->getAuthorizationUrl());
         $this->assertEquals('https://login.live.com/oauth20_token.srf', $auth->getAccessTokenUrl());
@@ -143,9 +143,9 @@ class AuthenticatorTest extends PHPUnit\Framework\TestCase
         $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
         $_SERVER['HTTP_HOST'] = 'example.com';
         $params = array('current'=>true, 'pending'=>false, 'supplement'=>false, 'client_secrets_path'=>dirname(__FILE__).'/helpers/google.json');
-        $auth = new \Auth\GoogleAuthenticator($params);
+        $auth = new \Flipside\Auth\GoogleAuthenticator($params);
         $this->assertNotNull($auth);
-        $this->assertInstanceOf('Auth\GoogleAuthenticator', $auth);
+        $this->assertInstanceOf('Flipside\Auth\GoogleAuthenticator', $auth);
         
         $linkTxt = $auth->getSupplementLink();
         $dom = new DOMDocument;

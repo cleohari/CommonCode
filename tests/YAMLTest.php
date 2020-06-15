@@ -4,7 +4,7 @@ class YAMLTest extends PHPUnit\Framework\TestCase
 {
     public function testBasic()
     {
-        $serializer = new \Serialize\YAMLSerializer();
+        $serializer = new \Flipside\Serialize\YAMLSerializer();
         $array = array(array('Test1'=>1,'Test2'=>'a','ABC'=>'1'));
         $type = 'text/x-yaml';
         $data = $serializer->serializeData($type, $array);
@@ -13,13 +13,13 @@ class YAMLTest extends PHPUnit\Framework\TestCase
 
     public function testComma()
     {
-        $serializer = new \Serialize\YAMLSerializer();
+        $serializer = new \Flipside\Serialize\YAMLSerializer();
         $array = array(array('Test1'=>1,'Test2,3'=>'a','ABC'=>'1,0'));
         $type = 'text/x-yaml';
         $data = $serializer->serializeData($type, $array);
         $this->assertEquals("-\n    Test1: 1\n    'Test2,3': a\n    ABC: '1,0'\n", $data);
 
-        $serializer = new \Serialize\YAMLSerializer();
+        $serializer = new \Flipside\Serialize\YAMLSerializer();
         $array = array(array('Test1'=>1,'Test2,3'=>'a','ABC'=>array(1,0)));
         $data = $serializer->serializeData($type, $array);
         $this->assertEquals("-\n    Test1: 1\n    'Test2,3': a\n    ABC: [1, 0]\n", $data);
@@ -27,7 +27,7 @@ class YAMLTest extends PHPUnit\Framework\TestCase
 
     public function testUnevenArrays()
     {
-        $serializer = new \Serialize\YAMLSerializer();
+        $serializer = new \Flipside\Serialize\YAMLSerializer();
         $row1 = array('A'=>1,'B'=>'2','C'=>'3');
         $row2 = array('A'=>1,'C'=>2);
         $array = array($row1, $row2);
@@ -39,9 +39,9 @@ class YAMLTest extends PHPUnit\Framework\TestCase
     public function testObjectContents()
     {
         //May need the Mongo Polyfill
-        $tmp = new \Data\MongoDataSet(false);
+        $tmp = new \Flipside\Data\MongoDataSet(false);
 
-        $serializer = new \Serialize\YAMLSerializer();
+        $serializer = new \Flipside\Serialize\YAMLSerializer();
         $obj = new stdClass();
         $obj->Test1 = 1;
         $obj->Test2 = 'a';
@@ -55,7 +55,7 @@ class YAMLTest extends PHPUnit\Framework\TestCase
 
     public function testSimpleType()
     {
-        $serializer = new \Serialize\YAMLSerializer();
+        $serializer = new \Flipside\Serialize\YAMLSerializer();
         $type = 'text/x-yaml';
         $data = $serializer->serializeData($type, array('Test', 'Test1'));
         $this->assertEquals("- Test\n- Test1\n", $data);
@@ -63,7 +63,7 @@ class YAMLTest extends PHPUnit\Framework\TestCase
 
     public function testBadType()
     {
-        $serializer = new \Serialize\YAMLSerializer();
+        $serializer = new \Flipside\Serialize\YAMLSerializer();
         $array = array(array('Test1'=>1,'Test2,3'=>'a','ABC'=>'1,0'));
         $type = 'text/json';
         $data = $serializer->serializeData($type, $array);
@@ -72,7 +72,7 @@ class YAMLTest extends PHPUnit\Framework\TestCase
 
     public function testEmpty()
     {
-        $serializer = new \Serialize\YAMLSerializer();
+        $serializer = new \Flipside\Serialize\YAMLSerializer();
         $array = array();
         $type = 'text/x-yaml';
         $data = $serializer->serializeData($type, $array);

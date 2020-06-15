@@ -1,6 +1,6 @@
 <?php
 
-class TestProvider extends Provider
+class TestProvider extends \Flipside\Provider
 {
     public function __construct($method)
     {
