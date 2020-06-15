@@ -15,7 +15,7 @@ class DataTableSessionHandler implements \SessionHandlerInterface
 
     public function open($savePath, $sessionName)
     {
-       $this->dataTable = \DataSetFactory::getDataTableByNames($this->dataSetName, $this->dataTableName);
+       $this->dataTable = \Flipside\DataSetFactory::getDataTableByNames($this->dataSetName, $this->dataTableName);
        if($this->dataTable)
        {
            return true;
@@ -30,7 +30,7 @@ class DataTableSessionHandler implements \SessionHandlerInterface
 
     public function read($id)
     {
-        $filter = new \Data\Filter("sessionId eq '$id'");
+        $filter = new \Flipside\Data\Filter("sessionId eq '$id'");
         $data = $this->dataTable->read($filter, array('sessionData'));
         if(empty($data))
         {
@@ -41,7 +41,7 @@ class DataTableSessionHandler implements \SessionHandlerInterface
 
     public function write($id, $data)
     {
-        $filter = new \Data\Filter("sessionId eq '$id'");
+        $filter = new \Flipside\Data\Filter("sessionId eq '$id'");
         $res = $this->dataTable->update($filter, array('sessionData'=>$data, 'sessionLastAccess'=>date("Y-m-d H:i:s")));
         if($res === false)
         {
@@ -56,14 +56,14 @@ class DataTableSessionHandler implements \SessionHandlerInterface
 
     public function destroy($id)
     {
-        $filter = new \Data\Filter("sessionId eq '$id'");
+        $filter = new \Flipside\Data\Filter("sessionId eq '$id'");
         return $this->dataTable->delete($filter);
     }
 
     public function gc($maxlifetime)
     {
         $date = date("Y-m-d H:i:s", time()-$maxlifetime);
-        $filter = new \Data\Filter("sessionLastAccess lt $date");
+        $filter = new \Flipside\Data\Filter("sessionLastAccess lt $date");
         return $this->dataTable->delete($filter);
     }
 }

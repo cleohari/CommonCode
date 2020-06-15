@@ -12,7 +12,7 @@ class AuthMiddleware
     {
         if(\Flipside\FlipSession::isLoggedIn())
         {
-            return \FlipSession::getUser();
+            return \Flipside\FlipSession::getUser();
         }
         return false;
     }

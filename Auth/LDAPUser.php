@@ -212,7 +212,7 @@ class LDAPUser extends User
         {
             throw new \Exception('data must be set for LDAPUser');
         }
-        $filter = new \Data\Filter("uid eq $name");
+        $filter = new \Flipside\Data\Filter("uid eq $name");
         $user = $data->read($data->user_base, $filter);
         if(empty($user))
         {
@@ -256,7 +256,7 @@ class LDAPUser extends User
 
     public function getPasswordResetHash()
     {
-        $ldapObj = $this->server->read($this->server->user_base, new \Data\Filter('uid eq '.$this->uid));
+        $ldapObj = $this->server->read($this->server->user_base, new \Flipside\Data\Filter('uid eq '.$this->uid));
         $ldapObj = $ldapObj[0];
         $hash = $this->getHashFromUser($ldapObj);
         $obj = array('dn'=>$this->ldapObj->dn);
@@ -299,7 +299,7 @@ class LDAPUser extends User
         {
             throw new \Exception('Unable to change mail properties in LDAP object!');
         }
-        $this->ldapObj = $this->server->read($this->server->user_base, new \Data\Filter('uid eq '.$this->uid));
+        $this->ldapObj = $this->server->read($this->server->user_base, new \Flipside\Data\Filter('uid eq '.$this->uid));
         return true;
     }
 

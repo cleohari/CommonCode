@@ -32,11 +32,11 @@ class GitHubAuthenticator extends OAuth2Authenticator
     {
         if($token === false)
         {
-            $token = \FlipSession::getVar('OAuthToken');
+            $token = \Flipside\FlipSession::getVar('OAuthToken');
         }
         $resp = \Httpful\Request::get('https://api.github.com/user')->addHeader('Authorization', 'token '.$token['access_token'])->send();
         $github_user = $resp->body;
-        $user = new \Auth\PendingUser();
+        $user = new \Flipside\Auth\PendingUser();
         if(isset($github_user->name))
         {
             $name = explode(' ', $github_user->name);

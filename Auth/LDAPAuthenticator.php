@@ -113,7 +113,7 @@ class LDAPAuthenticator extends Authenticator
         {
             return $params['host'];
         }
-        $settings = \Settings::getInstance();
+        $settings = \Flipside\Settings::getInstance();
         return $settings->getLDAPSetting('host');
     }
 
@@ -139,7 +139,7 @@ class LDAPAuthenticator extends Authenticator
         {
             return $params[$paramName];
         }
-        $settings = \Settings::getInstance();
+        $settings = \Flipside\Settings::getInstance();
         return $settings->getLDAPSetting($settingsName, ($settingsLocation !== '$ldap'));
     }
 
@@ -154,7 +154,7 @@ class LDAPAuthenticator extends Authenticator
      */
     public function getAndBindServer($bindWrite = false)
     {
-        $server = \LDAP\LDAPServer::getInstance();
+        $server = \Flipside\LDAP\LDAPServer::getInstance();
         $server->user_base = $this->user_base;
         $server->group_base = $this->group_base;
         $server->connect($this->host);
@@ -195,7 +195,7 @@ class LDAPAuthenticator extends Authenticator
         {
             return false;
         }
-        $filter = new \Data\Filter("uid eq $username or mail eq $username");
+        $filter = new \Flipside\Data\Filter("uid eq $username or mail eq $username");
         $user = $server->read($this->user_base, $filter);
         if($user === false || count($user) === 0)
         {
@@ -266,7 +266,7 @@ class LDAPAuthenticator extends Authenticator
         }
         if($filter === false)
         {
-            $filter = new \Data\Filter('cn eq *');
+            $filter = new \Flipside\Data\Filter('cn eq *');
         }
         $groups = $server->read($this->group_base, $filter);
         if($groups === false)
@@ -346,7 +346,7 @@ class LDAPAuthenticator extends Authenticator
         }
         if($filter === false)
         {
-            $filter = new \Data\Filter('cn eq *');
+            $filter = new \Flipside\Data\Filter('cn eq *');
         }
         $users = $server->read($this->user_base, $filter, false, $select);
         if($users === false)
@@ -400,7 +400,7 @@ class LDAPAuthenticator extends Authenticator
         {
             $user->delete();
         }
-        $users = $this->getUsersByFilter(new \Data\Filter('mail eq '.$user->mail));
+        $users = $this->getUsersByFilter(new \Flipside\Data\Filter('mail eq '.$user->mail));
         if(empty($users))
         {
             throw new \Exception('Error creating user!');
@@ -410,7 +410,7 @@ class LDAPAuthenticator extends Authenticator
 
     public function getUserByResetHash($hash)
     {
-        $users = $this->getUsersByFilter(new \Data\Filter("uniqueIdentifier eq $hash"));
+        $users = $this->getUsersByFilter(new \Flipside\Data\Filter("uniqueIdentifier eq $hash"));
         if($users === false || !isset($users[0]))
         {
             return false;
