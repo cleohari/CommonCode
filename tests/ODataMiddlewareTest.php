@@ -4,7 +4,7 @@ class ODataMiddlewareTest extends PHPUnit\Framework\TestCase
 {
     public function testBasic()
     {
-        $middleware = new \Http\ODataMiddleware();
+        $middleware = new \Flipside\Http\ODataMiddleware();
         $uri = \Slim\Http\Uri::createFromString('http://example.org');
         $headers = new \Slim\Http\Headers();
         $body = new \Slim\Http\Body(fopen('php://temp', 'r+'));
@@ -19,7 +19,7 @@ class ODataMiddlewareTest extends PHPUnit\Framework\TestCase
         $this->assertNotNull($response);
         $odata = $request->getAttribute('odata', null);
         $this->assertNotNull($odata);
-        $this->assertInstanceOf(\ODataParams::class, $odata);
+        $this->assertInstanceOf(\Flipside\ODataParams::class, $odata);
         return $response;
     } 
 }

@@ -4,7 +4,7 @@ class DataSetTest extends PHPUnit\Framework\TestCase
 {
     public function testDataSet()
     {
-        $dataSet = new \Data\DataSet();
+        $dataSet = new \Flipside\Data\DataSet();
         $dataSet->offsetSet(0, 'test');
         $this->assertTrue(true);
         $dataSet->offsetSet('a', 'test');
@@ -64,8 +64,8 @@ class DataSetTest extends PHPUnit\Framework\TestCase
 
     public function testSQLDataSet()
     {
-        $dataSet = new \Data\SQLDataSet(array('dsn'=>'sqlite::memory:'));
-        $this->assertInstanceOf('Data\SQLDataSet', $dataSet);
+        $dataSet = new \Flipside\Data\SQLDataSet(array('dsn'=>'sqlite::memory:'));
+        $this->assertInstanceOf('Flipside\Data\SQLDataSet', $dataSet);
         $res = $dataSet->raw_query('CREATE TABLE Persons (PersonID int, LastName varchar(255), FirstName varchar(255), Address varchar(255), City varchar(255));');
         $this->assertNotFalse($res);
 
@@ -95,15 +95,15 @@ class DataSetTest extends PHPUnit\Framework\TestCase
 
         $dataTable = $dataSet['Users'];
         $this->assertNotFalse($dataTable);
-        $this->assertInstanceOf('Data\SQLDataTable', $dataTable);
+        $this->assertInstanceOf('Flipside\Data\SQLDataTable', $dataTable);
 
         $dataTable = $dataSet['UserPeople'];
         $this->assertNotFalse($dataTable);
-        $this->assertInstanceOf('Data\SQLDataTable', $dataTable);
+        $this->assertInstanceOf('Flipside\Data\SQLDataTable', $dataTable);
 
         $dataTable = $dataSet['Persons'];
         $this->assertNotFalse($dataTable);
-        $this->assertInstanceOf('Data\SQLDataTable', $dataTable);
+        $this->assertInstanceOf('Flipside\Data\SQLDataTable', $dataTable);
 
         $res = $dataTable->create(array('PersonID'=>1, 'LastName'=>'Test', 'FirstName'=>'Bob', 'Address'=>'123 Fake Street', 'City'=>'Fake Town'));
         $this->assertTrue($res);
@@ -126,19 +126,19 @@ class DataSetTest extends PHPUnit\Framework\TestCase
         $res = $dataTable->read(false);
         $this->assertCount(3, $res);
 
-        $res = $dataTable->read(new \Data\Filter('PersonID eq 1'));
+        $res = $dataTable->read(new \Flipside\Data\Filter('PersonID eq 1'));
         $this->assertCount(1, $res);
         $this->assertCount(5, $res[0]);
         $this->assertEquals(1, $res[0]['PersonID']);
         $this->assertEquals('Test', $res[0]['LastName']);
 
-        $res = $dataTable->read(new \Data\Filter('PersonID eq 2'), array('PersonID', 'Address'));
+        $res = $dataTable->read(new \Flipside\Data\Filter('PersonID eq 2'), array('PersonID', 'Address'));
         $this->assertCount(1, $res);
         $this->assertCount(2, $res[0]);
         $this->assertEquals(2, $res[0]['PersonID']);
         $this->assertEquals('123 Fake Street', $res[0]['Address']);
 
-        $res = $dataTable->read(new \Data\Filter('PersonID eq 4'));
+        $res = $dataTable->read(new \Flipside\Data\Filter('PersonID eq 4'));
         $this->assertFalse($res);
 
         $res = $dataTable->read(false, false, 1);
@@ -155,34 +155,34 @@ class DataSetTest extends PHPUnit\Framework\TestCase
         $count = $dataTable->count();
         $this->assertEquals(3, $count);
 
-        $count = $dataTable->count(new \Data\Filter('PersonID eq 2'));
+        $count = $dataTable->count(new \Flipside\Data\Filter('PersonID eq 2'));
         $this->assertEquals(1, $count);
 
-        $count = $dataTable->count(new \Data\Filter('PersonID eq 4'));
+        $count = $dataTable->count(new \Flipside\Data\Filter('PersonID eq 4'));
         $this->assertEquals(0, $count);
 
-        $res = $dataTable->update(new \Data\Filter('PersonID eq 1'), array('LastName'=>'Smith'));
+        $res = $dataTable->update(new \Flipside\Data\Filter('PersonID eq 1'), array('LastName'=>'Smith'));
         $this->assertTrue($res);
 
         $obj = new stdClass();
         $obj->FirstName = 'Tim';
-        $res = $dataTable->update(new \Data\Filter('PersonID eq 2'), $obj);
+        $res = $dataTable->update(new \Flipside\Data\Filter('PersonID eq 2'), $obj);
         $this->assertTrue($res);
 
-        $res = $dataTable->update(new \Data\Filter('PersonID eq 3'), array('LastName1'=>'Smith'));
+        $res = $dataTable->update(new \Flipside\Data\Filter('PersonID eq 3'), array('LastName1'=>'Smith'));
         $this->assertFalse($res);
 
-        $res = $dataTable->read(new \Data\Filter('PersonID eq 1'));
+        $res = $dataTable->read(new \Flipside\Data\Filter('PersonID eq 1'));
         $this->assertCount(1, $res);
         $this->assertEquals('Smith', $res[0]['LastName']);
 
-        $res = $dataTable->delete(new \Data\Filter('PersonID eq 2'));
+        $res = $dataTable->delete(new \Flipside\Data\Filter('PersonID eq 2'));
         $this->assertTrue($res);
 
         $res = $dataTable->read(false);
         $this->assertCount(2, $res);
 
-        $res = $dataTable->delete(new \Data\Filter('Test eq 4'));
+        $res = $dataTable->delete(new \Flipside\Data\Filter('Test eq 4'));
         $this->assertFalse($res);
 
         $err = $dataTable->getLastError();
@@ -198,17 +198,17 @@ class DataSetTest extends PHPUnit\Framework\TestCase
 
     public function testSerialization()
     {
-        $dataSet = new \Data\SQLDataSet(array('dsn'=>'sqlite::memory:'));
-        $this->assertInstanceOf('Data\SQLDataSet', $dataSet);
+        $dataSet = new \Flipside\Data\SQLDataSet(array('dsn'=>'sqlite::memory:'));
+        $this->assertInstanceOf('Flipside\Data\SQLDataSet', $dataSet);
         $data = serialize($dataSet);
         $dataSet2 = unserialize($data);
-        $this->assertInstanceOf('Data\SQLDataSet', $dataSet2);
+        $this->assertInstanceOf('Flipside\Data\SQLDataSet', $dataSet2);
     }
 
     public function testObjectDataTable()
     {
         $dataTable = TestObjDataTable::getInstance();
-        $this->assertInstanceOf('Data\ObjectDataTable', $dataTable);
+        $this->assertInstanceOf('Flipside\Data\ObjectDataTable', $dataTable);
 
         $res = $dataTable->read();
         $this->assertFalse($res);
@@ -233,32 +233,32 @@ class DataSetTest extends PHPUnit\Framework\TestCase
         $this->assertCount(3, $res);
         for($i = 0; $i < 3; $i++)
         {
-            $this->assertInstanceOf('SerializableObject', $res[$i]);
+            $this->assertInstanceOf('Flipside\SerializableObject', $res[$i]);
         }
 
         $res = $dataTable->count();
         $this->assertEquals(3, $res);
 
-        $res = $dataTable->update(new \Data\Filter('PersonID eq 2'), array('LastName'=>'Smith'));
+        $res = $dataTable->update(new \Flipside\Data\Filter('PersonID eq 2'), array('LastName'=>'Smith'));
         $this->assertTrue($res);
 
-        $res = $dataTable->read(new \Data\Filter('PersonID eq 2 and LastName eq "Smith"'));
+        $res = $dataTable->read(new \Flipside\Data\Filter('PersonID eq 2 and LastName eq "Smith"'));
         $this->assertNotFalse($res);
         $this->assertCount(1, $res);
         $this->assertEquals('Smith', $res[0]->LastName);
 
-        $res = $dataTable->update(new \Data\Filter('PersonID eq 1'), $obj);
+        $res = $dataTable->update(new \Flipside\Data\Filter('PersonID eq 1'), $obj);
         $this->assertTrue($res);
 
-        $res = $dataTable->read(new \Data\Filter('PersonID eq 1'));
+        $res = $dataTable->read(new \Flipside\Data\Filter('PersonID eq 1'));
         $this->assertNotFalse($res);
         $this->assertCount(1, $res);
         $this->assertEquals('Test2', $res[0]->LastName);
 
-        $res = $dataTable->delete(new \Data\Filter('PersonID eq 2'));
+        $res = $dataTable->delete(new \Flipside\Data\Filter('PersonID eq 2'));
         $this->assertTrue($res);
 
-        $res = $dataTable->delete(new \Data\Filter('Test eq 4'));
+        $res = $dataTable->delete(new \Flipside\Data\Filter('Test eq 4'));
         $this->assertFalse($res);
     }
 
@@ -266,7 +266,7 @@ class DataSetTest extends PHPUnit\Framework\TestCase
     {
         try
         {
-             \DataSetFactory::getDataSetByName('Unknown');
+             \Flipside\DataSetFactory::getDataSetByName('Unknown');
              $this->assertFalse(true);
         }
         catch(\Exception $ex)
@@ -276,17 +276,17 @@ class DataSetTest extends PHPUnit\Framework\TestCase
     }
 }
 
-class TestObjDataTable extends \Data\ObjectDataTable
+class TestObjDataTable extends \Flipside\Data\ObjectDataTable
 {
     protected function __construct()
     {
-        $dataSet = new \Data\SQLDataSet(array('dsn'=>'sqlite::memory:'));
+        $dataSet = new \Flipside\Data\SQLDataSet(array('dsn'=>'sqlite::memory:'));
         $dataSet->raw_query('CREATE TABLE Persons (PersonID int, LastName varchar(255), FirstName varchar(255), Address varchar(255), City varchar(255));');
         parent::__construct($dataSet['Persons']);
     }
 }
 
-class TestDataObj extends \SerializableObject
+class TestDataObj extends \Flipside\SerializableObject
 {
     public function preCreate()
     {

@@ -4,7 +4,7 @@ class GroupTest extends PHPUnit\Framework\TestCase
 {
     public function testGroup()
     {
-        $user = new \Auth\Group();
+        $user = new \Flipside\Auth\Group();
         $this->assertFalse($user->getGroupName());
         $this->assertFalse($user->getDescription());
         $this->assertFalse($user->setGroupName('AAR'));
@@ -27,7 +27,7 @@ class GroupTest extends PHPUnit\Framework\TestCase
         $this->assertFalse($user->addMember('test', true, false));
         $json = json_encode($user);
         $this->assertEquals($json, '{"cn":false,"description":false,"member":[]}');
-        $this->assertFalse(\Auth\Group::from_name('test'));
+        $this->assertFalse(\Flipside\Auth\Group::from_name('test'));
     }
 
     public function testLDAPGroup()
@@ -35,7 +35,7 @@ class GroupTest extends PHPUnit\Framework\TestCase
         $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
         try
         {
-            $group = new \Auth\LDAPGroup(false);
+            $group = new \Flipside\Auth\LDAPGroup(false);
             $this->assertFalse(true);
         }
         catch(\Exception $ex)
@@ -43,8 +43,8 @@ class GroupTest extends PHPUnit\Framework\TestCase
             $this->assertFalse(false);
         }
         $array = array('dn'=>array('cn=Test,dc=example,dc=com'), 'cn'=>array('Test'), 'description'=>array('Test Group'), 'member'=>array('uid=test,dc=example,dc=com', 'cn=tg,dc=example,dc=com'));
-        $ldapGroup = new \LDAP\LDAPObject($array);
-        $group = new \Auth\LDAPGroup($ldapGroup);
+        $ldapGroup = new \Flipside\LDAP\LDAPObject($array);
+        $group = new \Flipside\Auth\LDAPGroup($ldapGroup);
         $this->assertEquals('Test', $group->getGroupName());
         $this->assertEquals('Test Group', $group->getDescription());
         $group->setDescription('New Group');
@@ -69,8 +69,8 @@ class GroupTest extends PHPUnit\Framework\TestCase
         $this->assertCount(0, $ids);
 
         $array = array('dn'=>array('cn=Test,dc=example,dc=com'), 'cn'=>array('Test'), 'description'=>array('Test Group'), 'memberuid'=>array('test'));
-        $ldapGroup = new \LDAP\LDAPObject($array);
-        $group = new \Auth\LDAPGroup($ldapGroup);
+        $ldapGroup = new \Flipside\LDAP\LDAPObject($array);
+        $group = new \Flipside\Auth\LDAPGroup($ldapGroup);
         $ids = $group->getMemberUids();
         $this->assertNotFalse($ids);
         $this->assertCount(1, $ids);
@@ -81,8 +81,8 @@ class GroupTest extends PHPUnit\Framework\TestCase
         $this->assertCount(0, $ids);
 
         $array = array('dn'=>array('cn=Test,dc=example,dc=com'), 'cn'=>array('Test'), 'description'=>array('Test Group'), 'uniquemember'=>array('uid=test'));
-        $ldapGroup = new \LDAP\LDAPObject($array);
-        $group = new \Auth\LDAPGroup($ldapGroup);
+        $ldapGroup = new \Flipside\LDAP\LDAPObject($array);
+        $group = new \Flipside\Auth\LDAPGroup($ldapGroup);
         $ids = $group->getMemberUids();
         $this->assertNotFalse($ids);
         $this->assertCount(1, $ids);
@@ -95,13 +95,13 @@ class GroupTest extends PHPUnit\Framework\TestCase
 
     public function testSQLGroup()
     {
-        $group = new \Auth\SQLGroup(array(), false);
+        $group = new \Flipside\Auth\SQLGroup(array(), false);
         $this->assertFalse($group->getGroupName());
         $this->assertFalse($group->getDescription());
         $this->assertEmpty($group->members());
         $this->assertEmpty($group->getMemberUids());
 
-        $group = new \Auth\SQLGroup(array('gid'=>'testGid', 'description'=>'Test Group'), false);
+        $group = new \Flipside\Auth\SQLGroup(array('gid'=>'testGid', 'description'=>'Test Group'), false);
         $this->assertEquals($group->getGroupName(), 'testGid');
         $this->assertEquals($group->getDescription(), 'Test Group');
     }

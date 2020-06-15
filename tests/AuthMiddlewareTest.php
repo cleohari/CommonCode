@@ -6,7 +6,8 @@ class AuthMiddlewareTest extends PHPUnit\Framework\TestCase
 
     public function testNoAuth()
     {
-        $middleware = new \Http\AuthMiddleware();
+        $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
+        $middleware = new \Flipside\Http\AuthMiddleware();
         $this->assertNotNull($middleware);
 
         $uri = \Slim\Http\Uri::createFromString('https://www.burningflipside.com');
@@ -20,7 +21,8 @@ class AuthMiddlewareTest extends PHPUnit\Framework\TestCase
 
     public function testBasicAuthBad()
     {
-        $middleware = new \Http\AuthMiddleware();
+        $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
+        $middleware = new \Flipside\Http\AuthMiddleware();
         $this->assertNotNull($middleware);
 
         $uri = \Slim\Http\Uri::createFromString('https://www.burningflipside.com');

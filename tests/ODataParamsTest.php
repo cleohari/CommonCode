@@ -7,7 +7,7 @@ class ODataParamsTest extends PHPUnit\Framework\TestCase
         $params = array();
         $params['filter'] = 'year eq 2020';
         $params['select'] = 'd,e,f';
-        $odata = new \ODataParams($params);
+        $odata = new \Flipside\ODataParams($params);
         $this->assertNotFalse($odata->filter);
         $this->assertNotFalse($odata->select);
         $this->assertNotFalse($odata->filter->contains('year eq 2020'));
@@ -21,7 +21,7 @@ class ODataParamsTest extends PHPUnit\Framework\TestCase
     {
         $params = array();
         $params['$filter'] = 'sold eq 1';
-        $odata = new \ODataParams($params);
+        $odata = new \Flipside\ODataParams($params);
         $this->assertNotFalse($odata->filter);
         $this->assertTrue($odata->filter->contains('sold eq 1'));
     }
@@ -30,7 +30,7 @@ class ODataParamsTest extends PHPUnit\Framework\TestCase
     {
         $params = array();
         $params['$select'] = 'test1,a,1,Zz';
-        $odata = new \ODataParams($params);
+        $odata = new \Flipside\ODataParams($params);
         $this->assertNotFalse($odata->select);
         $this->assertCount(4, $odata->select);
         $this->assertContains('test1', $odata->select);
@@ -42,12 +42,12 @@ class ODataParamsTest extends PHPUnit\Framework\TestCase
         $filtered = $odata->filterArrayPerSelect($array);
         $this->assertEquals(array(array('test1'=>1, 'a'=>1, '1'=>1, 'Zz'=>1)), $filtered);
 
-        $array = array(new SerializableObject(array('test1'=>1, 'a'=>1, '1'=>1, 'Zz'=>1, 'T'=>1)));
+        $array = array(new \Flipside\SerializableObject(array('test1'=>1, 'a'=>1, '1'=>1, 'Zz'=>1, 'T'=>1)));
         $filtered = $odata->filterArrayPerSelect($array);
         $this->assertEquals(array(array('test1'=>1, 'a'=>1, '1'=>1, 'Zz'=>1)), $filtered);
 
         $params = array();
-        $odata = new \ODataParams($params);
+        $odata = new \Flipside\ODataParams($params);
         $this->assertFalse($odata->select);
         $array = array(array('test1'=>1, 'a'=>1, '1'=>1, 'Zz'=>1, 'T'=>1));
         $filtered = $odata->filterArrayPerSelect($array);
@@ -58,7 +58,7 @@ class ODataParamsTest extends PHPUnit\Framework\TestCase
     {
         $params = array();
         $params['$expand'] = 'tickets,donations';
-        $odata = new \ODataParams($params);
+        $odata = new \Flipside\ODataParams($params);
         $this->assertNotFalse($odata->expand);
         $this->assertCount(2, $odata->expand);
         $this->assertContains('tickets', $odata->expand);
@@ -69,13 +69,13 @@ class ODataParamsTest extends PHPUnit\Framework\TestCase
     {
         $params = array();
         $params['$top'] = 1;
-        $odata = new \ODataParams($params);
+        $odata = new \Flipside\ODataParams($params);
         $this->assertNotFalse($odata->top);
         $this->assertEquals(1, $odata->top);
 
         $params = array();
         $params['$top'] = '1';
-        $odata = new \ODataParams($params);
+        $odata = new \Flipside\ODataParams($params);
         $this->assertNotFalse($odata->top);
         $this->assertEquals(1, $odata->top);
     }
@@ -84,13 +84,13 @@ class ODataParamsTest extends PHPUnit\Framework\TestCase
     {
         $params = array();
         $params['$skip'] = 1;
-        $odata = new \ODataParams($params);
+        $odata = new \Flipside\ODataParams($params);
         $this->assertNotFalse($odata->skip);
         $this->assertEquals(1, $odata->skip);
 
         $params = array();
         $params['$skip'] = '1';
-        $odata = new \ODataParams($params);
+        $odata = new \Flipside\ODataParams($params);
         $this->assertNotFalse($odata->skip);
         $this->assertEquals(1, $odata->skip);
     }
@@ -99,11 +99,11 @@ class ODataParamsTest extends PHPUnit\Framework\TestCase
     {
         $params = array();
         $params['$count'] = 'true';
-        $odata = new \ODataParams($params);
+        $odata = new \Flipside\ODataParams($params);
         $this->assertNotFalse($odata->count);
 
         $params = array();
-        $odata = new \ODataParams($params);
+        $odata = new \Flipside\ODataParams($params);
         $this->assertFalse($odata->count);
     }
 
@@ -111,19 +111,19 @@ class ODataParamsTest extends PHPUnit\Framework\TestCase
     {
         $params = array();
         $params['$orderby'] = 'test';
-        $odata = new \ODataParams($params);
+        $odata = new \Flipside\ODataParams($params);
         $this->assertNotFalse($odata->orderby);
         $this->assertEquals(array('test'=>1), $odata->orderby);
 
         $params = array();
         $params['$orderby'] = 'test asc';
-        $odata = new \ODataParams($params);
+        $odata = new \Flipside\ODataParams($params);
         $this->assertNotFalse($odata->orderby);
         $this->assertEquals(array('test'=>1), $odata->orderby);
 
         $params = array();
         $params['$orderby'] = 'test desc';
-        $odata = new \ODataParams($params);
+        $odata = new \Flipside\ODataParams($params);
         $this->assertNotFalse($odata->orderby);
         $this->assertEquals(array('test'=>-1), $odata->orderby);
     }

@@ -6,7 +6,7 @@ class AmazonSESTest extends PHPUnit\Framework\TestCase
     {
         try
         {
-            $amazon = new Email\AmazonSES(false);
+            $amazon = new Flipside\Email\AmazonSES(false);
             $this->assertFalse(true);
         }
         catch(\Exception $e)
@@ -16,7 +16,7 @@ class AmazonSESTest extends PHPUnit\Framework\TestCase
 
         try
         {
-            $amazon = new Email\AmazonSES(array());
+            $amazon = new Flipside\Email\AmazonSES(array());
             $this->assertFalse(true);
         }
         catch(\Exception $e)
@@ -27,7 +27,7 @@ class AmazonSESTest extends PHPUnit\Framework\TestCase
 
     public function testGoodInit()
     {
-        $amazon = new Email\AmazonSES(array('ini'=>dirname(__FILE__).'/helpers/aws.ini'));
+        $amazon = new Flipside\Email\AmazonSES(array('ini'=>dirname(__FILE__).'/helpers/aws.ini'));
         $this->assertFalse(false);
     }
 }

@@ -4,7 +4,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 {
     public function testUser()
     {
-        $user = new \Auth\User();
+        $user = new \Flipside\Auth\User();
         $this->assertFalse($user->isInGroupNamed('AAR'));
         $this->assertFalse($user->displayName);
         $this->assertFalse($user->givenName);
@@ -72,7 +72,7 @@ class UserTest extends PHPUnit\Framework\TestCase
         $this->assertEquals("BEGIN:VCARD\nVERSION:2.1\nN:;\nFN:\nORG: Austin Artistic Reconstruction\nTEL;TYPE=MOBILE,VOICE:\nEMAIL;TYPE=PREF,INTERNET:\nEND:VCARD\n", $vcard);
 
         $json = json_encode($user);
-        $this->assertEquals('{"displayName":false,"givenName":false,"jpegPhoto":"","mail":false,"mobile":false,"uid":false,"o":false,"title":false,"titlenames":false,"st":false,"l":false,"sn":false,"cn":false,"postalAddress":false,"postalCode":false,"c":false,"ou":false,"host":false,"class":"Auth\\\\User"}', $json);
+        $this->assertEquals('{"displayName":false,"givenName":false,"jpegPhoto":"","mail":false,"mobile":false,"uid":false,"o":false,"title":false,"titlenames":false,"st":false,"l":false,"sn":false,"cn":false,"postalAddress":false,"postalCode":false,"c":false,"ou":false,"host":false,"class":"Flipside\\\\Auth\\\\User"}', $json);
 
         $data = new \stdClass();
         $user->editUser($data);
@@ -150,7 +150,7 @@ class UserTest extends PHPUnit\Framework\TestCase
     public function testLDAPUser()
     {
         $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
-        $user = new \Auth\LDAPUser();
+        $user = new \Flipside\Auth\LDAPUser();
         try{
             $this->assertFalse($user->isInGroupNamed('AAR'));
         } catch(\Exception $e)
@@ -218,7 +218,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 
     public function testSQLUser()
     {
-        $user = new \Auth\SQLUser();
+        $user = new \Flipside\Auth\SQLUser();
         try{
             $this->assertFalse($user->isInGroupNamed('AAR'));
         } catch(\Exception $e)
@@ -244,7 +244,7 @@ class UserTest extends PHPUnit\Framework\TestCase
         $this->assertFalse($user->host);
         $this->assertFalse($user->getGroups());
 
-        $user = new \Auth\SQLUser(array('mail'=>'test@example.com'));
+        $user = new \Flipside\Auth\SQLUser(array('mail'=>'test@example.com'));
         $this->assertEquals('test@example.com', $user->mail);
     }
 
@@ -252,7 +252,7 @@ class UserTest extends PHPUnit\Framework\TestCase
     {
         $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
 
-        $user = new \Auth\FlipsideAPIUser();
+        $user = new \Flipside\Auth\FlipsideAPIUser();
         try{
             $this->assertFalse($user->isInGroupNamed('AAR'));
         } catch(\Exception $e)
@@ -282,7 +282,7 @@ class UserTest extends PHPUnit\Framework\TestCase
     public function testPendingUser()
     {
         $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
-        $user = new \Auth\PendingUser();
+        $user = new \Flipside\Auth\PendingUser();
         $this->assertFalse($user->getHash());
         $this->assertFalse($user->getRegistrationTime());
         $this->assertFalse($user->isInGroupNamed('AAR'));
@@ -310,13 +310,13 @@ class UserTest extends PHPUnit\Framework\TestCase
         $user->sn = 'test';
         $this->assertEquals('test', $user->sn);
 
-        $this->assertEquals('{"hash":false,"mail":"test@example.com","uid":"test","class":"Auth\\\\PendingUser"}', json_encode($user));
+        $this->assertEquals('{"hash":false,"mail":"test@example.com","uid":"test","class":"Flipside\\\\Auth\\\\PendingUser"}', json_encode($user));
     }
 
     public function testSQLPendingUser()
     {
         $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
-        $user = new \Auth\SQLPendingUser(array('hash'=>false, 'time'=>'now', 'data'=>'{"mail":"test@example.com", "uid":"test", "password":"test"}'));
+        $user = new \Flipside\Auth\SQLPendingUser(array('hash'=>false, 'time'=>'now', 'data'=>'{"mail":"test@example.com", "uid":"test", "password":"test"}'));
         $this->assertFalse($user->getHash());
         $this->assertNotFalse($user->getRegistrationTime());
         $this->assertFalse($user->isInGroupNamed('AAR'));
@@ -324,10 +324,10 @@ class UserTest extends PHPUnit\Framework\TestCase
         $this->assertEquals('test', $user->uid);
         $this->assertEquals('test', $user->getPassword());
         $time = $user->getRegistrationTime()->format(\DateTime::RFC822);
-        $this->assertEquals('{"hash":false,"mail":"test@example.com","uid":"test","time":"'.$time.'","class":"Auth\\\\SQLPendingUser"}', json_encode($user));
+        $this->assertEquals('{"hash":false,"mail":"test@example.com","uid":"test","time":"'.$time.'","class":"Flipside\\\\Auth\\\\SQLPendingUser"}', json_encode($user));
         $this->assertEquals('test', $user['uid']);
 
-        $user = new \Auth\SQLPendingUser(array('hash'=>'1234', 'time'=>'now', 'data'=>'{"mail":["test@example.com"], "uid":["test"], "password":["test"]}'));
+        $user = new \Flipside\Auth\SQLPendingUser(array('hash'=>'1234', 'time'=>'now', 'data'=>'{"mail":["test@example.com"], "uid":["test"], "password":["test"]}'));
         $this->assertEquals('1234', $user->getHash());
         $this->assertNotFalse($user->getRegistrationTime());
         $this->assertFalse($user->isInGroupNamed('AAR'));
@@ -335,7 +335,7 @@ class UserTest extends PHPUnit\Framework\TestCase
         $this->assertEquals('test', $user->uid);
         $this->assertEquals('test', $user->getPassword());
         $time = $user->getRegistrationTime()->format(\DateTime::RFC822);
-        $this->assertEquals('{"hash":"1234","mail":"test@example.com","uid":"test","time":"'.$time.'","class":"Auth\\\\SQLPendingUser"}', json_encode($user));
+        $this->assertEquals('{"hash":"1234","mail":"test@example.com","uid":"test","time":"'.$time.'","class":"Flipside\\\\Auth\\\\SQLPendingUser"}', json_encode($user));
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */

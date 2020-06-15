@@ -17,7 +17,7 @@ class FlipsideSettings
     );
 
     public static $authProviders = array(
-        'Auth\\SQLAuthenticator' => array(
+        'Flipside\\Auth\\SQLAuthenticator' => array(
             'current' => true,
             'pending' => true,
             'supplement' => false

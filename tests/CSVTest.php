@@ -4,7 +4,7 @@ class CSVTest extends PHPUnit\Framework\TestCase
 {
     public function testBasic()
     {
-        $serializer = new \Serialize\CSVSerializer();
+        $serializer = new \Flipside\Serialize\CSVSerializer();
         $array = array(array('Test1'=>1,'Test2'=>'a','ABC'=>'1'));
         $type = 'text/csv';
         $data = $serializer->serializeData($type, $array);
@@ -13,7 +13,7 @@ class CSVTest extends PHPUnit\Framework\TestCase
 
     public function testObject()
     {
-        $serializer = new \Serialize\CSVSerializer();
+        $serializer = new \Flipside\Serialize\CSVSerializer();
         $obj = new stdClass();
         $obj->Test1 = 1;
         $obj->Test2 = 'a';
@@ -23,7 +23,7 @@ class CSVTest extends PHPUnit\Framework\TestCase
         $data = $serializer->serializeData($type, $array);
         $this->assertEquals("Test1,Test2,ABC\n1,a,1\n", $data);
 
-        $serializer = new \Serialize\CSVSerializer();
+        $serializer = new \Flipside\Serialize\CSVSerializer();
         $obj = new stdClass();
         $obj->Test1 = 1;
         $obj->Test2 = 'a';
@@ -35,13 +35,13 @@ class CSVTest extends PHPUnit\Framework\TestCase
 
     public function testComma()
     {
-        $serializer = new \Serialize\CSVSerializer();
+        $serializer = new \Flipside\Serialize\CSVSerializer();
         $array = array(array('Test1'=>1,'Test2,3'=>'a','ABC'=>'1,0'));
         $type = 'text/csv';
         $data = $serializer->serializeData($type, $array);
         $this->assertEquals("Test1,\"Test2,3\",ABC\n1,a,\"1,0\"\n", $data);
 
-        $serializer = new \Serialize\CSVSerializer();
+        $serializer = new \Flipside\Serialize\CSVSerializer();
         $array = array(array('Test1'=>1,'Test2,3'=>'a','ABC'=>array(1,0)));
         $data = $serializer->serializeData($type, $array);
         $this->assertEquals("Test1,\"Test2,3\",ABC\n1,a,\"1,0\"\n", $data);
@@ -49,7 +49,7 @@ class CSVTest extends PHPUnit\Framework\TestCase
 
     public function testUnevenArrays()
     {
-        $serializer = new \Serialize\CSVSerializer();
+        $serializer = new \Flipside\Serialize\CSVSerializer();
         $row1 = array('A'=>1,'B'=>'2','C'=>'3');
         $row2 = array('A'=>1,'C'=>2);
         $array = array($row1, $row2);
@@ -61,10 +61,18 @@ class CSVTest extends PHPUnit\Framework\TestCase
     public function testObjectContents()
     {
         //May need the Mongo Polyfill
-        $tmp = new \Data\MongoDataSet(false);
+        $tmp = new \Flipside\Data\MongoDataSet(false);
 
-        $serializer = new \Serialize\CSVSerializer();
-        $id = new \MongoId('4af9f23d8ead0e1d32000000');
+	$serializer = new \Flipside\Serialize\CSVSerializer();
+	$id = null;
+	if(class_exists('MongoId'))
+        {
+            $id = new \MongoId('4af9f23d8ead0e1d32000000');
+        }
+        else
+        {
+            $id = new \MongoDB\BSON\ObjectId('4af9f23d8ead0e1d32000000');
+        }
         $obj = new stdClass();
         $obj->Test1 = 1;
         $obj->Test2 = 'a';
@@ -78,7 +86,7 @@ class CSVTest extends PHPUnit\Framework\TestCase
 
     public function testBadType()
     {
-        $serializer = new \Serialize\CSVSerializer();
+        $serializer = new \Flipside\Serialize\CSVSerializer();
         $array = array(array('Test1'=>1,'Test2,3'=>'a','ABC'=>'1,0'));
         $type = 'text/json';
         $data = $serializer->serializeData($type, $array);
@@ -87,7 +95,7 @@ class CSVTest extends PHPUnit\Framework\TestCase
 
     public function testEmpty()
     {
-        $serializer = new \Serialize\CSVSerializer();
+        $serializer = new \Flipside\Serialize\CSVSerializer();
         $array = array();
         $type = 'text/csv';
         $data = $serializer->serializeData($type, $array);
