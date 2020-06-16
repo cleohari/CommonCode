@@ -26,7 +26,7 @@ class WebSite extends \Slim\App
     public function registerAPI($uri, $api)
     {
         $group = $this->group($uri, function() use($api){$api->setup($this);});
-        $group->add(new \Http\Rest\SerializationMiddleware());
-        $group->add(new \Http\Rest\CORSMiddleware($this->getContainer()));
+        $group->add(new \Flipside\Http\Rest\SerializationMiddleware());
+        $group->add(new \Flipside\Http\Rest\CORSMiddleware($this->getContainer()));
     }
 }

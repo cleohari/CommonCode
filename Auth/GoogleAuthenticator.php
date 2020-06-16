@@ -43,7 +43,7 @@ class GoogleAuthenticator extends Authenticator
         {
             $this->client->authenticate($code);
             $this->token = $this->client->getAccessToken();
-            \FlipSession::setVar('GoogleToken', $this->token);
+            \Flipside\FlipSession::setVar('GoogleToken', $this->token);
             $oauth2Service = new \Google_Service_Oauth2($this->client);
             $googleUser = $oauth2Service->userinfo->get();
         }
@@ -52,8 +52,8 @@ class GoogleAuthenticator extends Authenticator
             return self::LOGIN_FAILED;
         }
 
-        $auth = \AuthProvider::getInstance();
-        $localUsers = $auth->getUsersByFilter(new \Data\Filter('mail eq '.$googleUser->email));
+        $auth = \Flipside\AuthProvider::getInstance();
+        $localUsers = $auth->getUsersByFilter(new \Flipside\Data\Filter('mail eq '.$googleUser->email));
         if($localUsers !== false && isset($localUsers[0]))
         {
             if($localUsers[0]->canLoginWith('google.com'))
@@ -91,7 +91,7 @@ class GoogleAuthenticator extends Authenticator
             $this->client->setAccessToken($data);
             $oauth2Service = new \Google_Service_Oauth2($this->client);
             $googleUser = $oauth2Service->userinfo->get();
-            $profileUser = new \Auth\PendingUser();
+            $profileUser = new \Flipside\Auth\PendingUser();
             $profileUser->addLoginProvider('google.com');
             $profileUser->mail = $googleUser->email;
             $profileUser->sn = $googleUser->familyName;

@@ -119,14 +119,14 @@ abstract class OAuth2Authenticator extends \Flipside\Auth\Authenticator
         {
             return self::LOGIN_FAILED; 
         }
-        \FlipSession::setVar('OAuthToken', $resp->body);
+        \Flipside\FlipSession::setVar('OAuthToken', $resp->body);
         $user = $this->getUserFromToken($resp->body);
         if($user === false)
         {
             return self::LOGIN_FAILED;
         }
-        $auth = \AuthProvider::getInstance();
-        $local_users = $auth->getUsersByFilter(new \Data\Filter('mail eq '.$user->mail));
+        $auth = \Flipside\AuthProvider::getInstance();
+        $local_users = $auth->getUsersByFilter(new \Flipside\Data\Filter('mail eq '.$user->mail));
         if($local_users !== false && isset($local_users[0]))
         {
             if($local_users[0]->canLoginWith($this->getHostName()))

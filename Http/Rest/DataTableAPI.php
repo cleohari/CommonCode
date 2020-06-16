@@ -40,7 +40,7 @@ class DataTableAPI extends RestAPI
 
     protected function getDataTable()
     {
-        return \DataSetFactory::getDataTableByNames($this->dataSetName, $this->dataTableName);
+        return \Flipside\DataSetFactory::getDataTableByNames($this->dataSetName, $this->dataTableName);
     }
 
     protected function canRead($request)
@@ -70,7 +70,7 @@ class DataTableAPI extends RestAPI
 
     protected function getFilterForPrimaryKey($value)
     {
-        return new \Data\Filter($this->primaryKeyName." eq '$value'");
+        return new \Flipside\Data\Filter($this->primaryKeyName." eq '$value'");
     }
 
     protected function manipulateParameters($request, &$odata)
@@ -105,7 +105,7 @@ class DataTableAPI extends RestAPI
             return $response->withStatus(401);
         }
         $dataTable = $this->getDataTable();
-        $odata = $request->getAttribute('odata', new \ODataParams(array()));
+        $odata = $request->getAttribute('odata', new \Flipside\ODataParams(array()));
         $params = $this->manipulateParameters($request, $odata);
         $areas = $dataTable->read($odata->filter, $odata->select, $odata->top,
                                   $odata->skip, $odata->orderby, $params);
@@ -156,7 +156,7 @@ class DataTableAPI extends RestAPI
             return $response->withStatus(401);
         }
         $dataTable = $this->getDataTable();
-        $odata = $request->getAttribute('odata', new \ODataParams(array()));
+        $odata = $request->getAttribute('odata', new \Flipside\ODataParams(array()));
         $filter = $this->getFilterForPrimaryKey($args['name']);
         $areas = $dataTable->read($filter, $odata->select, $odata->top,
                                   $odata->skip, $odata->orderby);

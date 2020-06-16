@@ -24,6 +24,10 @@ class Filter
     static public function process_string($string)
     {
         $parens = false;
+        if(is_a($string, '\Flipside\Data\Filter'))
+        {
+            $string = $string->string;
+        }
         //First check for parenthesis...
         if($string[0] === '(' && substr($string, -1) === ')')
         {

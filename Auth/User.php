@@ -94,7 +94,7 @@ class User extends \Flipside\SerializableObject
         }
         if(self::$titlenames === null)
         {
-            $dataSet = \DataSetFactory::getDataSetByName('profiles');
+            $dataSet = \Flipside\DataSetFactory::getDataSetByName('profiles');
             $dataTable = $dataSet['position'];
             $titlenames = $dataTable->read();
             self::$titlenames = array();

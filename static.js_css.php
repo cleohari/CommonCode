@@ -72,8 +72,8 @@ $jsArray = array(
                 'min' => '/js/common/jquery.dataTables.min.js'
             ),
             'cdn' => array(
-                'no'  => '//cdn.datatables.net/1.10.15/js/jquery.dataTables.js',
-                'min' => '//cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js'
+                'no'  => '//cdn.datatables.net/1.10.20/js/jquery.dataTables.js',
+                'min' => '//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js'
             )
         ),
         JS_CHART => array(

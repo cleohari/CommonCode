@@ -300,7 +300,7 @@ class AuthProvider extends Provider
         {
             $userArray = new $userArray['class']($userArray);
         }
-        \FlipSession::setUser($userArray);
+        \Flipside\FlipSession::setUser($userArray);
     }
 
     /**
