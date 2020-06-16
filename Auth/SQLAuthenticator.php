@@ -328,7 +328,7 @@ class SQLAuthenticator extends Authenticator
         $ret = $userDataTable->create($array);
         if($ret !== false)
         {
-            $users = $this->getPendingUsersByFilter(new \Data\Filter("hash eq '$hash'"));
+            $users = $this->getPendingUsersByFilter(new \Flipside\Data\Filter("hash eq '$hash'"));
             if($users === false || !isset($users[0]))
             {
                 throw new \Exception('Error retreiving user object after successful create!');
@@ -340,7 +340,7 @@ class SQLAuthenticator extends Authenticator
 
     public function getTempUserByHash($hash)
     {
-        $users = $this->getPendingUsersByFilter(new \Data\Filter("hash eq '$hash'"));
+        $users = $this->getPendingUsersByFilter(new \Flipside\Data\Filter("hash eq '$hash'"));
         if($users === false || !isset($users[0]))
         {
             return false;

@@ -35,7 +35,7 @@ class SQLUser extends User
         $auth_data_set = $this->auth->dataSet;
         $group_data_table = $auth_data_set['group'];
         $uid = $this->uid;
-        $filter = new \Data\Filter("uid eq '$uid' and gid eq '$name'");
+        $filter = new \Flipside\Data\Filter("uid eq '$uid' and gid eq '$name'");
         $groups = $group_data_table->read($filter);
         if($groups === false || !isset($groups[0]))
         {

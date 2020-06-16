@@ -11,12 +11,12 @@ class SQLAuthTest extends PHPUnit\Framework\TestCase
             FlipsideSettings::$dataset['auth'] = array('type'=>'SQLDataSet', 'params'=>$params);
         }
 
-        $dataSet = \DataSetFactory::getDataSetByName('auth');
+        $dataSet = \Flipside\DataSetFactory::getDataSetByName('auth');
         $dataSet->raw_query('CREATE TABLE user (uid VARCHAR(255), pass VARCHAR(255));');
         $dataSet->raw_query('CREATE TABLE tblgroup (gid VARCHAR(255), uid VARCHAR(255), description VARCHAR(255));');
 
         $params = array('current'=>true, 'pending'=>false, 'supplement'=>false, 'current_data_set'=>'auth');
-        $auth = new \Auth\SQLAuthenticator($params);
+        $auth = new \Flipside\Auth\SQLAuthenticator($params);
 
         $this->assertFalse($auth->login('test', 'test'));
 
@@ -31,11 +31,11 @@ class SQLAuthTest extends PHPUnit\Framework\TestCase
         $this->assertFalse($auth->isLoggedIn(false));
 
         $user = $auth->getUser($res);
-        $this->assertInstanceOf('Auth\SQLUser', $user);
+        $this->assertInstanceOf('Flipside\Auth\SQLUser', $user);
         $this->assertEquals('test', $user->uid);
  
         $user = $auth->getUserByName('test');
-        $this->assertInstanceOf('Auth\SQLUser', $user);
+        $this->assertInstanceOf('Flipside\Auth\SQLUser', $user);
         $this->assertEquals('test', $user->uid);
 
         $user = $auth->getUserByName('test1');
@@ -48,14 +48,14 @@ class SQLAuthTest extends PHPUnit\Framework\TestCase
 
         $group = $auth->getGroupByName('test');
         $this->assertNotFalse($group);
-        $this->assertInstanceOf('Auth\SQLGroup', $group);
+        $this->assertInstanceOf('Flipside\Auth\SQLGroup', $group);
 
         $user = $auth->getUserByName('test');
         $this->assertTrue($user->isInGroupNamed('test'));
         $this->assertFalse($user->isInGroupNamed('test1'));
         $user->mail = 'test@test.com';
 
-        $pendingUser = new \Auth\PendingUser();
+        $pendingUser = new \Flipside\Auth\PendingUser();
         $pendingUser->uid = 'test1';
         $pendingUser->mail = 'test@test.com';
         $pendingUser->sn = 'User';
@@ -77,7 +77,7 @@ class SQLAuthTest extends PHPUnit\Framework\TestCase
         $params['pending'] = false;
         $params['supplement'] = false;
         $params['current_data_set'] = 'auth';
-        $auth = new \Auth\SQLAuthenticator($params);
+        $auth = new \Flipside\Auth\SQLAuthenticator($params);
         $this->assertFalse($auth->login('test', 'test')); 
     }
 
@@ -97,12 +97,12 @@ class SQLAuthTest extends PHPUnit\Framework\TestCase
         $params['pending'] = true;
         $params['supplement'] = false;
         $params['pending_data_set'] = 'pending_auth';
-        $auth = new \Auth\SQLAuthenticator($params);
+        $auth = new \Flipside\Auth\SQLAuthenticator($params);
 
-        $dataSet = \DataSetFactory::getDataSetByName('pending_auth');
+        $dataSet = \Flipside\DataSetFactory::getDataSetByName('pending_auth');
         $dataSet->raw_query('CREATE TABLE users (hash VARCHAR(255), data VARCHAR(4096), time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, UNIQUE KEY `hash` (`hash`));');
 
-        $pendingUser = new \Auth\PendingUser();
+        $pendingUser = new \Flipside\Auth\PendingUser();
         $pendingUser->uid = 'test1';
         $pendingUser->mail = 'test@test.com';
         $pendingUser->sn = 'User';
@@ -128,10 +128,10 @@ class SQLAuthTest extends PHPUnit\Framework\TestCase
     {
         if(version_compare(PHP_VERSION, '5.5.0', '<'))
         {
-            require_once('Auth/class.SQLAuthenticator.php');
-            $hash = @\Auth\password_hash('test');
+            require_once('Auth/SQLAuthenticator.php');
+            $hash = @\Flipside\Auth\password_hash('test');
             $this->assertNotFalse($hash);
-            $this->assertTrue(\Auth\password_verify('test', $hash));
+            $this->assertTrue(\Flipside\Auth\password_verify('test', $hash));
         }
         
         $this->assertNotFalse(true);
