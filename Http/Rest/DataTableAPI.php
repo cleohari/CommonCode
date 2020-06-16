@@ -156,7 +156,7 @@ class DataTableAPI extends RestAPI
             return $response->withStatus(401);
         }
         $dataTable = $this->getDataTable();
-        $odata = $request->getAttribute('odata', new \ODataParams(array()));
+        $odata = $request->getAttribute('odata', new \Flipside\ODataParams(array()));
         $filter = $this->getFilterForPrimaryKey($args['name']);
         $areas = $dataTable->read($filter, $odata->select, $odata->top,
                                   $odata->skip, $odata->orderby);
