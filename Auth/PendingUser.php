@@ -110,7 +110,7 @@ class PendingUser extends User
 
     public function sendEmail()
     {
-        $email_msg = new \Email\Email();
+        $email_msg = new \Flipside\Email\Email();
         $email_msg->addToAddress($this->mail);
         $email_msg->setTextBody('Thank you for signing up with Burning Flipside. Your registration is not complete until you goto the address below.
                 '.$this->profilesUrl.'/finish.php?hash='.$this->getHash().'
@@ -121,7 +121,7 @@ class PendingUser extends User
                 Thank you,<br/>
                 Burning Flipside Technology Team');
         $email_msg->setSubject('Burning Flipside Registration');
-        $email_provider = \EmailProvider::getInstance();
+        $email_provider = \Flipside\EmailProvider::getInstance();
         if($email_provider->sendEmail($email_msg) === false)
         {
             throw new \Exception('Unable to send email!');
