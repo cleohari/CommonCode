@@ -97,7 +97,7 @@ class LDAPTest extends PHPUnit\Framework\TestCase
         $this->assertNotFalse($auth->getAndBindServer());
         $this->assertNotFalse($auth->getAndBindServer(true));
 
-        $pendingUser = new \Auth\PendingUser();
+        $pendingUser = new \Flipside\Auth\PendingUser();
         $pendingUser->uid = 'test1';
         $pendingUser->mail = 'test@test.com';
         $pendingUser->sn = 'User';
