@@ -24,7 +24,7 @@ class SMTPServer extends EmailService
 
     public function __construct($params)
     {
-        $this->smtp = new \PHPMailer();
+        $this->smtp = new \PHPMailer\PHPMailer\PHPMailer();
         $this->smtp->SMTPDebug = 3;
         $this->smtp->isSMTP();
  
