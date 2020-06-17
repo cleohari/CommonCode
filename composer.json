@@ -14,7 +14,7 @@
         "phpoffice/phpspreadsheet": "^1.6",
         "mpdf/mpdf": "^7.1",
         "twig/twig": "^3.0",
-        "symfony/yaml": "^4.1",
+        "symfony/yaml": "^5.1",
         "ps/image-optimizer": "^2.0",
         "sentry/sdk": "2.1.0"
     },
