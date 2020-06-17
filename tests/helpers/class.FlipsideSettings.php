@@ -13,7 +13,13 @@ class FlipsideSettings
             'params' => array(
                 'dsn' => 'sqlite:/tmp/pending.sq3'
             )
-        )
+        ),
+	'memory' => array(
+           'type' => 'SQLDataSet',
+           'params' => array(
+                'dsn' => 'sqlite::memory:'
+           )
+	)
     );
 
     public static $authProviders = array(
