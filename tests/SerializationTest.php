@@ -14,6 +14,32 @@ class SerializationTest extends PHPUnit\Framework\TestCase
         $this->assertNotNull($response);
     }
 
+    public function testDeserialization()
+    {
+        $obj = \Flipside\SerializableObject::jsonDeserialize('{"test1": "a", "test2": 3}');
+        $this->assertNotNull($obj);
+        $this->assertArrayHasKey('test1', $obj);
+        $this->assertEquals('a', $obj->test1);
+        $this->assertArrayHasKey('test2', $obj);
+        $this->assertEquals(3, $obj->test2);
+    }
+
+    public function testSerializtion()
+    {
+        $obj = new \Flipside\SerializableObject(array('a'=>1, 'b'=>2));
+        $this->assertEquals('{"a":1,"b":2}', $obj->serializeObject());
+        $this->assertEquals('{"a":1}', $obj->serializeObject('json', array('a')));
+    }
+
+    public function testUnset()
+    {
+        $obj = new \Flipside\SerializableObject(array('a'=>1, 'b'=>2));
+        $this->assertEquals('{"a":1,"b":2}', $obj->serializeObject());
+        $this->assertEquals(2, $obj['b']);
+        unset($obj['b']);
+        $this->assertEquals('{"a":1}', $obj->serializeObject());
+    }
+
     public function testODataStreaming()
     {
         $middleware = new \Flipside\Http\Rest\SerializationMiddleware();
@@ -202,3 +228,4 @@ class SerializationTest extends PHPUnit\Framework\TestCase
         return $response->withJson(array('test'=>'a'));
     }
 }
+/* vim: set tabstop=4 shiftwidth=4 expandtab: */
