@@ -59,6 +59,7 @@ class DataTableTest extends PHPUnit\Framework\TestCase
         $dataSet->raw_query('CREATE TABLE tbltest (a varchar(255), b varchar(255));');
         $dataSet->raw_query('INSERT INTO tbltest (a, b) VALUES ("Test", "Test");');
         $dataSet->raw_query('INSERT INTO tbltest (a, b) VALUES ("Test1", "Test1");');
+        $dataSet->raw_query('CREATE TABLE tblempty (a varchar(255), b varchar(255));');
 
         $api = new \AlwaysReadAPI('memory', 'test');
 
@@ -92,6 +93,18 @@ class DataTableTest extends PHPUnit\Framework\TestCase
         $body = new \Slim\Http\Body(fopen('php://temp', 'r+'));
         $request = new \Slim\Http\Request('GET', $uri, $headers, array(), array(), $body);
         $response = new \Slim\Http\Response();
+        $request = $request->withAttribute('odata', new \Flipside\ODataParams(array('$count'=>true)));
+        $response = $api->readEntry($request, $response, array('name'=>'Test1'));
+        $this->assertNotNull($response);
+        $body = $response->getBody();
+        $body->rewind();
+        $this->assertEquals('{"a":"Test1","b":"Test1"}', $body->getContents());
+
+        $uri = \Slim\Http\Uri::createFromString('http://example.org');
+        $headers = new \Slim\Http\Headers();
+        $body = new \Slim\Http\Body(fopen('php://temp', 'r+'));
+        $request = new \Slim\Http\Request('GET', $uri, $headers, array(), array(), $body);
+        $response = new \Slim\Http\Response();
 
         $response = $api->readEntry($request, $response, array('name'=>'Test2'));
         $this->assertNotNull($response);
@@ -99,6 +112,47 @@ class DataTableTest extends PHPUnit\Framework\TestCase
         $body->rewind();
         $this->assertEquals('', $body->getContents());
         $this->assertEquals(404, $response->getStatusCode());
+
+        $api = new \AlwaysReadAPI('memory', 'empty', 'a');
+        $uri = \Slim\Http\Uri::createFromString('http://example.org');
+        $headers = new \Slim\Http\Headers();
+        $body = new \Slim\Http\Body(fopen('php://temp', 'r+'));
+        $request = new \Slim\Http\Request('GET', $uri, $headers, array(), array(), $body);
+        $response = new \Slim\Http\Response();
+
+        $response = $api->readEntries($request, $response, null);
+        $this->assertNotNull($response);
+        $body = $response->getBody();
+        $body->rewind();
+        $this->assertEquals('[]', $body->getContents());
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $api = new \NeverReadAPI('memory', 'test', 'a');
+        $uri = \Slim\Http\Uri::createFromString('http://example.org');
+        $headers = new \Slim\Http\Headers();
+        $body = new \Slim\Http\Body(fopen('php://temp', 'r+'));
+        $request = new \Slim\Http\Request('GET', $uri, $headers, array(), array(), $body);
+        $response = new \Slim\Http\Response();
+
+        $response = $api->readEntries($request, $response, null);
+        $this->assertNotNull($response);
+        $body = $response->getBody();
+        $body->rewind();
+        $this->assertEquals(401, $response->getStatusCode());
+        $this->assertEquals('', $body->getContents());
+
+        $uri = \Slim\Http\Uri::createFromString('http://example.org');
+        $headers = new \Slim\Http\Headers();
+        $body = new \Slim\Http\Body(fopen('php://temp', 'r+'));
+        $request = new \Slim\Http\Request('GET', $uri, $headers, array(), array(), $body);
+        $response = new \Slim\Http\Response();
+
+        $response = $api->readEntry($request, $response, array('name' => 'Test2'));
+        $this->assertNotNull($response);
+        $body = $response->getBody();
+        $body->rewind();
+        $this->assertEquals(401, $response->getStatusCode());
+        $this->assertEquals('', $body->getContents());
     }
 
     public function testCreate()
@@ -148,6 +202,21 @@ class DataTableTest extends PHPUnit\Framework\TestCase
         $this->assertNotEmpty($entries);
         $this->assertCount(1, $entries);
         $this->assertEquals(array('a' => 'Test', 'b' => 'Test123'), $entries[0]);
+
+        //Test without content type
+         $uri = \Slim\Http\Uri::createFromString('http://example.org');
+        $headers = new \Slim\Http\Headers();
+        $body = new \Slim\Http\Body(fopen('php://temp', 'r+'));
+        $body->write('{"a": "Test1", "b": "Test123"}');
+        $request = new \Slim\Http\Request('GET', $uri, $headers, array(), array(), $body);
+        $response = new \Slim\Http\Response();
+
+        $response = $api->createEntry($request, $response, null);
+        $this->assertNotNull($response);
+        $body = $response->getBody();
+        $body->rewind();
+        $this->assertEquals('true', $body->getContents());
+        $this->assertEquals(200, $response->getStatusCode());
     }
 
     public function testUpdate()
@@ -158,6 +227,22 @@ class DataTableTest extends PHPUnit\Framework\TestCase
         $dataSet->raw_query('CREATE TABLE tblup (a varchar(255), b varchar(255));');
         $dataSet->raw_query('INSERT INTO tblup (a, b) VALUES ("Test", "Test");');
         $dataSet->raw_query('INSERT INTO tblup (a, b) VALUES ("Test1", "Test1");');
+
+        //Test not even authorized to read...
+        $api = new \NeverReadAPI('memory', 'test', 'a');
+        $uri = \Slim\Http\Uri::createFromString('http://example.org');
+        $headers = new \Slim\Http\Headers();
+        $body = new \Slim\Http\Body(fopen('php://temp', 'r+'));
+        $body->write('{"b": "Test123"}');
+        $request = new \Slim\Http\Request('GET', $uri, $headers, array(), array(), $body);
+        $response = new \Slim\Http\Response();
+
+        $response = $api->updateEntry($request, $response, array('name' => 'Test'));
+        $this->assertNotNull($response);
+        $body = $response->getBody();
+        $body->rewind();
+        $this->assertEquals('', $body->getContents());
+        $this->assertEquals(401, $response->getStatusCode());
 
         //Test not authorized to update...
         $api = new \AlwaysReadAPI('memory', 'up', 'a');
@@ -222,6 +307,21 @@ class DataTableTest extends PHPUnit\Framework\TestCase
         $dataSet = \Flipside\DataSetFactory::getDataSetByName('memory');
         $dataSet->raw_query('CREATE TABLE tbldelete (a varchar(255), b varchar(255));');
         $dataSet->raw_query('INSERT INTO tbldelete (a, b) VALUES ("Test", "Test");');
+
+        //Test not even authorized to read...
+        $api = new \NeverReadAPI('memory', 'test', 'a');
+        $uri = \Slim\Http\Uri::createFromString('http://example.org');
+        $headers = new \Slim\Http\Headers();
+        $body = new \Slim\Http\Body(fopen('php://temp', 'r+'));
+        $request = new \Slim\Http\Request('GET', $uri, $headers, array(), array(), $body);
+        $response = new \Slim\Http\Response();
+
+        $response = $api->deleteEntry($request, $response, array('name'=>'Test'));
+        $this->assertNotNull($response);
+        $body = $response->getBody();
+        $body->rewind();
+        $this->assertEquals('', $body->getContents());
+        $this->assertEquals(401, $response->getStatusCode());
 
         //First try not authorized to delete...
         $api = new \AlwaysReadAPI('memory', 'delete', 'a');
@@ -336,6 +436,14 @@ class TestWithKey
         $this->counts['delete']++;
         $this->test->assertEquals('/{name}[/]', $str);
         $this->test->assertEquals(array($this->api, 'deleteEntry'), $arr);
+    }
+}
+
+class NeverReadAPI extends \Flipside\Http\Rest\DataTableAPI
+{
+    protected function canRead($request)
+    {
+        return false;
     }
 }
 

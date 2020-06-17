@@ -9,11 +9,15 @@ abstract class DBEmail extends \Flipside\Email\Email
     public function __construct($datasetName, $datatableName, $dataRowName)
     {
         parent::__construct();
-        $dataTable = \DataSetFactory::getDataTableByNames($datasetName, $datatableName);
-        $this->dbData = $dataTable->read(new \Data\Filter('id eq '.$dataRowName));
+        $dataTable = \Flipside\DataSetFactory::getDataTableByNames($datasetName, $datatableName);
+        $this->dbData = $dataTable->read(new \Flipside\Data\Filter('id eq '.$dataRowName));
         if($this->dbData === false)
         {
             throw new \Exception('Unknown dataRow identified by ID '.$dataRowName);
+        }
+        if(isset($this->dbData[0]))
+        {
+            $this->dbData = $this->dbData[0];
         }
     }
 
@@ -50,7 +54,7 @@ abstract class DBEmail extends \Flipside\Email\Email
     {
         if(isset($this->dbData['body']))
         {
-            return $this->dbData;
+            return $this->dbData['body'];
         }
         if($html === true)
         {
@@ -90,4 +94,4 @@ abstract class DBEmail extends \Flipside\Email\Email
         return $this->getBodyFromDB(false);
     }
 }
-?>
+/* vim: set tabstop=4 shiftwidth=4 expandtab: */
