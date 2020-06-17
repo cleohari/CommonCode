@@ -88,7 +88,7 @@ class SerializationTest extends PHPUnit\Framework\TestCase
         $array = json_decode($body->getContents(), true);
         $this->assertEquals(array(array('test'=>'a')), $array);
 
-	$middleware = new \Flipside\Http\Rest\SerializationMiddleware();
+        $middleware = new \Flipside\Http\Rest\SerializationMiddleware();
         $uri = \Slim\Http\Uri::createFromString('http://example.org?$format=json-ss-dt');
         $headers = new \Slim\Http\Headers();
         $body = new \Slim\Http\Body(fopen('php://temp', 'r+'));
@@ -219,6 +219,22 @@ class SerializationTest extends PHPUnit\Framework\TestCase
         $this->assertEquals('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', $response->getHeaderLine('Content-Type'));
     }
 
+    public function testOverride()
+    {
+        $middleware = new \Flipside\Http\Rest\SerializationMiddleware();
+        $uri = \Slim\Http\Uri::createFromString('http://example.org?$format=text/html');
+        $headers = new \Slim\Http\Headers();
+        $body = new \Slim\Http\Body(fopen('php://temp', 'r+'));
+        $request = new \Slim\Http\Request('GET', $uri, $headers, array(), array(), $body);
+        $response = new \Slim\Http\Response();
+        $response = $middleware($request, $response, new \TestSerializer());
+        $this->assertNotNull($response);
+        $this->assertEquals('text/html', $response->getHeaderLine('Content-Type'));
+        $body = $response->getBody();
+        $body->rewind();
+        $this->assertEquals('abc', $body->getContents());
+    }
+
     public function __invoke($request, $response)
     {
         if($request->getAttribute('format') === 'vcard')
@@ -226,6 +242,21 @@ class SerializationTest extends PHPUnit\Framework\TestCase
             return $response->withHeader('Content-Type', 'text/x-vCard');
         }
         return $response->withJson(array('test'=>'a'));
+    }
+}
+
+class TestSerializer extends \Flipside\Serialize\Serializer
+{
+    public function __invoke($request, $response)
+    {
+        $overrides = $request->getAttribute('serializeOverrides');
+        $overrides['text/html'] = '\TestSerializer';
+        return $response->withJson(array('test'=>'a'));
+    }
+
+    public function serializeData(&$type, $array)
+    {
+        return "abc";
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
