@@ -6,7 +6,7 @@
     "require": {
         "psr/log": "~1.0",
         "browscap/browscap-php": "^4.2.0",
-        "phpmailer/phpmailer": "~5.2",
+        "phpmailer/phpmailer": "^6.0",
         "nategood/httpful": "~0.2",
         "google/apiclient": "^2.0",
         "aws/aws-sdk-php": "~3.28",
