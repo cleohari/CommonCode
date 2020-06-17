@@ -155,7 +155,7 @@ class ODataParams
                             $this->orderby[$exp[0]] = -1;
                             break;
                         default:
-                            throw new Exception('Unknown orderby operation');
+                            throw new \Exception('Unknown orderby operation');
                     }
                 }
             }

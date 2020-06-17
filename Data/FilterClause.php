@@ -254,24 +254,30 @@ class FilterClause
 
     public function php_compare($value)
     {
-	if(is_array($value))
-	{
-            return $this->php_compare($value[$this->var1]);
-	}
+        if(is_array($value))
+        {
+            if(isset($value[$this->var1]))
+            {
+                return $this->php_compare($value[$this->var1]);
+            }
+            //Value isn't set so not a match!
+            return false;
+        }
         switch($this->op)
         {
-            case '!=':
-                return $value != $this->var2;
-	    case '=':
-                return $value == $this->var2;
-            case '<':
-                return $value < $this->var2;
-            case '<=':
-                return $value <= $this->var2;
-            case '>':
-                return $value > $this->var2;
-            case '>=':
-                return $value >= $this->var2;
+        case '!=':
+            return $value != $this->var2;
+        case '=':
+            return $value == $this->var2;
+        case '<':
+            return $value < $this->var2;
+        case '<=':
+            return $value <= $this->var2;
+        case '>':
+            return $value > $this->var2;
+        case '>=':
+            return $value >= $this->var2;
         }
     }
 }
+/* vim: set tabstop=4 shiftwidth=4 expandtab: */

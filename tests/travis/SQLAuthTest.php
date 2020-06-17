@@ -12,6 +12,8 @@ class SQLAuthTest extends PHPUnit\Framework\TestCase
         }
 
         $dataSet = \Flipside\DataSetFactory::getDataSetByName('auth');
+        $dataSet->raw_query('DROP TABLE user;');
+        $dataSet->raw_query('DROP TABLE tblgroup;');
         $dataSet->raw_query('CREATE TABLE user (uid VARCHAR(255), pass VARCHAR(255));');
         $dataSet->raw_query('CREATE TABLE tblgroup (gid VARCHAR(255), uid VARCHAR(255), description VARCHAR(255));');
 
@@ -100,6 +102,7 @@ class SQLAuthTest extends PHPUnit\Framework\TestCase
         $auth = new \Flipside\Auth\SQLAuthenticator($params);
 
         $dataSet = \Flipside\DataSetFactory::getDataSetByName('pending_auth');
+        $dataSet->raw_query('DROP TABLE users;');
         $dataSet->raw_query('CREATE TABLE users (hash VARCHAR(255), data VARCHAR(4096), time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, UNIQUE KEY `hash` (`hash`));');
 
         $pendingUser = new \Flipside\Auth\PendingUser();

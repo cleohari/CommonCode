@@ -83,7 +83,7 @@ class SerializationMiddleware
             //The underlying API call gave us back a different content type. Just pass that on...
             return $response;
         }
-        $overrides = $request->getAttribute('serializeOverrides');
+	$overrides = $request->getAttribute('serializeOverrides');
         if($overrides->has($this->format))
         {
             return $this->reserializeBody($response, $overrides->get($this->format));

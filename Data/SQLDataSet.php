@@ -290,6 +290,7 @@ class SQLDataSet extends DataSet
             {
                 array_push($set, $this->pdo->quote($data[$cols[$i]]));
             }
+            $cols[$i] = "`".$cols[$i]."`";
         }
         $cols = implode(',', $cols);
         $set = implode(',', $set);

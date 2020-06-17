@@ -126,6 +126,18 @@ class ODataParamsTest extends PHPUnit\Framework\TestCase
         $odata = new \Flipside\ODataParams($params);
         $this->assertNotFalse($odata->orderby);
         $this->assertEquals(array('test'=>-1), $odata->orderby);
+
+        $params = array();
+        $params['$orderby'] = 'test adesc';
+        try
+        {
+            $odata = new \Flipside\ODataParams($params);
+            $this->assertFalse(true);
+        }
+        catch(\Exception $e)
+        {
+            $this->assertFalse(false);
+        }
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */

@@ -139,7 +139,10 @@ class DataTableAPI extends RestAPI
         $obj = $request->getParsedBody();
         if($obj == NULL)
         {
-            $obj = json_decode($request->getBody()->getContents(), true);
+            $body = $request->getBody();
+            $body->rewind();
+            $str = $body->getContents();
+            $obj = json_decode($str, true);
         }
         if($this->validateCreate($obj, $request) === false)
         {
@@ -244,3 +247,4 @@ class DataTableAPI extends RestAPI
         return $response->withJson($ret);
     }
 }
+/* vim: set tabstop=4 shiftwidth=4 expandtab: */
