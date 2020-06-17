@@ -325,7 +325,6 @@ class SQLAuthenticator extends Authenticator
         $json = json_encode($user);
         $hash = hash('sha512', $json);
         $array = array('hash'=>$hash, 'data'=>$json);
-        var_dump($array);
         $ret = $userDataTable->create($array);
         if($ret !== false)
         {
