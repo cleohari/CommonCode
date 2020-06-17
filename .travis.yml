@@ -20,7 +20,7 @@ before_install:
   - mysql -e 'create database p_auth;'
 
 install:
-  - composer require satooshi/php-coveralls:~1.0
+  - composer require php-coveralls/php-coveralls
   - nvm install stable
 
 before_script:
