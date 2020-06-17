@@ -18,7 +18,7 @@ class WebPage
     {
         \Sentry\init(['dsn' => 'https://8d76f6c4cb3b409bbe7ed4300e054afd@sentry.io/4283882' ]);
         $this->settings = \Flipside\Settings::getInstance();
-        $this->loader = new \Twig_Loader_Filesystem(dirname(__FILE__).'/../templates');
+        $this->loader = new \Twig\Loader\FilesystemLoader(dirname(__FILE__).'/../templates');
 
         $twigSettings = array();
         if(\file_exists('/var/php_cache/twig'))
@@ -38,7 +38,7 @@ class WebPage
         $this->loginUrl = $this->settings->getGlobalSetting('login_url', $this->profilesUrl.'/login.php');
         $this->logoutUrl = $this->settings->getGlobalSetting('logout_url', $this->profilesUrl.'/logout.php');
 
-        $this->twig = new \Twig_Environment($this->loader, $twigSettings);
+        $this->twig = new \Twig\Environment($this->loader, $twigSettings);
         //$this->twig->addExtension(new \Twig\Extension\DebugExtension());
         $this->content = array('pageTitle' => $title);
         $this->user = \Flipside\FlipSession::getUser();
