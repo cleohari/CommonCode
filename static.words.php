@@ -1622,7 +1622,6 @@ $words = array(
     "soil",
     "surgery",
     "correct",
-    "Jewish",
     "blame",
     "estimate",
     "due",
