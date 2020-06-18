@@ -20,7 +20,7 @@ require_once('Autoload.php');
 /**
  * A class to represent a Completely Automated Public Turing test to tell Computers and Humans Apart
  */
-class FlipsideCAPTCHA implements JsonSerializable
+class FlipsideCAPTCHA implements \JsonSerializable
 {
     /**
      * The ID of the CAPTCHA in the DB
@@ -113,7 +113,7 @@ class FlipsideCAPTCHA implements JsonSerializable
     {
         $dataset = DataSetFactory::getDataSetByName('profiles');
         $datatable = $dataset['captcha'];
-        $data = $datatable->read(new \Data\Filter('id eq '.$this->random_id), array($fieldName));
+        $data = $datatable->read(new \Flipside\Data\Filter('id eq '.$this->random_id), array($fieldName));
         if(empty($data))
         {
             return false;
