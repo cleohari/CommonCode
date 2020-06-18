@@ -142,7 +142,7 @@ class SQLDataSet extends DataSet
         {
             array_push($tmp, $sort_col.' '.($dir === 1 ? 'ASC' : 'DESC'));
         }
-        $sql .= implode($tmp, ',');
+        $sql .= implode(',', $tmp);
         return $sql;
     }
 
