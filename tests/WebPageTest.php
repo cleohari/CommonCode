@@ -48,11 +48,11 @@ class WebPageTest extends PHPUnit\Framework\TestCase
         $this->assertContains('http://example.org/test.css', $page->content['css']);
 
         $page = new \Flipside\Http\WebPage('Test');
-        $page->addWellKnownCSS(CSS_JQUERY_UI);
+        $page->addWellKnownCSS(CSS_BOOTSTRAP_FH);
         $this->assertNotNull($page->content);
         $this->assertArrayHasKey('css', $page->content);
         $this->assertIsarray($page->content['css']);
-        $this->assertContains('//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.min.css', $page->content['css']);
+        $this->assertContains('//cdnjs.cloudflare.com/ajax/libs/bootstrap-formhelpers/2.3.0/css/bootstrap-formhelpers.min.css', $page->content['css']);
     }
 
     public function testAddJS()
@@ -69,7 +69,7 @@ class WebPageTest extends PHPUnit\Framework\TestCase
         $this->assertNotNull($page->content);
         $this->assertArrayHasKey('js', $page->content);
         $this->assertIsarray($page->content['js']);
-        $this->assertContains('//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js', $page->content['js']);
+        $this->assertContains('//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js', $page->content['js']);
 
         $page = new \Flipside\Http\WebPage('Test');
         $page->addWellKnownJS(JS_BOOTBOX);
