@@ -28,7 +28,17 @@ function sort_array(&$array, $orderby)
         for($j = $i; $j < $count; $j++)
         {
             $key = $keys[0];
-            $data = strcasecmp($array[$i][$key][0], $array[$j][$key][0]);
+            $item1 = $array[$i][$key];
+            if(is_array($item1))
+            {
+                $item1 = $item1[0];
+            }
+            $item2 = $array[$j][$key];
+            if(is_array($item2))
+            {
+                $item2 = $item2[0];
+            }
+            $data = strcasecmp($item1, $item2);
             switch($orderby[$keys[0]])
             {
                 case 1:
