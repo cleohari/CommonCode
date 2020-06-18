@@ -29,6 +29,9 @@ class SerializationTest extends PHPUnit\Framework\TestCase
         $obj = new \Flipside\SerializableObject(array('a'=>1, 'b'=>2));
         $this->assertEquals('{"a":1,"b":2}', $obj->serializeObject());
         $this->assertEquals('{"a":1}', $obj->serializeObject('json', array('a')));
+
+        $this->expectException(Exception::class);
+        $this->assertEquals('{"a":1}', $obj->serializeObject('bad', array('a')));
     }
 
     public function testUnset()

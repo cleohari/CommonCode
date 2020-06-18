@@ -246,7 +246,7 @@ class SerializableObject implements \ArrayAccess, \JsonSerializable
             case 'json':
                 return json_encode($copy);
             default:
-                throw new Exception('Unsupported fmt '.$fmt);
+                throw new \Exception('Unsupported fmt '.$fmt);
         }
     }
 
