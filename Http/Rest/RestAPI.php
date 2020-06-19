@@ -4,8 +4,6 @@ namespace Flipside\Http\Rest;
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 
-require 'vendor/autoload.php';
-
 const SUCCESS = 0;
 const UNRECOGNIZED_METHOD = 1;
 const INVALID_PARAM = 2;
