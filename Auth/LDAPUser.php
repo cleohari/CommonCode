@@ -8,7 +8,7 @@ class LDAPUser extends User
     use LDAPSettableObject;
 
     private $ldapObj;
-    private $server;
+    protected $server;
 
     /**
      * Initialize a LDAPUser object
