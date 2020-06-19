@@ -37,18 +37,6 @@ class FlipsideCAPTCHA implements \JsonSerializable
      * Get all valid CAPTCH IDs
      *
      * @return array An array of captch IDs
-     *
-     * @deprecated 2.1 Will be removed in favor of self::getValidCaptchaIDs()
-     */
-    public static function get_valid_captcha_ids()
-    {
-        return self::getValidCaptchaIDs();
-    }
-
-    /**
-     * Get all valid CAPTCH IDs
-     *
-     * @return array An array of captch IDs
      */
     public static function getValidCaptchaIDs()
     {
@@ -60,18 +48,6 @@ class FlipsideCAPTCHA implements \JsonSerializable
             $data[$i] = $data[$i]['id'];
         }
         return $data;
-    }
-
-    /**
-     * Get an array of all CAPTCHAs
-     *
-     * @return array An array of captchas
-     *
-     * @deprecated 2.1 Will be removed in favor of self::getAll()
-     */
-    public static function get_all()
-    {
-        return self::getAll();
     }
 
     /**
@@ -102,7 +78,7 @@ class FlipsideCAPTCHA implements \JsonSerializable
 
     public function __construct()
     {
-        $this->validIDs = FlipsideCAPTCHA::get_valid_captcha_ids();
+        $this->validIDs = FlipsideCAPTCHA::getValidCaptchaIDs();
         $this->random_id = mt_rand(0, count($this->validIDs) - 1);
         $this->random_id = $this->validIDs[$this->random_id];
         $settings = Settings::getInstance();
