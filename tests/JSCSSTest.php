@@ -3,7 +3,7 @@ class JSSCSSTest extends PHPUnit\Framework\TestCase
 {
     public function testJS()
     {
-        require('static.js_css.php');
+        require_once('static.js_css.php');
         global $jsArray;
         foreach($jsArray as $js)
         {
