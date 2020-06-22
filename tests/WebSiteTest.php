@@ -28,7 +28,7 @@ class WebSiteTest extends PHPUnit\Framework\TestCase
     }
 }
 
-class TestAPI
+class TestAPI extends \Flipside\Http\Rest\RestAPI
 {
     public function __construct($test)
     {
@@ -38,6 +38,7 @@ class TestAPI
     public function setup($app)
     {
         $this->test->assertInstanceOf('Flipside\Http\WebSite', $app);
+        parent::setup($app);
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
