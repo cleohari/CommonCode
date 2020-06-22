@@ -165,7 +165,7 @@ class LDAPServerTest extends PHPUnit\Framework\TestCase
         $ldap_set_option = $this->getFunctionMock('Flipside\LDAP', "ldap_set_option");
         $ldap_set_option->expects($this->exactly(1))->willReturn(true);
         $ldap_close = $this->getFunctionMock('Flipside\LDAP', "ldap_close");
-        $ldap_close->expects($this->once())->willReturn(true);
+        $ldap_close->expects($this->exactly(2))->willReturn(true);
         $ldap_read = $this->getFunctionMock('Flipside\LDAP', "ldap_read");
         $ldap_read->expects($this->exactly(1))->willReturn(true);
         $ldap_get_entries = $this->getFunctionMock('Flipside\LDAP', "ldap_get_entries");
@@ -174,6 +174,7 @@ class LDAPServerTest extends PHPUnit\Framework\TestCase
         $server = \Flipside\LDAP\LDAPServer::getInstance();
         $server->connect('ldap://test');
         $this->assertNotFalse($server->read('test', '(objectclass=*)', true));
+        $server->disconnect();
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
