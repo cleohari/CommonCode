@@ -2,6 +2,8 @@
 require_once('Autoload.php');
 class SerializationTest extends PHPUnit\Framework\TestCase
 {
+    use \phpmock\phpunit\PHPMock;
+
     public function testBasic()
     {
         $middleware = new \Flipside\Http\Rest\SerializationMiddleware();
