@@ -62,14 +62,7 @@ class SerializableObject implements \ArrayAccess, \JsonSerializable
         $xml = new \XmlWriter();
         $xml->openMemory();
         $xml->startDocument('1.0');
-        if(version_compare(PHP_VERSION, '7.0.0', '>='))
-        {
-            $this->php7XmlSerialize($xml);
-        }
-        else
-        {
-            $this->oldPhpSerialize($xml);
-        }
+        $this->php7XmlSerialize($xml);
         $xml->endElement();
         return $xml->outputMemory(true);
     }
@@ -92,33 +85,6 @@ class SerializableObject implements \ArrayAccess, \JsonSerializable
         else
         {
             $this->object2XML($xml, $this);
-        }
-    }
-
-    /**
-     * Convert the object into an XML string for PHP 5
-     *
-     * @param XmlWriter $xml The XmlWriter Instancce to use in serializing
-     *
-     * @return string The XML format of the object
-     */
-    private function oldPhpSerialize(\XMLWriter $xml)
-    {
-        $tmp = json_decode(json_encode($this), false);
-        $tmpA = $tmp;
-        if(is_object($tmp))
-        {
-            $tmpA = get_object_vars($tmp);
-        }
-        if(isset($tmpA[0]))
-        {
-            $xml->startElement('Array');
-            $this->array2XML($xml, 'Entity', $tmpA);
-            $xml->endElement();
-        }
-        else
-        {
-            $this->object2XML($xml, $tmp);
         }
     }
 
