@@ -86,5 +86,14 @@ class LogTest extends \PHPUnit\Framework\TestCase
         $this->expectOutputString('[debug] Test12');
         $log->log(\Psr\Log\LogLevel::DEBUG, 'Test12');
     }
+
+    public function testBadLog()
+    {
+        $log = new \Flipside\Log\PHPLog(array('defaultLogLevels'=>array(\Psr\Log\LogLevel::DEBUG)));
+	$this->expectOutputString('[debug] Test12');
+	$log->log(\Psr\Log\LogLevel::DEBUG, 'Test12');
+	$this->expectException(\Psr\Log\InvalidArgumentException::class);
+	$log->log('BadLevel', 'Test12');
+    }
 }
 

@@ -4,13 +4,11 @@ namespace Flipside\Http;
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 
-require 'vendor/autoload.php';
-
 class WebSite extends \Slim\App
 {
     public function __construct()
     {
-        $settings = array("settings"=>["determineRouteBeforeAppMiddleware"=>true]);
+        $settings = array("settings"=>["determineRouteBeforeAppMiddleware"=>true, 'displayErrorDetails'=> true]);
         parent::__construct($settings);
         $c = $this->getContainer();
         $c['errorHandler'] = function($c) { return new WebErrorHandler();};

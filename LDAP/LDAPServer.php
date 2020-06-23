@@ -182,10 +182,6 @@ class LDAPServer extends \Flipside\Singleton
     private function fixObject($object, &$delete = false)
     {
         $entity = $object;
-        if(!is_array($object))
-        {
-            $entity = $object->to_array();
-        }
         unset($entity['dn']);
         $keys = array_keys($entity);
         $count = count($keys);

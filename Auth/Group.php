@@ -111,9 +111,12 @@ class Group extends \Flipside\SerializableObject
     public function editGroup($group)
     {
         //Make sure we are bound in write mode
-        $auth = \AuthProvider::getInstance();
-        $ldap = $auth->getMethodByName('Auth\LDAPAuthenticator');
-        $ldap->getAndBindServer(true);
+        $auth = \Flipside\AuthProvider::getInstance();
+        $ldap = $auth->getMethodByName('Flipisde\Auth\LDAPAuthenticator');
+        if($ldap !== false)
+        {
+            $ldap->getAndBindServer(true);
+        }
         if(is_array($group))
         {
             $group = json_decode(json_encode($group), false);
@@ -165,3 +168,4 @@ class Group extends \Flipside\SerializableObject
         return false;
     }
 }
+/* vim: set tabstop=4 shiftwidth=4 expandtab: */

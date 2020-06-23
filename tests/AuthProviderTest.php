@@ -162,12 +162,42 @@ class AuthProviderTest extends PHPUnit\Framework\TestCase
         $full = array();
         $auth->mergeResult($full, false);
         $this->assertCount(0, $full);
+
+        $tmp = new \MyMergeClass($this);
+        $auth->mergeResult($tmp, $full);
+    }
+
+    public function testPendingUsers()
+    {
+        $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
+
+        $dataSet = \Flipside\DataSetFactory::getDataSetByName('pending_authentication');
+        $dataSet->raw_query('CREATE TABLE tblusers (hash varchar(255), data varchar(255));');
+
+        $auth = \Flipside\AuthProvider::getInstance();
+
+        $users = $auth->getPendingUsersByFilter(false);
+        $this->assertEmpty($users);
+        $this->assertEquals(0, $auth->getPendingUserCount());
     }
 
     public static function tearDownAfterClass(): void
     {
         unlink('/tmp/auth.sq3');
         unlink('/tmp/pending.sq3');
+    }
+}
+
+class MyMergeClass
+{
+    public function __construct($test)
+    {
+        $this->test = $test;
+    }
+
+    public function merge($res)
+    {
+        $this->test->assertIsArray($res);
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */

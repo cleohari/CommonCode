@@ -4,8 +4,6 @@ namespace Flipside\Http\Rest;
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 
-require 'vendor/autoload.php';
-
 const SUCCESS = 0;
 const UNRECOGNIZED_METHOD = 1;
 const INVALID_PARAM = 2;
@@ -52,7 +50,7 @@ class RestAPI
 
     protected function sendEmail($email)
     {
-        $emailProvider = \EmailProvider::getInstance();
+        $emailProvider = \Flipside\EmailProvider::getInstance();
         if($emailProvider->sendEmail($email) === false)
         {
             throw new \Exception('Unable to send email!');

@@ -19,6 +19,12 @@ class FlipsideSettings
            'params' => array(
                 'dsn' => 'sqlite::memory:'
            )
+        ),
+	'profiles' => array(
+           'type' => 'SQLDataSet',
+           'params' => array(
+                'dsn' => 'sqlite::memory:'
+           )
 	)
     );
 
