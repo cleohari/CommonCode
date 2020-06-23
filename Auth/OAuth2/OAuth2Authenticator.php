@@ -140,7 +140,7 @@ abstract class OAuth2Authenticator extends \Flipside\Auth\Authenticator
         $ret = $auth->activatePendingUser($user);
         if($ret === false)
         {
-            throw new \Exception('Unable to create user! '.$res);
+            throw new \Exception('Unable to create user!');
         }
         return self::SUCCESS;
     }

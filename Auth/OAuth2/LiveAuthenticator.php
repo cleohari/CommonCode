@@ -37,11 +37,11 @@ class LiveAuthenticator extends OAuth2Authenticator
     {
         if($token === false)
         {
-            $token = \FlipSession::getVar('OAuthToken');
+            $token = \Flipside\FlipSession::getVar('OAuthToken');
         }
         $resp = \Httpful\Request::get('https://apis.live.net/v5.0/me')->addHeader('Authorization', 'Bearer '.$token->access_token)->send();
         $live_user = $resp->body;
-        $user = new \Auth\PendingUser();
+        $user = new \Flipside\Auth\PendingUser();
         $user->mail = $live_user->emails->preferred;
         $user->givenName = $live_user->first_name;
         $user->sn = $live_user->last_name;
