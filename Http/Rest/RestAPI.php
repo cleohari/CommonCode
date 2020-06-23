@@ -50,7 +50,7 @@ class RestAPI
 
     protected function sendEmail($email)
     {
-        $emailProvider = \EmailProvider::getInstance();
+        $emailProvider = \Flipside\EmailProvider::getInstance();
         if($emailProvider->sendEmail($email) === false)
         {
             throw new \Exception('Unable to send email!');

@@ -51,6 +51,13 @@ class RestAPITest extends PHPUnit\Framework\TestCase
 
         $this->assertEquals(array('test1'=> true), $api->doParseBody($request));
     }
+
+    public function testSendEmail()
+    {
+        $api = new MyTestRestAPI();
+        $api->doEmail(new stdClass());
+        $this->assertFalse(false);
+    }
 }
 
 class MyTestRestAPI extends \Flipside\Http\Rest\RestAPI
@@ -58,6 +65,11 @@ class MyTestRestAPI extends \Flipside\Http\Rest\RestAPI
     public function doParseBody($request)
     {
         return $this->getParsedBody($request);
+    }
+
+    public function doEmail($email)
+    {
+        return $this->sendEmail($email);
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
