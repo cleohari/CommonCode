@@ -38,6 +38,9 @@ class LDAPServerTest extends PHPUnit\Framework\TestCase
     {
         $ldap_connect = $this->getFunctionMock('Flipside\LDAP', "ldap_connect");
         $ldap_connect->expects($this->once())->willReturn(false);
+        //Handle state from other tests...
+        $ldap_close = $this->getFunctionMock('Flipside\LDAP', "ldap_close");
+        $ldap_close->expects($this->any())->willReturn(true);
 
         $server = \Flipside\LDAP\LDAPServer::getInstance();
         $this->assertNotNull($server);
@@ -111,11 +114,16 @@ class LDAPServerTest extends PHPUnit\Framework\TestCase
 
     public function testUnbind()
     {
+        $ldap_connect = $this->getFunctionMock('Flipside\LDAP', "ldap_connect");
+        $ldap_connect->expects($this->any())->willReturn(true);
+        $ldap_set_option = $this->getFunctionMock('Flipside\LDAP', "ldap_set_option");
+        $ldap_set_option->expects($this->any())->willReturn(true);
         $ldap_close = $this->getFunctionMock('Flipside\LDAP', "ldap_close");
-        $ldap_close->expects($this->once())->willReturn(true);
+        $ldap_close->expects($this->any())->willReturn(true);
         $ldap_unbind = $this->getFunctionMock('Flipside\LDAP', "ldap_unbind");
         $ldap_unbind->expects($this->once())->willReturn(true);
         $server = \Flipside\LDAP\LDAPServer::getInstance();
+        $server->connect('ldap://test');
         $this->assertTrue($server->unbind());
         $server->disconnect();
         $this->assertTrue($server->unbind());
@@ -141,13 +149,19 @@ class LDAPServerTest extends PHPUnit\Framework\TestCase
 
     public function testDisonnectedRead()
     {
+        $ldap_close = $this->getFunctionMock('Flipside\LDAP', "ldap_close");
+        $ldap_close->expects($this->any())->willReturn(true);
+
         $server = \Flipside\LDAP\LDAPServer::getInstance();
+        $server->disconnect();
         $this->expectException(Exception::class);
         $server->read('test');
     }
 
     public function testBadSingleRead()
     {
+        $ldap_close = $this->getFunctionMock('Flipside\LDAP', "ldap_close");
+        $ldap_close->expects($this->any())->willReturn(true);
         $ldap_connect = $this->getFunctionMock('Flipside\LDAP', "ldap_connect");
         $ldap_connect->expects($this->exactly(1))->willReturn(true);
         $ldap_set_option = $this->getFunctionMock('Flipside\LDAP', "ldap_set_option");

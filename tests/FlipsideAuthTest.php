@@ -80,5 +80,30 @@ class FlipsideAuthTest extends PHPUnit\Framework\TestCase
         $user = $site->getUser(array());
         $this->assertInstanceOf('Flipside\Auth\FlipsideAPIUser', $user);
     }
+
+    public function testIsInGroupNamedError()
+    {
+        $curl_exec = $this->getFunctionMock('Httpful', "curl_exec");
+        $curl_exec->expects($this->exactly(1))->willReturn("HTTP/1.1 500 Server Error\r\nDate: Tue, 23 Jun 2020 15:25:09 GMT\r\nServer: Apache\r\nCache-Control: no-store, no-cache, must-revalidate\r\nContent-Length: 437\r\nContent-Type: application/json\r\n\r\n{}");
+   
+        $data = new stdClass();
+        $data->uid = 'test';
+        $data->userPassword = 'pass';
+        $user = new \Flipside\Auth\FlipsideAPIUser(array('extended'=>$data), '');
+        $this->assertFalse($user->isInGroupNamed('dontcare'));
+    }
+
+    public function testIsInGroupNamed()
+    {
+        $curl_exec = $this->getFunctionMock('Httpful', "curl_exec");
+        $curl_exec->expects($this->exactly(1))->willReturn("HTTP/1.1 200 OK\r\nDate: Tue, 23 Jun 2020 15:25:09 GMT\r\nServer: Apache\r\nCache-Control: no-store, no-cache, must-revalidate\r\nContent-Length: 437\r\nContent-Type: application/json\r\n\r\n[{\"cn\":\"yes\"}]");
+
+        $data = new stdClass();
+        $data->uid = 'test';
+        $data->userPassword = 'pass';
+        $user = new \Flipside\Auth\FlipsideAPIUser(array('extended'=>$data), '');
+        $this->assertFalse($user->isInGroupNamed('no'));
+        $this->assertTrue($user->isInGroupNamed('yes'));
+    }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */

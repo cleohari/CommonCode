@@ -28,6 +28,8 @@ class GroupTest extends PHPUnit\Framework\TestCase
         $json = json_encode($user);
         $this->assertEquals($json, '{"cn":false,"description":false,"member":[]}');
         $this->assertFalse(\Flipside\Auth\Group::from_name('test'));
+
+        $user->editGroup(array('description' => 'Testing'));
     }
 
     public function testLDAPGroup()
@@ -104,6 +106,17 @@ class GroupTest extends PHPUnit\Framework\TestCase
         $group = new \Flipside\Auth\SQLGroup(array('gid'=>'testGid', 'description'=>'Test Group'), false);
         $this->assertEquals($group->getGroupName(), 'testGid');
         $this->assertEquals($group->getDescription(), 'Test Group');
+
+        $group = new \Flipside\Auth\SQLGroup(array(), false);
+        $group->addMember('test');
+        $group->editGroup(array('member'=>array('test1')));
+        $this->assertEquals(array(), $group->getMemberUids());
+
+        $group->editGroup(array('member'=>array(array('type'=>'Group', 'cn'=>'test1'))));
+        $this->assertEquals(array(), $group->getMemberUids());
+
+        $group->editGroup(array('member'=>array(array('type'=>'User', 'uid'=>'test1'))));
+        $this->assertEquals(array(), $group->getMemberUids());
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
