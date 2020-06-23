@@ -46,11 +46,11 @@ class FlipsideAuthenticator extends OAuth2Authenticator
     {
         if($token === false)
         {
-            $token = \FlipSession::getVar('OAuthToken');
+            $token = \Flipside\FlipSession::getVar('OAuthToken');
         }
         $resp = \Httpful\Request::get($this->apiUrl.'/users/me')->addHeader('Authorization', 'token '.$token['access_token'])->send();
         $data = array('extended'=>$resp->body);
-        $user = new \Auth\FlipsideAPIUser($data);
+        $user = new \Flipside\Auth\FlipsideAPIUser($data);
         $user->addLoginProvider($this->getHostName());
         return $user;
     }
@@ -82,6 +82,6 @@ class FlipsideAuthenticator extends OAuth2Authenticator
 
     public function getUser($data)
     {
-        return new \Auth\FlipsideAPIUser($data, $this->apiUrl);
+        return new \Flipside\Auth\FlipsideAPIUser($data, $this->apiUrl);
     }
 }

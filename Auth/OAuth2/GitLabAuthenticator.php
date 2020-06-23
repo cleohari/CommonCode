@@ -32,11 +32,11 @@ class GitLabAuthenticator extends OAuth2Authenticator
     {
         if($token === false)
         {
-            $token = \FlipSession::getVar('OAuthToken');
+            $token = \Flipside\FlipSession::getVar('OAuthToken');
         }
         $resp = \Httpful\Request::get('https://gitlab.com/api/v3/user')->addHeader('Authorization', 'Bearer '.$token->access_token)->send();
         $gitlab_user = $resp->body;
-        $user = new \Auth\PendingUser();
+        $user = new \Flipside\Auth\PendingUser();
         $user->mail = $gitlab_user->email;
         $name = explode(' ', $gitlab_user->name);
         $user->givenName = $name[0];
