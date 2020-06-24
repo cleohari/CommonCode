@@ -404,5 +404,266 @@ class LDAPAuthenticatorTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(50, $auth->getActiveUserCount());
         \Flipside\LDAP\LDAPServer::getInstance()->disconnect();
     }
+
+    public function testGetUserFilterNoBind()
+    {
+        $ldap_connect = $this->getFunctionMock('Flipside\LDAP', "ldap_connect");
+        $ldap_connect->expects($this->any())->willReturn(true);
+        $ldap_bind = $this->getFunctionMock('Flipside\LDAP', "ldap_bind");
+        $ldap_bind->expects($this->any())->willReturn(false);
+        $ldap_set_option = $this->getFunctionMock('Flipside\LDAP', "ldap_set_option");
+        $ldap_set_option->expects($this->any())->willReturn(true);
+        $ldap_close = $this->getFunctionMock('Flipside\LDAP', "ldap_close");
+        $ldap_close->expects($this->any())->willReturn(true);
+
+        $auth = new \Flipside\Auth\LDAPAuthenticator(array('current'=>true, 'pending'=>false, 'supplement'=>false, 'bind_dn'=> 'readwrite', 'bind_pass' => 'readwrite'));
+        $this->assertNotFalse($auth);
+        $this->assertFalse($auth->getUsersByFilter(false));
+        \Flipside\LDAP\LDAPServer::getInstance()->disconnect();
+    }
+
+    public function testGetUserFilterNoUsers()
+    {
+        $ldap_connect = $this->getFunctionMock('Flipside\LDAP', "ldap_connect");
+        $ldap_connect->expects($this->any())->willReturn(true);
+        $ldap_bind = $this->getFunctionMock('Flipside\LDAP', "ldap_bind");
+        $ldap_bind->expects($this->any())->willReturn(true);
+        $ldap_set_option = $this->getFunctionMock('Flipside\LDAP', "ldap_set_option");
+        $ldap_set_option->expects($this->any())->willReturn(true);
+        $ldap_list = $this->getFunctionMock('Flipside\LDAP', "ldap_list");
+        $ldap_list->expects($this->exactly(1))->willReturn(false);
+        $ldap_close = $this->getFunctionMock('Flipside\LDAP', "ldap_close");
+        $ldap_close->expects($this->any())->willReturn(true);
+
+        $auth = new \Flipside\Auth\LDAPAuthenticator(array('current'=>true, 'pending'=>false, 'supplement'=>false, 'bind_dn'=> 'readwrite', 'bind_pass' => 'readwrite'));
+        $this->assertNotFalse($auth);
+        $this->assertFalse($auth->getUsersByFilter(false));
+        \Flipside\LDAP\LDAPServer::getInstance()->disconnect();
+    }
+
+    public function testGetUserFilter()
+    {
+        $ldap_connect = $this->getFunctionMock('Flipside\LDAP', "ldap_connect");
+        $ldap_connect->expects($this->any())->willReturn(true);
+        $ldap_bind = $this->getFunctionMock('Flipside\LDAP', "ldap_bind");
+        $ldap_bind->expects($this->any())->willReturn(true);
+        $ldap_set_option = $this->getFunctionMock('Flipside\LDAP', "ldap_set_option");
+        $ldap_set_option->expects($this->any())->willReturn(true);
+        $ldap_list = $this->getFunctionMock('Flipside\LDAP', "ldap_list");
+        $ldap_list->expects($this->exactly(1))->willReturn(true);
+        $ldap_get_entries = $this->getFunctionMock('Flipside\LDAP', "ldap_get_entries");
+        $ldap_get_entries->expects($this->exactly(1))->willReturn(array('count' => 1, 0 => array('dn'=>'test')));
+        $ldap_close = $this->getFunctionMock('Flipside\LDAP', "ldap_close");
+        $ldap_close->expects($this->any())->willReturn(true);
+
+        $auth = new \Flipside\Auth\LDAPAuthenticator(array('current'=>true, 'pending'=>false, 'supplement'=>false, 'bind_dn'=> 'readwrite', 'bind_pass' => 'readwrite'));
+        $this->assertNotFalse($auth);
+        $user = $auth->getUsersByFilter(false);
+        $this->assertNotFalse($user);
+        \Flipside\LDAP\LDAPServer::getInstance()->disconnect();
+    }
+
+    public function testGetUserFilterSelect()
+    {
+        $ldap_connect = $this->getFunctionMock('Flipside\LDAP', "ldap_connect");
+        $ldap_connect->expects($this->any())->willReturn(true);
+        $ldap_bind = $this->getFunctionMock('Flipside\LDAP', "ldap_bind");
+        $ldap_bind->expects($this->any())->willReturn(true);
+        $ldap_set_option = $this->getFunctionMock('Flipside\LDAP', "ldap_set_option");
+        $ldap_set_option->expects($this->any())->willReturn(true);
+        $ldap_list = $this->getFunctionMock('Flipside\LDAP', "ldap_list");
+        $ldap_list->expects($this->any())->willReturn(true);
+        $ldap_get_entries = $this->getFunctionMock('Flipside\LDAP', "ldap_get_entries");
+        $ldap_get_entries->expects($this->any())->willReturn(array('count' => 2, 0 => array('dn'=>'test', 'cn'=>'test', 'givenname'=>array('Bob'), 'member'=>array('count' => 0)), 1 => array('dn'=>'test1', 'cn'=>'abc', 'givenname'=>array('Bob1'), 'member'=>array('count' => 0))));
+        $ldap_close = $this->getFunctionMock('Flipside\LDAP', "ldap_close");
+        $ldap_close->expects($this->any())->willReturn(true);
+
+        $auth = new \Flipside\Auth\LDAPAuthenticator(array('current'=>true, 'pending'=>false, 'supplement'=>false, 'bind_dn'=> 'readwrite', 'bind_pass' => 'readwrite'));
+        $this->assertNotFalse($auth);
+        $group = $auth->getUsersByFilter(false);
+        $this->assertNotEmpty($group);
+        $this->assertArrayHasKey(0, $group);
+        $this->assertEquals('Bob', $group[0]->givenName);
+
+        $group = $auth->getUsersByFilter(false, array('mail', 'members'));
+        $this->assertNotEmpty($group);
+        $this->assertArrayHasKey(0, $group);
+        $this->assertArrayNotHasKey('givenname', $group[0]);
+
+        $group = $auth->getUsersByFilter(false, false, 1);
+        $this->assertNotEmpty($group);
+        $this->assertArrayHasKey(0, $group);
+        $this->assertArrayNotHasKey(1, $group);
+
+        $group = $auth->getUsersByFilter(false, false, false, 1);
+        $this->assertNotEmpty($group);
+        $this->assertArrayHasKey(0, $group);
+        $this->assertArrayNotHasKey(1, $group);
+        $this->assertEquals('Bob1', $group[0]->givenName);
+
+        $group = $auth->getUsersByFilter(false, false, 1, 1);
+        $this->assertNotEmpty($group);
+        $this->assertArrayHasKey(0, $group);
+        $this->assertArrayNotHasKey(1, $group);
+        $this->assertEquals('Bob1', $group[0]->givenName);
+
+        $group = $auth->getUsersByFilter(false, false, false, false, array('cn' => 1));
+        $this->assertNotEmpty($group);
+        $this->assertArrayHasKey(0, $group);
+        $this->assertArrayHasKey(1, $group);
+        $this->assertEquals('Bob1', $group[0]->givenName);
+        \Flipside\LDAP\LDAPServer::getInstance()->disconnect();
+    }
+
+    public function testActivatePendingAddFail()
+    {
+        $ldap_connect = $this->getFunctionMock('Flipside\LDAP', "ldap_connect");
+        $ldap_connect->expects($this->any())->willReturn(true);
+        $ldap_bind = $this->getFunctionMock('Flipside\LDAP', "ldap_bind");
+        $ldap_bind->expects($this->any())->willReturn(true);
+        $ldap_set_option = $this->getFunctionMock('Flipside\LDAP', "ldap_set_option");
+        $ldap_set_option->expects($this->any())->willReturn(true);
+        $ldap_add = $this->getFunctionMock('Flipside\LDAP', "ldap_add");
+        $ldap_add->expects($this->any())->willReturn(false);
+        $ldap_close = $this->getFunctionMock('Flipside\LDAP', "ldap_close");
+        $ldap_close->expects($this->any())->willReturn(true);
+
+        $user = new \BareMinimumTestUser();
+        $user->uid = 'test';
+        $user->mail = 'test@example.org';
+
+        $auth = new \Flipside\Auth\LDAPAuthenticator(array('current'=>true, 'pending'=>false, 'supplement'=>false, 'bind_dn'=> 'readwrite', 'bind_pass' => 'readwrite'));
+        $this->assertNotFalse($auth);
+
+        $this->expectException('\Exception');
+        $this->expectExceptionMessage('Failed to create object with dn=uid=test,');
+        $auth->activatePendingUser($user);
+    }
+
+    public function testActivatePendingQueryFail()
+    {
+        $ldap_connect = $this->getFunctionMock('Flipside\LDAP', "ldap_connect");
+        $ldap_connect->expects($this->any())->willReturn(true);
+        $ldap_bind = $this->getFunctionMock('Flipside\LDAP', "ldap_bind");
+        $ldap_bind->expects($this->any())->willReturn(true);
+        $ldap_set_option = $this->getFunctionMock('Flipside\LDAP', "ldap_set_option");
+        $ldap_set_option->expects($this->any())->willReturn(true);
+        $ldap_add = $this->getFunctionMock('Flipside\LDAP', "ldap_add");
+        $ldap_add->expects($this->any())->willReturn(true);
+        $ldap_list = $this->getFunctionMock('Flipside\LDAP', "ldap_list");
+        $ldap_list->expects($this->exactly(1))->willReturn(false);
+        $ldap_close = $this->getFunctionMock('Flipside\LDAP', "ldap_close");
+        $ldap_close->expects($this->any())->willReturn(true);
+
+        $user = new \SlightlyLessBareMinimumTestUser();
+        $user->uid = 'test';
+        $user->mail = 'test@example.org';
+        $user->sn = 'Smith';
+        $user->givenName = 'Bob';
+
+        $auth = new \Flipside\Auth\LDAPAuthenticator(array('current'=>true, 'pending'=>false, 'supplement'=>false, 'bind_dn'=> 'readwrite', 'bind_pass' => 'readwrite'));
+        $this->assertNotFalse($auth);
+
+        $this->expectException('\Exception');
+        $this->expectExceptionMessage('Error creating user!');
+        $auth->activatePendingUser($user);
+    }
+
+    public function testActivatePending()
+    {
+        $ldap_connect = $this->getFunctionMock('Flipside\LDAP', "ldap_connect");
+        $ldap_connect->expects($this->any())->willReturn(true);
+        $ldap_bind = $this->getFunctionMock('Flipside\LDAP', "ldap_bind");
+        $ldap_bind->expects($this->any())->willReturn(true);
+        $ldap_set_option = $this->getFunctionMock('Flipside\LDAP', "ldap_set_option");
+        $ldap_set_option->expects($this->any())->willReturn(true);
+        $ldap_add = $this->getFunctionMock('Flipside\LDAP', "ldap_add");
+        $ldap_add->expects($this->any())->willReturn(true);
+        $ldap_list = $this->getFunctionMock('Flipside\LDAP', "ldap_list");
+        $ldap_list->expects($this->any())->willReturn(true);
+        $ldap_get_entries = $this->getFunctionMock('Flipside\LDAP', "ldap_get_entries");
+        $ldap_get_entries->expects($this->any())->willReturn(array('count' => 1, 0 => array('dn'=>'test', 'cn'=>'test', 'givenname'=>array('Bob'), 'member'=>array('count' => 0))));
+        $ldap_close = $this->getFunctionMock('Flipside\LDAP', "ldap_close");
+        $ldap_close->expects($this->any())->willReturn(true);
+
+        $user = new \SlightlyLessBareMinimumTestUser();
+        $user->uid = 'test';
+        $user->mail = 'test@example.org';
+        $user->sn = 'Smith';
+        $user->host = 'test.org';
+        $user->givenName = 'Bob';
+
+        $auth = new \Flipside\Auth\LDAPAuthenticator(array('current'=>true, 'pending'=>false, 'supplement'=>false, 'bind_dn'=> 'readwrite', 'bind_pass' => 'readwrite'));
+        $this->assertNotFalse($auth);
+
+        $x = $auth->activatePendingUser($user);
+        $this->assertNotFalse($x);
+        $this->assertTrue($user->wasDeleted);
+    }
+
+    public function testUserByResetHashQueryFail()
+    {
+        $ldap_connect = $this->getFunctionMock('Flipside\LDAP', "ldap_connect");
+        $ldap_connect->expects($this->any())->willReturn(true);
+        $ldap_bind = $this->getFunctionMock('Flipside\LDAP', "ldap_bind");
+        $ldap_bind->expects($this->any())->willReturn(true);
+        $ldap_set_option = $this->getFunctionMock('Flipside\LDAP', "ldap_set_option");
+        $ldap_set_option->expects($this->any())->willReturn(true);
+        $ldap_list = $this->getFunctionMock('Flipside\LDAP', "ldap_list");
+        $ldap_list->expects($this->exactly(1))->willReturn(false);
+        $ldap_close = $this->getFunctionMock('Flipside\LDAP', "ldap_close");
+        $ldap_close->expects($this->any())->willReturn(true);
+
+        $auth = new \Flipside\Auth\LDAPAuthenticator(array('current'=>true, 'pending'=>false, 'supplement'=>false, 'bind_dn'=> 'readwrite', 'bind_pass' => 'readwrite'));
+        $this->assertNotFalse($auth);
+
+        $this->assertFalse($auth->getUserByResetHash('hash'));
+    }
+
+    public function testUserByResetHash()
+    {
+        $ldap_connect = $this->getFunctionMock('Flipside\LDAP', "ldap_connect");
+        $ldap_connect->expects($this->any())->willReturn(true);
+        $ldap_bind = $this->getFunctionMock('Flipside\LDAP', "ldap_bind");
+        $ldap_bind->expects($this->any())->willReturn(true);
+        $ldap_set_option = $this->getFunctionMock('Flipside\LDAP', "ldap_set_option");
+        $ldap_set_option->expects($this->any())->willReturn(true);
+        $ldap_add = $this->getFunctionMock('Flipside\LDAP', "ldap_add");
+        $ldap_add->expects($this->any())->willReturn(true);
+        $ldap_list = $this->getFunctionMock('Flipside\LDAP', "ldap_list");
+        $ldap_list->expects($this->any())->willReturn(true);
+        $ldap_get_entries = $this->getFunctionMock('Flipside\LDAP', "ldap_get_entries");
+        $ldap_get_entries->expects($this->any())->willReturn(array('count' => 1, 0 => array('dn'=>'test', 'cn'=>'test', 'givenname'=>array('Bob'), 'member'=>array('count' => 0))));
+        $ldap_close = $this->getFunctionMock('Flipside\LDAP', "ldap_close");
+        $ldap_close->expects($this->any())->willReturn(true);
+
+        $auth = new \Flipside\Auth\LDAPAuthenticator(array('current'=>true, 'pending'=>false, 'supplement'=>false, 'bind_dn'=> 'readwrite', 'bind_pass' => 'readwrite'));
+        $this->assertNotFalse($auth);
+
+        $this->assertNotFalse($auth->getUserByResetHash('hash'));
+    }
+}
+
+class BareMinimumTestUser
+{
+    public function getPassword()
+    {
+        return false;
+    }
+}
+
+class SlightlyLessBareMinimumTestUser
+{
+    public $wasDeleted = false;
+
+    public function getPassword()
+    {
+        return 'fakePass';
+    }
+
+    public function delete()
+    {
+        $this->wasDeleted = true;
+    }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
