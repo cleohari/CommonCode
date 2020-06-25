@@ -31,6 +31,24 @@ class XMLTest extends PHPUnit\Framework\TestCase
         $obj->ABC = '1';
         $data = $serializer->serializeData($type, $obj);
         $this->assertEquals("<?xml version=\"1.0\"?>\n<Test1>1</Test1><Test2>a</Test2><ABC>1</ABC>", $data);
+
+        $serializer = new \Flipside\Serialize\XMLSerializer();
+        $obj = new stdClass();
+        $obj->Test1 = 1;
+        $obj->Test2 = 'a';
+        $obj->ABC = new stdClass();
+        $obj->ABC->x = 'abc';
+        $data = $serializer->serializeData($type, $obj);
+        $this->assertEquals("<?xml version=\"1.0\"?>\n<Test1>1</Test1><Test2>a</Test2><ABC><x>abc</x></ABC>", $data);
+
+        $serializer = new \Flipside\Serialize\XMLSerializer();
+        $obj = new stdClass();
+        $obj->Test1 = 1;
+        $obj->Test2 = 'a';
+        $obj->ABC = new stdClass();
+        $obj->ABC->{'$x'} = 'abc';
+        $data = $serializer->serializeData($type, $obj);
+        $this->assertEquals("<?xml version=\"1.0\"?>\n<Test1>1</Test1><Test2>a</Test2><ABC><x>abc</x></ABC>", $data);
     }
 
     public function testComma()
@@ -58,6 +76,17 @@ class XMLTest extends PHPUnit\Framework\TestCase
         $this->assertEquals("<?xml version=\"1.0\"?>\n<Array><Entity><A>1</A><B>2</B><C>3</C></Entity><Entity><A>1</A><C>2</C></Entity></Array>", $data);
     }
 
+    public function testUnkeyedArrays()
+    {
+        $serializer = new \Flipside\Serialize\XMLSerializer();
+        $row1 = array(1,2,3);
+        $row2 = array('A','B');
+        $array = array($row1, $row2);
+        $type = 'text/xml';
+        $data = $serializer->serializeData($type, $array);
+        $this->assertEquals("<?xml version=\"1.0\"?>\n<Array><Entity><Child>1</Child><Child>2</Child><Child>3</Child></Entity><Entity><Child>A</Child><Child>B</Child></Entity></Array>", $data);
+    }
+
     public function testBadType()
     {
         $serializer = new \Flipside\Serialize\XMLSerializer();
@@ -76,3 +105,4 @@ class XMLTest extends PHPUnit\Framework\TestCase
         $this->assertEquals("<?xml version=\"1.0\"?>\n", $data);
     }
 }
+/* vim: set tabstop=4 shiftwidth=4 expandtab: */

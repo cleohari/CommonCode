@@ -11,7 +11,7 @@ class FlipsideSettings
         'pending_authentication' => array(
             'type' => 'SQLDataSet',
             'params' => array(
-                'dsn' => 'sqlite:/tmp/pending.sq3'
+                'dsn' => 'sqlite::memory:'
             )
         ),
 	'memory' => array(
