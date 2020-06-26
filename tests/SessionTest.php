@@ -21,6 +21,25 @@ class SessionTest extends PHPUnit\Framework\TestCase
         unset($_SESSION['AuthMethod']);
     }
 
+    public function testGetUser()
+    {
+        $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
+
+        unset($_SESSION['flipside_user']);
+        unset($_SESSION['AuthMethod']);
+        unset($_SESSION['AuthData']);
+        $this->assertEquals(null, \Flipside\FlipSession::getUser());
+        $_SESSION['flipside_user'] = 'test';
+        $this->assertEquals('test', \Flipside\FlipSession::getUser());
+        unset($_SESSION['flipside_user']);
+        $_SESSION['AuthMethod'] = 'Flipside\Auth\SQLAuthenticator';
+        $_SESSION['AuthData'] = array('uid'=>'test');
+        $this->assertNotEquals(null, \Flipside\FlipSession::getUser());
+        unset($_SESSION['flipside_user']);
+        unset($_SESSION['AuthMethod']);
+        unset($_SESSION['AuthData']);
+    }
+
     public function testSetUser()
     {
         unset($_SESSION['flipside_user']);
