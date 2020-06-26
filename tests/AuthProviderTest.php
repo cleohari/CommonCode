@@ -316,7 +316,97 @@ class AuthProviderTest extends PHPUnit\Framework\TestCase
         $reflection_property->setValue($mock, array(new \TestSupplmentProv()));
 
         $this->assertFalse($mock->createPendingUser(array('uid'=>'test', 'mail'=>'test@example.org')));
+
+        $dataSet->raw_query('DROP TABLE tblusers;');
     }
+
+    public function testActivatePending()
+    {
+        $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
+        $auth = \Flipside\AuthProvider::getInstance();
+        $dataSet = \Flipside\DataSetFactory::getDataSetByName('pending_authentication');
+        $dataSet->raw_query('CREATE TABLE tblusers (hash varchar(255), data varchar(255), time varchar(255));');
+        $dt = $dataSet['users'];
+
+        $user = new \Flipside\Auth\PendingUser();
+        $this->assertFalse($auth->activatePendingUser($user));
+        $this->assertFalse($auth->activatePendingUser($user, 'Flipside\Auth\SQLAuthenticator'));
+
+        $reflection = new ReflectionClass($auth);
+        $mock = $reflection->newInstanceWithoutConstructor();
+
+        $reflection_property = $reflection->getProperty('methods');
+        $reflection_property->setAccessible(true);
+        $reflection_property->setValue($mock, array(new \TestSupplmentProv()));
+
+        $this->assertFalse($mock->activatePendingUser($user));
+
+        $reflection_property->setValue($mock, array(new \TestCurrentProv()));
+
+        $this->assertTrue($mock->activatePendingUser($user));
+
+        $dataSet->raw_query('DROP TABLE tblusers;');
+    }
+
+    public function testUserByResetHash()
+    {
+        $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
+        $auth = \Flipside\AuthProvider::getInstance();
+
+        $dataSet = \Flipside\DataSetFactory::getDataSetByName('pending_authentication');
+        $dataSet->raw_query('CREATE TABLE tblusers (hash varchar(255), data varchar(255), time varchar(255));');
+        $dt = $dataSet['users'];
+
+        $this->assertFalse($auth->getUserByResetHash('bad'));
+        $this->assertFalse($auth->getUserByResetHash('bad', 'Flipside\Auth\SQLAuthenticator'));
+        $this->assertFalse($auth->getUserByResetHash('bad', 'bad'));
+
+        $dataSet->raw_query('DROP TABLE tblusers;');
+    }
+
+    public function testSuplementalProviderHost()
+    {
+        $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
+        $auth = \Flipside\AuthProvider::getInstance();
+
+        $this->assertFalse($auth->getSuplementalProviderByHost('bad'));
+
+        $reflection = new ReflectionClass($auth);
+        $mock = $reflection->newInstanceWithoutConstructor();
+
+        $reflection_property = $reflection->getProperty('methods');
+        $reflection_property->setAccessible(true);
+        $reflection_property->setValue($mock, array(new \TestSupplmentProv()));
+
+        $this->assertFalse($mock->getSuplementalProviderByHost('bad'));
+        $this->assertNotFalse($mock->getSuplementalProviderByHost('good'));
+    }
+
+    public function testDeletePending()
+    {
+        $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
+        $auth = \Flipside\AuthProvider::getInstance();
+
+        $dataSet = \Flipside\DataSetFactory::getDataSetByName('pending_authentication');
+        $dataSet->raw_query('CREATE TABLE tblusers (hash varchar(255), data varchar(255), time varchar(255));');
+        $dt = $dataSet['users'];
+
+        $this->assertTrue($dt->create(array('hash'=>'good', 'data'=>'{}', 'time'=>'')));
+
+        $this->assertFalse($auth->deletePendingUsersByFilter(new \Flipside\Data\Filter('hash eq "bad"')));
+        $this->assertTrue($auth->deletePendingUsersByFilter(new \Flipside\Data\Filter('hash eq "good"')));
+
+        $dataSet->raw_query('DROP TABLE tblusers;');
+    }
+/*
+    public function testAccessCode()
+    {
+        $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
+        $auth = \Flipside\AuthProvider::getInstance();
+
+        $this->assertFalse($auth->getUserByAccessCode('key'));
+        $this->assertFalse($auth->getUserByAccessCode('key', 'Flipside\Auth\SQLAuthenticator'));
+    }*/
 
     public static function tearDownAfterClass(): void
     {
@@ -339,6 +429,7 @@ class MyMergeClass
 
 class TestSupplmentProv
 {
+    public $current = false;
     public $pending = false;
     public $supplement = true;
 
@@ -346,5 +437,23 @@ class TestSupplmentProv
     {
         return 'testlink';
     }
+
+    public function getHostName()
+    {
+        return 'good';
+    }
+}
+
+class TestCurrentProv
+{
+    public $current = true;
+    public $pending = false;
+    public $supplement = false;
+
+    public function activatePendingUser($user)
+    {
+        return $user;
+    }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
+
