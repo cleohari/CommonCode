@@ -1,4 +1,8 @@
 <?php
+/**
+* @runTestsInSeparateProcesses
+* @preserveGlobalState disabled
+ */
 class JSSCSSTest extends PHPUnit\Framework\TestCase
 {
     public function testJS()
@@ -18,6 +22,7 @@ class JSSCSSTest extends PHPUnit\Framework\TestCase
 
     public function testCSS()
     {
+        require_once('static.js_css.php');
         global $cssArray;
         foreach($cssArray as $css)
         {

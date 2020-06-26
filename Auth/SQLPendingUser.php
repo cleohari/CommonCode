@@ -61,7 +61,7 @@ class SQLPendingUser extends PendingUser
 
     public function delete()
     {
-        $this->table->delete(new \Data\Filter("hash eq '{$this->hash}'"));
+        $this->table->delete(new \Flipside\Data\Filter("hash eq '{$this->hash}'"));
     }
 }
 

@@ -237,8 +237,8 @@ class LDAPServerTest extends PHPUnit\Framework\TestCase
         $ldap_connect->expects($this->exactly(1))->willReturn(true);
         $ldap_set_option = $this->getFunctionMock('Flipside\LDAP', "ldap_set_option");
         $ldap_set_option->expects($this->exactly(1))->willReturn(true);
-        //$ldap_close = $this->getFunctionMock('Flipside\LDAP', "ldap_close");
-        //$ldap_close->expects($this->exactly(1))->willReturn(true);
+        $ldap_close = $this->getFunctionMock('Flipside\LDAP', "ldap_close");
+        $ldap_close->expects($this->any())->willReturn(true);
         $ldap_read = $this->getFunctionMock('Flipside\LDAP', "ldap_list");
         $ldap_read->expects($this->exactly(1))->will($this->throwException(new Exception('bad', 0)));
 

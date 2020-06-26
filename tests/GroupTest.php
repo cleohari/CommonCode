@@ -2,6 +2,8 @@
 require_once('Autoload.php');
 class GroupTest extends PHPUnit\Framework\TestCase
 {
+    use \phpmock\phpunit\PHPMock;
+
     public function testGroup()
     {
         $user = new \Flipside\Auth\Group();
@@ -93,6 +95,81 @@ class GroupTest extends PHPUnit\Framework\TestCase
         $ids = $group->getMemberUids();
         $this->assertNotFalse($ids);
         $this->assertCount(0, $ids);
+
+        $group->addMember('test', false, false);
+        $ids = $group->getMemberUids();
+        $this->assertNotFalse($ids);
+        $this->assertCount(1, $ids);
+        $group->addMember('test', false, false);
+        $ids = $group->getMemberUids();
+        $this->assertCount(1, $ids);
+
+        $array = array('dn'=>array('cn=Test,dc=example,dc=com'), 'cn'=>array('Test'), 'description'=>array('Test Group'), 'memberuid'=>array('test'));
+        $ldapGroup = new \Flipside\LDAP\LDAPObject($array);
+        $group = new \Flipside\Auth\LDAPGroup($ldapGroup);
+        $ids = $group->getMemberUids();
+        $this->assertNotFalse($ids);
+        $this->assertCount(1, $ids);
+
+        $group->addMember('test1', false, false);
+        $ids = $group->getMemberUids();
+        $this->assertNotFalse($ids);
+        $this->assertCount(2, $ids);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Unable to add a group as a child of this group type');
+        $group->addMember('bob', true, false);
+    }
+
+    public function testLDAPGroupRecursiveMembers()
+    {
+        $ldap_connect = $this->getFunctionMock('Flipside\LDAP', "ldap_connect");
+        $ldap_connect->expects($this->any())->willReturn(true);
+        $ldap_bind = $this->getFunctionMock('Flipside\LDAP', "ldap_bind");
+        $ldap_bind->expects($this->any())->willReturn(true);
+        $ldap_set_option = $this->getFunctionMock('Flipside\LDAP', "ldap_set_option");
+        $ldap_set_option->expects($this->any())->willReturn(true);
+        $ldap_close = $this->getFunctionMock('Flipside\LDAP', "ldap_close");
+        $ldap_close->expects($this->any())->willReturn(true);
+        $ldap_list = $this->getFunctionMock('Flipside\LDAP', "ldap_read");
+        $ldap_list->expects($this->any())->willReturn(true);
+        $ldap_list = $this->getFunctionMock('Flipside\LDAP', "ldap_list");
+        $ldap_list->expects($this->any())->willReturn(true);
+        $ldap_get_entries = $this->getFunctionMock('Flipside\LDAP', "ldap_get_entries");
+        $ldap_get_entries->expects($this->any())->willReturn(array('count' => 1, 0 => array('dn'=>'test', 'cn'=>'test', 'description'=>array('Bob'), 'member'=>array('count' => 1, 0 => 'uid=bob'))));
+
+        $server = \Flipside\LDAP\LDAPServer::getInstance();
+        $server->connect('ldap');
+        $array = array('dn'=>array('cn=Test,dc=example,dc=com'), 'cn'=>array('Test'), 'description'=>array('Test Group'), 'uniquemember'=>array('count' => 2, 0=> 'uid=test', 1 => 'cn=x'));
+        $ldapGroup = new \Flipside\LDAP\LDAPObject($array);
+        $group = new \Flipside\Auth\LDAPGroup($ldapGroup);
+        $ids = $group->getMemberUids(true);
+        $this->assertNotFalse($ids);
+        $this->assertCount(2, $ids);
+
+        $ids = $group->members();
+        $this->assertNotFalse($ids);
+        $this->assertCount(2, $ids);
+
+        $array = array('dn'=>array('cn=Test,dc=example,dc=com'), 'cn'=>array('Test'), 'description'=>array('Test Group'), 'uniquemember'=>array('count' => 2, 0=> 'uid=test', 1 => 'cn=x'));
+        $ldapGroup = new \Flipside\LDAP\LDAPObject($array);
+        $group = new \Flipside\Auth\LDAPGroup($ldapGroup);
+        $ids = $group->members(true, false);
+        $this->assertNotFalse($ids);
+        $this->assertCount(2, $ids);
+
+        $array = array('dn'=>array('cn=Test,dc=example,dc=com'), 'cn'=>array('Test'), 'description'=>array('Test Group'), 'uniquemember'=>array('count' => 2, 0=> 'uid=test,base', 1 => 'cn=x,base'));
+        $ldapGroup = new \Flipside\LDAP\LDAPObject($array);
+        $group = new \Flipside\Auth\LDAPGroup($ldapGroup);
+        $ids = $group->members(true, false);
+        $this->assertNotFalse($ids);
+        $this->assertCount(2, $ids);
+
+        $server->disconnect();
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('data must be set for LDAPGroup');
+        \Flipside\Auth\LDAPGroup::from_name('test');
     }
 
     public function testSQLGroup()
