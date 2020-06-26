@@ -7,8 +7,15 @@ $settings = \Flipside\Settings::getInstance();
 //Use PHP based session handling if DB session handling isn't setup
 if($settings->getDataSetData('profiles') !== false)
 {
-    $handler = new \Flipside\Data\DataTableSessionHandler('profiles', 'sessions');
-    session_set_save_handler($handler, true);
+    try
+    {
+        $handler = new \Flipside\Data\DataTableSessionHandler('profiles', 'sessions');
+        session_set_save_handler($handler, true);
+    }
+    catch(\Exception $e)
+    {
+        //Use default PHP session handling...
+    }
 }
 
 if(!isset($_SESSION) && php_sapi_name() !== 'cli')

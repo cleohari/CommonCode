@@ -61,12 +61,8 @@ class SQLDataSet extends DataSet
         {
             return 0;
         }
-        $count = $stmt->rowCount();
-        if($count === 0)
-        {
-            $array = $stmt->fetchAll();
-            $count = count($array);
-        }
+        $array = $stmt->fetchAll();
+        $count = count($array);
         return $count;
     }
 

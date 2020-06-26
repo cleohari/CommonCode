@@ -102,10 +102,11 @@ class AuthProviderTest extends PHPUnit\Framework\TestCase
         $this->assertNull($group);
 
         $dataSet = \Flipside\DataSetFactory::getDataSetByName('authentication');
-        $dataSet->raw_query('CREATE TABLE tblgroup (gid varchar(255), description varchar(255));');
+        $dataSet->raw_query('DROP TABLE tblgroup;');
+        $this->assertNotFalse($dataSet->raw_query('CREATE TABLE tblgroup (gid varchar(255), description varchar(255));'), 'SQL Error: '.print_r($dataSet->getLastError(), true));
 
         $dataTable = \Flipside\DataSetFactory::getDataTableByNames('authentication', 'group');
-        $dataTable->create(array('gid'=>'goodgroup', 'description'=>'Good Group'));
+        $this->assertTrue($dataTable->create(array('gid'=>'goodgroup', 'description'=>'Good Group')));
 
         $group = $auth->getGroupByName('goodgroup');
         $this->assertNotNull($group);
