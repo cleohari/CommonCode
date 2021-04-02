@@ -15,7 +15,7 @@
     {% for c in css %}
         <link rel="stylesheet" href="{{ c }}" type="text/css">
     {% endfor %}
-    <script async defer src="js/common/flipside.min.js" type="text/javascript"></script>
+    <script src="js/common/flipside.min.js" type="text/javascript"></script>
     <script async defer src="js/common/login.min.js" type="text/javascript"></script>
     {% for j in securejs %}
       <script async defer src="{{ j.src }}" type="text/javascript" integrity="{{ j.hash }}" crossorigin="anonymous"></script>

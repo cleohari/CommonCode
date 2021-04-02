@@ -46,7 +46,7 @@ class SQLAuthenticator extends Authenticator
         return \Flipside\DataSetFactory::getDataSetByName('pending_authentication');
     }
 
-    private function getDataTable($name, $pending = false)
+    public function getDataTable($name, $pending = false)
     {
         if(isset($this->dataTables[$name]) && isset($this->dataTables[$name][$pending]))
         {
@@ -84,21 +84,70 @@ class SQLAuthenticator extends Authenticator
         return $this->getDataTable('users', true);
     }
 
+    public function getCurrentUserDataTable()
+    {
+        if(isset($this->params['current_user_table']))
+        {
+            return $this->getDataTable($this->params['current_user_table']);
+        }
+        return $this->getDataTable('user');
+    }
+
+    private function verifyPass($givenPass, $savedPass)
+    {
+        //Is this in the even better PHP hash format?
+        if(\password_verify($givenPass, $savedPass))
+        {
+            return true;
+        }
+        //Is it in the slightly less secure, but still good LDAP format?
+        if(substr($savedPass, 0, 6) === "{SSHA}")
+        {
+            return $this->verifyLDAPSHAAPass($givenPass, $savedPass);
+        }
+        //Didn't pass password_verify and not in LDAP format
+        return false;
+    }
+
+    private function hashLDAPPassword($password, $salt)
+    {
+        $shaHashed = sha1($password.$salt);
+        $packed = pack("H*",$shaHashed);
+        $encoded = base64_encode($packed.$salt);
+        return "{SSHA}".$encoded;
+    }
+
+    private function verifyLDAPSHAAPass($givenPass, $sshaHash)
+    {
+        //Remove {SSHA} from start 
+        $encodedString = substr($sshaHash, 6);
+        $decoded = base64_decode($encodedString);
+        //Get the salt, SHA1 is always 20 chars
+        $salt = substr($decoded, 20);
+        //hash the password given and compare it to the saved password hash
+        return $this->hashLDAPPassword($givenPass, $salt) == $sshaHash;
+    }
+
     public function login($username, $password)
     {
         if($this->current === false)
         {
             return false;
         }
-        $userDataTable = $this->getDataTable('user');
+        $userDataTable = $this->getCurrentUserDataTable();
         $filter = new \Flipside\Data\Filter("uid eq '$username'");
         $users = $userDataTable->read($filter);
         if($users === false || !isset($users[0]))
         {
             return false;
         }
-        if(password_verify($password, $users[0]['pass']))
+        if(isset($users[0]['pass']) && password_verify($password, $users[0]['pass']))
         {
+            return array('res'=>true, 'extended'=>$users[0]);
+        }
+        if(isset($users[0]['userPassword']) && $this->verifyPass($password, $users[0]['userPassword']))
+        {
+            unset($users[0]['userPassword']);
             return array('res'=>true, 'extended'=>$users[0]);
         }
         return false;
@@ -145,12 +194,21 @@ class SQLAuthenticator extends Authenticator
 
     public function getGroupByName($name)
     {
-        return $this->getEntityByFilter('group', "gid eq '$name'", '\Flipside\Auth\SQLGroup');
+        $group = $this->getEntityByFilter('group', "cn eq '$name'", '\Flipside\Auth\SQLGroup');
+        if($group === null) {
+            return $this->getEntityByFilter('group', "gid eq '$name'", '\Flipside\Auth\SQLGroup');
+        }
+        return $group;
     }
 
     public function getUserByName($name)
     {
-        return $this->getEntityByFilter('user', "uid eq '$name'", '\Flipside\Auth\SQLUser');
+        $tblName = 'user';
+        if(isset($this->params['current_user_table']))
+        {
+            $tblName = $this->params['current_user_table'];
+        }
+        return $this->getEntityByFilter($tblName, "uid eq '$name'", '\Flipside\Auth\SQLUser');
     }
 
     /**
@@ -213,7 +271,12 @@ class SQLAuthenticator extends Authenticator
      */
     public function getUsersByFilter($filter, $select = false, $top = false, $skip = false, $orderby = false)
     {
-        return $this->convertDataToClass('user', 'Flipside\Auth\SQLUser', $filter, $select, $top, $skip, $orderby);
+        $tblName = 'user';
+        if(isset($this->params['current_user_table']))
+        {
+            $tblName = $this->params['current_user_table'];
+        }
+        return $this->convertDataToClass($tblName, 'Flipside\Auth\SQLUser', $filter, $select, $top, $skip, $orderby);
     }
 
     public function getPendingUserCount()
@@ -344,6 +407,71 @@ class SQLAuthenticator extends Authenticator
         if($users === false || !isset($users[0]))
         {
             return false;
+        }
+        return $users[0];
+    }
+
+    public function createGroup($group)
+    {
+        if(!isset($group['gid']))
+        {
+            return false;
+        }
+        $member = false;
+        if(isset($group['member']))
+        {
+            $member = $group['member'];
+            unset($group['member']);
+        }
+        $group['cn'] = $group['gid'];
+        unset($group['gid']);
+        $dt = $this->getDataTable('group');
+        $res = $dt->create($group);
+        if($res === false)
+        {
+            return $res;
+        }
+        if($member !== false)
+        {
+            $memberDT = $this->getDataTable('groupUserMap');
+            $count = count($member);
+            for($i = 0; $i < $count; $i++)
+            {
+                $val = array('groupCN' => $group['cn']);
+                if($member[$i]['type'] === 'User')
+                {
+                    $val['uid'] = $member[$i]['uid'];
+                }
+                else
+                {
+                    $val['gid'] = $member[$i]['cn'];
+                }
+                $res = $memberDT->create($val);
+                if($res === false)
+                {
+                    return $res;
+                }
+            }
+        }
+        return $res;
+    }
+
+    public function activatePendingUser($user)
+    {
+        $newUser = array();
+        $newUser['uid'] = $user->uid;
+        $newUser['mail'] = $user->mail;
+        $newUser['userPassword'] = \password_hash($user->password, \PASSWORD_DEFAULT);
+        $dt = $this->getCurrentUserDataTable();
+        $res = $dt->create($newUser);
+        if($res === false)
+        {
+            return $res;
+        }
+        $users = $this->getUsersByFilter(new \Flipside\Data\Filter('mail eq "'.$user->mail.'"'));
+        if(empty($users))
+        {
+            throw new \Exception('Error creating user!');
         }
         return $users[0];
     }

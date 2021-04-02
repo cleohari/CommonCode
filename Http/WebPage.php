@@ -47,7 +47,7 @@ class WebPage
         $this->content['header']['sites'] = array();
         $this->content['header']['sites']['Profiles'] = $this->profilesUrl;
         $this->content['header']['sites']['WWW'] = $this->wwwUrl;
-        $this->content['header']['sites']['Pyropedia'] = $this->wikiUrl;
+        #$this->content['header']['sites']['Pyropedia'] = $this->wikiUrl;
         $this->content['header']['sites']['Secure'] = $this->secureUrl;
 
         $this->aboutUrl = $this->settings->getGlobalSetting('about_url', $this->wwwUrl.'/about');

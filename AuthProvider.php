@@ -390,6 +390,40 @@ class AuthProvider extends Provider
     }
 
     /**
+     * Create a Auth\Group in the backend
+     *
+     * This will allow a new group to be created.
+     *
+     * @param array $group The Group to create
+     * @param string|false $methodName The AuthMethod if information is desired only from a particular Auth\Authenticator
+     *
+     * @return boolean true if the group was successfully created. Otherwise false.
+     */
+    public function createGroup($group, $methodName = false)
+    {
+        if($methodName === false)
+        {
+            $count = count($this->methods);
+            for($i = 0; $i < $count; $i++)
+            {
+                if($this->methods[$i]->current === false)
+                {
+                    continue;
+                }
+
+                $ret = $this->methods[$i]->createGroup($group);
+                if($ret !== false)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        $auth = $this->getMethodByName($methodName);
+        return $auth->createGroup($user);
+    }
+
+    /**
      * Get a current user by a password reset hash
      *
      * @param string $hash The current password reset hash for the user
