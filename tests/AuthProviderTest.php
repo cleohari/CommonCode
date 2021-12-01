@@ -357,6 +357,9 @@ class AuthProviderTest extends PHPUnit\Framework\TestCase
         $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
         $auth = \Flipside\AuthProvider::getInstance();
 
+        $dataSet2 = \Flipside\DataSetFactory::getDataSetByName('authentication');
+        $dataSet2->raw_query('CREATE TABLE tbluser (uid varchar(255), pass varchar(255), mail varchar(255), jpegphoto varchar(255));');
+
         $dataSet = \Flipside\DataSetFactory::getDataSetByName('pending_authentication');
         $dataSet->raw_query('CREATE TABLE tblusers (hash varchar(255), data varchar(255), time varchar(255));');
         $dt = $dataSet['users'];
@@ -366,6 +369,7 @@ class AuthProviderTest extends PHPUnit\Framework\TestCase
         $this->assertFalse($auth->getUserByResetHash('bad', 'bad'));
 
         $dataSet->raw_query('DROP TABLE tblusers;');
+        $dataSet2->raw_query('DROP TABLE tbluser;');
     }
 
     public function testSuplementalProviderHost()
