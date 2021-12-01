@@ -56,8 +56,6 @@ trait LDAPCachableObject
             }
             return $users[0];
         }
-        var_dump($array);
-        die();
     }
 
     protected function update($obj)
@@ -69,7 +67,7 @@ trait LDAPCachableObject
         catch(\Exception $ex)
         {
             $auth = \Flipside\AuthProvider::getInstance();
-            $ldap = $auth->getMethodByName('Auth\LDAPAuthenticator');
+            $ldap = $auth->getMethodByName('Flipside\Auth\LDAPAuthenticator');
             if($ldap === false)
             {
                 return false;

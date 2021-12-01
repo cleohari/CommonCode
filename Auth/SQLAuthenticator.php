@@ -61,7 +61,26 @@ class SQLAuthenticator extends Authenticator
         {
             throw new \Exception('Unable to obtain dataset for SQL Authentication!');
         }
-        $dataTable = $dataSet[$name];
+        try
+        {
+            $dataTable = $dataSet[$name];
+        }
+        catch(\Exception $e)
+        {
+            //Table doesn't exist... let's create it to make first install easier...
+            if($pending)
+            {
+                if($dataSet->raw_query("CREATE TABLE tbl$name (hash varchar(255), data varchar(255), time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, UNIQUE KEY hash);") === false)
+                {
+                    $dataSet->raw_query("CREATE TABLE tbl$name (hash varchar(255), data varchar(255), time timestamp);");
+                }
+            }
+            else
+            {
+                $dataSet->raw_query("CREATE TABLE tbl$name (uid varchar(255), pass varchar(255), mail varchar(255), jpegphoto varchar(255));");
+            }
+            $dataTable = $dataSet[$name];
+        }
         if(!isset($this->dataTables[$name]))
         {
             $this->dataTables[$name] = array();
@@ -139,7 +158,12 @@ class SQLAuthenticator extends Authenticator
         $users = $userDataTable->read($filter);
         if($users === false || !isset($users[0]))
         {
-            return false;
+            $filter = new \Flipside\Data\Filter("mail eq '$username'");
+            $users = $userDataTable->read($filter);
+            if($users === false || !isset($users[0]))
+            {
+                return false;
+            }
         }
         if(isset($users[0]['pass']) && password_verify($password, $users[0]['pass']))
         {

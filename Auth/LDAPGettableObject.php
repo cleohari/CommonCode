@@ -84,19 +84,15 @@ trait LDAPGettableObject
             }
             return isset($this->ldapObj[$propName]);
         }
-        if(is_object($this->ldapObj))
+        $lowerName = strtolower($propName);
+        if(isset($this->ldapObj->labeleduri))
         {
-            $lowerName = strtolower($propName);
-            if(isset($this->ldapObj->labeleduri))
+            if($propName === 'allMail')
             {
-                if($propName === 'allMail')
-                {
-                    return true;
-                }
+                return true;
             }
-            return isset($this->ldapObj->{$lowerName});
         }
-        return false;
+        return isset($this->ldapObj->{$lowerName});
     }
 }
 
