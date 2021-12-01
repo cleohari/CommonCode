@@ -29,5 +29,8 @@
 	"psr-4": {
 		"Flipside\\": ""
 	}
+    },
+    "scripts": {
+        "test": "phpunit"
     }
 }
