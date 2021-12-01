@@ -220,7 +220,14 @@ class SQLAuthenticator extends Authenticator
     {
         $group = $this->getEntityByFilter('group', "cn eq '$name'", '\Flipside\Auth\SQLGroup');
         if($group === null) {
-            return $this->getEntityByFilter('group', "gid eq '$name'", '\Flipside\Auth\SQLGroup');
+            try
+            {
+                return $this->getEntityByFilter('group', "gid eq '$name'", '\Flipside\Auth\SQLGroup');
+            }
+            catch(\PDOException $ex)
+            {
+                return false;
+            }
         }
         return $group;
     }
