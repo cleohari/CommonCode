@@ -99,12 +99,12 @@ class AuthProviderTest extends PHPUnit\Framework\TestCase
         $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
         $auth = \Flipside\AuthProvider::getInstance();
 
-        $group = $auth->getGroupByName('BadGroup');
-        $this->assertNull($group);
-
         $dataSet = \Flipside\DataSetFactory::getDataSetByName('authentication');
         $dataSet->raw_query('DROP TABLE tblgroup;');
         $this->assertNotFalse($dataSet->raw_query('CREATE TABLE tblgroup (cn varchar(50), description varchar(255));'), 'SQL Error: '.print_r($dataSet->getLastError(), true));
+
+        $group = $auth->getGroupByName('BadGroup');
+        $this->assertNull($group);
 
         $dataTable = \Flipside\DataSetFactory::getDataTableByNames('authentication', 'group');
         $this->assertTrue($dataTable->create(array('cn'=>'goodgroup', 'description'=>'Good Group')));
