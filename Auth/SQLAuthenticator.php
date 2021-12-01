@@ -519,6 +519,10 @@ class SQLAuthenticator extends Authenticator
     public function activatePendingUser($user)
     {
         $newUser = array();
+        if(!isset($user->mail))
+        {
+            return false;
+        }
         if(isset($user->uid))
         {
             $newUser['uid'] = $user->uid;
