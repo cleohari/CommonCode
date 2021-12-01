@@ -29,7 +29,7 @@ class AuthProviderTest extends PHPUnit\Framework\TestCase
         $this->assertNotFalse($user);
         $this->assertInstanceOf('Flipside\Auth\User', $user);
 
-        $dataSet->raw_query('DROP TABLE tblusers;');
+        $dataSet->raw_query('DROP TABLE tbluser;');
     }
 
     public function testLogin()
