@@ -249,6 +249,14 @@ class SQLAuthenticator extends Authenticator
      */
     private function getDataByFilter($dataTableName, $filter, $select, $top, $skip, $orderby)
     {
+        if($filter !== false)
+        {
+            $gidClause = $filter->getClause('gid');
+            if($gidClause !== null)
+            {
+                $gidClause->var1 = 'cn';
+            }
+        }
         $dataTable = $this->getDataTable($dataTableName);
         return $dataTable->read($filter, $select, $top, $skip, $orderby);
     }

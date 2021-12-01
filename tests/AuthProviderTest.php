@@ -104,10 +104,10 @@ class AuthProviderTest extends PHPUnit\Framework\TestCase
 
         $dataSet = \Flipside\DataSetFactory::getDataSetByName('authentication');
         $dataSet->raw_query('DROP TABLE tblgroup;');
-        $this->assertNotFalse($dataSet->raw_query('CREATE TABLE tblgroup (gid varchar(255), description varchar(255));'), 'SQL Error: '.print_r($dataSet->getLastError(), true));
+        $this->assertNotFalse($dataSet->raw_query('CREATE TABLE tblgroup (cn varchar(50), description varchar(255));'), 'SQL Error: '.print_r($dataSet->getLastError(), true));
 
         $dataTable = \Flipside\DataSetFactory::getDataTableByNames('authentication', 'group');
-        $this->assertTrue($dataTable->create(array('gid'=>'goodgroup', 'description'=>'Good Group')));
+        $this->assertTrue($dataTable->create(array('cn'=>'goodgroup', 'description'=>'Good Group')));
 
         $group = $auth->getGroupByName('goodgroup');
         $this->assertNotNull($group);
@@ -147,7 +147,7 @@ class AuthProviderTest extends PHPUnit\Framework\TestCase
         $auth = \Flipside\AuthProvider::getInstance();
 
         $dataTable = \Flipside\DataSetFactory::getDataTableByNames('authentication', 'group');
-        $res = $dataTable->create(array('gid'=>'goodgroup2', 'description'=>'Good Group'));
+        $res = $dataTable->create(array('cn'=>'goodgroup2', 'description'=>'Good Group'));
 
         $groups = $auth->getGroupsByFilter(false);
         $this->assertNotNull($groups);
