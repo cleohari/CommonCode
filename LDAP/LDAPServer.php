@@ -48,6 +48,12 @@ function ldap_escape($subject, $distinguishedName = false, $ignore = NULL)
 
 function cleanupDN($distinguishedName)
 {
+    $makeArray = false;
+    if(is_array($distinguishedName))
+    {
+        $distinguishedName = $distinguishedName[0];
+        $makeArray = true;
+    }
     if($distinguishedName[0] == ' ')
     {
         $distinguishedName = '\\20'.substr($distinguishedName, 1);
@@ -55,6 +61,10 @@ function cleanupDN($distinguishedName)
     if($distinguishedName[strlen($distinguishedName) - 1] == ' ')
     {
         $distinguishedName = substr($distinguishedName, 0, -1).'\\20';
+    }
+    if($makeArray)
+    {
+        return array($distinguishedName);
     }
     return $distinguishedName;
 }
@@ -314,6 +324,11 @@ class LDAPServer extends \Flipside\Singleton
 
     public function update($object)
     {
+        if($this->ldapLink === null)
+        {
+            //Error out if not connected
+            return false;
+        }
         $distinguishedName = ldap_escape($object['dn'], true);
         $delete = array();
         $entity = $this->fixObject($object, $delete);

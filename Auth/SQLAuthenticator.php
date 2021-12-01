@@ -70,7 +70,19 @@ class SQLAuthenticator extends Authenticator
             //Table doesn't exist... let's create it to make first install easier...
             if($pending)
             {
-                if($dataSet->raw_query("CREATE TABLE tbl$name (hash varchar(255), data varchar(255), time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, UNIQUE KEY hash);") === false)
+                $sqlLite = false;
+                try
+                {
+                    if($dataSet->raw_query("CREATE TABLE tbl$name (hash varchar(255), data varchar(255), time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, UNIQUE KEY hash);") === false)
+                    {
+                        $sqlLite = true;
+                    }
+                }
+                catch(\PDOException $ex)
+                {
+                    $sqlLite = true;
+                }
+                if($sqlLite)
                 {
                     $dataSet->raw_query("CREATE TABLE tbl$name (hash varchar(255), data varchar(255), time timestamp);");
                 }
@@ -226,7 +238,7 @@ class SQLAuthenticator extends Authenticator
             }
             catch(\PDOException $ex)
             {
-                return false;
+                return null;
             }
         }
         return $group;

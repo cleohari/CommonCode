@@ -117,7 +117,7 @@ class SerializationTest extends PHPUnit\Framework\TestCase
         $serializer = new \Flipside\Serialize\JsonSpreadSheet();
         $this->assertNull($serializer->serializeData($type, array('test'=>0)));
         $type = 'json-ss';
-        $this->assertEquals('[{"a":1},{"a":2}]', $serializer->serializeData($type, array(array('a'=>1), 2)));
+        $this->assertEquals('[{"a":1},{"a":2}]', $serializer->serializeData($type, array(array('a'=>1), array('a'=>2))));
     }
 
     public function testAcceptHeader()

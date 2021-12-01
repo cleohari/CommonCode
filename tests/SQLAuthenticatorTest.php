@@ -39,10 +39,10 @@ class SQLAuthenticatorTest extends PHPUnit\Framework\TestCase
         $GLOBALS['FLIPSIDE_SETTINGS_LOC'] = './tests/helpers';
 
         $dataSet = \Flipside\DataSetFactory::getDataSetByName('memory');
-        $dataSet->raw_query('DROP TABLE tbluser;');
-        $dataSet->raw_query('DROP TABLE user;');
-        $dataSet->raw_query('DROP TABLE tbltest;');
-        $dataSet->raw_query('DROP TABLE test;');
+        $this->paranoiaTableDelete($dataSet, 'tbluser');
+        $this->paranoiaTableDelete($dataSet, 'user');
+        $this->paranoiaTableDelete($dataSet, 'tbltest');
+        $this->paranoiaTableDelete($dataSet, 'test');
 
         $auth = new \Flipside\Auth\SQLAuthenticator(array('current'=>true, 'pending'=>true, 'supplement'=>false, 'current_data_set'=>'memory', 'pending_data_set'=>'memory', 'pending_user_table'=>'test'));
         $this->assertNotFalse($auth);
@@ -62,6 +62,18 @@ class SQLAuthenticatorTest extends PHPUnit\Framework\TestCase
 
         $dataSet->raw_query('DROP TABLE tbluser;');
         $dataSet->raw_query('DROP TABLE tbltest;');
+    }
+
+    private function paranoiaTableDelete($dataSet, $name)
+    {
+        try
+        {
+            $dataSet->raw_query("DROP TABLE $name;");
+        }
+        catch(\Exception $ex)
+        {
+
+        }
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */

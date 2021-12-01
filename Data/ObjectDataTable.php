@@ -55,7 +55,7 @@ class ObjectDataTable extends DataTable
 
     public function update($filter, $data)
     {
-        if(method_exists($data, 'preUpdate'))
+        if(is_object($data) && method_exists($data, 'preUpdate'))
         {
             $data = $data->preUpdate();
         }
