@@ -475,5 +475,15 @@ class SQLAuthenticator extends Authenticator
         }
         return $users[0];
     }
+
+    public function getUserByResetHash($hash)
+    {
+        $users = $this->getUsersByFilter(new \Flipside\Data\Filter("resetHash eq '$hash'"));
+        if($users === false || !isset($users[0]))
+        {
+            return false;
+        }
+        return $users[0];
+    }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
