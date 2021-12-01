@@ -49,14 +49,5 @@ class Singleton
     private function __clone()
     {
     }
-
-    /**
-     * A singleton can not be serialized and deserialized
-     * 
-     * @SuppressWarnings("UnusedPrivateMethod")
-     */
-    private function __wakeup()
-    {
-    }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */

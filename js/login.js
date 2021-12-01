@@ -104,4 +104,12 @@ function do_login_init()
     }
 }
 
-$(do_login_init);
+function retryInit() {
+  if($ != undefined) {
+    $(do_login_init);
+  } else {
+    window.setTimeout(retryInit, 200);
+  }
+}
+
+retryInit();
