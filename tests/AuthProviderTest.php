@@ -358,7 +358,7 @@ class AuthProviderTest extends PHPUnit\Framework\TestCase
         $auth = \Flipside\AuthProvider::getInstance();
 
         $dataSet2 = \Flipside\DataSetFactory::getDataSetByName('authentication');
-        $dataSet2->raw_query('CREATE TABLE tbluser (uid varchar(255), pass varchar(255), mail varchar(255), jpegphoto varchar(255));');
+        $dataSet2->raw_query('CREATE TABLE tbluser (uid varchar(255), pass varchar(255), mail varchar(255), resetHash varchar(255), jpegphoto varchar(255));');
 
         $dataSet = \Flipside\DataSetFactory::getDataSetByName('pending_authentication');
         $dataSet->raw_query('CREATE TABLE tblusers (hash varchar(255), data varchar(255), time varchar(255));');
