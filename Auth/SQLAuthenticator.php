@@ -332,6 +332,20 @@ class SQLAuthenticator extends Authenticator
         return $dataTable->count();
     }
 
+    public function getActiveUserCount()
+    {
+        if($this->current === false)
+        {
+            return 0;
+        }
+        $dataTable = $this->getCurrentUserDataTable();
+        if($dataTable === null)
+        {
+            return 0;
+        }
+        return $dataTable->count();
+    }
+
     /**
      * Search all the pending users
      *
