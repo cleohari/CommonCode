@@ -16,14 +16,14 @@ class AuthProviderTest extends PHPUnit\Framework\TestCase
         $auth = \Flipside\AuthProvider::getInstance();
 
         $dataSet = \Flipside\DataSetFactory::getDataSetByName('authentication');
-        $dataSet->raw_query('CREATE TABLE tbluser (uid varchar(255), pass varchar(255), jpegphoto varchar(255));');
+        $dataSet->raw_query('CREATE TABLE tbluser (uid varchar(255), pass varchar(255), mail varchar(255), jpegphoto varchar(255));');
         $dataSet->raw_query('CREATE TABLE groupUserMap (`idgroupUserMap` int NOT NULL, `groupCN` varchar(50) NOT NULL, `uid` varchar(50) DEFAULT NULL, `gid` varchar(50) DEFAULT NULL, PRIMARY KEY (`idgroupUserMap`));');
 
         $user = $auth->getUserByLogin('baduser', 'badpass');
         $this->assertFalse($user);
 
         $dataTable = \Flipside\DataSetFactory::getDataTableByNames('authentication', 'user');
-        $dataTable->create(array('uid'=>'gooduser', 'pass'=>password_hash('goodpass', PASSWORD_DEFAULT)));
+        $dataTable->create(array('uid'=>'gooduser', 'mail'=>'good@example.com', 'pass'=>password_hash('goodpass', PASSWORD_DEFAULT)));
 
         $user = $auth->getUserByLogin('gooduser', 'goodpass');
         $this->assertNotFalse($user);
@@ -38,7 +38,7 @@ class AuthProviderTest extends PHPUnit\Framework\TestCase
         $auth = \Flipside\AuthProvider::getInstance();
 
         $dataSet = \Flipside\DataSetFactory::getDataSetByName('authentication');
-        $dataSet->raw_query('CREATE TABLE tbluser (uid varchar(255), pass varchar(255), jpegphoto varchar(255));');
+        $dataSet->raw_query('CREATE TABLE tbluser (uid varchar(255), pass varchar(255), mail varchar(255), jpegphoto varchar(255));');
         $dt = $dataSet['user'];
 
         $dt->create(array('uid'=>'gooduser', 'pass'=>password_hash('goodpass', PASSWORD_DEFAULT)));
@@ -124,7 +124,7 @@ class AuthProviderTest extends PHPUnit\Framework\TestCase
         $auth = \Flipside\AuthProvider::getInstance();
 
         $dataSet = \Flipside\DataSetFactory::getDataSetByName('authentication');
-        $dataSet->raw_query('CREATE TABLE tbluser (uid varchar(255), pass varchar(255), jpegphoto varchar(255));');
+        $dataSet->raw_query('CREATE TABLE tbluser (uid varchar(255), pass varchar(255), mail varchar(255), jpegphoto varchar(255));');
 
         $dt = $dataSet['user'];
         $dt->create(array('uid'=>'gooduser', 'pass'=>password_hash('goodpass', PASSWORD_DEFAULT)));
@@ -170,7 +170,7 @@ class AuthProviderTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(0, $count);
 
         $dataSet = \Flipside\DataSetFactory::getDataSetByName('authentication');
-        $dataSet->raw_query('CREATE TABLE tbluser (uid varchar(255), pass varchar(255), jpegphoto varchar(255));');
+        $dataSet->raw_query('CREATE TABLE tbluser (uid varchar(255), pass varchar(255), mail varchar(255), jpegphoto varchar(255));');
         $dt = $dataSet['user'];
         $dt->create(array('uid'=>'gooduser', 'pass'=>password_hash('goodpass', PASSWORD_DEFAULT)));
         $dt->create(array('uid'=>'gooduser2', 'pass'=>password_hash('goodpass', PASSWORD_DEFAULT)));
