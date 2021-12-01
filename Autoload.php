@@ -8,6 +8,11 @@
 * @copyright Copyright (c) 2015, Austin Artistic Reconstruction
 * @license http://www.apache.org/licenses/ Apache 2.0 License
 */
+if(file_exists(__DIR__ . '/vendor/autoload.php'))
+{
+    require(__DIR__ . '/vendor/autoload.php');
+}
+set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__);
 spl_autoload_register(function ($class) {
 
     // project-specific namespace prefix

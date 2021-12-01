@@ -39,7 +39,7 @@ class SQLDataSet extends DataSet
     {
         if(isset($this->params['user']))
         {
-            $this->pdo = new \PDO($this->params['dsn'], $this->params['user'], $this->params['pass'], array(PDO::MYSQL_ATTR_FOUND_ROWS => true));
+            $this->pdo = new \PDO($this->params['dsn'], $this->params['user'], $this->params['pass'], array(\PDO::MYSQL_ATTR_FOUND_ROWS => true));
         }
         else
         {
@@ -56,7 +56,14 @@ class SQLDataSet extends DataSet
      */
     private function _get_row_count_for_query($sql)
     {
-        $stmt = $this->pdo->query($sql);
+        try
+        {
+            $stmt = $this->pdo->query($sql);
+        }
+        catch(\PDOException $e)
+        {
+            return 0;
+        }
         if($stmt === false)
         {
             return 0;
@@ -220,6 +227,10 @@ class SQLDataSet extends DataSet
      */
     public function update($tablename, $where, $data)
     {
+        if($this->pdo === null)
+        {
+            $this->connect();
+        }
         $set = array();
         if(is_object($data))
         {
@@ -239,7 +250,7 @@ class SQLDataSet extends DataSet
             }
         }
         $set = implode(',', $set);
-        $sql = "UPDATE $tablename SET $set WHERE $where";
+        $sql = "UPDATE `$tablename` SET $set WHERE $where";
         $stmt = $this->pdo->query($sql);
         if($stmt === false)
         {
@@ -290,7 +301,7 @@ class SQLDataSet extends DataSet
         }
         $cols = implode(',', $cols);
         $set = implode(',', $set);
-        $sql = "INSERT INTO $tablename ($cols) VALUES ($set);";
+        $sql = "INSERT INTO `$tablename` ($cols) VALUES ($set);";
         if($this->pdo->exec($sql) === false)
         {
             if (php_sapi_name() !== "cli") {
@@ -311,7 +322,7 @@ class SQLDataSet extends DataSet
      */
     public function delete($tablename, $where)
     {
-        $sql = "DELETE FROM $tablename WHERE $where";
+        $sql = "DELETE FROM `$tablename` WHERE $where";
         if($this->pdo->exec($sql) === false)
         {
             return false;

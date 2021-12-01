@@ -30,8 +30,8 @@ class Settings extends \Flipside\Singleton
         {
             require $GLOBALS['FLIPSIDE_SETTINGS_LOC'].'/class.FlipsideSettings.php';
             return;
-        }
-        if(is_readable('/var/www/secure_settings/class.FlipsideSettings.php'))
+	}
+        if(file_exists('/var/www/secure_settings/class.FlipsideSettings.php'))
         {
             require '/var/www/secure_settings/class.FlipsideSettings.php';
             return;

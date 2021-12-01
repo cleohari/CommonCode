@@ -55,8 +55,8 @@ $jsArray = array(
                 'min' => '/js/common/jquery.dataTables.min.js'
             ),
             'cdn' => array(
-                'no'  => '//cdn.datatables.net/1.10.21/js/jquery.dataTables.js',
-                'min' => '//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js'
+                'no'  => '//cdn.datatables.net/1.10.24/js/jquery.dataTables.js',
+                'min' => '//cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js'
             )
         ),
         JS_CHART => array(
@@ -169,8 +169,8 @@ $cssArray = array(
                 'min' => '/css/common/jquery.dataTables.min.css'
             ),
             'cdn' => array(
-                'no'  => '//cdn.datatables.net/1.10.21/css/jquery.dataTables.css',
-                'min' => '//cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css'
+                'no'  => '//cdn.datatables.net/1.10.24/css/jquery.dataTables.css',
+                'min' => '//cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css'
             )
     ),
     CSS_JCROP => array(

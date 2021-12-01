@@ -24,6 +24,39 @@ class SQLUser extends User
                 $this->data = $data['extended'];
             }
         }
+        if(isset($this->data['title']))
+        {
+            $this->data['title'] = explode(',', $this->data['title']);
+        }
+        if(isset($this->data['ou']))
+        {
+            $this->data['ou'] = explode(',', $this->data['ou']);
+        }
+        if(isset($this->data['host']))
+        {
+            $this->data['host'] = explode(',', $this->data['host']);
+        }
+    }
+
+    public function getGroups()
+    {
+        if($this->auth === false)
+        {
+            return false;
+        }
+        $dt = $this->auth->dataSet['groupUserMap'];
+        $sqlMemberData = $dt->read(new \Flipside\Data\Filter("uid eq \"$this->uid\""));
+        if(empty($sqlMemberData))
+        {
+            return false;
+        }
+        $res = array();
+        $count = count($sqlMemberData);
+        for($i = 0; $i < $count; $i++)
+        {
+            array_push($res, new SQLGroup($sqlMemberData[$i], $this->auth));
+        }
+        return $res;
     }
 
     public function isInGroupNamed($name)
@@ -32,16 +65,31 @@ class SQLUser extends User
         {
             return false;
         }
-        $auth_data_set = $this->auth->dataSet;
-        $group_data_table = $auth_data_set['group'];
-        $uid = $this->uid;
-        $filter = new \Flipside\Data\Filter("uid eq '$uid' and gid eq '$name'");
-        $groups = $group_data_table->read($filter);
-        if($groups === false || !isset($groups[0]))
+        $group = $this->auth->getGroupByName($name);
+        if($group === null)
         {
             return false;
         }
-        return true;
+        return $group->hasMemberUID($this->uid);
+    }
+
+    public function getPasswordResetHash()
+    {
+        $filter = new \Flipside\Data\Filter('uid eq "'.$this->uid.'"');
+        $userDT = $this->auth->getCurrentUserDataTable();
+        $data = $userDT->read($filter);
+        if(strlen($data[0]['userPassword']) === 0)
+        {
+             $data[0]['userPassword'] = openssl_random_pseudo_bytes(10);
+        }
+        $hash = hash('sha512', $data[0]['uid'].';'.$data[0]['userPassword'].';'.$data[0]['mail']);
+        $update = array('resetHash' => $hash);
+        $res = $userDT->update($filter, $update);
+        if($res === false)
+        {
+            throw new \Exception('Unable to create hash in SQL User!');
+        }
+        return $hash;
     }
 
     public function __get($propName)
@@ -55,6 +103,10 @@ class SQLUser extends User
 
     public function __set($propName, $value)
     {
+        $filter = new \Flipside\Data\Filter('uid eq "'.$this->uid.'"');
+        $userDT = $this->auth->getCurrentUserDataTable();
+        $data = array($propName => $value);
+        $res = $userDT->update($filter, $data);
     }
 }
 /* vim: set tabstop=4 shiftwidth=4 expandtab: */
