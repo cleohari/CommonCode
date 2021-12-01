@@ -343,7 +343,14 @@ class SQLAuthenticator extends Authenticator
         {
             return 0;
         }
-        return $dataTable->count();
+        try
+        {
+            return $dataTable->count();
+        }
+        catch(\PDOException $ex)
+        {
+            return 0;
+        }
     }
 
     /**
