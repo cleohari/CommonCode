@@ -100,7 +100,6 @@ class AuthProviderTest extends PHPUnit\Framework\TestCase
         $auth = \Flipside\AuthProvider::getInstance();
 
         $dataSet = \Flipside\DataSetFactory::getDataSetByName('authentication');
-        $dataSet->raw_query('DROP TABLE tblgroup;');
         $this->assertNotFalse($dataSet->raw_query('CREATE TABLE tblgroup (cn varchar(50), description varchar(255));'), 'SQL Error: '.print_r($dataSet->getLastError(), true));
 
         $group = $auth->getGroupByName('BadGroup');
