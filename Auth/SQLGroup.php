@@ -10,6 +10,10 @@ class SQLGroup extends Group
     {
         $this->data = $data;
         $this->auth = $auth;
+        if($this->auth === false) 
+        {
+            $this->auth = \Flipside\AuthProvider::getInstance()->getMethodByName("Flipside\Auth\SQLAuthenticator");
+        }
     }
 
     public function getGroupName()
@@ -58,6 +62,11 @@ class SQLGroup extends Group
     {
         $members = array();
         $gid = $this->getGroupName();
+        if($this->auth === false)
+        {
+            //TODO should probably go get the authenticator...
+            return false;
+        }
         $dt = $this->auth->dataSet['groupUserMap'];
         $sqlMemberData = $dt->read(new \Flipside\Data\Filter("groupCN eq \"$gid\""));
         if($sqlMemberData === false)
@@ -135,6 +144,14 @@ class SQLGroup extends Group
 
     public function addMember($name, $isGroup = false, $flush = true)
     {
+        if(!isset($this->tmpMembers))
+        {
+            $this->tmpMembers = $this->members(false, false, true);
+            if($this->tmpMembers === false)
+            {
+                $this->tmpMembers = array();
+            }
+        }
         if($isGroup)
         {
         	array_push($this->tmpMembers, array('gid' => $name));
@@ -146,9 +163,14 @@ class SQLGroup extends Group
         if($flush)
         {
                 $gid = $this->getGroupName();
-        	$memberDT = $this->auth->getDataTable('groupUserMap');
+                $memberDT = $this->auth->getDataTable('groupUserMap');
                 //Get all cu rrent direct members
                 $existing = $memberDT->read(new \Flipside\Data\Filter('groupCN eq "'.$gid.'"'));
+                if($existing === false) 
+                {
+                    //Empty group...
+                    $existing = array();
+                }
                 $exCount = count($existing);
                 $newCount = count($this->tmpMembers);
                 for($i = 0; $i < $exCount; $i++)

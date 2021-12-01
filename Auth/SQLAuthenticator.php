@@ -483,9 +483,20 @@ class SQLAuthenticator extends Authenticator
     public function activatePendingUser($user)
     {
         $newUser = array();
-        $newUser['uid'] = $user->uid;
+        if(isset($user->uid))
+        {
+            $newUser['uid'] = $user->uid;
+        }
+        else
+        {
+            $newUser['uid'] = $user->mail;
+        }
         $newUser['mail'] = $user->mail;
-        $newUser['userPassword'] = \password_hash($user->password, \PASSWORD_DEFAULT);
+        //If the user is an oauth user they won't have a password
+        if(isset($user->password))
+        {
+            $newUser['userPassword'] = \password_hash($user->password, \PASSWORD_DEFAULT);
+        }
         $dt = $this->getCurrentUserDataTable();
         $res = $dt->create($newUser);
         if($res === false)

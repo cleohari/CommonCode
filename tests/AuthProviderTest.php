@@ -17,6 +17,7 @@ class AuthProviderTest extends PHPUnit\Framework\TestCase
 
         $dataSet = \Flipside\DataSetFactory::getDataSetByName('authentication');
         $dataSet->raw_query('CREATE TABLE tbluser (uid varchar(255), pass varchar(255), jpegphoto varchar(255));');
+        $dataSet->raw_query('CREATE TABLE groupUserMap (`idgroupUserMap` int NOT NULL, `groupCN` varchar(50) NOT NULL, `uid` varchar(50) DEFAULT NULL, `gid` varchar(50) DEFAULT NULL, PRIMARY KEY (`idgroupUserMap`));');
 
         $user = $auth->getUserByLogin('baduser', 'badpass');
         $this->assertFalse($user);
