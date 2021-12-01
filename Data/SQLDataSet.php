@@ -56,7 +56,14 @@ class SQLDataSet extends DataSet
      */
     private function _get_row_count_for_query($sql)
     {
-        $stmt = $this->pdo->query($sql);
+        try
+        {
+            $stmt = $this->pdo->query($sql);
+        }
+        catch(\PDOException $e)
+        {
+            return 0;
+        }
         if($stmt === false)
         {
             return 0;
